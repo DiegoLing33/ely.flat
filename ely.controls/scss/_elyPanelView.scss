@@ -1,0 +1,96 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyPanelView.scss                                                    +
+// Файл создан: 05.12.2018 17:55:50                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyPanelView.scss                                                    +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../../ely.core/scss/vriables";
+@import "../../ely.core/scss/mixins/ui";
+@import "../../ely.core/scss/mixins/shadow";
+@import "../../ely.core/scss/mixins/media";
+
+//
+//  elyFlat panel
+//
+
+.ef-panel {
+  display: block;
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 15px;
+  background-color: $panelBackGroundColor;
+  border: 1px solid #e7e7e7;
+
+  @include box-shadow-core($controlDefaultShadow);
+
+  &.brd-default {
+    border-color: #e7e7e7;
+  }
+
+  .ef-panel-description {
+    border-top: 1px solid rgb(206, 206, 206);
+    margin: -10px;
+    padding: 5px;
+    background-color: rgba(220, 220, 220, 0.23);
+    margin-top: 7px;
+    color: rgba(86, 86, 86, 0.46);
+    opacity: 1;
+  }
+
+  .ef-panel-title {
+    display: block;
+    margin: -10px;
+    margin-bottom: 7px;
+    border-bottom: 1px solid #eeeeee;
+    padding: 7px;
+
+    &.bg-default {
+      background-color: #e7e7e7;
+      color: rgb(132, 132, 132);
+    }
+  }
+}
+
+.ef-panel-content {
+  display: block;
+  color: #5a5a5a; // Color
+
+  .ef-input-group {
+    box-shadow: none;
+    border: none;
+
+    .ef-input {
+      border: none;
+      border-bottom: 1px solid #c5c5c5;
+      padding: 0.375rem 0;
+    }
+
+    .ef-input:focus {
+      border-bottom: 1px solid #05bfff;
+    }
+
+    &.error {
+
+      .ef-input {
+        border: none;
+        border-bottom: 1px solid rgba(232, 0, 0, 0.86) !important;
+        color: rgba(232, 0, 0, 0.86);
+        &::placeholder {
+          color: rgba(232, 0, 0, 0.86);
+        }
+      }
+    }
+  }
+}

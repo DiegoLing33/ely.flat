@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="&#10;,--. o                   |    o&#10;|   |.,---.,---.,---.    |    .,---.,---.&#10;|   |||---'|   ||   |    |    ||   ||   |&#10;`--' ``---'`---|`---'    `---'``   '`---|&#10;           `---'                    `---'&#10;&#10;Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)&#10;Mail: &lt;diegoling33@gmail.com&gt;&#10;&#10;Это программное обеспечение имеет лицензию, как это сказано в файле&#10;COPYING, который Вы должны были получить в рамках распространения ПО.&#10;&#10;Использование, изменение, копирование, распространение, обмен/продажа&#10;могут выполняться исключительно в согласии с условиями файла COPYING.&#10;&#10;Проект: &amp;#36;project.name&#10;&#10;Файл: &amp;#36;file.fileName&#10;Файл изменен: &amp;#36;file.lastModified.format(&quot;dd.MM.yyyy HH:mm:ss&quot;)&#10;" />
+    <option name="myName" value="Diego Ling" />
+  </copyright>
+</component>

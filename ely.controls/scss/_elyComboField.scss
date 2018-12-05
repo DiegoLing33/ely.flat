@@ -1,0 +1,33 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyComboField.scss                                                   +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-tips-view {
+  text-align: left;
+  border: 1px solid rgba(181, 181, 181, 0.43);
+  position: absolute;
+  z-index: 99100;
+  background-color: #fafafa;
+}
+
+.ef-tips-view ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: #7d7d7d;
+}
+
+.ef-tips-view li {
+  margin: 0;
+  padding: 0.375rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.ef-tips-view li:hover {
+  background-color: rgba(128, 128, 128, 0.19);
+}

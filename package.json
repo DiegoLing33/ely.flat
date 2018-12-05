@@ -1,0 +1,27 @@
+{
+  "name": "ely.flat",
+  "version": "1.0.0",
+  "description": "The ely.flat framework",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiegoLing33/ely.flat.git"
+  },
+  "keywords": [
+    "ely",
+    "framework",
+    "web",
+    "mobile",
+    "standalone"
+  ],
+  "author": "Diego Ling",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/DiegoLing33/ely.flat/issues"
+  },
+  "homepage": "https://github.com/DiegoLing33/ely.flat#readme",
+  "dependencies": {
+    "typescript": "^3.3.0-dev.20181205"
+  }
+}

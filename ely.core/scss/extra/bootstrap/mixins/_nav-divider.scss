@@ -1,0 +1,17 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _nav-divider.scss                                                     +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// Horizontal dividers
+//
+// Dividers (basically an hr) within dropdowns and nav lists
+
+@mixin nav-divider($color: $nav-divider-color, $margin-y: $nav-divider-margin-y) {
+  height: 0;
+  margin: $margin-y 0;
+  overflow: hidden;
+  border-top: 1px solid $color;
+}

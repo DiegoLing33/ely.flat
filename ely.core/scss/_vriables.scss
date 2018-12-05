@@ -1,0 +1,138 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _vriables.scss                                                        +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//
+//  Colors set-up
+//
+$defaultColor: #c5c5c5 !default;
+$primaryColor: #375a7f !default;
+$infoColor: #4f82b7 !default;
+$warningColor: #ffc107 !default;
+$dangerColor: #dc3545 !default;
+$successColor: #33d647 !default;
+$secondaryColor: #9f9f9f !default;
+$mutedColor: rgba(108, 108, 108, 0.69) !default;
+
+$lightTextColor: rgb(255, 255, 255) !default;
+$darkTextColor: rgb(28, 28, 28) !default;
+
+/**
+   * Размеры текста
+   */
+
+$sizeRegular: 16 !default;
+$sizeFill: 100% !default;
+$sizeMedium: 28 !default;
+$sizeLarge: ($sizeMedium * 2) !default;
+
+$sizeSmall: 13 !default;
+$sizeExtraLarge: ($sizeLarge * 2) !default;
+$sizeExtraSmall: ($sizeSmall / 2) !default;
+
+//
+//  Colors enum
+//
+$colorsBase: () !default;
+$colorsBase: (
+        primary:$primaryColor,
+        info:$infoColor,
+        warning:$warningColor,
+        danger:$dangerColor,
+        success:$successColor,
+        secondary:$secondaryColor,
+        muted:$mutedColor,
+);
+
+//
+//  Sizes enum
+//
+$sizeBase: () !default;
+$sizeBase: (
+        default:   #{$sizeRegular}px,
+        regulat:   #{$sizeRegular}px,
+        fill:    $sizeFill,
+        small:   #{$sizeSmall}px,
+        extraSmall:  #{$sizeExtraSmall}px,
+        middle:    #{$sizeMedium}px,
+        large:   #{$sizeLarge}px,
+        extraLarge:  #{$sizeExtraLarge}px
+);
+
+$sizeMobileBase: (
+        default:   #{$sizeRegular / 2}px,
+        regular:   #{$sizeRegular - 4}px,
+        fill:    $sizeFill,
+        small:   11px,
+        extraSmall:  #{$sizeExtraSmall - 4}px,
+        middle:    #{$sizeRegular}px,
+        large:   #{$sizeLarge / 2}px,
+        extraLarge:  #{$sizeExtraLarge / 2}px
+);
+
+//
+//  Controls
+//
+
+$controlDefaultShadow: 0 0 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.24) !default;
+
+//
+//  Wrapper Style Settings
+//
+$wrapperSideMargin: 50px;
+$wrapperSizeMarginMobile: 10px;
+
+//
+//  Navigation Bar Style Settings
+//
+$navigationBarFixed: true;
+$navigationBarFixedTopSpacing: 50px;
+
+$navigationBarColor: #194d6d !default;
+$navigationBarTitleColor: rgba(255, 255, 255, 0.84) !default;
+$navigationBarBottomBorder: lighten($navigationBarColor, 5%);
+
+$navigationBarTitleSize: 22px !default;
+$navigationBarTopBottomPadding: 13px !default;
+$navigationBarItemsSize: 16px !default;
+
+$navigationBarBottomBorderHeight: 4px !default;
+$navigationBarHeight: $navigationBarTopBottomPadding + max($navigationBarTitleSize, $navigationBarItemsSize);
+
+$navigationBarLightTitleColor: rgba(0, 0, 0, 0.84) !default;
+
+//
+//  Text Style Settings
+//
+
+$textSizeSmall: 13px;
+$textSizeRegular: 1rem;
+$textSizeMedium: $textSizeRegular * 2;
+$textSizeLarge: $textSizeMedium * 2;
+$textSizeSuperLarge: $textSizeLarge * 2;
+
+//
+//  ProgressBar Style Settings
+//
+
+$progressBarHeight: 2.5px;
+$progressBarMarginBottom: 10px;
+
+//
+//  Sidebar Style Settings
+//
+
+$sideBarWidth: 230px;
+
+//
+//  UI Panel settings
+//
+
+$panelBackGroundColor: white;
+
+//
+// Something next
+//

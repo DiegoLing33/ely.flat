@@ -1,0 +1,19 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _badge.scss                                                           +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@mixin badge-variant($bg) {
+  color: color-yiq($bg);
+  background-color: $bg;
+
+  &[href] {
+    @include hover-focus {
+      color: color-yiq($bg);
+      text-decoration: none;
+      background-color: darken($bg, 10%);
+    }
+  }
+}

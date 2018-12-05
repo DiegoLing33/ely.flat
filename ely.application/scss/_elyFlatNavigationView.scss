@@ -1,0 +1,153 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyFlatNavigationView.scss                                           +
+// Файл создан: 05.12.2018 18:00:49                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyFlatNavigationView.scss                                           +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../../ely.core/scss/vriables";
+@import "../../ely.core/scss/mixins/shadow";
+@import "../../ely.core/scss/mixins/ui";
+@import "../../ely.core/scss/mixins/media";
+
+.ely-navigation-view {
+  @if ($navigationBarFixed) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  } @else {
+    width: 100%;
+  }
+  background-color: $navigationBarColor;
+  color: #bbbbbb;
+  padding: $navigationBarTopBottomPadding $wrapperSideMargin;
+  border-bottom: $navigationBarBottomBorderHeight solid $navigationBarBottomBorder;
+  z-index: 99999;
+
+  @include mobile-only {
+    padding: $navigationBarTopBottomPadding $wrapperSizeMarginMobile;
+    text-align: center;
+  }
+
+  ul {
+    float: right;
+    margin: 0;
+
+    @include mobile-only {
+      display: none;
+    }
+  }
+
+  li {
+    list-style: none;
+    display: inline-block;
+    font-size: $navigationBarItemsSize;
+    padding: 0 10px;
+    margin-top: (abs($navigationBarTitleSize - $navigationBarItemsSize) / 2) + $navigationBarBottomBorderHeight;
+  }
+
+  li:not(:first-child) {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .title {
+    color: $navigationBarTitleColor;
+    display: inline-block;
+    font-size: $navigationBarTitleSize;
+    margin-top: $navigationBarBottomBorderHeight;
+    transition: color 0.35s;
+
+    @include mobile-only {
+      width: 100%;
+      text-align: center;
+    }
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.67);
+    }
+  }
+
+  .ely-table {
+    display: inline;
+    float: right;
+    width: auto;
+  }
+
+  .ely-row {
+    vertical-align: top;
+    margin: 0 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.67);
+    transition: color 0.35s;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+}
+
+.ely-navigation-view.light{
+  .title{
+    color: $navigationBarLightTitleColor;
+  }
+
+  a {
+    text-decoration: none;
+    color: rgba(50, 50, 50, 0.67);
+    transition: color 0.35s;
+
+    &:hover {
+      color: #090909;
+    }
+  }
+}
+
+.ef-vml {
+
+  padding: 0;
+  margin: 0;
+
+  li {
+    list-style: none;
+    display: block;
+    font-size: $navigationBarItemsSize;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.00);
+    opacity: 0.46;
+    transition: opacity 0.4s ease-out;
+    cursor: pointer;
+
+    &:hover{
+      opacity: 1;
+    }
+  }
+
+  li:not(:first-child) {
+    //border-top: 1px solid rgba(0, 0, 0, 0.42);
+    margin-top: 5px;
+  }
+
+  a{
+    padding: 5px 5px;
+    color: #898989;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}

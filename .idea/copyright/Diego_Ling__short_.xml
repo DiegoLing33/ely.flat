@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="&#10;Diego Ling: ely.flat&#10;&#10;Проект: &amp;#36;project.name&#10;&#10;Файл: &amp;#36;file.fileName&#10;Файл создан: &amp;#36;today.format(&quot;dd.MM.yyyy HH:mm:ss&quot;)&#10;" />
+    <option name="myName" value="Diego Ling (short)" />
+  </copyright>
+</component>

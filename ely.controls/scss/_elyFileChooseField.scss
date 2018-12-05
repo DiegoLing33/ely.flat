@@ -1,0 +1,87 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyFileChooseField.scss                                              +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//@import "../../../ely.core/src/scss/vriables";
+//@import "../../../ely.core/src/scss/mixins/shadow";
+
+//
+//  Поле выбора файла | elyFileChooseField
+//
+.ef-file-choose{
+
+  .ef-input{
+    display: none;
+  }
+
+  .choose-place{
+    text-align: center;
+    padding: 7.5px;
+    margin: 2px;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.7s;
+
+    .title{
+      opacity: 0.5;
+    }
+
+    .description{
+      opacity: 0.4;
+      font-size: 11px;
+    }
+
+  }
+
+  .ef-files-grid{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top: 2px dashed rgba(128, 128, 128, 0.2);
+    padding-top: 9px;
+  }
+
+  .deny{
+    cursor: not-allowed;
+  }
+
+  .choose-place:hover{
+    opacity: 1;
+  }
+
+  .ef-file-item{
+    display: table-row;
+
+    .fa{
+      display: table-cell;
+      font-size: 30px;
+      opacity: 0.3;
+      padding: 0 15px;
+      vertical-align: middle;
+    }
+
+    .title{
+      display: table-cell;
+      vertical-align: middle;
+      width: 100%;
+      font-weight: 300;
+      border-right: 2px solid rgba(0, 0, 0, 0.13);
+    }
+
+    .remove{
+      display: table-cell;
+      font-weight: 700;
+      font-size: 33px;
+      opacity: 0.2;
+      cursor: pointer;
+      transition: opacity 0.5s;
+      vertical-align: middle;
+      padding: 0 15px;
+    }
+    .remove:hover{
+      opacity: 0.45;
+    }
+  }
+}

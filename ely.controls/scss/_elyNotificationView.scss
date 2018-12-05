@@ -1,0 +1,76 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyNotificationView.scss                                             +
+// Файл создан: 05.12.2018 17:55:22                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyNotificationView.scss                                             +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../../../ely.core/src/scss/vriables";
+@import "../../../ely.core/src/scss/mixins/ui";
+@import "../../../ely.core/src/scss/mixins/shadow";
+@import "../../../ely.core/src/scss/mixins/media";
+
+
+/*
+ *  elyApplication.Notifications
+ *
+ *  Dynamic notifications system with smooth animation
+ */
+
+/* The panel */
+.ely-notification-panel {
+  //display: none;
+  padding: 10px;
+  position: fixed;
+  z-index: 99999999;
+  @include box-shadow-core($controlDefaultShadow);
+  transition: top 500ms ease-out;
+  max-width: 100% !important;
+
+  @include mobile-only{
+    bottom: auto !important;
+    right: 10px !important;
+    left: 10px !important;
+    top: 10px !important;
+  }
+
+}
+
+/* The close button */
+.ely-notification-close-button {
+  float: right;
+  font-size: 17px;
+  margin-top: -3.3px;
+  cursor: pointer;
+}
+
+/* The title */
+.ely-notification-title-label {
+  font-size: 17px;
+  margin-bottom: 3px
+}
+
+/* The message */
+.ely-notification-message-label {
+  font-size: 13px;
+}
+
+/* The content block */
+.ely-notification-content {
+  margin-top: 10px;
+  margin-left: -10px;
+  padding: 10px;
+  margin-bottom: -10px;
+  background-color: rgba(0, 0, 0, 0.0175);
+  font-size: 13px;
+}

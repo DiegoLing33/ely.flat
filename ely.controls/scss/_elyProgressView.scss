@@ -1,0 +1,60 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyProgressView.scss                                                 +
+// Файл создан: 05.12.2018 17:55:18                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyProgressView.scss                                                 +
+// Файл создан: 05.12.2018 17:55:09                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyProgressView.scss                                                 +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../../../ely.core/src/scss/vriables";
+@import "../../../ely.core/src/scss/mixins/ui";
+@import "../../../ely.core/src/scss/mixins/shadow";
+@import "../../../ely.core/src/scss/mixins/media";
+
+//
+//  Progress bar
+//
+
+.ef-pb {
+
+  background-color: #d9d9d9;
+  width: 100%;
+  min-height: $progressBarHeight;
+  height: $progressBarHeight;
+  margin-bottom: $progressBarMarginBottom;
+
+  //
+  //  Progress bar line
+  //
+  .bar {
+    opacity: 0.8;
+    min-height: $progressBarHeight;
+    height: $progressBarHeight;
+    transition: width 0.8s ease-out;
+  }
+
+  .ef-hint {
+    margin-top: 2px;
+  }
+}

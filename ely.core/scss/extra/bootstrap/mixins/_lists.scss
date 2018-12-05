@@ -1,0 +1,14 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _lists.scss                                                           +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// Lists
+
+// Unstyled keeps list views block level, just removes default browser padding and list-style
+@mixin list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}

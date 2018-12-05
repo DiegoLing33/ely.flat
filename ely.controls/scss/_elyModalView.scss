@@ -1,0 +1,81 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyModalView.scss                                                    +
+// Файл создан: 05.12.2018 17:55:50                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elyModalView.scss                                                    +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../../ely.core/scss/vriables";
+@import "../../ely.core/scss/mixins/ui";
+@import "../../ely.core/scss/mixins/shadow";
+@import "../../ely.core/scss/mixins/media";
+
+//
+//  Modals
+//
+
+.ef-modal {
+  background-color: rgba(0, 0, 0, 0.77);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000000;
+
+  .ef-modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    background-color: #d0d0d0;
+    min-width: 350px;
+    border: 4px solid;
+    @include box-shadow-core($controlDefaultShadow);
+
+    .title {
+      clear: both;
+      padding: 10px;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.47);
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .content {
+      clear: both;
+      padding: 10px;
+    }
+
+    .close {
+      clear: both;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      right: 0;
+      opacity: 0.7;
+      cursor: pointer;
+      transition: opacity 0.4s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .bg-default {
+    background-color: #373737;
+    color: #e2e2e2;
+  }
+}

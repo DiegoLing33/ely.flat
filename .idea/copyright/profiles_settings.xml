@@ -1,0 +1,23 @@
+<component name="CopyrightManager">
+  <settings>
+    <module2copyright>
+      <element module="TS" copyright="Diego Ling" />
+      <element module="SCSS" copyright="Diego Ling (short)" />
+    </module2copyright>
+    <LanguageOptions name="SCSS">
+      <option name="fileTypeOverride" value="3" />
+      <option name="block" value="false" />
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
+      <option name="box" value="true" />
+      <option name="filler" value="+" />
+    </LanguageOptions>
+    <LanguageOptions name="TypeScript">
+      <option name="fileTypeOverride" value="3" />
+      <option name="separateBefore" value="true" />
+      <option name="separateAfter" value="true" />
+      <option name="box" value="true" />
+      <option name="filler" value="+" />
+    </LanguageOptions>
+  </settings>
+</component>

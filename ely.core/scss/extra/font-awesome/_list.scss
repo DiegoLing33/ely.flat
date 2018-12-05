@@ -1,0 +1,26 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _list.scss                                                            +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// List Icons
+// -------------------------
+
+.#{$fa-css-prefix}-ul {
+  padding-left: 0;
+  margin-left: $fa-li-width;
+  list-style-type: none;
+  > li { position: relative; }
+}
+.#{$fa-css-prefix}-li {
+  position: absolute;
+  left: -$fa-li-width;
+  width: $fa-li-width;
+  top: (2em / 14);
+  text-align: center;
+  &.#{$fa-css-prefix}-lg {
+    left: -$fa-li-width + (4em / 14);
+  }
+}

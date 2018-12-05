@@ -1,0 +1,360 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _ui.scss                                                              +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../../../ely.core/scss/vriables";
+@import "../../../ely.core/scss/mixins/ui";
+@import "../../../ely.core/scss/mixins/shadow";
+@import "../../../ely.core/scss/mixins/media";
+
+hr{
+  border: 0.5px solid rgb(156, 156, 156);
+}
+
+input {
+  outline: none
+}
+
+
+@each $color, $value in $colorsBase {
+  @include ui-bg($color, $value, $lightTextColor, $darkTextColor)
+}
+
+@each $color, $value in $colorsBase {
+  .brd-#{$color} {
+    border-color: $value !important;
+  }
+}
+
+@each $color, $value in $colorsBase {
+  .text-#{$color} {
+    color: $value !important;
+  }
+}
+
+@each $name, $value in $sizeBase {
+  .ts-#{$name} {
+    font-size: $value;
+    //padding-bottom: 5px;
+  }
+}
+
+@include mobile-only {
+  @each $name, $value in $sizeMobileBase {
+    .ts-#{$name} {
+      font-size: $value;
+    }
+  }
+}
+
+
+.ef-control-opacity {
+  opacity: 1;
+  @extend .opacity-transition;
+}
+
+.ef-control-opacity:hover {
+  opacity: 1;
+  @extend .opacity-transition;
+}
+
+.ef-control {
+
+}
+
+.ef-control:hover {
+
+}
+
+
+.ef-tip {
+  position: relative;
+}
+
+.ef-tip .ef-tip-cnt {
+  width: auto;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1999;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60%;
+  transition: opacity 0.3s;
+}
+
+.ef-tip .ef-tip-cnt::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: #555;
+}
+
+
+.ef-input-group {
+  .ef-pb {
+    display: table-row;
+  }
+}
+
+//
+//  Graph
+//
+
+.ef-graphView {
+
+}
+
+.ef-graph {
+  display: block;
+  width: 100%;
+  min-height: 200px;
+  position: relative;
+}
+
+.ef-gpt {
+  position: absolute;
+  height: 4px;
+  width: 4px;
+  border-radius: 360px;
+  background-color: gray;
+}
+
+//
+//  Utilities
+//
+
+::-webkit-scrollbar-track {
+  background-color: #c2c2c2;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  background-color: #c2c2c2;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #111111;
+}
+
+/** Анимация прозрачности */
+.opacity-transition {
+  transition: opacity 0.25s ease-in-out;
+}
+
+.clickable {
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.25s ease-in-out;
+  @include deny-selection();
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.ef-screen{}
+
+html, body {
+  background-color: #dfdfdf;
+}
+
+//
+//  Content wrapper
+//
+.ef-wrp {
+
+  margin-right: $wrapperSideMargin;
+  margin-left: $wrapperSideMargin;
+
+  @if ($navigationBarFixed) {
+    margin-top: $navigationBarFixedTopSpacing + $navigationBarHeight;
+  }
+
+  @include mobile-only {
+    margin-left: $wrapperSizeMarginMobile;
+    margin-right: $wrapperSizeMarginMobile;
+  }
+
+}
+
+//
+// Content wrapper with sidebar class
+//
+.ef-wrp-sidebar {
+  margin-left: $sideBarWidth - $wrapperSideMargin;
+}
+
+.ef-sidebar {
+  position: fixed;
+  width: $sideBarWidth;
+  height: 100%;
+
+  @if ($navigationBarFixed) {
+    top: $navigationBarFixedTopSpacing + $navigationBarHeight;
+  }
+
+  @include tablet-landscape-and-below {
+    display: none;
+  }
+
+  left: 0;
+
+  .ely-list-item {
+    font-size: 17.5px;
+    list-style: none;
+    margin: 5px;
+  }
+
+  .active {
+    background-color: rgba(137, 137, 137, 0.21);
+  }
+
+  a {
+    padding: 5px;
+    width: 100%;
+    display: block;
+    opacity: 0.7;
+    transition: opacity 1s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .fa {
+    padding-right: 20px;
+  }
+}
+
+.ef-cntr {
+  //margin-left: $sideBarWidth;
+}
+
+
+h1 {
+  font-weight: 100;
+}
+
+.large-h1 {
+  font-size: 52px;
+}
+
+
+//
+//  ely.button
+//
+
+
+.ef-alert {
+  background: #FFFFFF;
+  box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.22), 0 24px 24px 0 rgba(0, 0, 0, 0.30);
+}
+
+.eld {
+  background-color: white !important;
+  z-index: 9999999;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  padding: 14% 30px 30px 30px;
+  text-align: center;
+
+  .fa {
+    display: block !important;
+    font-size: 60px !important;
+    color: #121212 !important;
+  }
+
+  .elm {
+    padding-top: 20px;
+    display: block !important;
+    font-size: 20px !important;
+    color: #7d7d7d !important;
+  }
+}
+
+
+//
+//  ============= > ely.flat.scrollView < ==============
+//
+.ef-scroll-view {
+  max-width: 100%;
+
+  &.horizontal {
+    overflow-x: scroll;
+  }
+
+  &.vertical {
+    overflow-y: scroll;
+  }
+
+  &.mnd-center {
+    * {
+      scroll-snap-align: center;
+    }
+
+    &.horizontal {
+      scroll-snap-type: x mandatory;
+      overflow-x: scroll;
+    }
+
+    &.vertical {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+  }
+
+}
+
+
+//
+//
+//
+
+.ely-center {
+  margin: 0 auto;
+}
+
+.ely-timer {
+  font-size: 50px;
+}
+
+.ely-timer-separator {
+  color: grey;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.ef-footer {
+  padding: 5px;
+  padding-top: 15px;
+  text-align: center;
+  opacity: 0.2;
+
+  .title {
+    display: block;
+    font-size: $textSizeSmall;
+  }
+
+  .sub-title {
+    display: block;
+    font-size: 10px;
+  }
+}

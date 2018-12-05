@@ -1,0 +1,124 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elySwitchField.scss                                                  +
+// Файл создан: 05.12.2018 17:55:32                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Файл: _elySwitchField.scss                                                  +
+// Файл создан: 23.11.2018 23:03:24                                            +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../../../ely.core/src/scss/vriables";
+@import "../../../ely.core/src/scss/mixins/ui";
+@import "../../../ely.core/src/scss/mixins/shadow";
+@import "../../../ely.core/src/scss/mixins/media";
+
+//
+//  Модуляция стандартныъ элементов
+//
+.ef-input-switch {
+
+  box-shadow: none;
+  background: transparent;
+
+  .ef-input-group {
+    box-shadow: none;
+    background: transparent;
+
+    .title {
+      display: inline-block;
+      top: -7px;
+      position: relative;
+      color: rgb(131, 131, 131);
+    }
+  }
+
+}
+
+//
+//  Переключатель
+//
+.ef-switch {
+
+  display: inline-block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+
+}
+
+.ef-switch .switcher {
+  position: relative;
+  display: inline-block;
+  margin-right: .5rem;
+  width: 46px;
+  height: 26px;
+  background-color: #e6e6e6;
+  border-radius: 23px;
+  transition: all 0.3s linear;
+  transition: background-color 0.24s;
+}
+
+.ef-switch .switcher::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear;
+  @include box-shadow-core($controlDefaultShadow);
+}
+
+.ef-switch .switcher::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.ef-switch:active .switcher::after {
+  width: 28px;
+  transform: translate3d(2px, 2px, 0);
+}
+
+.ef-switch:active input:checked + .switcher::after {
+  transform: translate3d(16px, 2px, 0);
+}
+
+.ef-switch input {
+  display: none;
+}
+
+.ef-switch input:checked + .switcher {
+  background-color: #4BD763;
+}
+
+.ef-switch input:checked + .switcher::before {
+  transform: translate3d(18px, 2px, 0) scale3d(0, 0, 0);
+}
+
+.ef-switch input:checked + .switcher::after {
+  transform: translate3d(22px, 2px, 0);
+}

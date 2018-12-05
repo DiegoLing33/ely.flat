@@ -1,0 +1,70 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// ,--. o                   |    o                                             +
+// |   |.,---.,---.,---.    |    .,---.,---.                                   +
+// |   |||---'|   ||   |    |    ||   ||   |                                   +
+// `--' ``---'`---|`---'    `---'``   '`---|                                   +
+//            `---'                    `---'                                   +
+//                                                                             +
+// Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                           +
+// Mail: <diegoling33@gmail.com>                                               +
+//                                                                             +
+// Это программное обеспечение имеет лицензию, как это сказано в файле         +
+// COPYING, который Вы должны были получить в рамках распространения ПО.       +
+//                                                                             +
+// Использование, изменение, копирование, распространение, обмен/продажа       +
+// могут выполняться исключительно в согласии с условиями файла COPYING.       +
+//                                                                             +
+// Проект: ely.flat.application                                                +
+//                                                                             +
+// Файл: _elyDataControls.scss                                                 +
+// Файл изменен: 27.11.2018 22:28:04                                           +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+$efDataGridViewTableBorder: 1px solid rgba(0, 0, 0, 0.58);
+
+.ef-dgv {
+  width: 100%;
+
+  tr {
+    border-bottom: 1px solid rgb(220, 220, 220);
+  }
+
+  td, th {
+    color: rgba(0, 0, 0, 0.56);
+    padding: 10px;
+  }
+
+  th{
+    color: rgba(0, 0, 0, 0.84);
+  }
+
+  th {
+    .ef-text {
+      font-weight: bold;
+    }
+  }
+
+  caption{
+    caption-side: top;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    color: #6c757d;
+    text-align: left;
+  }
+}
+
+.ef-dgv.bordered {
+  border: $efDataGridViewTableBorder;
+
+  td, th {
+    color: rgba(0, 0, 0, 0.84);
+    border: $efDataGridViewTableBorder;
+    padding: 10px;
+  }
+
+  th {
+    background-color: rgba(0, 0, 0, 0.09);
+  }
+}
