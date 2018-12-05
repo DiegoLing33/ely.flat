@@ -20,15 +20,15 @@
 
 import elyControl from "@controls/action/elyControl";
 import elyStylesheet from "@controls/elyStylesheet";
-import elySize from "@controls/enums/elySize";
-import elyWeight from "@controls/enums/elyWeight";
 import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyTextView from "@controls/text/elyTextView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyScrollView from "@controls/view/elyScrollView";
-import elyUIWorkshop from "../elyUIWorkshop";
-import elyWSRegex from "../src/elyWSRegex";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
+import elySize from "@enums/elySize";
+import elyWeight from "@enums/elyWeight";
 
 /**
  * Панель созданных элементов

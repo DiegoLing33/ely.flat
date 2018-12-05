@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "ely.core/src/controls/elyView";
-import elyViewOptions from "ely.core/src/controls/elyViewOptions";
+import elyView from "@core/controls/elyView";
+import elyViewOptions from "@core/controls/elyViewOptions";
 
 /**
  * Опции для {@link elyDataGridViewOptions}

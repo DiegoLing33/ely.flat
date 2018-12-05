@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elyInput from "../action/elyInput";
-import elyFieldOptions from "../options/fields/elyFieldOptions";
-import elyField from "./elyField";
+import elyInput from "@controls/action/elyInput";
+import elyField from "@controls/fields/elyField";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Поле ввода: Многострочный ввод текста

@@ -18,13 +18,13 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
+import elyTextView from "@controls/text/elyTextView";
 import elyView from "@core/controls/elyView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elyControl from "@controls/action/elyControl";
-import elyStyle from "@controls/enums/elyStyle";
+import elyStyle from "@enums/elyStyle";
 import elyControlOptions from "@options/elyControlOptions";
-import elyTextView from "@controls/text/elyTextView";
 
 /**
  * Элемент отображения: Панель

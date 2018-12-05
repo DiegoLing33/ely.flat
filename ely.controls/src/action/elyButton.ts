@@ -18,13 +18,13 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elySize from "../enums/elySize";
-import elyStyle from "../enums/elyStyle";
-import elyButtonOptions from "../options/elyButtonOptions";
-import elyTextView from "../text/elyTextView";
-import elyControl from "./elyControl";
+import elyControl from "@controls/action/elyControl";
+import elyTextView from "@controls/text/elyTextView";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elySize from "@enums/elySize";
+import elyStyle from "@enums/elyStyle";
+import elyButtonOptions from "@options/elyButtonOptions";
 
 /**
  * Элемент управления: Кнопка

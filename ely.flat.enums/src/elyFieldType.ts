@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,87 +15,58 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elySize.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyFieldType.ts                                                      +
+ + Файл изменен: 05.12.2018 23:47:11                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ISize from "../interfaces/ISize";
+import IFieldType from "@controls/interfaces/IFieldType";
 
 /**
- * Размеры ely.flat
+ * Типы ввода данных
  */
-export default class elySize {
+export default class elyFieldType {
 
     /**
-     * Стандартный размер
+     * Текст
      */
-    public static readonly default = new elySize("default");
+    public static readonly text = new elyFieldType("text");
 
     /**
-     * Основной размер, используемый в ely.flat
+     * Пароль
      */
-    public static readonly regular = new elySize("regular");
+    public static readonly password = new elyFieldType("password");
 
     /**
-     * Размер во весь блок
+     * Число
      */
-    public static readonly fill = new elySize("fill");
+    public static readonly number = new elyFieldType("number");
 
     /**
-     * Маленький размер
+     * Почта
      */
-    public static readonly small = new elySize("small");
+    public static readonly mail = new elyFieldType("mail");
 
     /**
-     * Средний размер
-     */
-    public static readonly middle = new elySize("middle");
-
-    /**
-     * Большой размер
-     */
-    public static readonly large = new elySize("large");
-
-    /**
-     * Очень большой размер
-     */
-    public static readonly extraLarge = new elySize("extraLarge");
-
-    /**
-     * Очень маленький размер
-     */
-    public static readonly extraSmall = new elySize("extraSmall");
-
-    /**
-     * Свой размер
+     * Тип по имени
      * @param value
      */
-    public static custom(value: string | number): elySize {
+    public static byName(value: string | number): elyFieldType {
         if (typeof value === "number") value = value.toString() + "px";
-        return new elySize(value, true);
-    }
-
-    /**
-     * Возвращает размер по его названию
-     * @param name
-     */
-    public static byName(name: string): elySize {
-        return new elySize(name);
+        return new elyFieldType(value);
     }
 
     /**
      * Список
      */
-    public static rawList(): ISize {
+    public static rawList(): IFieldType {
         return {
-            default:    elySize.default.value,
-            extraLarge: elySize.extraLarge.value,
-            extraSmall: elySize.extraSmall.value,
-            fill:       elySize.fill.value,
-            large:      elySize.large.value,
-            middle:     elySize.middle.value,
-            regular:    elySize.regular.value,
-            small:      elySize.small.value,
+            mail: elyFieldType.mail.value,
+            number: elyFieldType.number.value,
+            password: elyFieldType.password.value,
+            text: elyFieldType.text.value,
         };
     }
 
@@ -105,20 +77,12 @@ export default class elySize {
     public value: string;
 
     /**
-     * Кастомный размер
-     * @ignore
-     */
-    public custom: boolean;
-
-    /**
      * Конструктор
      * @ignore
      * @param val
-     * @param custom
      */
-    protected constructor(val: string, custom: boolean = false) {
+    protected constructor(val: string) {
         this.value  = val;
-        this.custom = custom;
     }
 
     /**

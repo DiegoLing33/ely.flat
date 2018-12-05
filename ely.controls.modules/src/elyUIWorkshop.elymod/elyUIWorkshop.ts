@@ -18,6 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatApplicationPreloader from "@app/app/content/elyFlatApplicationPreloader";
 import elyFlatApplication from "@app/app/elyFlatApplication";
 import elyGridRowView from "@controls/flex/elyGridRowView";
 import elyGridView from "@controls/flex/elyGridView";
@@ -29,17 +30,16 @@ import elyLogger from "@core/elyLogger";
 import elySimpleJSONParser from "@core/elySimpleJSONParser";
 import elyUtils from "@core/elyUtils";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elyFlatApplicationPreloader from "../../../ely.application/src/app/content/elyFlatApplicationPreloader";
-import elyWSUtils from "./elyWSUtils";
-import elyTabBarView from "./navigation/elyTabBarView";
-import elyUIWorkshopElementsPanel from "./panels/elyUIWorkshopElementsPanel";
-import elyWSSettingsPanel from "./panels/elyWSSettingsPanel";
-import elyWSViewPropsPanel from "./panels/elyWSViewPropsPanel";
-import elyUIWSContextMenu from "./src/elyUIWSContextMenu";
-import elyUIWSMeta from "./src/elyUIWSMeta";
-import elyUIWSViewsFactory from "./src/elyUIWSViewsFactory";
-import elyUIWSWorkspace from "./src/elyUIWSWorkspace";
-import elyWSRegex from "./src/elyWSRegex";
+import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
+import elyTabBarView from "@devMods/elyUIWorkshop.elymod/navigation/elyTabBarView";
+import elyUIWorkshopElementsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyUIWorkshopElementsPanel";
+import elyWSSettingsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyWSSettingsPanel";
+import elyWSViewPropsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyWSViewPropsPanel";
+import elyUIWSContextMenu from "@devMods/elyUIWorkshop.elymod/src/elyUIWSContextMenu";
+import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
+import elyUIWSViewsFactory from "@devMods/elyUIWorkshop.elymod/src/elyUIWSViewsFactory";
+import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace";
+import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 
 export default class elyUIWorkshop {
 

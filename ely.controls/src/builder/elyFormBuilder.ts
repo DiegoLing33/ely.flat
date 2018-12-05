@@ -20,7 +20,6 @@
 
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
-import elySize from "@controls/enums/elySize";
 import elyField from "@controls/fields/elyField";
 import elyTextField from "@controls/fields/elyTextField";
 import elyGridView from "@controls/flex/elyGridView";
@@ -33,6 +32,7 @@ import elyObservableDictionary from "@core/observable/properties/elyObservableDi
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyEncrypt from "@core/secure/elyEncrypt";
 import elyURL from "@core/web/url/elyURL";
+import elySize from "@enums/elySize";
 import elyFlexGridViewOptions from "@options/elyFlexGridViewOptions";
 
 type elyFormBuilderErrorObserver = (error: string, field: elyField<any>) => void;

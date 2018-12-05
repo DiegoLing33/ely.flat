@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elySize from "../enums/elySize";
-import elyWeight from "../enums/elyWeight";
+import elySize from "@enums/elySize";
+import elyWeight from "@enums/elyWeight";
 import elyControlOptions from "./elyControlOptions";
 
 /**

@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplicationConfig_Template_Footer from "./template/footer";
+import elyFlatApplicationConfig_Template_Footer from "@app/app/options/elyFlatApplication/template/footer";
 
 /**
  * Шаблон

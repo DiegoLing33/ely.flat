@@ -19,11 +19,11 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyControl from "@controls/action/elyControl";
+import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
 import elyTextView from "@controls/text/elyTextView";
 import elyView from "@core/controls/elyView";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyTableViewOptions from "@options/elyTableViewOptions";
-import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
 
 /**
  * Элемент отображения: Таблица

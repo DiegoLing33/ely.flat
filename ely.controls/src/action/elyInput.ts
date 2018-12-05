@@ -18,9 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFieldOptions from "ely.controls/src/options/fields/elyFieldOptions";
-import elyFieldType from "../enums/elyFieldType";
-import elyFieldProtocol from "../protocols/elyFieldProtocol";
+import elyFieldProtocol from "@controls/protocols/elyFieldProtocol";
+import elyFieldType from "@enums/elyFieldType";
+import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Элемент: Элемент ввода текст

@@ -18,11 +18,11 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyTextField from "@controls/fields/elyTextField";
+import elyGridRowView from "@controls/flex/elyGridRowView";
+import elyFieldProtocol from "@controls/protocols/elyFieldProtocol";
 import elyView from "@core/controls/elyView";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
-import elyGridRowView from "../flex/elyGridRowView";
-import elyFieldProtocol from "../protocols/elyFieldProtocol";
-import elyTextField from "./elyTextField";
 
 /**
  * @deprecated

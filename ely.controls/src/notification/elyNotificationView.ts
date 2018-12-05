@@ -18,11 +18,11 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
+import elyTextView from "@controls/text/elyTextView";
+import elyBodyView from "@controls/view/elyBodyView";
 import elyView from "@core/controls/elyView";
-import elyControl from "../action/elyControl";
-import elyNotificationOptions from "../options/elyNotificationOptions";
-import elyTextView from "../text/elyTextView";
-import elyBodyView from "../view/elyBodyView";
+import elyNotificationOptions from "@options/elyNotificationOptions";
 
 /**
  * Оповещения

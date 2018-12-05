@@ -20,14 +20,14 @@
 
 import elyControl from "@controls/action/elyControl";
 import elyInput from "@controls/action/elyInput";
+import elyField from "@controls/fields/elyField";
+import elyComboFieldItemProtocol from "@controls/protocols/elyComboFieldItemProtocol";
 import elyTextView from "@controls/text/elyTextView";
 import elyListView from "@controls/view/elyListView";
 import elyUtils from "@core/elyUtils";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyComboFieldOptions from "@options/fields/elyComboFieldOptions";
-import elyComboFieldItemProtocol from "../protocols/elyComboFieldItemProtocol";
-import elyField from "./elyField";
 
 /**
  * Элемент: Поле выбора значения

@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,11 +15,14 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
  + Файл: elyStyle.ts                                                          +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Файл изменен: 05.12.2018 23:47:11                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import IStyleType from "../interfaces/IStyleType";
+import IStyleType from "@controls/interfaces/IStyleType";
 
 /**
  * Стили ely.flat
@@ -85,6 +89,7 @@ export default class elyStyle {
      * Список
      */
     public static rawList(): IStyleType {
+        // tslint:disable-next-line:max-classes-per-file
         return new class implements IStyleType {
             public danger: string = elyStyle.danger.value;
             public default: string = elyStyle.default.value;

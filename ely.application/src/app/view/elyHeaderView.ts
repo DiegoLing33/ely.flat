@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "@core/controls/elyView";
 import elyStylesheet from "@controls/elyStylesheet";
+import elyView from "@core/controls/elyView";
 
 /**
  * Отображение заголовка

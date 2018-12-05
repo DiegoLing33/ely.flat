@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyViewOptions from "ely.core/src/controls/elyViewOptions";
+import elyViewOptions from "@core/controls/elyViewOptions";
 
 /**
  * Опции для {@link elyStaticGridView}

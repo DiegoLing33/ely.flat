@@ -18,9 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
 import elyViewOptions from "@core/controls/elyViewOptions";
-import elyControl from "@controls/action/elyControl";
 
 /**
  * Элемент отображения: Flex Строка

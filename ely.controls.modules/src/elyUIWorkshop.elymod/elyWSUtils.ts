@@ -19,7 +19,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyView from "@core/controls/elyView";
-import elyWSRegex from "./src/elyWSRegex";
+import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 
 export default class elyWSUtils {
 

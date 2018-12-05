@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "ely.core/src/controls/elyView";
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elyImageViewOptions from "ely.controls/src/options/elyImageViewOptions";
+import elyView from "@core/controls/elyView";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyImageViewOptions from "@options/elyImageViewOptions";
 
 /**
  * Элемент отображения: Изображение

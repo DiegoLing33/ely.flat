@@ -20,7 +20,7 @@
 
 import elyView from "@core/controls/elyView";
 import elyViewOptions from "@core/controls/elyViewOptions";
-import elyStyle from "@controls/enums/elyStyle";
+import elyStyle from "@enums/elyStyle";
 
 /**
  * Опции модальных окон

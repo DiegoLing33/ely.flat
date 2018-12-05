@@ -18,15 +18,15 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyButton from "@controls/action/elyButton";
+import elyControl from "@controls/action/elyControl";
 import elyStylesheet from "@controls/elyStylesheet";
 import elySwitchField from "@controls/fields/elySwitchField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyPanelView from "@controls/view/elyPanelView";
-import elyControl from "@controls/action/elyControl";
-import elyButton from "@controls/action/elyButton";
-import elyStyle from "@controls/enums/elyStyle";
-import elyUIWorkshop from "../elyUIWorkshop";
-import elyWSOpenProjectWindow from "../windows/elyWSOpenProjectWindow";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWSOpenProjectWindow from "@devMods/elyUIWorkshop.elymod/windows/elyWSOpenProjectWindow";
+import elyStyle from "@enums/elyStyle";
 
 /**
  * Панель инструментов

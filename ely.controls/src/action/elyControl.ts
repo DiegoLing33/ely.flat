@@ -18,11 +18,11 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyViewEntityProtocol from "@controls/protocols/elyViewEntityProtocol";
 import elyView from "@core/controls/elyView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyUtils from "@core/elyUtils";
 import elyControlOptions from "@options/elyControlOptions";
-import elyViewEntityProtocol from "../protocols/elyViewEntityProtocol";
 
 /**
  * Основная единица графического элемента

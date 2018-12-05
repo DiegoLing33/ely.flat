@@ -18,16 +18,16 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "@core/controls/elyView";
 import elyButton from "@controls/action/elyButton";
 import elyGridView from "@controls/flex/elyGridView";
+import elyIconView from "@controls/text/elyIconView";
+import elyTextView from "@controls/text/elyTextView";
+import elyListView from "@controls/view/elyListView";
+import elyView from "@core/controls/elyView";
 import elyButtonOptions from "@options/elyButtonOptions";
 import elyIconViewOptions from "@options/elyIconViewOptions";
 import elyListViewOptions from "@options/elyListViewOptions";
 import elyTextViewOptions from "@options/elyTextViewOptions";
-import elyIconView from "@controls/text/elyIconView";
-import elyTextView from "@controls/text/elyTextView";
-import elyListView from "@controls/view/elyListView";
 
 declare global {
 

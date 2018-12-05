@@ -23,7 +23,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyGridView from "@controls/flex/elyGridView";
-import elyView from "ely.core/src/controls/elyView";
+import elyView from "@core/controls/elyView";
 import elyViewController from "./elyViewController";
 
 /**

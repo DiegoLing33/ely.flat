@@ -18,12 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyStylesheet from "@controls/elyStylesheet";
+import elyGridRowView from "@controls/flex/elyGridRowView";
+import IPosition from "@controls/interfaces/IPosition";
 import elyView from "@core/controls/elyView";
 import elyUtils from "@core/elyUtils";
 import elyFlexGridViewOptions from "@options/elyFlexGridViewOptions";
-import elyStylesheet from "../elyStylesheet";
-import IPosition from "../interfaces/IPosition";
-import elyGridRowView from "./elyGridRowView";
 
 /**
  * Элемент отображения: Флекс сетка

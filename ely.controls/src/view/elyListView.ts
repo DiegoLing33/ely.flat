@@ -18,12 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
+import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
+import elyTextView from "@controls/text/elyTextView";
 import elyView from "@core/controls/elyView";
 import elyObservableArray from "@core/observable/properties/elyObservableArray";
-import elyControl from "@controls/action/elyControl";
 import elyListViewOptions from "@options/elyListViewOptions";
-import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
-import elyTextView from "@controls/text/elyTextView";
 
 /**
  * Элемент отображения: Список

@@ -18,13 +18,13 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elyControl from "../action/elyControl";
-import elyInput from "../action/elyInput";
-import elySwitchFieldOptions from "../options/fields/elySwitchFieldOptions";
-import elyTextView from "../text/elyTextView";
-import elyField from "./elyField";
+import elyControl from "@controls/action/elyControl";
+import elyInput from "@controls/action/elyInput";
+import elyField from "@controls/fields/elyField";
+import elyTextView from "@controls/text/elyTextView";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elySwitchFieldOptions from "@options/fields/elySwitchFieldOptions";
 
 /**
  * Поле: Переключатель

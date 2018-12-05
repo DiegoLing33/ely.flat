@@ -18,14 +18,14 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
 import elyTextViewEditable from "@controls/text/elyTextViewEditable";
+import elyView from "@core/controls/elyView";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elyView from "ely.core/src/controls/elyView";
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyControl from "../action/elyControl";
-import elySize from "../enums/elySize";
-import elyWeight from "../enums/elyWeight";
-import elyTextViewOptions from "../options/elyTextViewOptions";
+import elySize from "@enums/elySize";
+import elyWeight from "@enums/elyWeight";
+import elyTextViewOptions from "@options/elyTextViewOptions";
 
 /**
  * Элемент отображения: Текст

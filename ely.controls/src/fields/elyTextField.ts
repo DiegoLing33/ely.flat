@@ -18,12 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elyInput from "../action/elyInput";
-import elyFieldType from "../enums/elyFieldType";
-import elyFieldOptions from "../options/fields/elyFieldOptions";
-import elyField from "./elyField";
+import elyInput from "@controls/action/elyInput";
+import elyField from "@controls/fields/elyField";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyFieldType from "@enums/elyFieldType";
+import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Поле: Ввод текста

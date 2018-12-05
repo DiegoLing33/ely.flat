@@ -19,12 +19,12 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyButton from "@controls/action/elyButton";
-import elySize from "@controls/enums/elySize";
-import elyStyle from "@controls/enums/elyStyle";
 import elyGridView from "@controls/flex/elyGridView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
 import elyGuard from "@core/elyGuard";
+import elySize from "@enums/elySize";
+import elyStyle from "@enums/elyStyle";
 import elyUIWorkshop from "../elyUIWorkshop";
 import elyWSUtils from "../elyWSUtils";
 import elyWSViewPropsPanel from "../panels/elyWSViewPropsPanel";

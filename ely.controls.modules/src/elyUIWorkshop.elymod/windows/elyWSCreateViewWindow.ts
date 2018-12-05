@@ -24,7 +24,6 @@
 
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
-import elyStyle from "@controls/enums/elyStyle";
 import elyComboField from "@controls/fields/elyComboField";
 import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyGridView from "@controls/flex/elyGridView";
@@ -34,6 +33,7 @@ import elyModalView from "@controls/view/elyModalView";
 import elyView from "@core/controls/elyView";
 import {elyDesignableAutoFieldsData, elyDesignableCore} from "@core/elyDesignable";
 import elyUtils from "@core/elyUtils";
+import elyStyle from "@enums/elyStyle";
 
 /**
  * Окно создания элемента

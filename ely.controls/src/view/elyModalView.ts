@@ -18,17 +18,17 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
+import elyIconView from "@controls/text/elyIconView";
+import elyTextView from "@controls/text/elyTextView";
+import elyBodyView from "@controls/view/elyBodyView";
 import elyView from "@core/controls/elyView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elyControl from "@controls/action/elyControl";
-import elyStyle from "../enums/elyStyle";
+import elyStyle from "@enums/elyStyle";
 import elyModalViewOptions from "@options/elyModalViewOptions";
-import elyIconView from "@controls/text/elyIconView";
-import elyTextView from "@controls/text/elyTextView";
-import elyBodyView from "./elyBodyView";
 
-/**
+/**w
  * Элемент отображения: Модальное окно
  * @version 1.0
  */

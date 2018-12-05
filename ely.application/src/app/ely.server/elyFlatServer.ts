@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyGetRequest from "@core/web/request/elyGetRequest";
 import elyNotificationView from "@controls/notification/elyNotificationView";
+import elyGetRequest from "@core/web/request/elyGetRequest";
 
 export default class elyFlatServer {
 

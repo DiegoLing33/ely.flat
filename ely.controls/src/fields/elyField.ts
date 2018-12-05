@@ -19,11 +19,11 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyControl from "@controls/action/elyControl";
+import elyFieldProtocol from "@controls/protocols/elyFieldProtocol";
 import elyIconView from "@controls/text/elyIconView";
-import elyView from "ely.core/src/controls/elyView";
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyFieldOptions from "ely.controls/src/options/fields/elyFieldOptions";
-import elyFieldProtocol from "../protocols/elyFieldProtocol";
+import elyView from "@core/controls/elyView";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Элемент: Поле ввода <T>

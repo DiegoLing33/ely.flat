@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyStyle from "@controls/enums/elyStyle";
-import elyViewOptions from "ely.core/src/controls/elyViewOptions";
+import elyStyle from "@enums/elyStyle";
+import elyViewOptions from "@core/controls/elyViewOptions";
 
 /**
  * Опции {@link elyTabBarView}

@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplicationConfig_Application from "./elyFlatApplication/app";
-import elyFlatApplicationConfig_Navigation from "./elyFlatApplication/navigation";
-import elyFlatApplicationConfig_Sideavigation from "./elyFlatApplication/sidenavigation";
-import elyFlatApplicationConfig_Template from "./elyFlatApplication/template";
+import elyFlatApplicationConfig_Application from "@app/app/options/elyFlatApplication/app";
+import elyFlatApplicationConfig_Navigation from "@app/app/options/elyFlatApplication/navigation";
+import elyFlatApplicationConfig_Sideavigation from "@app/app/options/elyFlatApplication/sidenavigation";
+import elyFlatApplicationConfig_Template from "@app/app/options/elyFlatApplication/template";
 
 /**
  * Конфигурация приложения

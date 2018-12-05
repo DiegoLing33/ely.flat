@@ -22,11 +22,11 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyGridViewController from "@controllers/elyGridViewController";
 import elyControl from "@controls/action/elyControl";
-import elySize from "@controls/enums/elySize";
-import elyWeight from "@controls/enums/elyWeight";
 import elyTextView from "@controls/text/elyTextView";
-import elyGridViewController from "./elyGridViewController";
+import elySize from "@enums/elySize";
+import elyWeight from "@enums/elyWeight";
 
 /**
  * Контроллер с шаблоном макета приложения

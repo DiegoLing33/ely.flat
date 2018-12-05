@@ -18,13 +18,13 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "@core/controls/elyView";
-import elyViewOptions from "@core/controls/elyViewOptions";
-import elyLogger from "@core/elyLogger";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyControl from "@controls/action/elyControl";
 import elyIconView from "@controls/text/elyIconView";
 import elyListView from "@controls/view/elyListView";
+import elyView from "@core/controls/elyView";
+import elyViewOptions from "@core/controls/elyViewOptions";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyXLogger from "@core/utils/elyXLogger";
 
 /**
  * Боковая панель навигации
@@ -106,7 +106,7 @@ export default class elyFlatSideNavigationView extends elyView {
      * Применяет события мыши
      */
     public applyMouseEvents(): void {
-        elyLogger.debug("События мыши активированы для боковой панели");
+        elyXLogger.default.log("События мыши активированы для боковой панели");
         this.getDocument().onmouseleave = () => {
             this.dismiss();
         };

@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyLogger from "../../elyLogger";
-import elyURLDelegate from "./elyURLDelegate";
+import elyLogger from "@core/elyLogger";
+import elyURLDelegate from "@core/web/url/elyURLDelegate";
 
 /**
  * Класс ely.URL

@@ -18,13 +18,13 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "ely.core/src/controls/elyView";
-import elyViewOptions from "ely.core/src/controls/elyViewOptions";
-import {designable, elyDesignableFieldState} from "ely.core/src/elyDesignable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elyStyle from "../enums/elyStyle";
-import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
-import elyControl from "./elyControl";
+import elyControl from "@controls/action/elyControl";
+import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
+import elyView from "@core/controls/elyView";
+import elyViewOptions from "@core/controls/elyViewOptions";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyStyle from "@enums/elyStyle";
 
 /**
  * Опции: {@link elyProgressView}

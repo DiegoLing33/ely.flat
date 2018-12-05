@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "The ely.flat framework",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "ely.flat.builder": "ts-node ./bin/ely.flat.builder.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DiegoLing33/ely.flat.git"
@@ -22,6 +24,22 @@
   },
   "homepage": "https://github.com/DiegoLing33/ely.flat#readme",
   "dependencies": {
+    "boxen": "latest",
+    "figlet": "latest",
+    "prompt": "latest",
+    "rollup": "^0.67.4",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "sass": "^1.15.1",
+    "ts-node": "^7.0.1",
     "typescript": "^3.3.0-dev.20181205"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.2.0",
+    "@types/node": "^10.12.12",
+    "install": "^0.12.2",
+    "npm": "^6.4.1",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-ts-paths": "^1.0.1"
   }
 }

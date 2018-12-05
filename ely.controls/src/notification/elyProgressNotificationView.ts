@@ -18,11 +18,11 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elySize from "../enums/elySize";
-import elyNotificationOptions from "../options/elyNotificationOptions";
-import elyIconView from "../text/elyIconView";
-import elyTextView from "../text/elyTextView";
-import elyNotificationView from "./elyNotificationView";
+import elyNotificationView from "@controls/notification/elyNotificationView";
+import elyIconView from "@controls/text/elyIconView";
+import elyTextView from "@controls/text/elyTextView";
+import elySize from "@enums/elySize";
+import elyNotificationOptions from "@options/elyNotificationOptions";
 
 /**
  * Опции

@@ -18,6 +18,18 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatApplicationPreloader from "@app/app/content/elyFlatApplicationPreloader";
+import elyFlatApplicationLoader from "@app/app/elyFlatApplicationLoader";
+import elyFlatApplicationConfig_Application from "@app/app/options/elyFlatApplication/app";
+import elyFlatApplicationConfig_Navigation from "@app/app/options/elyFlatApplication/navigation";
+import elyFlatApplicationConfig_Sideavigation from "@app/app/options/elyFlatApplication/sidenavigation";
+import elyFlatApplicationConfig_Template from "@app/app/options/elyFlatApplication/template";
+import elyFlatApplicationConfig_Template_Footer from "@app/app/options/elyFlatApplication/template/footer";
+import elyFlatApplicationConfig from "@app/app/options/elyFlatApplicationConfig";
+import elyFlatSideNavigationView from "@app/app/view/elyFlatSideNavigationView";
+import elyFooterView from "@app/app/view/elyFooterView";
+import elyHeaderView from "@app/app/view/elyHeaderView";
+import elyNavigationView from "@app/app/view/elyNavigationView";
 import elyScreenController from "@controllers/elyScreenController";
 import elyControl from "@controls/action/elyControl";
 import elyStylesheet from "@controls/elyStylesheet";
@@ -27,18 +39,7 @@ import elyLogger from "@core/elyLogger";
 import elyOneActionEval from "@core/elyOneActionEval";
 import elyObservable from "@core/observable/elyObservable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elyFlatApplicationPreloader from "./content/elyFlatApplicationPreloader";
-import elyFlatApplicationLoader from "./elyFlatApplicationLoader";
-import elyFlatApplicationConfig_Application from "./options/elyFlatApplication/app";
-import elyFlatApplicationConfig_Navigation from "./options/elyFlatApplication/navigation";
-import elyFlatApplicationConfig_Sideavigation from "./options/elyFlatApplication/sidenavigation";
-import elyFlatApplicationConfig_Template from "./options/elyFlatApplication/template";
-import elyFlatApplicationConfig_Template_Footer from "./options/elyFlatApplication/template/footer";
-import elyFlatApplicationConfig from "./options/elyFlatApplicationConfig";
-import elyFlatSideNavigationView from "./view/elyFlatSideNavigationView";
-import elyFooterView from "./view/elyFooterView";
-import elyHeaderView from "./view/elyHeaderView";
-import elyNavigationView from "./view/elyNavigationView";
+import elyXLogger from "@core/utils/elyXLogger";
 
 /**
  * Наблюдатель за завершением загрузки приложения
@@ -89,7 +90,7 @@ export default class elyFlatApplication extends elyObservable {
      * @param closure
      */
     public static loadApplication(closure: () => void): void {
-        elyLogger.debug("Загрузка приложения...");
+        elyXLogger.default.log("Загрузка приложения...");
         if (!elyFlatApplication.default.getConfig()) {
             elyFlatApplicationLoader.loadApplicationConfiguration((config) => {
                 elyFlatApplication.default.init(config);

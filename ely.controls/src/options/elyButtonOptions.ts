@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elySize from "../enums/elySize";
-import elyStyle from "../enums/elyStyle";
-import elyControlOptions from "./elyControlOptions";
-import elyTextViewOptions from "./elyTextViewOptions";
+import elySize from "@enums/elySize";
+import elyStyle from "@enums/elyStyle";
+import elyControlOptions from "@options/elyControlOptions";
+import elyTextViewOptions from "@options/elyTextViewOptions";
 
 /**
  * Опции кнопки

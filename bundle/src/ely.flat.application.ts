@@ -23,16 +23,16 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatApplication from "@app/app/elyFlatApplication";
+import elyGridViewController from "@controllers/elyGridViewController";
+import elyScreenController from "@controllers/elyScreenController";
+import elySimplePageViewController from "@controllers/elySimplePageViewController";
+import elyViewController from "@controllers/elyViewController";
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
 import elyProgressView from "@controls/action/elyProgressView";
 import elyDataGridView from "@controls/data/elyDataGridView";
 import elyStylesheet from "@controls/elyStylesheet";
 import "@controls/elyUIExt";
-import elyFieldType from "@controls/enums/elyFieldType";
-import elySize from "@controls/enums/elySize";
-import elyStyle from "@controls/enums/elyStyle";
-import elyWeight from "@controls/enums/elyWeight";
 import elyComboField from "@controls/fields/elyComboField";
 import elyField from "@controls/fields/elyField";
 import elyFileChooseField from "@controls/fields/elyFileChooseField";
@@ -64,11 +64,10 @@ import elyPostRequest from "@core/web/request/elyPostRequest";
 import elyURL from "@core/web/url/elyURL";
 import "@devMods/elyColorPicker.elymod/ely.module";
 import "@devMods/elyUIWorkshop.elymod/ely.module";
-import elyGridViewController from "@controllers/elyGridViewController";
-import elyScreenController from "@controllers/elyScreenController";
-import elySimplePageViewController from "@controllers/elySimplePageViewController";
-import elyViewController from "@controllers/elyViewController";
-
+import elyFieldType from "@enums/elyFieldType";
+import elySize from "@enums/elySize";
+import elyStyle from "@enums/elyStyle";
+import elyWeight from "@enums/elyWeight";
 //
 //  Деклорации
 //
@@ -344,6 +343,7 @@ declare global {
     }
 }
 
+/*
 window.elyApplication = elyFlatApplication.default;
 window.elyStylesheet = elyStylesheet;
 window.elyScreen = elyScreenController.default;
@@ -392,7 +392,7 @@ window.elyTime = elyTime;
 window.elyUtils = elyUtils;
 window.elyURL = elyURL;
 window.elyGetRequest = elyGetRequest;
-window.elyPostRequest = elyPostRequest;
+window.elyPostRequest = elyPostRequest;*/
 
 window.present = (viewController: elyViewController, completion?: () => void) => {
     elyScreenController.default.present(viewController, completion);

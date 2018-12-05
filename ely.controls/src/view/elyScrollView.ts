@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyControl from "@controls/action/elyControl";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyScrollViewOptions from "@options/elyScrollViewOptions";
 
 /**

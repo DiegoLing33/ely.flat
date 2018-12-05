@@ -18,26 +18,26 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
-import elySize from "@controls/enums/elySize";
-import elyGridView from "@controls/flex/elyGridView";
-import elyGridRowView from "@controls/flex/elyGridRowView";
-import elyView from "@core/controls/elyView";
-import {elyDesignableAutoFieldItem, elyDesignableCore, elyDesignableFieldState} from "@core/elyDesignable";
-import elyUtils from "@core/elyUtils";
 import elyButton from "@controls/action/elyButton";
-import elyFieldType from "@controls/enums/elyFieldType";
+import elyControl from "@controls/action/elyControl";
 import elyComboField from "@controls/fields/elyComboField";
 import elySwitchField from "@controls/fields/elySwitchField";
 import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyTextField from "@controls/fields/elyTextField";
+import elyGridRowView from "@controls/flex/elyGridRowView";
+import elyGridView from "@controls/flex/elyGridView";
 import elyTextView from "@controls/text/elyTextView";
 import elyModalView from "@controls/view/elyModalView";
 import elyPanelView from "@controls/view/elyPanelView";
-import elyUIWorkshop from "../elyUIWorkshop";
-import elyWSRus from "../lang/elyWSRus";
-import elyUIWSMeta from "../src/elyUIWSMeta";
-import elyWSRegex from "../src/elyWSRegex";
+import elyView from "@core/controls/elyView";
+import {elyDesignableAutoFieldItem, elyDesignableCore, elyDesignableFieldState} from "@core/elyDesignable";
+import elyUtils from "@core/elyUtils";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWSRus from "@devMods/elyUIWorkshop.elymod/lang/elyWSRus";
+import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
+import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
+import elyFieldType from "@enums/elyFieldType";
+import elySize from "@enums/elySize";
 
 /**
  * Панеь настройки элемента

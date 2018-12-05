@@ -23,9 +23,9 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyControl from "@controls/action/elyControl";
-import elyView from "ely.core/src/controls/elyView";
-import elyObservable from "ely.core/src/observable/elyObservable";
-import elyScreenController from "./elyScreenController";
+import elyView from "@core/controls/elyView";
+import elyScreenController from "@controllers/elyScreenController";
+import elyObservable from "@core/observable/elyObservable";
 
 /**
  * Контроллер элемента отображения

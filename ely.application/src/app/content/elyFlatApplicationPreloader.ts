@@ -18,9 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "@core/controls/elyView";
-import elyLogger from "@core/elyLogger";
 import elyTextView from "@controls/text/elyTextView";
+import elyView from "@core/controls/elyView";
+import elyXLogger from "@core/utils/elyXLogger";
 
 export default class elyFlatApplicationPreloader extends elyView {
 
@@ -53,7 +53,7 @@ export default class elyFlatApplicationPreloader extends elyView {
             this.messageView.text("Пожалуйста, подождите...");
         } else {
             this.messageView = new elyTextView({});
-            elyLogger.warning("Ошибка обработки экрана загрузки...");
+            elyXLogger.default.warning("Ошибка обработки экрана загрузки...");
         }
     }
 

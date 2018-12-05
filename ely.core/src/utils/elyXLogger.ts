@@ -49,7 +49,7 @@ export default class elyXLogger {
     /**
      * Стили
      */
-    public static styles: { [name: string]: string } = {
+    public static styles = {
 
         /**
          * Сбрасывает любой примененный эффект

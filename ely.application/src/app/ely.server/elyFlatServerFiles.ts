@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatServer from "@app/app/ely.server/elyFlatServer";
 import elyPostRequest from "@core/web/request/elyPostRequest";
-import elyFlatServer from "./elyFlatServer";
 
 /**
  * Загружает файлы на сервер

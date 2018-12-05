@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyLogger from "@core/elyLogger";
+import elyFlatApplicationConfig from "@app/app/options/elyFlatApplicationConfig";
 import elyObservable from "@core/observable/elyObservable";
+import elyXLogger from "@core/utils/elyXLogger";
 import elyURL from "@core/web/url/elyURL";
-import elyFlatApplicationConfig from "./options/elyFlatApplicationConfig";
 
 export default class elyFlatApplicationLoader extends elyObservable {
 
@@ -62,13 +62,13 @@ export default class elyFlatApplicationLoader extends elyObservable {
      * @param closure - обработчик конфигурации
      */
     public static loadApplicationConfiguration(closure: (config: elyFlatApplicationConfig) => void): void {
-        elyLogger.debug("Получение файла конфигурации: " + elyFlatApplicationLoader.configurationPath);
+        elyXLogger.default.log("Получение файла конфигурации: " + elyFlatApplicationLoader.configurationPath);
         new elyURL(elyFlatApplicationLoader.configurationPath).request({}, (response, status) => {
             if (status === 200) {
-                elyLogger.debug("Файл конфигурации получен");
+                elyXLogger.default.log("Файл конфигурации получен");
                 closure({...elyFlatApplicationLoader.defaultConfiguration(), ...response});
             } else {
-                elyLogger.debug("Использована стандартная конфигурация");
+                elyXLogger.default.log("Использована стандартная конфигурация");
                 closure(elyFlatApplicationLoader.defaultConfiguration());
             }
         });

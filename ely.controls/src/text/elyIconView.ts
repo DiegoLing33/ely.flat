@@ -22,8 +22,8 @@ import elyView from "@core/controls/elyView";
 import elyViewOptions from "@core/controls/elyViewOptions";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elySize from "@controls/enums/elySize";
-import elyWeight from "@controls/enums/elyWeight";
+import elySize from "@enums/elySize";
+import elyWeight from "@enums/elyWeight";
 
 /**
  * Элемент отображения: Иконка

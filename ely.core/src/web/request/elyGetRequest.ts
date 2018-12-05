@@ -18,9 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyLogger from "../../elyLogger";
-import elyObservable from "../../observable/elyObservable";
-import elyURL from "../url/elyURL";
+import elyLogger from "@core/elyLogger";
+import elyObservable from "@core/observable/elyObservable";
+import elyURL from "@core/web/url/elyURL";
 
 type elyWebRequestSendObserver = (response: any, status: number) => void;
 type elyWebRequestProgressChangedObserver = (loadedBytes: number, totalBytes: number) => void;

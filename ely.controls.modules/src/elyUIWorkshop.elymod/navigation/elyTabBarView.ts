@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyStyle from "@controls/enums/elyStyle";
 import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
 import elyTextView from "@controls/text/elyTextView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyStyle from "@enums/elyStyle";
 import elyTabBarOptions from "@options/navigation/elyTabBarOptions";
 
 /**

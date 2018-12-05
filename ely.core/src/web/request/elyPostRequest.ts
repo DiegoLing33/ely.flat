@@ -18,9 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyLogger from "../../elyLogger";
-import elyURL from "../url/elyURL";
-import elyGetRequest from "./elyGetRequest";
+import elyLogger from "@core/elyLogger";
+import elyGetRequest from "@core/web/request/elyGetRequest";
+import elyURL from "@core/web/url/elyURL";
 
 type elyPostRequestSendObserver = (response: any, status: number) => void;
 

@@ -18,15 +18,15 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatServer from "@app/app/ely.server/elyFlatServer";
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
-import elySize from "@controls/enums/elySize";
 import elyTextField from "@controls/fields/elyTextField";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyImageView from "@controls/view/elyImageView";
 import elyModalView from "@controls/view/elyModalView";
 import elyEncrypt from "@core/secure/elyEncrypt";
-import elyFlatServer from "./elyFlatServer";
+import elySize from "@enums/elySize";
 
 /**
  * Тест каптчи

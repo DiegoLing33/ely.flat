@@ -23,11 +23,11 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatApplication from "@app/app/elyFlatApplication";
+import elySimplePageViewController from "@controllers/elySimplePageViewController";
+import elyViewController from "@controllers/elyViewController";
 import elyControl from "@controls/action/elyControl";
-import elyObservable from "ely.core/src/observable/elyObservable";
-import elyObservableProperty from "ely.core/src/observable/properties/elyObservableProperty";
-import elySimplePageViewController from "./elySimplePageViewController";
-import elyViewController from "./elyViewController";
+import elyObservable from "@core/observable/elyObservable";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 
 class __elyScreenIndexViewController extends elySimplePageViewController {
 

@@ -20,6 +20,7 @@
 
 import elyControl from "@controls/action/elyControl";
 import elyInput from "@controls/action/elyInput";
+import elyField from "@controls/fields/elyField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyIconView from "@controls/text/elyIconView";
 import elyTextView from "@controls/text/elyTextView";
@@ -28,7 +29,6 @@ import elyUtils from "@core/elyUtils";
 import elyObservableArray from "@core/observable/properties/elyObservableArray";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyFieldOptions from "@options/fields/elyFieldOptions";
-import elyField from "./elyField";
 
 /**
  * Опции элемента поля выбора файла
