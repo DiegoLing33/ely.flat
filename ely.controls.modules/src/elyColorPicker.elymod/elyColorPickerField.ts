@@ -63,21 +63,21 @@ export default class elyColorPickerField extends elyField<elyColor> {
     public constructor(options: elyFieldOptions<elyColor> = {}) {
         super({}, new elyInput({...{class: "ef-input", tag: "input"}}));
 
-        this.valueProperty.addChangeObserver((oldValue, newValue) => {
-            if (oldValue === newValue) return;
-            this.accessoryView.value(newValue.toString());
-            this.colorThumbnail.css({"background-color": newValue.toString()});
-            this.accessoryView.css({color: newValue.toString()});
-            this.picker.set(newValue.toString());
-        });
-
         this.colorThumbnail = new elyControl();
+        this.colorThumbnail.addClass("bg-primary");
         this.colorView = new elyControl({class: "ef-color-pict"});
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
         this.actionIconView.removeClass("fa").addClass("ef-color-pict");
 
         this.colorThumbnail.getDocument().innerHTML = "&nbsp";
+
+        this.valueProperty.change(value => {
+            this.picker.set(value.toString());
+            this.accessoryView.value(value.toString());
+            this.colorThumbnail.css({"background-color": value.getDarker(0.2).toString()});
+            this.accessoryView.css({color: value.getDarker(0.14).toString()});
+        });
 
         this.editableProperty.addChangeObserver((oldValue, newValue) => {
             this.accessoryView.getDocument().disabled = !newValue;
@@ -88,14 +88,27 @@ export default class elyColorPickerField extends elyField<elyColor> {
         // @ts-ignore
         this.picker = new CP(this.accessoryView.getDocument());
 
-        this.picker.on("change", (color: string) => {
+        this.picker.on("exit", () => {
             if (this.editable()) {
-                this.value(new elyColor({hex: color}));
+                const ec = new elyColor({hex: this.accessoryView.value()});
+                this.value(ec);
             }
         });
+        // (this.accessoryView as elyInput).addInputObserver(value => {
+        //    const color = new elyColor({hex: value});
+        //    this.value(color);
+        // });
+        this.picker.on("change", (color: string) => {
+            if ("#" + color === this.value().toString()) return;
+            const ec = new elyColor({hex: color});
+            this.accessoryView.value(ec.toString());
+            this.colorThumbnail.css({"background-color": ec.getDarker(0.2).toString()});
+            this.accessoryView.css({color: ec.getDarker(0.14).toString()});
+        });
 
-        this.applyProtocolOptions(options);
+        this.placeholder("#______");
         this.editable(false);
+        this.applyProtocolOptions(options);
         this.actionIconView.hidden(false);
     }
 
@@ -112,7 +125,6 @@ export default class elyColorPickerField extends elyField<elyColor> {
         if (!this.editable()) {
             this.editable(true);
         } else {
-            this.value(new elyColor({hex: this.accessoryView.getDocument().value}));
             this.editable(false);
         }
     }
