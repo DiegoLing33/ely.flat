@@ -32,10 +32,10 @@ import path = require("path");
 import prompt = require("prompt");
 import elyXLogger from "../ely.core/src/utils/elyXLogger";
 
-const jsBuildPath            = "ely.build.js";
-const productsPath           = "products";
+const jsBuildPath = "ely.build.js";
+const productsPath = "products";
 const product_elyFlatAppPath = `${productsPath}/ely.flat.application`;
-const logger                 = new elyXLogger({mainPrefix: "Builder"});
+const logger = new elyXLogger({mainPrefix: "Builder"});
 
 prompt.start();
 
@@ -56,7 +56,7 @@ function welcome(): void {
         "1 - Выполнить сборку ely.flat application (develop)\n" +
         "2 - Выполнить сборку ely.flat application (release)\n" +
         "3 - Создать проект (JS)\n" +
-        "4 - Создать проект (TS)\n" +
+        "4 - Обновить ресурсы проекта (JS)\n" +
         "0 - Выход", {padding: 1, borderColor: "cyan", align: "left"}));
     console.log();
 
@@ -81,6 +81,7 @@ function execMenuCommand(cmd: string): void {
     const cmdNum = parseInt(cmd, 10);
     if (cmdNum === 1) buildPaths();
     if (cmdNum === 3) commandCreateProject();
+    if (cmdNum === 4) commandRebuildProject();
     if (cmdNum === 0) process.exit(0);
 }
 
@@ -153,8 +154,9 @@ function commandCreateProjectStep(name: string, step: number, cb: () => void) {
  * Пошагово создает проект
  * @param name
  * @param cb
+ * @param ex
  */
-function commandCreateProjectStepByStep(name: string, cb: () => void): void {
+function commandCreateProjectStepByStep(name: string, cb: () => void, ex?: number[]): void {
     let i = 0;
 
     function req() {
@@ -162,7 +164,10 @@ function commandCreateProjectStepByStep(name: string, cb: () => void): void {
         if (i === 9) {
             cb();
         } else {
-            commandCreateProjectStep(name, i, req);
+            if (ex && ex.indexOf(i) > -1)
+                commandCreateProjectStep(name, i + 1, req);
+            else
+                commandCreateProjectStep(name, i, req);
         }
     }
 
@@ -170,7 +175,7 @@ function commandCreateProjectStepByStep(name: string, cb: () => void): void {
 }
 
 function menuBack() {
-    let i    = 4;
+    let i = 4;
     const th = setInterval(() => {
         i--;
         logger.log(`Выход в меню через ${i} сек...`);
@@ -187,7 +192,7 @@ function menuBack() {
 function commandCreateProject(): void {
     prompt.get([{name: "name", description: "Системное имя проекта"}, {
         description: "Заголовок",
-        name:        "title",
+        name: "title",
     }], (err: any, result: any) => {
         const name = result.name;
         commandCreateProjectStepByStep(name, () => {
@@ -197,12 +202,26 @@ function commandCreateProject(): void {
     });
 }
 
+/**
+ * Команда перестроения проекта
+ */
+function commandRebuildProject(): void {
+    prompt.get([{name: "name", description: "Системное имя проекта"}], (err: any, result: any) => {
+        const name = result.name;
+        logger.log("Перестроение проекта...");
+        commandCreateProjectStepByStep(name, () => {
+            logger.log("Проект успешно перестроен!");
+            menuBack();
+        }, [6]);
+    });
+}
+
 function buildPaths(cb?: () => void) {
     logger.log("Перестроение...");
     child_process.exec("tsc", () => {
         logger.log("Изменение путей в dist файле...");
         fs.readFile("tsconfig.json", (err, data) => {
-            const json  = JSON.parse(String(data || ""));
+            const json = JSON.parse(String(data || ""));
             const paths = json.compilerOptions.paths;
 
             const walkSync = (dir: string) => {
@@ -214,16 +233,16 @@ function buildPaths(cb?: () => void) {
                         logger.log(`Обработка файла ${dir}/${file}...`);
 
                         const data1 = fs.readFileSync(dir + "/" + file);
-                        let res     = String(data1);
-                        res         = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\);/g,
+                        let res = String(data1);
+                        res = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\);/g,
                             (substring, p, r) => {
                                 p += "*";
                                 let rep = substring;
                                 if (paths[p]) {
                                     let np = String(paths[p][0]).replace("\*", "");
-                                    np     = np.replace(/^.\//, path.relative(dir, "ely.build.js")
+                                    np = np.replace(/^.\//, path.relative(dir, "ely.build.js")
                                         .replace("/ely.build.js", "/") + "/");
-                                    rep    = `require("${np}${r}");`;
+                                    rep = `require("${np}${r}");`;
                                 }
 
                                 logger.log(elyXLogger.styles.fgCyan + `Найдено ${substring} -> ${rep}` +
