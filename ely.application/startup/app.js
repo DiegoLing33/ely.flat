@@ -13,7 +13,7 @@ class IndexViewController extends elySimplePageViewController {
     viewDidLoad() {
         super.viewDidLoad();
 
-        this.title("Open.test *{* *}*");
+        this.title("ely.flat *{* Application *}*");
         this.description("Приложение разработано на основе ely.flat framework");
     }
 }

@@ -1,6 +1,6 @@
 {
   "app":        {
-    "title":                "ely.Flat",
+    "title":                "my.App",
     "useContentController": true,
     "defaultContentId":     "index",
     "mainScript":           "app.js"
@@ -13,7 +13,7 @@
     }
   },
   "navigation": {
-    "title": "app.Simple{ }",
+    "title": "ely.Flat *{* Application *}*",
     "items": [
       {
         "text":   "Home",
