@@ -1,0 +1,24 @@
+{
+  "app":        {
+    "title":                "my.App",
+    "useContentController": true,
+    "defaultContentId":     "index",
+    "mainScript":           "app.js"
+  },
+  "template":   {
+    "maxContainerWidth": 700,
+    "footer":            {
+      "title":    "Works with ely.Flat Application Engine",
+      "subtitle": "My application"
+    }
+  },
+  "navigation": {
+    "title": "ely.Flat *{* Application *}*",
+    "items": [
+      {
+        "text":   "Home",
+        "action": "#content(*default)"
+      }
+    ]
+  }
+}
