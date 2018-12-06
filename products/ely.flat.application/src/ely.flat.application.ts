@@ -22,17 +22,6 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplication from "../../../ely.application/src/app/elyFlatApplication";
-import elyGridViewController from "../../../ely.controls.controllers/src/elyGridViewController";
-import elyScreenController from "../../../ely.controls.controllers/src/elyScreenController";
-import elySimplePageViewController from "../../../ely.controls.controllers/src/elySimplePageViewController";
-import elyViewController from "../../../ely.controls.controllers/src/elyViewController";
-import elyButton from "../../../ely.controls/src/action/elyButton";
-import elyControl from "../../../ely.controls/src/action/elyControl";
-import elyProgressView from "../../../ely.controls/src/action/elyProgressView";
-import elyDataGridView from "../../../ely.controls/src/data/elyDataGridView";
-import elyStylesheet from "../../../ely.controls/src/elyStylesheet";
-import "../../../ely.controls/src/elyUIExt";
 import elyComboField from "@controls/fields/elyComboField";
 import elyField from "@controls/fields/elyField";
 import elyFileChooseField from "@controls/fields/elyFileChooseField";
@@ -68,6 +57,17 @@ import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
 import elyWeight from "@enums/elyWeight";
+import elyFlatApplication from "../../../ely.application/src/app/elyFlatApplication";
+import elyGridViewController from "../../../ely.controls.controllers/src/elyGridViewController";
+import elyScreenController from "../../../ely.controls.controllers/src/elyScreenController";
+import elySimplePageViewController from "../../../ely.controls.controllers/src/elySimplePageViewController";
+import elyViewController from "../../../ely.controls.controllers/src/elyViewController";
+import elyButton from "../../../ely.controls/src/action/elyButton";
+import elyControl from "../../../ely.controls/src/action/elyControl";
+import elyProgressView from "../../../ely.controls/src/action/elyProgressView";
+import elyDataGridView from "../../../ely.controls/src/data/elyDataGridView";
+import elyStylesheet from "../../../ely.controls/src/elyStylesheet";
+import "../../../ely.controls/src/elyUIExt";
 //
 //  Деклорации
 //
@@ -82,6 +82,11 @@ declare global {
          * Приложение
          */
         elyApplication: elyFlatApplication;
+
+        /**
+         * Приложение
+         */
+        elyFlatApplication: typeof elyFlatApplication;
 
         /**
          * Таблица стилей
@@ -343,8 +348,8 @@ declare global {
     }
 }
 
-/*
 window.elyApplication = elyFlatApplication.default;
+window.elyFlatApplication = elyFlatApplication;
 window.elyStylesheet = elyStylesheet;
 window.elyScreen = elyScreenController.default;
 
@@ -392,7 +397,7 @@ window.elyTime = elyTime;
 window.elyUtils = elyUtils;
 window.elyURL = elyURL;
 window.elyGetRequest = elyGetRequest;
-window.elyPostRequest = elyPostRequest;*/
+window.elyPostRequest = elyPostRequest;
 
 window.present = (viewController: elyViewController, completion?: () => void) => {
     elyScreenController.default.present(viewController, completion);
