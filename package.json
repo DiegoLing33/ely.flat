@@ -25,7 +25,6 @@
   "homepage": "https://github.com/DiegoLing33/ely.flat#readme",
   "dependencies": {
     "boxen": "latest",
-    "express": "^4.16.4",
     "figlet": "latest",
     "prompt": "latest",
     "rollup": "^0.67.4",
@@ -36,13 +35,8 @@
     "typescript": "^3.3.0-dev.20181205"
   },
   "devDependencies": {
-    "@types/express": "^4.16.0",
     "@types/figlet": "^1.2.0",
-    "@types/jsdom": "^12.2.0",
     "@types/node": "^10.12.12",
-    "install": "^0.12.2",
-    "jsdom": "latest",
-    "npm": "^6.4.1",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-ts-paths": "^1.0.1"
