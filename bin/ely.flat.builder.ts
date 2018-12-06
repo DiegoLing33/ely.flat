@@ -32,7 +32,10 @@ import path = require("path");
 import prompt = require("prompt");
 import elyXLogger from "../ely.core/src/utils/elyXLogger";
 
-const logger = new elyXLogger({mainPrefix: "Builder"});
+const jsBuildPath            = "ely.build.js";
+const productsPath           = "products";
+const product_elyFlatAppPath = `${productsPath}/ely.flat.application`;
+const logger                 = new elyXLogger({mainPrefix: "Builder"});
 
 prompt.start();
 
@@ -49,7 +52,9 @@ function welcome(): void {
     logger.log("Добро пожаловать в строитель ely.flat!");
     console.log();
 
-    console.log(boxen("1 - Выполнить сборку (Develop)\n2 - Выполнит сборку (release)\n" +
+    console.log(boxen(
+        "1 - Выполнить сборку ely.flat application (develop)\n" +
+        "2 - Выполнить сборку ely.flat application (release)\n" +
         "3 - Создать проект (JS)\n" +
         "4 - Создать проект (TS)\n" +
         "0 - Выход", {padding: 1, borderColor: "cyan", align: "left"}));
@@ -112,24 +117,32 @@ function commandCreateProjectStep(name: string, step: number, cb: () => void) {
             });
             break;
         case 5:
-            if (!fs.existsSync("bundle/scss/ely.flat.css")) {
-                let flag = false;
-                logger.warning("Построение CSS файла ely.flat...");
-                child_process.exec("scss bundle/scss/ely.flat.sass", () => {
-                    flag = true;
-                });
-                while (true) {
-                    if (flag) break;
-                }
-            }
-            logger.log("Копирование шрифтов...");
-            child_process.exec(`cp ely.resources.fonts/* ely.flat.test/${name}/fonts`, () => {
-                cb();
+            logger.log("Построение CSS файла ely.flat...");
+            child_process.exec(`sass ${product_elyFlatAppPath}/scss/ely.flat.application.scss`, () => {
+                logger.log("Копирование стилей...");
+                child_process.exec(
+                    `cp ${product_elyFlatAppPath}/scss/*.css* ` +
+                    `ely.flat.test/${name}/css`, () => {
+                        cb();
+                    });
+
             });
             break;
         case 6:
             logger.log("Копирование стартовых файлов...");
             child_process.exec(`cp ely.application/startup/* ely.flat.test/${name}`, () => {
+                cb();
+            });
+            break;
+        case 7:
+            logger.log("Копирование файлов JS...");
+            child_process.exec(`cp dist/ely.flat.application/* ely.flat.test/${name}/js`, () => {
+                cb();
+            });
+            break;
+        case 8:
+            logger.log("Копирование шрифтов...");
+            child_process.exec(`cp ely.resources.fonts/* ely.flat.test/${name}/fonts`, () => {
                 cb();
             });
             break;
@@ -146,7 +159,7 @@ function commandCreateProjectStepByStep(name: string, cb: () => void): void {
 
     function req() {
         i++;
-        if (i === 6) {
+        if (i === 9) {
             cb();
         } else {
             commandCreateProjectStep(name, i, req);
@@ -156,36 +169,40 @@ function commandCreateProjectStepByStep(name: string, cb: () => void): void {
     req();
 }
 
+function menuBack() {
+    let i    = 4;
+    const th = setInterval(() => {
+        i--;
+        logger.log(`Выход в меню через ${i} сек...`);
+        if (i === 0) {
+            clearInterval(th);
+            welcome();
+        }
+    }, 1000);
+}
+
 /**
  * Команда создания проекта
  */
 function commandCreateProject(): void {
     prompt.get([{name: "name", description: "Системное имя проекта"}, {
         description: "Заголовок",
-        name: "title",
+        name:        "title",
     }], (err: any, result: any) => {
         const name = result.name;
         commandCreateProjectStepByStep(name, () => {
             logger.log("Проект успешно создан!");
-            let i = 6;
-            const th = setInterval(() => {
-                i--;
-                logger.log(`Выход в меню через ${i} сек...`);
-                if (i === 0) {
-                    clearInterval(th);
-                    welcome();
-                }
-            }, 1000);
+            menuBack();
         });
     });
 }
 
 function buildPaths(cb?: () => void) {
     logger.log("Перестроение...");
-    child_process.exec("tsc", ()=> {
+    child_process.exec("tsc", () => {
         logger.log("Изменение путей в dist файле...");
         fs.readFile("tsconfig.json", (err, data) => {
-            const json = JSON.parse(String(data || ""));
+            const json  = JSON.parse(String(data || ""));
             const paths = json.compilerOptions.paths;
 
             const walkSync = (dir: string) => {
@@ -197,16 +214,16 @@ function buildPaths(cb?: () => void) {
                         logger.log(`Обработка файла ${dir}/${file}...`);
 
                         const data1 = fs.readFileSync(dir + "/" + file);
-                        let res = String(data1);
-                        res = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\);/g,
+                        let res     = String(data1);
+                        res         = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\);/g,
                             (substring, p, r) => {
                                 p += "*";
                                 let rep = substring;
                                 if (paths[p]) {
                                     let np = String(paths[p][0]).replace("\*", "");
-                                    np = np.replace(/^.\//, path.relative(dir, "dist")
-                                        .replace("/dist", "/") + "/");
-                                    rep = `require("${np}${r}");`;
+                                    np     = np.replace(/^.\//, path.relative(dir, "ely.build.js")
+                                        .replace("/ely.build.js", "/") + "/");
+                                    rep    = `require("${np}${r}");`;
                                 }
 
                                 logger.log(elyXLogger.styles.fgCyan + `Найдено ${substring} -> ${rep}` +
@@ -220,7 +237,12 @@ function buildPaths(cb?: () => void) {
                     }
                 });
             };
-            walkSync("dist");
+            walkSync("ely.build.js");
+            logger.log("Построение...");
+            child_process.exec("./node_modules/rollup/bin/rollup -c", () => {
+                logger.log("Фреймворк ely.flat application успешно построен!");
+                menuBack();
+            });
         });
     });
 }

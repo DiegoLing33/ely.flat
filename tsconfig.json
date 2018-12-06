@@ -6,7 +6,7 @@
       "dom",
       "es6"
     ],
-    "outDir": "./dist",
+    "outDir": "./ely.build.js",
     "strict": true,
     "baseUrl": "./",
     "paths": {

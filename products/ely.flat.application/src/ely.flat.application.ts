@@ -22,17 +22,17 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplication from "@app/app/elyFlatApplication";
-import elyGridViewController from "@controllers/elyGridViewController";
-import elyScreenController from "@controllers/elyScreenController";
-import elySimplePageViewController from "@controllers/elySimplePageViewController";
-import elyViewController from "@controllers/elyViewController";
-import elyButton from "@controls/action/elyButton";
-import elyControl from "@controls/action/elyControl";
-import elyProgressView from "@controls/action/elyProgressView";
-import elyDataGridView from "@controls/data/elyDataGridView";
-import elyStylesheet from "@controls/elyStylesheet";
-import "@controls/elyUIExt";
+import elyFlatApplication from "../../../ely.application/src/app/elyFlatApplication";
+import elyGridViewController from "../../../ely.controls.controllers/src/elyGridViewController";
+import elyScreenController from "../../../ely.controls.controllers/src/elyScreenController";
+import elySimplePageViewController from "../../../ely.controls.controllers/src/elySimplePageViewController";
+import elyViewController from "../../../ely.controls.controllers/src/elyViewController";
+import elyButton from "../../../ely.controls/src/action/elyButton";
+import elyControl from "../../../ely.controls/src/action/elyControl";
+import elyProgressView from "../../../ely.controls/src/action/elyProgressView";
+import elyDataGridView from "../../../ely.controls/src/data/elyDataGridView";
+import elyStylesheet from "../../../ely.controls/src/elyStylesheet";
+import "../../../ely.controls/src/elyUIExt";
 import elyComboField from "@controls/fields/elyComboField";
 import elyField from "@controls/fields/elyField";
 import elyFileChooseField from "@controls/fields/elyFileChooseField";

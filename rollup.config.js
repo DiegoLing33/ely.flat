@@ -4,10 +4,10 @@ import tsConfigPaths from 'rollup-plugin-ts-paths';
 import json from 'rollup-plugin-json';
 
 export default {
-    input: 'dist/bundle/src/ely.flat.application.js',
+    input: 'ely.build.js/bundle/src/ely.flat.application.js',
     output:{
         name: 'ely',
-        file: 'bundle.js',
+        file: 'dist/ely.flat.application/ely.flat.application.js',
         format: 'iife'
     },
     plugins: [
@@ -31,7 +31,7 @@ export default {
             ignoreGlobal: false,  // Default: false
 
             // if false then skip sourceMap generation for CommonJS modules
-            sourceMap: false,  // Default: true
+            sourceMap: true,  // Default: true
 
         })
     ]
