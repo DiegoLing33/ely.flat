@@ -7031,25 +7031,24 @@ var main = (function () {
 	                // @ts-ignore
 	                (parent || bucket || b).appendChild(self), $.visible = true;
 	            }
+	            function click(e) {
+	                const t = e.target, is_source = t === source || closest(t, source) === source;
+	                if (is_source) {
+	                    // @ts-ignore
+	                    create();
+	                }
+	                else {
+	                    // @ts-ignore
+	                    $.exit();
+	                }
+	                // @ts-ignore
+	                trigger(is_source ? "enter" : "exit", [$]);
+	            }
 	            P_W = size(self).w;
 	            P_H = size(self).h;
 	            var SV_size = size(SV), SV_point_size = size(SV_point), H_H = size(H).h, SV_W = SV_size.w, SV_H = SV_size.h, H_point_H = size(H_point).h, SV_point_W = SV_point_size.w, SV_point_H = SV_point_size.h;
 	            if (first) {
 	                self.style.left = self.style.top = '-9999px';
-	                // @ts-ignore
-	                function click(e) {
-	                    var t = e.target, is_source = t === source || closest(t, source) === source;
-	                    if (is_source) {
-	                        // @ts-ignore
-	                        create();
-	                    }
-	                    else {
-	                        // @ts-ignore
-	                        $.exit();
-	                    }
-	                    // @ts-ignore
-	                    trigger(is_source ? "enter" : "exit", [$]);
-	                }
 	                if (events !== false) {
 	                    on(events, source, click);
 	                }
@@ -7322,6 +7321,12 @@ var main = (function () {
 	        this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
 	        this.actionIconView.removeClass("fa").addClass("ef-color-pict");
 	        this.colorThumbnail.getDocument().innerHTML = "&nbsp";
+	        this.valueProperty.change(value => {
+	            this.picker.set(value.toString());
+	            this.accessoryView.value(value.toString());
+	            this.colorThumbnail.css({ "background-color": value.getDarker(0.2).toString() });
+	            this.accessoryView.css({ color: value.getDarker(0.14).toString() });
+	        });
 	        this.editableProperty.addChangeObserver((oldValue, newValue) => {
 	            this.accessoryView.getDocument().disabled = !newValue;
 	            if (newValue)
@@ -7331,12 +7336,16 @@ var main = (function () {
 	        });
 	        // @ts-ignore
 	        this.picker = new CP(this.accessoryView.getDocument());
-	        this.picker.on("stop", (color) => {
+	        this.picker.on("exit", () => {
 	            if (this.editable()) {
-	                const ec = new elyColor_1.default({ hex: color });
+	                const ec = new elyColor_1.default({ hex: this.accessoryView.value() });
 	                this.value(ec);
 	            }
 	        });
+	        // (this.accessoryView as elyInput).addInputObserver(value => {
+	        //    const color = new elyColor({hex: value});
+	        //    this.value(color);
+	        // });
 	        this.picker.on("change", (color) => {
 	            if ("#" + color === this.value().toString())
 	                return;
@@ -7347,7 +7356,6 @@ var main = (function () {
 	        });
 	        this.placeholder("#______");
 	        this.editable(false);
-	        this.value(new elyColor_1.default({ hex: "#ffffff" }));
 	        this.applyProtocolOptions(options);
 	        this.actionIconView.hidden(false);
 	    }

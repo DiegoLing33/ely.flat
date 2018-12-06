@@ -447,6 +447,19 @@
                 // @ts-ignore
                 (parent || bucket || b).appendChild(self), $.visible = true;
             }
+            function click(e: any) {
+                const t = e.target,
+                    is_source = t === source || closest(t, source) === source;
+                if (is_source) {
+                    // @ts-ignore
+                    create();
+                } else {
+                    // @ts-ignore
+                    $.exit();
+                }
+                // @ts-ignore
+                trigger(is_source ? "enter" : "exit", [$]);
+            }
             P_W = size(self).w;
             P_H = size(self).h;
             var SV_size = size(SV),
@@ -459,20 +472,6 @@
                 SV_point_H = SV_point_size.h;
             if (first) {
                 self.style.left = self.style.top = '-9999px';
-                // @ts-ignore
-                function click(e) {
-                    var t = e.target,
-                        is_source = t === source || closest(t, source) === source;
-                    if (is_source) {
-                        // @ts-ignore
-                        create();
-                    } else {
-                        // @ts-ignore
-                        $.exit();
-                    }
-                    // @ts-ignore
-                    trigger(is_source ? "enter" : "exit", [$]);
-                }
                 if (events !== false) {
                     on(events, source, click);
                 }
