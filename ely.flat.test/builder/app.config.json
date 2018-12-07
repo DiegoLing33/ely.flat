@@ -6,14 +6,14 @@
     "mainScript":           "app.js"
   },
   "template":   {
-    "maxContainerWidth": 700,
+    "maxContainerWidth": "90%",
     "footer":            {
       "title":    "Works with ely.Flat Application Engine",
       "subtitle": "My application"
     }
   },
   "sidenavigation": {
-    "enabled": true,
+    "enabled": false,
     "allowMouseEvents": true,
     "items": [
       {
@@ -22,11 +22,12 @@
     ]
   },
   "navigation": {
-    "title": "ely.Flat *{* Application *}*",
+    "imageUrl": "img/logo.jpg",
+    "title": "&nbsp;ely <b>{</b> <span style='color: #aaaaaa;'>Workshop</span> <b>}</b> ",
     "items": [
       {
         "text":   "Home",
-        "action": "#content(*default)"
+        "action": "#content(index)"
       }
     ]
   }
