@@ -32,13 +32,13 @@
     "sass": "^1.15.1",
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.7.0",
-    "typescript": "^3.3.0-dev.20181205"
-  },
-  "devDependencies": {
-    "@types/figlet": "^1.2.0",
-    "@types/node": "^10.12.12",
+    "typescript": "^3.3.0-dev.20181205",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-ts-paths": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.2.0",
+    "@types/node": "^10.12.12"
   }
 }

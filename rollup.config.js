@@ -6,8 +6,8 @@ import json from 'rollup-plugin-json';
 export default {
     input: 'ely.build.js/products/ely.flat.application/src/ely.flat.application.js',
     output:{
-        name: 'main',
         file: 'dist/ely.flat.application/ely.flat.application.js',
+        name: 'ely',
         format: 'iife'
     },
     plugins: [
@@ -31,7 +31,8 @@ export default {
             ignoreGlobal: false,  // Default: false
 
             // if false then skip sourceMap generation for CommonJS modules
-            sourceMap: true,  // Default: true
+            sourceMap: true,  // Default: true,
+            customNamedExports: true,
 
         })
     ]
