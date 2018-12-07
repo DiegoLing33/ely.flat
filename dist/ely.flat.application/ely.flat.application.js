@@ -1,4 +1,4 @@
-(function (exports) {
+var ely = (function () {
 	'use strict';
 
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -11630,4 +11630,4 @@
 
 	return ely_flat_application$1;
 
-}((this.ely = this.ely || {})));
+}());

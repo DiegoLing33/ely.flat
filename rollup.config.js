@@ -18,22 +18,11 @@ export default {
             main: true,
             browser: true,
         }),
-
         commonjs({
-            // non-CommonJS modules will be ignored, but you can also
-            // specifically include/exclude files
-
-            // search for files other than .js files (must already
-            // be transpiled by a previous plugin!)
             extensions: [ '.js'],  // Default: [ '.js' ]
-
-            // if true then uses of `global` won't be dealt with by this plugin
             ignoreGlobal: false,  // Default: false
-
-            // if false then skip sourceMap generation for CommonJS modules
-            sourceMap: true,  // Default: true,
+            sourceMap: true,
             customNamedExports: true,
-
         })
     ]
 }
