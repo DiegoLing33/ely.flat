@@ -12,6 +12,15 @@
       "subtitle": "My application"
     }
   },
+  "sidenavigation": {
+    "enabled": false,
+    "allowMouseEvents": true,
+    "items": [
+      {
+        "text": "Home"
+      }
+    ]
+  },
   "navigation": {
     "title": "ely.Flat *{* Application *}*",
     "items": [

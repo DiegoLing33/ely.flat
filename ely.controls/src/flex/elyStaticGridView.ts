@@ -25,6 +25,9 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableArray from "@core/observable/properties/elyObservableArray";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyStaticGridViewOptions from "@options/elyStaticGridViewOptions";
+import IPosition from "@controls/interfaces/IPosition";
+import elyUtils from "@core/elyUtils";
+import elyStylesheet from "@controls/elyStylesheet";
 
 /**
  * Позиция на сетке
@@ -93,11 +96,6 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
     protected readonly views: elyObservableArray<elyView>;
 
     /**
-     * Флекс контент
-     */
-    protected readonly flexContentView: elyView;
-
-    /**
      * Флекс карта
      * @ignore
      */
@@ -126,11 +124,28 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
         this.rowsCount(options.rowsCount || 3);
         this.colsCount(options.colsCount || 3);
 
+        this.addClass(this.identifier());
+
         if (options.flexMapValues) this.flexMap(...options.flexMapValues);
         if (options.flexMap) this.flexMap(...options.flexMap);
+        this.setItemsMargin(options.margin || {top: 5, bottom: 5, left: 5, right: 5});
 
         this.denyRebuild(false);
         this.rebuild();
+    }
+
+    /**
+     * Устанавливает внитринний отступ элементов сетки
+     * @param margin
+     */
+    public setItemsMargin(margin: IPosition): elyStaticGridView {
+        margin       = {...{top: 0, bottom: 0, left: 0, right: 0}, ...margin};
+        const styles = {};
+        elyUtils.applySrc(margin, ["top", "bottom", "left", "right"], styles, "margin-", (val) => {
+            return typeof val === "string" ? val : val + "px";
+        });
+        elyStylesheet.global.addClass(this.identifier() + " .item", styles);
+        return this;
     }
 
     /**
@@ -203,7 +218,6 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
         return this.flexMapProperty;
     }
 
-
     /**
      * Возвращает количество строк
      */
@@ -256,7 +270,7 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
     }
 
     protected __rebuild(): elyRebuildableViewProtocol {
-        this.flexContentView.removeViewContent();
+        this.removeViewContent();
         for (let i = 0; i < this.rowsCount(); i++) {
             const rowView = new elyControl();
             rowView.addClass("ef-flex-box", "row");
@@ -274,7 +288,7 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
                 this.notificate("col", [colView, {col: j, row: i, index} as elyStaticGridViewLocation,
                     view]);
             }
-            this.flexContentView.getDocument().append(rowView.getDocument());
+            this.getDocument().append(rowView.getDocument());
         }
         this.notificate("rebuild", []);
         return this;

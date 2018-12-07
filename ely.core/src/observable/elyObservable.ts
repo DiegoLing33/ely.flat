@@ -18,14 +18,21 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+/**
+ * Прослушиваемый протокол
+ * @class elyObservable
+ */
 export default class elyObservable {
 
+    /**
+     * @protected
+     */
     protected observers: { [event: string]: Array<() => void> } = {};
 
     /**
      * Добавляет наблюдатель
-     * @param event - событие
-     * @param observer - наблюдатель
+     * @param {String} event - событие
+     * @param {Function} observer - наблюдатель
      */
     public addObserver(event: string, observer: any): elyObservable {
         if (!this.observers.hasOwnProperty(event)) this.observers[event] = [];
@@ -35,8 +42,8 @@ export default class elyObservable {
 
     /**
      * Сообщает о событие всех наблюдателей
-     * @param event
-     * @param args
+     * @param {String} event
+     * @param {*} args
      */
     protected notificate(event: string, args?: any) {
         if (this.observers.hasOwnProperty(event)) {

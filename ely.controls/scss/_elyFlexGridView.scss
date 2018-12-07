@@ -5,6 +5,8 @@
 // Файл создан: 23.11.2018 23:03:24                                            +
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+@import "../../ely.core/scss/mixins/media";
+
 //
 //  Flex box
 //
@@ -12,5 +14,14 @@
   width: 100%;
   &.row {
     display: flex;
+  }
+}
+
+@include mobile-only{
+  .ef-flex-box {
+    width: 100%;
+    &.row {
+      display: block;
+    }
   }
 }

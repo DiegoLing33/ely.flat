@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "../elyObservable";
+import elyObservable from "@core/observable/elyObservable";
 
 type elyObservablePropertyHandler<T> = (oldValue: T, newValue: T) => void;
 
@@ -29,6 +29,8 @@ type elyObservablePropChangeHandler<T> = (value: T, oldVal: T | null) => void;
 
 /**
  * Обрабатываемое значение
+ * @class elyObservableProperty
+ * @augments elyObservable
  */
 export default class elyObservableProperty<T> extends elyObservable {
 
@@ -46,12 +48,14 @@ export default class elyObservableProperty<T> extends elyObservable {
 
     /**
      * Значение
+     * @protected
      */
     protected value: T | null;
 
     /**
      * Флаг защиты от перезаписи
      * @ignore
+     * @protected
      */
     protected isOverwriteProtected: boolean = false;
 

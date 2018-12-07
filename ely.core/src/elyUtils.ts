@@ -18,6 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+
 type elyIterateClosure = (index: any, value: any, iteration: number) => boolean | any | void;
 
 /**
@@ -107,7 +108,7 @@ export default class elyUtils {
     public static filter(obj: any | any[], filter: elyIterateClosure): {} | any[] | any {
         if (obj instanceof Array) {
             const newArray = [];
-            let i          = 0;
+            let i = 0;
             for (const index in obj) {
                 if (obj.hasOwnProperty(index)) {
                     if (filter(index, obj[index], i)) newArray.push(obj[index]);
@@ -132,9 +133,9 @@ export default class elyUtils {
      * Сортирует объект по алфавиту
      * @param obj
      */
-    public static sortAlphabetic(obj: any): any{
+    public static sortAlphabetic(obj: any): any {
         const ordered: any = {};
-        Object.keys(obj).sort().forEach(function(key) {
+        Object.keys(obj).sort().forEach(function (key) {
             ordered[key] = obj[key];
         });
         return ordered;
@@ -146,7 +147,7 @@ export default class elyUtils {
      * @param callback
      */
     public static require(src: string, callback: () => void): void {
-        const script = document.createElement("script")  as HTMLScriptElement;
+        const script = document.createElement("script") as HTMLScriptElement;
         script.src = src;
         script.onload = callback;
         document.getElementsByTagName("head")[0].appendChild(script);
@@ -216,7 +217,7 @@ export default class elyUtils {
 
     public static cut(obj: any, len: number): {} {
         const keys = Object.keys(obj);
-        const o: any    = {};
+        const o: any = {};
         keys.sort((a, b) => {
             return a.length - b.length;
         });
@@ -226,7 +227,7 @@ export default class elyUtils {
         return o;
     }
 
-    public static applySrc(source: {[name: string]: any}, key: string | string[], o: {[name: string]: any},
+    public static applySrc(source: { [name: string]: any }, key: string | string[], o: { [name: string]: any },
                            prefix: string = "", checker?: (s: string) => string) {
         checker = checker || ((val) => val);
         if (typeof key === "string") {
@@ -236,5 +237,38 @@ export default class elyUtils {
                 o[prefix + value] = checker!(source[value]);
             });
         }
+    }
+
+    /**
+     * Simple object check.
+     * @param item
+     * @returns {boolean}
+     */
+    public static isObject(item: any) {
+        return (item && typeof item === "object" && !Array.isArray(item));
+    }
+
+    /**
+     * Deep merge two objects.
+     * @param target
+     * @param sources
+     */
+    public static mergeDeep(target: any, ...sources: any[]): any {
+        if (!sources.length) return target;
+        const source = sources.shift();
+
+        if (elyUtils.isObject(target) && elyUtils.isObject(source)) {
+            for (const key in source) {
+                if (!source.hasOwnProperty(key)) continue;
+                if (elyUtils.isObject(source[key])) {
+                    if (!target[key]) Object.assign(target, {[key]: {}});
+                    elyUtils.mergeDeep(target[key], source[key]);
+                } else {
+                    Object.assign(target, {[key]: source[key]});
+                }
+            }
+        }
+
+        return elyUtils.mergeDeep(target, ...sources);
     }
 }

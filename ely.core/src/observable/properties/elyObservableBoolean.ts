@@ -23,7 +23,7 @@
  *
  */
 
-import elyObservableProperty from "./elyObservableProperty";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 
 /**
  * Прослушиваемый булевый тип

@@ -20,8 +20,8 @@
 
 import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
-import elyWSPlaceholderView from "../views/elyWSPlaceholderView";
-import elyWSRegex from "./elyWSRegex";
+import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
+import elyWSPlaceholderView from "@devMods/elyUIWorkshop.elymod/views/elyWSPlaceholderView";
 
 /**
  * Рабочая область

@@ -24,6 +24,7 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Протокол поля ввода данных
+ * @class elyFieldProtocol
  */
 export default abstract class elyFieldProtocol<T> extends elyView {
     /**

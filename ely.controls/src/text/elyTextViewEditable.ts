@@ -35,6 +35,7 @@ type elyTextViewEditableShouldSaveValueDelegate = (value: string, result: (res: 
 
 /**
  * Состояния объекта
+ * @enum elyTextViewEditableState
  */
 enum elyTextViewEditableState {
     /**
@@ -50,6 +51,8 @@ enum elyTextViewEditableState {
 
 /**
  * Элемент отображения: Мутация elyTextView в редактируемый по клику элемент
+ * @class elyTextViewEditable
+ * @augments elyView
  */
 export default class elyTextViewEditable extends elyView {
 

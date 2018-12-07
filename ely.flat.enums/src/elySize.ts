@@ -26,11 +26,13 @@ import ISize from "@controls/interfaces/ISize";
 
 /**
  * Размеры ely.flat
+ * @class elySize
  */
 export default class elySize {
 
     /**
      * Стандартный размер
+     * @return elySize
      */
     public static readonly default = new elySize("default");
 

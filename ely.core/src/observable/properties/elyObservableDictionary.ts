@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyUtils from "../../elyUtils";
-import elyObservableProperty from "./elyObservableProperty";
+import elyUtils from "@core/elyUtils";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 
 /**
  * Элемент свойства словаря

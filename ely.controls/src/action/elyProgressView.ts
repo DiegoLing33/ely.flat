@@ -28,6 +28,7 @@ import elyStyle from "@enums/elyStyle";
 
 /**
  * Опции: {@link elyProgressView}
+ * @class elyProgressView
  */
 interface elyProgressViewOptions extends elyViewOptions {
     displayInfoLevel?: number;

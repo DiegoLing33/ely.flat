@@ -234,7 +234,7 @@ function buildPaths(cb?: () => void) {
 
                         const data1 = fs.readFileSync(dir + "/" + file);
                         let res = String(data1);
-                        res = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\);/g,
+                        res = res.replace(/require\(\"(@[A-z]+\/)(.+)\"\)/g,
                             (substring, p, r) => {
                                 p += "*";
                                 let rep = substring;
@@ -242,7 +242,7 @@ function buildPaths(cb?: () => void) {
                                     let np = String(paths[p][0]).replace("\*", "");
                                     np = np.replace(/^.\//, path.relative(dir, "ely.build.js")
                                         .replace("/ely.build.js", "/") + "/");
-                                    rep = `require("${np}${r}");`;
+                                    rep = `require("${np}${r}")`;
                                 }
 
                                 logger.log(elyXLogger.styles.fgCyan + `Найдено ${substring} -> ${rep}` +
@@ -258,7 +258,14 @@ function buildPaths(cb?: () => void) {
             };
             walkSync("ely.build.js");
             logger.log("Построение...");
-            child_process.exec("./node_modules/rollup/bin/rollup -c", () => {
+            child_process.exec("./node_modules/.bin/rollup -c", () => {
+                /*logger.log("Постпроцессинг файла...");
+                let outFile = String(fs.readFileSync("dist/ely.flat.application/ely.flat.application.js") || "");
+                outFile = outFile.replace(/unwrapExports\((.+)_1\);/g, (str, a) => {
+                    logger.log(`Найден объект ${elyXLogger.styles.fgYellow}${a}${elyXLogger.styles.reset}`);
+                    return `let ${a} = ${str}`;
+                });
+                fs.writeFileSync("dist/ely.flat.application/ely.flat.application.js", outFile);*/
                 logger.log("Фреймворк ely.flat application успешно построен!");
                 menuBack();
             });

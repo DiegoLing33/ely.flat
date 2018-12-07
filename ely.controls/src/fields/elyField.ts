@@ -27,6 +27,8 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Элемент: Поле ввода <T>
+ *     @class elyField
+ *     @augments elyFieldProtocol
  */
 @designable("editable", elyDesignableFieldState.GETSET, "boolean")
 @designable("placeholder", elyDesignableFieldState.SET, "string")
@@ -85,9 +87,9 @@ export default abstract class elyField<T> extends elyFieldProtocol<T> {
     protected constructor(options: elyFieldOptions<T> = {}, accessory: elyFieldProtocol<any>) {
         super();
         this.addClass("ef-control", "ef-control-opacity");
-        this.fieldLineView               = new elyControl({class: "ef-input-group"});
-        this.accessoryView               = accessory;
-        this.actionIconView              = new elyIconView({class: "ef-input-status"});
+        this.fieldLineView = new elyControl({class: "ef-input-group"});
+        this.accessoryView = accessory;
+        this.actionIconView = new elyIconView({class: "ef-input-status"});
         this.acceptDoubleClickActivation = true;
         this.actionIconView.hidden(true);
 
@@ -103,7 +105,7 @@ export default abstract class elyField<T> extends elyFieldProtocol<T> {
             this.notificate("actionClick");
             this.actionIconDidClick();
         };
-        this.getDocument().ondblclick             = () => {
+        this.getDocument().ondblclick = () => {
             if (this.acceptDoubleClickActivation)
                 this.actionIconDidClick();
         };

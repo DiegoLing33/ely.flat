@@ -22,12 +22,14 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyViewController from "@controllers/elyViewController";
 import elyGridView from "@controls/flex/elyGridView";
 import elyView from "@core/controls/elyView";
-import elyViewController from "./elyViewController";
 
 /**
  * Контроллер с сеткой в основании
+ * @class elyGridViewController
+ * @augments elyViewController
  */
 export default class elyGridViewController extends elyViewController {
 

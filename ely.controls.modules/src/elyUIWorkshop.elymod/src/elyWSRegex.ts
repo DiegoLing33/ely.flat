@@ -23,8 +23,8 @@ import {elyDesignableCore} from "@core/elyDesignable";
 import elyGuard from "@core/elyGuard";
 import elyObservable from "@core/observable/elyObservable";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
-import elyUIWorkshop from "../elyUIWorkshop";
-import elyUIWSMeta from "./elyUIWSMeta";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
 
 /**
  * Обработчик регистрации элемента

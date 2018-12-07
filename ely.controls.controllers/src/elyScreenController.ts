@@ -47,6 +47,8 @@ class __elyScreenIndexViewController extends elySimplePageViewController {
 
 /**
  * Контроллер экрана
+ * @class elyScreenController
+ * @augments elyObservable
  */
 export default class elyScreenController extends elyObservable {
 

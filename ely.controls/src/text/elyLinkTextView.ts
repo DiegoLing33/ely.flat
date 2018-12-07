@@ -26,6 +26,7 @@ import elyTextView from "./elyTextView";
 /**
  * Элемент отображения: Текст ссылкой
  * @version 1.0
+ * @class elyLinkTextView
  */
 @designable("url", elyDesignableFieldState.GETSET, "string")
 @designable("text", elyDesignableFieldState.GETSET)
@@ -38,7 +39,7 @@ export default class elyLinkTextView extends elyTextView {
 
     /**
      * Конструктор
-     * @param options
+     * @param {elyTextViewOptions|url:String} options
      */
     public constructor(options: elyTextViewOptions & { url?: string } = {}) {
         super({tag: "a", ...options});

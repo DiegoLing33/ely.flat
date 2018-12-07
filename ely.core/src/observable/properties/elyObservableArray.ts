@@ -18,11 +18,11 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+
 type elyObservableArrayAddHandler<T> = (newItem: T, index: number) => void;
 type elyObservableArrayRemoveHandler<T> = (remove: T) => void;
 type elyObservableArrayClearHandler<T> = () => void;
-
-import elyObservableProperty from "./elyObservableProperty";
 
 /**
  * Массив

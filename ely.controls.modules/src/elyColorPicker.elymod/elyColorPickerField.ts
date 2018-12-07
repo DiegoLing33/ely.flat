@@ -19,7 +19,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 // import "../../../ely.flat";
-import "./color.picker";
+import "@devMods/elyColorPicker.elymod/color.picker";
 
 import elyControl from "@controls/action/elyControl";
 import elyInput from "@controls/action/elyInput";

@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyUIWorkshop from "./elyUIWorkshop";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
 
 declare global {
     interface Window {

@@ -23,11 +23,11 @@ import elyGridView from "@controls/flex/elyGridView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
 import elyGuard from "@core/elyGuard";
+import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
+import elyWSViewPropsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyWSViewPropsPanel";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
-import elyUIWorkshop from "../elyUIWorkshop";
-import elyWSUtils from "../elyWSUtils";
-import elyWSViewPropsPanel from "../panels/elyWSViewPropsPanel";
 
 export default class elyUIWSContextMenu extends elyPanelView {
 

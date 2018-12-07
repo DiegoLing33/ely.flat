@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "./controls/elyView";
-import elyUtils from "./elyUtils";
+import elyView from "@core/controls/elyView";
+import elyUtils from "@core/elyUtils";
 
 export const elyDesignableAutoFieldsData: { [className: string]: elyDesignableAutoFields } = {};
 

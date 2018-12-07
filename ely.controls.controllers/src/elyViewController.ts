@@ -22,13 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyScreenController from "@controllers/elyScreenController";
 import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
-import elyScreenController from "@controllers/elyScreenController";
 import elyObservable from "@core/observable/elyObservable";
 
 /**
  * Контроллер элемента отображения
+ * @class elyViewController
+ * @augments elyObservable
  */
 export default class elyViewController extends elyObservable {
 

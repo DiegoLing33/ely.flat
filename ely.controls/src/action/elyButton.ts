@@ -39,7 +39,8 @@ import elyButtonOptions from "@options/elyButtonOptions";
  *        console.log("Wow!");
  *     });
  *
- *
+ * @class elyButton
+ * @augments elyControl
  */
 @designable("text", elyDesignableFieldState.GETSET, "string")
 @designable("buttonSize", elyDesignableFieldState.GETSET, "string", elySize.rawList())
@@ -48,24 +49,27 @@ export default class elyButton extends elyControl {
 
     /**
      * Текст на кнопке
+     * @readonly
      */
     public readonly textView: elyTextView;
 
     /**
      * Параметр стиля кнопки
      * @ignore
+     * @readonly
      */
     protected readonly buttonStyleProperty: elyObservableProperty<elyStyle>;
 
     /**
      * Параметр размера кнопки
      * @ignore
+     * @readonly
      */
     protected readonly buttonSizeProperty: elyObservableProperty<elySize>;
 
     /**
      * Инициилизирует объект
-     * @param options
+     * @param {click:Function, buttonStyle: elyStyle, buttonSize: elySize, text: string, fill:Boolean|*} options - опции
      */
     constructor(options: elyButtonOptions = {}) {
         super({tag: "button", class: "btn", ...options});

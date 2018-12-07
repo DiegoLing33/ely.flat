@@ -28,6 +28,7 @@ import elyWeight from "@enums/elyWeight";
 /**
  * Элемент отображения: Иконка
  * @version 1.0
+ * @class elyIconView
  */
 @designable("iconName", elyDesignableFieldState.GETSET, "string")
 @designable("iconSpinning", elyDesignableFieldState.SET, "boolean")

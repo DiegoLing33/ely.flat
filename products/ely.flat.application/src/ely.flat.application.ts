@@ -22,6 +22,17 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatApplication from "@app/app/elyFlatApplication";
+import elyGridViewController from "@controllers/elyGridViewController";
+import elyScreenController from "@controllers/elyScreenController";
+import elySimplePageViewController from "@controllers/elySimplePageViewController";
+import elyViewController from "@controllers/elyViewController";
+import elyButton from "@controls/action/elyButton";
+import elyControl from "@controls/action/elyControl";
+import elyProgressView from "@controls/action/elyProgressView";
+import elyDataGridView from "@controls/data/elyDataGridView";
+import elyStylesheet from "@controls/elyStylesheet";
+import "@controls/elyUIExt";
 import elyComboField from "@controls/fields/elyComboField";
 import elyField from "@controls/fields/elyField";
 import elyFileChooseField from "@controls/fields/elyFileChooseField";
@@ -43,6 +54,7 @@ import elyListView from "@controls/view/elyListView";
 import elyModalView from "@controls/view/elyModalView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyScrollView from "@controls/view/elyScrollView";
+import elyView from "@core/controls/elyView";
 import elyColor from "@core/elyColor";
 import elyCookie from "@core/elyCookie";
 import elyMath from "@core/elyMath";
@@ -57,17 +69,6 @@ import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
 import elyWeight from "@enums/elyWeight";
-import elyFlatApplication from "../../../ely.application/src/app/elyFlatApplication";
-import elyGridViewController from "../../../ely.controls.controllers/src/elyGridViewController";
-import elyScreenController from "../../../ely.controls.controllers/src/elyScreenController";
-import elySimplePageViewController from "../../../ely.controls.controllers/src/elySimplePageViewController";
-import elyViewController from "../../../ely.controls.controllers/src/elyViewController";
-import elyButton from "../../../ely.controls/src/action/elyButton";
-import elyControl from "../../../ely.controls/src/action/elyControl";
-import elyProgressView from "../../../ely.controls/src/action/elyProgressView";
-import elyDataGridView from "../../../ely.controls/src/data/elyDataGridView";
-import elyStylesheet from "../../../ely.controls/src/elyStylesheet";
-import "../../../ely.controls/src/elyUIExt";
 //
 //  Деклорации
 //
@@ -124,7 +125,12 @@ declare global {
         /**
          * Элемент отображения: Родительский элемент
          */
-        elyView: typeof elyControl;
+        elyView: typeof elyView;
+
+        /**
+         * Элемент отображения: Родительский элемент
+         */
+        elyControl: typeof elyControl;
 
         /**
          * Элемент отображения: Кнопка
@@ -344,59 +350,221 @@ declare global {
          * @param viewController
          * @param canOverwrite
          */
-        addController(name: string, viewController: elyViewController, canOverwrite: boolean): void;
+        addController(name: string, viewController: elyViewController, canOverwrite?: boolean): void;
     }
 }
 
+/**
+ * @type {elyFlatApplication}
+ */
 window.elyApplication = elyFlatApplication.default;
+
 window.elyFlatApplication = elyFlatApplication;
 window.elyStylesheet = elyStylesheet;
 window.elyScreen = elyScreenController.default;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyViewController.constructor
+ */
 window.elyViewController = elyViewController;
+
+/**
+ * @alias elyGridViewController.constructor
+ */
 window.elyGridViewController = elyGridViewController;
+
+/**
+ * @alias elySimplePageViewController.constructor
+ */
 window.elySimplePageViewController = elySimplePageViewController;
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyView.constructor
+ */
+window.elyView = elyView;
 
-window.elyView = elyControl;
+/**
+ * @alias elyControl.constructor
+ */
+window.elyControl = elyControl;
+
+/**
+ * @alias elyButton.constructor
+ */
 window.elyButton = elyButton;
+
+/**
+ * @alias elyTextView.constructor
+ */
 window.elyTextView = elyTextView;
+/**
+ * @alias elyLinkTextView.constructor
+ */
 window.elyLinkTextView = elyLinkTextView;
+/**
+ * @alias elyIconView.constructor
+ */
 window.elyIconView = elyIconView;
+/**
+ * @alias elyTextViewEditable.constructor
+ */
 window.elyTextViewEditable = elyTextViewEditable;
+/**
+ * @type {elyBodyView}
+ */
 window.elyBodyView = elyBodyView.default;
+/**
+ * @alias elyImageView.constructor
+ */
 window.elyImageView = elyImageView;
+/**
+ * @alias elyListView.constructor
+ */
 window.elyListView = elyListView;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyPanelView.constructor
+ */
 window.elyPanelView = elyPanelView;
+/**
+ * @alias elyModalView.constructor
+ */
 window.elyModalView = elyModalView;
+/**
+ * @alias elyGridView.constructor
+ */
 window.elyGridView = elyGridView;
+/**
+ * @alias elyGridRowView.constructor
+ */
 window.elyGridRowView = elyGridRowView;
+/**
+ * @alias elyDataGridView.constructor
+ */
 window.elyDataGridView = elyDataGridView;
+/**
+ * @alias elyStaticGridView.constructor
+ */
 window.elyStaticGridView = elyStaticGridView;
+/**
+ * @alias elyProgressView.constructor
+ */
 window.elyProgressView = elyProgressView;
+/**
+ * @alias elyScrollView.constructor
+ */
 window.elyScrollView = elyScrollView;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyField.constructor
+ */
 window.elyField = elyField;
+/**
+ * @alias elyTextField.constructor
+ */
 window.elyTextField = elyTextField;
+/**
+ * @alias elyComboField.constructor
+ */
 window.elyComboField = elyComboField;
+/**
+ * @alias elySwitchField.constructor
+ */
 window.elySwitchField = elySwitchField;
+/**
+ * @alias elyTextAreaField.constructor
+ */
 window.elyTextAreaField = elyTextAreaField;
+/**
+ * @alias elyFileChooseField.constructor
+ */
 window.elyFileChooseField = elyFileChooseField;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyNotificationView.constructor
+ */
 window.elyNotificationView = elyNotificationView;
+/**
+ * @alias elyProgressNotificationView.constructor
+ */
 window.elyProgressNotificationView = elyProgressNotificationView;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyWeight.constructor
+ */
 window.elyWeight = elyWeight;
+/**
+ * @alias elySize.constructor
+ */
 window.elySize = elySize;
+/**
+ * @alias elyStyle.constructor
+ */
 window.elyStyle = elyStyle;
-
+/**
+ * @alias elyFieldType.constructor
+ */
+window.elyFieldType = elyFieldType;
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * @alias elyColor.constructor
+ */
 window.elyColor = elyColor;
+/**
+ * @alias elyCookie.constructor
+ */
 window.elyCookie = elyCookie;
+/**
+ * @alias elyMath.constructor
+ */
 window.elyMath = elyMath;
+/**
+ * @alias elyTime.constructor
+ */
 window.elyTime = elyTime;
+/**
+ * @alias elyUtils.constructor
+ */
 window.elyUtils = elyUtils;
+/**
+ * @alias elyURL.constructor
+ */
 window.elyURL = elyURL;
+/**
+ * @alias elyGetRequest.constructor
+ */
 window.elyGetRequest = elyGetRequest;
+/**
+ * @alias elyPostRequest.constructor
+ */
 window.elyPostRequest = elyPostRequest;
 
 window.present = (viewController: elyViewController, completion?: () => void) => {

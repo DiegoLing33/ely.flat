@@ -30,6 +30,8 @@ import elyWeight from "@enums/elyWeight";
 
 /**
  * Контроллер с шаблоном макета приложения
+ * @class elySimplePageViewController
+ * @augments elyGridViewController
  */
 export default class elySimplePageViewController extends elyGridViewController {
 

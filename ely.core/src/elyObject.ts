@@ -18,10 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "./observable/elyObservable";
+import elyObservable from "@core/observable/elyObservable";
 
 /**
  * Объект
+ * @class elyObject
+ * @abstract
  */
 export default abstract class elyObject extends elyObservable {
     protected constructor() {

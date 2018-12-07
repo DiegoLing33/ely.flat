@@ -31,6 +31,7 @@ import elyTextViewOptions from "@options/elyTextViewOptions";
  * Элемент отображения: Текст
  *
  * Объект соответствует стандарту: EPS4
+ * @class elyTextView
  */
 @designable("text", elyDesignableFieldState.GETSET, "text")
 @designable("textCenter", elyDesignableFieldState.GETSET, "boolean")

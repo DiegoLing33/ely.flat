@@ -25,6 +25,7 @@ import elyTextViewOptions from "@options/elyTextViewOptions";
 
 /**
  * Опции кнопки
+ * @interface elyButtonOptions
  */
 export default interface elyButtonOptions extends elyControlOptions, elyTextViewOptions {
     /**

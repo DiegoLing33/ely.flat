@@ -28,6 +28,8 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
 /**
  * Поле: Ввод текста
  * @version 1.0
+ * @class elyTextField
+ * @augments elyField
  */
 @designable("value", elyDesignableFieldState.GETSET, "string")
 @designable("fieldType", elyDesignableFieldState.GETSET, "string", elyFieldType.rawList())

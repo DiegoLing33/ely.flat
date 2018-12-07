@@ -17,7 +17,8 @@
  + Файл: ely.module.ts                                                        +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-import elyColorPickerField from "./elyColorPickerField";
+
+import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
 
 declare global {
     interface Window {

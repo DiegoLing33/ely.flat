@@ -18,23 +18,24 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObject from "../elyObject";
-import elyOneActionEval from "../elyOneActionEval";
-import elyUtils from "../elyUtils";
-import elyViewCounter from "./elyViewCounter";
-import elyViewOptions from "./elyViewOptions";
-import elyObservableProperty from "../observable/properties/elyObservableProperty";
+import elyViewCounter from "@core/controls/elyViewCounter";
+import elyViewOptions from "@core/controls/elyViewOptions";
+import elyObject from "@core/elyObject";
+import elyOneActionEval from "@core/elyOneActionEval";
+import elyUtils from "@core/elyUtils";
+import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 
 /**
  * Объект отображения
+ * @class elyView
+ * @abstract
  */
 export default abstract class elyView extends elyObject {
 
     /**
-     * Свойство: скрытие элемента
-     * @ignore
+     * Родитель элемента
      */
-    private readonly hiddenProperty: elyObservableProperty<boolean>;
+    public superview: elyView | null = null;
 
     /**
      * Элемент отображения
@@ -52,9 +53,10 @@ export default abstract class elyView extends elyObject {
     protected __actionString: string = "";
 
     /**
-     * Родитель элемента
+     * Свойство: скрытие элемента
+     * @ignore
      */
-    public superview: elyView | null = null;
+    private readonly hiddenProperty: elyObservableProperty<boolean>;
 
     /**
      * Конструктор
@@ -154,7 +156,6 @@ export default abstract class elyView extends elyObject {
         return this;
     }
 
-
     /**
      * Добавляет класс
      * @param className - имя класса стилей или кортеж имен
@@ -208,7 +209,6 @@ export default abstract class elyView extends elyObject {
     public hidden(value?: boolean): boolean | null | elyView {
         return elyObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
     }
-
 
     /**
      * Устанавливает css значение

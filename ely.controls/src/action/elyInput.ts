@@ -25,6 +25,7 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
 /**
  * Элемент: Элемент ввода текст
  * @version 1.0
+ * @class elyInput
  */
 export default class elyInput extends elyFieldProtocol<string> {
 

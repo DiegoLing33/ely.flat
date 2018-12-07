@@ -22,6 +22,7 @@ import elyFlatApplicationConfig from "@app/app/options/elyFlatApplicationConfig"
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
 import elyURL from "@core/web/url/elyURL";
+import elyUtils from "@core/elyUtils";
 
 export default class elyFlatApplicationLoader extends elyObservable {
 
@@ -66,7 +67,7 @@ export default class elyFlatApplicationLoader extends elyObservable {
         new elyURL(elyFlatApplicationLoader.configurationPath).request({}, (response, status) => {
             if (status === 200) {
                 elyXLogger.default.log("Файл конфигурации получен");
-                closure({...elyFlatApplicationLoader.defaultConfiguration(), ...response});
+                closure(elyUtils.mergeDeep(elyFlatApplicationLoader.defaultConfiguration(), (response || {})));
             } else {
                 elyXLogger.default.log("Использована стандартная конфигурация");
                 closure(elyFlatApplicationLoader.defaultConfiguration());

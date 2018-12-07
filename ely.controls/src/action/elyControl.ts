@@ -26,6 +26,8 @@ import elyControlOptions from "@options/elyControlOptions";
 
 /**
  * Основная единица графического элемента
+ * @class elyControl
+ * @augments elyView
  */
 @designable("actionString", elyDesignableFieldState.GETSET, "string")
 @designable("hidden", elyDesignableFieldState.GETSET, "boolean")
