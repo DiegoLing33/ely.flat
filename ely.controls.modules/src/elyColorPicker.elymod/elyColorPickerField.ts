@@ -26,6 +26,7 @@ import elyInput from "@controls/action/elyInput";
 import elyField from "@controls/fields/elyField";
 import elyFieldOptions from "@controls/options/fields/elyFieldOptions";
 import elyColor from "@core/elyColor";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 
 /**
  * Поле выблора цвета
@@ -41,6 +42,7 @@ import elyColor from "@core/elyColor";
  *
  */
 // @autField("value", elyDesignableFieldState.GETSET, "string")
+@designable("value", elyDesignableFieldState.DENY)
 export default class elyColorPickerField extends elyField<elyColor> {
 
     /**
