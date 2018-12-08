@@ -116,6 +116,7 @@ export default class elyComboField extends elyField<elyComboFieldItemProtocol> {
 
         this.__lock(true);
         this.applyProtocolOptions(options);
+        this.tipsView.hidden(true);
         this.actionIconView.hidden(false);
     }
 

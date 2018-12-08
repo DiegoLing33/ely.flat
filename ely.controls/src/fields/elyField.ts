@@ -32,7 +32,7 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
  */
 @designable("editable", elyDesignableFieldState.GETSET, "boolean")
 @designable("placeholder", elyDesignableFieldState.SET, "string")
-@designable("hint", elyDesignableFieldState.SET, "string")
+@designable("hint", elyDesignableFieldState.GETSET, "string")
 @designable("value", elyDesignableFieldState.GETSET, "string")
 export default abstract class elyField<T> extends elyFieldProtocol<T> {
 
@@ -158,18 +158,23 @@ export default abstract class elyField<T> extends elyFieldProtocol<T> {
      * @param {String} hint - подсказка
      * @return {elyView}
      */
-    public hint(hint: string) {
+    public hint(hint?: string): elyField<T> | string {
         const selector = this.getDocument().querySelector(".ef-hint");
-        if (selector) {
-            selector.innerHTML = hint;
+        if (typeof hint === "string") {
+            if (selector) {
+                selector.innerHTML = hint;
+            } else {
+                this.fieldLineView.css({"margin-bottom": "15px"});
+                const hintView = document.createElement("div");
+                hintView.classList.add("ef-hint");
+                hintView.innerText = hint;
+                this.getDocument().appendChild(hintView);
+            }
+            return this;
         } else {
-            this.fieldLineView.css({"margin-bottom": "15px"});
-            const hintView = document.createElement("div");
-            hintView.classList.add("ef-hint");
-            hintView.innerText = hint;
-            this.getDocument().appendChild(hintView);
+            if (selector) return selector.innerHTML;
+            return "";
         }
-        return this;
     }
 
     /**

@@ -440,16 +440,23 @@ export default abstract class elyView extends elyObject {
      * @param {String} hint - подсказка
      * @return {elyView}
      */
-    public hint(hint: string) {
-        if (this.getDocument().querySelectorAll(".ef-hint").length > 0) {
-            this.getDocument().querySelector(".ef-hint")!.innerHTML = hint;
+    public hint(hint?: string): elyView | string {
+        const selector = this.getDocument().querySelector(".ef-hint");
+        if (typeof hint === "string") {
+            if (selector) {
+                selector.innerHTML = hint;
+            } else {
+                // this.fieldLineView.css({"margin-bottom": "15px"});
+                const hintView = document.createElement("div");
+                hintView.classList.add("ef-hint");
+                hintView.innerText = hint;
+                this.getDocument().appendChild(hintView);
+            }
+            return this;
         } else {
-            const hintView = document.createElement("div");
-            hintView.classList.add("ef-hint");
-            hintView.innerText = hint;
-            this.getDocument().appendChild(hintView);
+            if (selector) return selector.innerHTML;
+            return "";
         }
-        return this;
     }
 
     /**
