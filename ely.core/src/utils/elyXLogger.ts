@@ -221,6 +221,11 @@ export default class elyXLogger {
     public writeLogs: boolean = false;
 
     /**
+     * Чистый лог
+     */
+    public clear: boolean;
+
+    /**
      * Главный префикс
      */
     protected mainPrefix: string = "";
@@ -229,9 +234,10 @@ export default class elyXLogger {
      * Конструктор
      * @param props
      */
-    public constructor(props: { mainPrefix?: string, writeLogs?: boolean } = {}) {
+    public constructor(props: { mainPrefix?: string, writeLogs?: boolean, clear?: boolean } = {}) {
         this.mainPrefix = props.mainPrefix || "ely";
         this.writeLogs = props.writeLogs || false;
+        this.clear = props.clear || false;
     }
 
     /**
@@ -300,28 +306,32 @@ export default class elyXLogger {
         let _clearPrefix = "";
 
         for (let _prefix of prefixes) {
-            let _color = elyXLogger.styles.fgGreen;
+            let _color = this.clear ? "" : elyXLogger.styles.fgGreen;
             if (_prefix instanceof Array) {
                 _color = _prefix[0];
                 _prefix = _prefix[1];
             }
 
-            _prefixToDisplay += "[" + _color + _prefix + elyXLogger.styles.reset + "]";
+            _prefixToDisplay += "[" + (!this.clear ? _color : "") + _prefix +
+                (!this.clear ? elyXLogger.styles.reset : "") + "]";
             _clearPrefix += "[" + _prefix + "]";
         }
 
         const str = "[" + dateString + "]" + _clearPrefix + ": " + elyXLogger.__loggerFilter(message, true);
         const strToDisplay = "["
-            + elyXLogger.styles.fgGrey
+            + (!this.clear ? elyXLogger.styles.fgGrey : "")
             + dateString
-            + elyXLogger.styles.reset
+            + (!this.clear ? elyXLogger.styles.reset : "")
             + "]"
             + _prefixToDisplay
-            + elyXLogger.styles.reset
-            + ": " + elyXLogger.__loggerFilter(message) + elyXLogger.styles.reset;
+            + (!this.clear ? elyXLogger.styles.reset : "")
+            + ": " + elyXLogger.__loggerFilter(message) + (this.clear ? "" : elyXLogger.styles.reset);
 
         this._saveLogString(str);
-        console.log(strToDisplay);
+        if (this.clear)
+            console.log(elyXLogger.__loggerFilter(strToDisplay, true));
+        else
+            console.log(strToDisplay);
     }
 
     /**

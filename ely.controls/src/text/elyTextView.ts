@@ -141,16 +141,34 @@ export default class elyTextView extends elyControl {
         super(options);
         this.addClass("ef-text");
 
+        /**
+         * @protected
+         * @readonly
+         */
         this.textContentView = new elyControl({tag: "span", class: "content"});
+
+        /**
+         * @protected
+         * @readonly
+         */
         this.iconView        = new elyControl({tag: "span"});
 
         this.addSubView(this.iconView);
         this.addSubView(this.textContentView);
         this.iconView.hidden(true);
 
+        /**
+         * Свойство текста
+         * @readonly
+         * @type {elyObservableProperty}
+         */
         this.textProperty = new elyObservableProperty<string>("").change((value) =>
             this.textContentView.getDocument().innerHTML = elyTextView.filterString(value));
 
+        /**
+         * @protected
+         * @readonly
+         */
         this.textSizeProperty = new elyObservableProperty<elySize>().change((newValue, oldValue) => {
             if (oldValue && !oldValue.custom) this.removeClass(`ts-${oldValue.value}`);
             if (oldValue && oldValue.custom) this.css({"font-size": null});
@@ -161,11 +179,19 @@ export default class elyTextView extends elyControl {
             }
         });
 
+        /**
+         * @protected
+         */
         this.textWeightProperty = new elyObservableProperty<number>(elyWeight.default.value)
             .change(value => {
                 return this.css({"font-weight": value});
             });
 
+        /**
+         * Иконка
+         * @readonly
+         * @type {elyObservableProperty}
+         */
         this.iconNameProperty = new elyObservableProperty<string>("")
             .change((value) => {
                 if (value) {
@@ -194,6 +220,8 @@ export default class elyTextView extends elyControl {
 
     /**
      * Устанавливает выравнивание текста по середине
+     * @param {boolean} [bool] - значение
+     * @return {boolean|elyTextView}
      */
     public textCenter(bool?: boolean): boolean | elyTextView {
         if (bool === undefined) return this.getStyle().textAlign === "center";
@@ -213,6 +241,8 @@ export default class elyTextView extends elyControl {
 
     /**
      * Возвращает и устанавливает размер текста
+     * @param {elySize|string|number} [value]
+     * @return {elyTextView|elySize}
      */
     public textSize(value?: elySize | string | number): elySize | null | elyTextView {
         if (value !== undefined) {
@@ -228,11 +258,12 @@ export default class elyTextView extends elyControl {
 
     /**
      * Устанавливает толщину текста
-     * @param weight
+     * @param {elyWeight|number} weight
+     * @return {elyTextView|number}
      *
      * Используемые константы: {@link elyWeight}
      */
-    public textWeight(weight?: elyWeight | number): elyTextView {
+    public textWeight(weight?: elyWeight | number): elyTextView | number {
         if (weight) {
             // @ts-ignore
             weight = weight.toString();
@@ -242,7 +273,8 @@ export default class elyTextView extends elyControl {
 
     /**
      * Устанавливает или возвращает текст
-     * @param value
+     * @param {String} [value] - текст
+     * @return {String|elyTextView}
      */
     public text(value?: string): string | elyTextView | any {
         return elyObservableProperty.simplePropertyAccess(this, value, this.textProperty);
@@ -250,7 +282,8 @@ export default class elyTextView extends elyControl {
 
     /**
      * Название иконки
-     * @param value
+     * @param {String} [value] - имя иконки
+     * @return {string|elyTextView}
      */
     public iconName(value?: string): string | elyTextView {
         return elyObservableProperty.simplePropertyAccess(this, value, this.iconNameProperty);

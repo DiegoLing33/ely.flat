@@ -55,11 +55,14 @@ import elyModalView from "@controls/view/elyModalView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyScrollView from "@controls/view/elyScrollView";
 import elyView from "@core/controls/elyView";
+import elyWorkspaceView from "@core/controls/elyWorkspaceView";
 import elyColor from "@core/elyColor";
 import elyCookie from "@core/elyCookie";
 import elyMath from "@core/elyMath";
 import elyTime from "@core/elyTime";
 import elyUtils from "@core/elyUtils";
+import elyWSProjectLoader from "@core/elyWSProjectLoader";
+import elyXLogger from "@core/utils/elyXLogger";
 import elyGetRequest from "@core/web/request/elyGetRequest";
 import elyPostRequest from "@core/web/request/elyPostRequest";
 import elyURL from "@core/web/url/elyURL";
@@ -332,6 +335,16 @@ declare global {
         elyPostRequest: typeof elyPostRequest;
 
         /**
+         * Проект WS
+         */
+        elyWSProject: typeof elyWSProjectLoader;
+
+        /**
+         * Пространтсво WS
+         */
+        elyWorkspaceView: typeof elyWorkspaceView;
+
+        /**
          * Добавляет обработчик загрузки ely.flat
          * @param result
          */
@@ -566,6 +579,14 @@ window.elyGetRequest = elyGetRequest;
  * @alias elyPostRequest.constructor
  */
 window.elyPostRequest = elyPostRequest;
+/**
+ * @alias elyWSProjectLoader.constructor
+ */
+window.elyWSProject = elyWSProjectLoader;
+/**
+ * @alias elyWorkspaceView.constructor
+ */
+window.elyWorkspaceView = elyWorkspaceView;
 
 window.present = (viewController: elyViewController, completion?: () => void) => {
     elyScreenController.default.present(viewController, completion);
@@ -580,6 +601,7 @@ window.addController = (name: string, viewController: elyViewController, canOver
 };
 
 window.onload = () => {
+    elyXLogger.default.clear = true;
     elyFlatApplication.loadApplication(() => {
         //
     });

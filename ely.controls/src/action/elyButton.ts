@@ -74,8 +74,19 @@ export default class elyButton extends elyControl {
     constructor(options: elyButtonOptions = {}) {
         super({tag: "button", class: "btn", ...options});
 
+        /**
+         * Элемент отображения текста
+         * @type {elyTextView}
+         * @readonly
+         */
         this.textView = new elyTextView({tag: "span", text: options.text, iconName: options.iconName});
+        /**
+         * @protected
+         */
         this.buttonSizeProperty = new elyObservableProperty<elySize>(elySize.default);
+        /**
+         * @protected
+         */
         this.buttonStyleProperty = new elyObservableProperty<elyStyle>(elyStyle.default);
 
         this.buttonStyleProperty.change((newValue, oldValue) => {
@@ -108,7 +119,8 @@ export default class elyButton extends elyControl {
 
     /**
      * Устанавливает текст на кнопку
-     * @param text
+     * @param {String} text - текст кнопки
+     * @return {string|elyButton}
      */
     public text(text?: string): string | elyButton {
         if (text === undefined) return this.textView.text();
@@ -120,7 +132,8 @@ export default class elyButton extends elyControl {
      * Возвращает или устанавливает размер кнопки
      *
      * См {@link elySize}
-     * @param sizeName - {@link elySize}
+     * @param [sizeName] - {@link elySize}
+     * @return {elyButton|elySize}
      */
     public buttonSize(sizeName?: elySize | string): elySize | elyButton {
         if (typeof sizeName === "string") sizeName = elySize.byName(sizeName);
@@ -134,7 +147,7 @@ export default class elyButton extends elyControl {
 
     /**
      * Устанавливает стиль кнопки
-     * @param styleName - {@link elyStyle}
+     * @param {elyStyle|string} styleName - {@link elyStyle}
      */
     public buttonStyle(styleName: elyStyle | string): elyButton;
 
@@ -142,7 +155,8 @@ export default class elyButton extends elyControl {
      * Возвращает или устанавливает стиль кнопки
      *
      * См {@link elyStyle}
-     * @param styleName
+     * @param {string|elyStyle} [styleName] - стиль
+     * @returns {elyStyle|elyButton|null}
      */
     public buttonStyle(styleName?: string | elyStyle): elyStyle | elyButton {
         if (typeof styleName === "string") styleName = elyStyle.byName(styleName);
@@ -153,7 +167,7 @@ export default class elyButton extends elyControl {
      * Устанавливает слушатель нажатия или нажимает на кнопку
      *
      * @param {Function} [callback = null]
-     * @return {elyButton}
+     * @returns {elyButton}
      */
     public click(callback?: () => void): elyButton {
         if (callback === undefined) {
@@ -166,6 +180,7 @@ export default class elyButton extends elyControl {
 
     /**
      * Увеличивает размер кнопки до всего блока
+     * @returns {elyButton}
      */
     public fill(): elyButton {
         this.buttonSize(elySize.fill);
