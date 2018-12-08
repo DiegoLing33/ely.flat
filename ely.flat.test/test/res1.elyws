@@ -1,77 +1,10 @@
 {
   "views": {
     "workspace": {
-      "item": "elyWorkspaceView"
-    },
-    "elyStaticGridView-view-15": {
-      "item": "elyStaticGridView",
-      "flexMapValues": [
-        "10%",
-        "80%",
-        "10%"
-      ],
-      "colsCount": 3,
-      "rowsCount": 3
-    },
-    "elyTextView-view-18": {
-      "item": "elyTextView",
+      "item": "elyControl",
       "opacity": 1,
       "hidden": false,
-      "actionString": "",
-      "iconName": "",
-      "textWeight": "100",
-      "textSize": "large",
-      "textCenter": true,
-      "text": "My app"
-    },
-    "elyStaticGridView-view-23": {
-      "item": "elyStaticGridView",
-      "flexMapValues": [
-        "70%",
-        "30%"
-      ],
-      "colsCount": "2",
-      "rowsCount": "2"
-    },
-    "elyPanelView-view-28": {
-      "item": "elyPanelView",
-      "opacity": 1,
-      "hidden": false,
-      "actionString": "",
-      "panelStyle": "default",
-      "title": "Главная страница"
-    },
-    "elyPanelView-view-31": {
-      "item": "elyPanelView",
-      "opacity": 1,
-      "hidden": false,
-      "actionString": "",
-      "panelStyle": "default",
-      "title": "Меню"
-    },
-    "elyStaticGridView-view-37": {
-      "item": "elyStaticGridView",
-      "flexMapValues": [],
-      "colsCount": 1,
-      "rowsCount": 3
-    },
-    "elyButton-view-40": {
-      "item": "elyButton",
-      "opacity": 1,
-      "hidden": false,
-      "actionString": "",
-      "buttonStyle": "primary",
-      "buttonSize": "fill",
-      "text": "Home"
-    },
-    "elyButton-view-43": {
-      "item": "elyButton",
-      "opacity": 1,
-      "hidden": false,
-      "actionString": "",
-      "buttonStyle": "primary",
-      "buttonSize": "fill",
-      "text": "Profile"
+      "actionString": ""
     },
     "elyTextView-view-46": {
       "item": "elyTextView",
@@ -83,70 +16,178 @@
       "textCenter": true,
       "text": "Добро пожаловать на наш портал!"
     },
-    "elyTextView-view-52": {
+    "logoTextView": {
       "item": "elyTextView",
-      "opacity": 0.25,
+      "opacity": 1,
       "hidden": false,
       "actionString": "",
       "iconName": "",
       "textWeight": "100",
-      "textSize": "small",
+      "textSize": "extraLarge",
       "textCenter": true,
-      "text": "Powered by Diego Ling &copy; 2018\n{nl}with ely *{* Workshop *}*"
+      "text": "ely *{* Home *}*"
+    },
+    "elyStaticGridView-view-31": {
+      "item": "elyStaticGridView",
+      "flexMapValues": [],
+      "colsCount": 3,
+      "rowsCount": 3
+    },
+    "elyTextView-view-34": {
+      "item": "elyTextView",
+      "opacity": 1,
+      "hidden": false,
+      "actionString": "",
+      "iconName": "",
+      "textWeight": "100",
+      "textSize": "large",
+      "textCenter": false,
+      "text": "Цвета секций"
+    },
+    "elyPanelView-view-37": {
+      "item": "elyPanelView",
+      "opacity": 1,
+      "hidden": false,
+      "actionString": "",
+      "panelStyle": "default",
+      "title": "Столечница"
+    },
+    "elyStaticGridView-view-46": {
+      "item": "elyStaticGridView",
+      "flexMapValues": [],
+      "colsCount": 1,
+      "rowsCount": 2
+    },
+    "elySwitchField-view-49": {
+      "item": "elySwitchField",
+      "value": true,
+      "editable": true,
+      "title": "Состояние linestrip"
+    },
+    "wrapperView": {
+      "item": "elyStaticGridView",
+      "flexMapValues": [
+        "20%",
+        "40%",
+        "20%"
+      ],
+      "colsCount": 3,
+      "rowsCount": 3
     }
   },
   "meta": {
-    "elyStaticGridView-view-15": {},
-    "elyTextView-view-18": {},
-    "elyStaticGridView-view-23": {},
-    "elyPanelView-view-28": {},
-    "elyPanelView-view-31": {},
-    "elyStaticGridView-view-37": {},
-    "elyButton-view-40": {},
-    "elyButton-view-43": {},
+    "workspace": {},
     "elyTextView-view-46": {},
-    "elyTextView-view-52": {}
+    "logoTextView": {},
+    "elyStaticGridView-view-31": {},
+    "elyTextView-view-34": {},
+    "elyPanelView-view-37": {},
+    "elyStaticGridView-view-46": {},
+    "elySwitchField-view-49": {},
+    "wrapperView": {}
   },
   "svs": {
     "workspace": {
-      "content": "elyStaticGridView-view-15"
+      "content": "wrapperView"
     },
-    "elyStaticGridView-view-15": {
-      "contentView0": null,
-      "contentView1": "elyTextView-view-18",
+    "elyTextView-view-46": {},
+    "logoTextView": {},
+    "elyStaticGridView-view-31": {
+      "contentView0": "elyPanelView-view-37",
+      "contentView1": null,
       "contentView2": null,
       "contentView3": null,
-      "contentView4": "elyStaticGridView-view-23",
+      "contentView4": null,
       "contentView5": null,
       "contentView6": null,
       "contentView7": null,
       "contentView8": null
     },
-    "elyTextView-view-18": {},
+    "elyTextView-view-34": {},
+    "elyPanelView-view-37": {
+      "descriptionView": null,
+      "contentView": "elyStaticGridView-view-46"
+    },
+    "elyStaticGridView-view-46": {
+      "contentView0": "elySwitchField-view-49",
+      "contentView1": null
+    },
+    "elySwitchField-view-49": {},
+    "elyStaticGridView-view-15": {
+      "contentView0": null,
+      "contentView1": null,
+      "contentView2": null,
+      "contentView3": null,
+      "contentView4": null,
+      "contentView5": null,
+      "contentView6": null,
+      "contentView7": null,
+      "contentView8": null
+    },
     "elyStaticGridView-view-23": {
-      "contentView0": "elyPanelView-view-28",
-      "contentView1": "elyPanelView-view-31",
-      "contentView2": "elyTextView-view-52",
+      "contentView0": null,
+      "contentView1": null,
+      "contentView2": null,
       "contentView3": null
     },
+    "elyStaticGridView-view-37": {
+      "contentView0": null,
+      "contentView1": null,
+      "contentView2": null
+    },
+    "elyTextView-view-52": {},
+    "contentPanel": {
+      "descriptionView": null,
+      "contentView": null
+    },
+    "menuPanel": {
+      "descriptionView": null,
+      "contentView": null
+    },
+    "homeButton": {},
+    "profileButton": {},
+    "elyTextView-view-18": {},
+    "elyPanelView-view-31": {
+      "descriptionView": null,
+      "contentView": null
+    },
+    "elyButton-view-40": {},
+    "elyButton-view-43": {},
     "elyPanelView-view-28": {
       "descriptionView": null,
       "contentView": "elyTextView-view-46"
     },
-    "elyPanelView-view-31": {
-      "descriptionView": null,
-      "contentView": "elyStaticGridView-view-37"
+    "elyStaticGridView-view-11": {
+      "contentView0": null,
+      "contentView1": null,
+      "contentView2": null,
+      "contentView3": null,
+      "contentView4": null,
+      "contentView5": null,
+      "contentView6": null,
+      "contentView7": null,
+      "contentView8": null
     },
+    "elyTextView-view-13": {},
     "elyButton-view-34": {},
-    "elyStaticGridView-view-37": {
-      "contentView0": "elyButton-view-40",
-      "contentView1": "elyButton-view-43",
-      "contentView2": null
-    },
-    "elyButton-view-40": {},
-    "elyButton-view-43": {},
-    "elyTextView-view-46": {},
     "elyTextView-view-49": {},
-    "elyTextView-view-52": {}
+    "elyTextView-view-29": {},
+    "wrapperView": {
+      "contentView0": null,
+      "contentView1": "logoTextView",
+      "contentView2": null,
+      "contentView3": "elyTextView-view-34",
+      "contentView4": "elyStaticGridView-view-31",
+      "contentView5": null,
+      "contentView6": null,
+      "contentView7": null,
+      "contentView8": null
+    },
+    "elyTextView-view-24": {},
+    "elyPanelView-view-27": {
+      "descriptionView": null,
+      "contentView": null
+    },
+    "elyColorPickerField-view-40": {}
   }
 }
