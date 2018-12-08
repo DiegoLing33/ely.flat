@@ -195,9 +195,12 @@ function commandCreateProject(): void {
         name: "title",
     }], (err: any, result: any) => {
         const name = result.name;
-        commandCreateProjectStepByStep(name, () => {
-            logger.log("Проект успешно создан!");
-            menuBack();
+
+        buildPaths(false, () => {
+            commandCreateProjectStepByStep(name, () => {
+                logger.log("Проект успешно создан!");
+                menuBack();
+            });
         });
     });
 }
@@ -209,14 +212,16 @@ function commandRebuildProject(): void {
     prompt.get([{name: "name", description: "Системное имя проекта"}], (err: any, result: any) => {
         const name = result.name;
         logger.log("Перестроение проекта...");
-        commandCreateProjectStepByStep(name, () => {
-            logger.log("Проект успешно перестроен!");
-            menuBack();
-        }, [6]);
+        buildPaths(false, () => {
+            commandCreateProjectStepByStep(name, () => {
+                logger.log("Проект успешно перестроен!");
+                menuBack();
+            }, [6]);
+        });
     });
 }
 
-function buildPaths(cb?: () => void) {
+function buildPaths(back: boolean = true, cb?: () => void) {
     logger.log("Перестроение...");
     child_process.exec("tsc", () => {
         logger.log("Изменение путей в dist файле...");
@@ -267,7 +272,10 @@ function buildPaths(cb?: () => void) {
                 });
                 fs.writeFileSync("dist/ely.flat.application/ely.flat.application.js", outFile);*/
                 logger.log("Фреймворк ely.flat application успешно построен!");
-                menuBack();
+                if (back) menuBack();
+                else {
+                    if (cb) cb();
+                }
             });
         });
     });

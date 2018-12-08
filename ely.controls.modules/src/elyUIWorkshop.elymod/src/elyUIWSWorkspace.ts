@@ -18,25 +18,20 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
+import elyWorkspaceView from "@core/controls/elyWorkspaceView";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elyWSPlaceholderView from "@devMods/elyUIWorkshop.elymod/views/elyWSPlaceholderView";
 
 /**
  * Рабочая область
  */
-export default class elyUIWSWorkspace extends elyView {
+export default class elyUIWSWorkspace extends elyWorkspaceView {
 
     /**
      * Главная рабочая область
      */
     public static main: elyUIWSWorkspace = new elyUIWSWorkspace();
-
-    /**
-     * Контент
-     */
-    public content: elyView;
 
     public canUpdate: boolean = true;
 
@@ -45,7 +40,6 @@ export default class elyUIWSWorkspace extends elyView {
      */
     public constructor() {
         super();
-        this.content = new elyControl();
         this.getDocument().append(this.content.getDocument());
         elyWSRegex.main.regView(this, "workspace");
         elyWSRegex.main.dependencies.workspace = {content: null};

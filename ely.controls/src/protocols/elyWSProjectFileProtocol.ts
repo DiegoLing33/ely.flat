@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,41 +15,32 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyWSProject.ts                                                      +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyWSProjectFileProtocol.ts                                          +
+ + Файл изменен: 08.12.2018 03:10:04                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
+import elyViewEntityProtocol from "@controls/protocols/elyViewEntityProtocol";
 
 /**
- * Проект ely workshop
+ * Протокол файла elyWS
  */
-export default class elyWSProject extends elyObservable {
-
-    /**
-     * Текущий проект
-     */
-    public static current: elyWSProject | null = new elyWSProject({name: "MyFirstProject"});
+export default interface elyWSProjectFileProtocol {
 
     /**
      * Имя проекта
      */
-    public readonly name: string;
+    projectName: string;
 
     /**
-     * Данные проекта
+     * Элементы отображения
      */
-    public data: any;
+    views: { [name: string]: elyViewEntityProtocol };
 
     /**
-     * Конструктор
-     * @param props
+     * Соединения
      */
-    public constructor(props: { name: string, data?: any }) {
-        super();
-        this.name = name;
-        this.data = props.data || {};
-
-        this.notificate("loaded");
-    }
+    svs: {[name: string]: {[connected: string]: string}};
 }

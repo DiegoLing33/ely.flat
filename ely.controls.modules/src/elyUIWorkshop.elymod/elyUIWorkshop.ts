@@ -94,7 +94,6 @@ export default class elyUIWorkshop {
         if (elyUIWorkshop.view) return;
 
         const workshopRow = new elyGridRowView();
-        const workshopProps = new elyGridView({margin: {top: 0, bottom: 10, left: 0, right: 0}});
 
         elyFlatApplicationPreloader.default.messageView.text("Загрузка данных...");
         elyFlatApplicationPreloader.default.hidden(false);
@@ -116,7 +115,6 @@ export default class elyUIWorkshop {
             elyUIWorkshopElementsPanel.main.update();
         });
 
-        // elyWSViewPropsPanel.main.applySettingsPanel("workspace");
         elyUIWorkshop.view = workshopRow;
 
         //
