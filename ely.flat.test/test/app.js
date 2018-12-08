@@ -13,14 +13,20 @@ class IndexViewController extends elySimplePageViewController {
     viewDidLoad() {
         super.viewDidLoad();
 
-        this.title("ely.flat *{* Application *}*");
+        /*this.title("ely.flat *{* Application *}*");
         this.description("Приложение разработано на основе ely.flat framework");
 
         let cp = new elyColorPickerField({editable: true, value: new elyColor({hex: "00ff00"})});
         cp.valueProperty.change(value => {
            console.log(value);
         });
-        this.view.add(cp);
+        this.view.add(cp);*/
+        elyWSProject.loadUrl("res1.elyws", project => {
+            this.view.add(project.getWorkspace());
+            project.getViewByName("elyButton-view-40").click(()=>{
+               new elyNotificationView({title: "lol"}).present();
+            });
+        });
     }
 }
 

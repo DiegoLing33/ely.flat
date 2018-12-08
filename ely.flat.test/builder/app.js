@@ -55,7 +55,7 @@ class IndexViewController extends elySimplePageViewController {
         uploadPanelGrid.add(file);
 
         grid.add(
-            new elyView().addSubView("*Создайте*{nl}новый проект,".textView({
+            new elyControl().addSubView("*Создайте*{nl}новый проект,".textView({
                 textSize: elySize.large,
                 textWeight: elyWeight.thin
             }))
@@ -63,14 +63,14 @@ class IndexViewController extends elySimplePageViewController {
                     " Вам не стоит задумываться о дизайне внешнего вида - сосредоточьтесь на результате.{nl}" +
                     "Встроенный фреймворк *application* после разработки макета позволит также быстро наполнить Ваше приложение функицоналом - " +
                     "ведь всё уже почти реализовано...").textView({opacity: 0.8})), panel);
-        grid.add(elyView.line(), elyView.empty(), elyView.line());
-        grid.add(elyView.empty(), "или просто".textView({
+        grid.add(elyControl.line(), elyControl.empty(), elyControl.line());
+        grid.add(elyControl.empty(), "или просто".textView({
             textSize: elySize.middle,
             textWeight: elyWeight.thin,
             textCenter: true,
             opacity: 0.8
-        }), elyView.empty());
-        grid.add(elyView.line(), elyView.empty(), elyView.line());
+        }), elyControl.empty());
+        grid.add(elyControl.line(), elyControl.empty(), elyControl.line());
         grid.add("...*продолжите*{nl}уже созданный.".textView({
             textSize: elySize.large,
             textWeight: elyWeight.thin
