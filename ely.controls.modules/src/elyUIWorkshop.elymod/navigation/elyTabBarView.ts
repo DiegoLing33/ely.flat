@@ -30,6 +30,7 @@ import elyObservableDictionary from "@core/observable/properties/elyObservableDi
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyStyle from "@enums/elyStyle";
 import elyTabBarOptions from "@options/navigation/elyTabBarOptions";
+import elyScrollView from "@controls/view/elyScrollView";
 
 /**
  * Элемент таб бара
@@ -65,6 +66,11 @@ export default class elyTabBarView extends elyRebuildableViewProtocol {
     protected readonly contentView: elyPanelView;
 
     /**
+     * Скролл
+     */
+    protected readonly scrollView: elyScrollView;
+
+    /**
      * Свойство: значение текущей вкладки
      * @ignore
      */
@@ -81,6 +87,15 @@ export default class elyTabBarView extends elyRebuildableViewProtocol {
         this.contentView = new elyPanelView({hidden: true});
         this.tabsProperty.change(() => this.rebuild());
 
+        this.scrollView = new elyScrollView({scrollVertical: true, scrollHorizontal: false});
+        this.scrollView.resize(view => {
+            view.height((window.innerHeight - this.getRect().top - 25) + "px");
+        });
+        this.contentView.resize(view => {
+            view.getStyle().height = (window.innerHeight - this.getRect().top) + "px";
+        });
+        this.contentView.contentView.addSubView(this.scrollView);
+
         this.tabBarStyleProperty = new elyObservableProperty<elyStyle>(elyStyle.default);
         this.tabBarStyleProperty.change((newValue, oldValue) => {
             if (oldValue) this.removeClass(`bg-${oldValue.value}`);
@@ -88,7 +103,7 @@ export default class elyTabBarView extends elyRebuildableViewProtocol {
         });
 
         this.tabBarCurrentTabNameProperty = new elyObservableProperty<string>("");
-        this.tabBarCurrentTabNameProperty.change((value, old) => {
+        this.tabBarCurrentTabNameProperty.change((value) => {
             this.contentView.hidden(true);
             this.tabsProperty.forEach((key, tab) => {
                 tab.selected = key === value;
@@ -97,8 +112,8 @@ export default class elyTabBarView extends elyRebuildableViewProtocol {
                     this.contentView.titleView.iconName(tab.iconName);
                     this.contentView.hidden(false);
                     if (tab.content) {
-                        this.contentView.contentView.removeViewContent();
-                        this.contentView.contentView.addSubView(tab.content);
+                        this.scrollView.removeViewContent();
+                        this.scrollView.addSubView(tab.content);
                     }
                 }
             });
@@ -182,7 +197,6 @@ export default class elyTabBarView extends elyRebuildableViewProtocol {
         });
         this.contentView.getStyle().top = this.getRect().top + "px";
         this.contentView.getStyle().right = this.width() + "px";
-        this.contentView.getStyle().height = (window.innerHeight - this.getRect().top) + "px";
         this.contentView.panelStyle(this.tabBarStyle());
         return this;
     }

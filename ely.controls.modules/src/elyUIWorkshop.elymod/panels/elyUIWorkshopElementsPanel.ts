@@ -24,7 +24,6 @@ import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyTextView from "@controls/text/elyTextView";
 import elyPanelView from "@controls/view/elyPanelView";
-import elyScrollView from "@controls/view/elyScrollView";
 import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elySize from "@enums/elySize";
@@ -42,21 +41,10 @@ export default class elyUIWorkshopElementsPanel extends elyPanelView {
      */
     public readonly gridView = new elyGridView({flex: [[15, 70, 15]]});
 
-    /**
-     * Прокрутка
-     */
-    public readonly scrollView: elyScrollView;
-
     protected constructor() {
         super({title: "Обзор"});
-        this.scrollView = new elyScrollView({
-            scrollHorizontal: false,
-            scrollSnapCenter: true,
-            scrollVertical: true,
-        }).height("100%") as elyScrollView;
-        this.contentView.addSubView(this.scrollView);
 
-        this.scrollView.addSubView(this.gridView);
+        this.contentView.addSubView(this.gridView);
         elyStylesheet.global.addClass("builderRowItem", {
             cursor: "pointer",
             opacity: "0.6",

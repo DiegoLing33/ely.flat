@@ -145,6 +145,7 @@ export default class elyWSProjectLoader {
         const logger = new elyXLogger({mainPrefix: "ws", clear: true});
         if (elyWSProjectLoader.DEBUG) logger.log("Компиляция проекта...");
         for (const name in this.__source.views) {
+            if(name === "workspace") this.__source.views[name].item = "elyWorkspaceView";
             if (!this.__source.views.hasOwnProperty(name)) continue;
             if (elyWSProjectLoader.DEBUG) logger.log(`Элемент: [${name} -> ${this.__source.views[name].item}]`);
             const view = elyControl.fromObject(this.__source.views[name]);

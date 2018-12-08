@@ -25,6 +25,7 @@ import elyObservable from "@core/observable/elyObservable";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
 import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
 import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
+import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
 
 /**
  * Обработчик регистрации элемента
@@ -67,6 +68,34 @@ export default class elyWSRegex extends elyObservable {
      */
     public constructor() {
         super();
+    }
+
+    public rename(oldName: string, newName: string): boolean | string {
+        if (this.views.contains(newName)) return "Имя элемента должно быть уникально!";
+        if (!this.views.contains(oldName)) return "Элемент не найден!";
+        this.views.item(oldName)!.attribute(elyWSUtils.WS_NAME_ATTRIBUTE, newName);
+        if (elyUIWSMeta.metas.hasOwnProperty(oldName)) {
+            elyUIWSMeta.metas[newName] = elyUIWSMeta.metas[oldName];
+            delete elyUIWSMeta.metas[oldName];
+        }
+        this.views.add(newName, this.views.item(oldName)!);
+        this.views.remove(oldName);
+
+        if (this.dependencies.hasOwnProperty(oldName)) {
+            this.dependencies[newName] = {...this.dependencies[oldName]};
+            delete this.dependencies[oldName];
+        }
+        for (const root in this.dependencies) {
+            if (!this.dependencies.hasOwnProperty(root) && this.dependencies[root] !== null) continue;
+            for (const af in this.dependencies[root]) {
+                if (!this.dependencies[root].hasOwnProperty(af)) continue;
+                if (this.dependencies[root][af] === oldName) {
+                    this.dependencies[root][af] = newName;
+                    return true;
+                }
+            }
+        }
+        return true;
     }
 
     /**

@@ -26,6 +26,7 @@ import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyTextField from "@controls/fields/elyTextField";
 import elyGridRowView from "@controls/flex/elyGridRowView";
 import elyGridView from "@controls/flex/elyGridView";
+import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyTextView from "@controls/text/elyTextView";
 import elyModalView from "@controls/view/elyModalView";
 import elyPanelView from "@controls/view/elyPanelView";
@@ -34,10 +35,12 @@ import {elyDesignableAutoFieldItem, elyDesignableCore, elyDesignableFieldState} 
 import elyUtils from "@core/elyUtils";
 import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
 import elyWSRus from "@devMods/elyUIWorkshop.elymod/lang/elyWSRus";
+import elyUIWorkshopElementsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyUIWorkshopElementsPanel";
 import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
+import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace";
 
 /**
  * Панеь настройки элемента
@@ -59,6 +62,7 @@ export default class elyWSViewPropsPanel extends elyPanelView {
     public constructor() {
         super({title: "Элемент", hidden: true});
         this.gridView = new elyGridView({margin: {bottom: 10}});
+
         this.contentView.addSubView(this.gridView);
 
         this.descriptionView.addSubView(new elyButton({text: "Код"}).fill().click(() => {
@@ -88,9 +92,26 @@ export default class elyWSViewPropsPanel extends elyPanelView {
         this.hidden(false);
         this.gridView.removeViewContent();
 
+        const ed = elyTextView.editable(name.textView());
+        ed.textViewEditableShouldSaveValue((value, result) => {
+            if (ed.value() === "workspace") {
+                new elyNotificationView({message: "Нельзя переименовать рабочую область!"}).present();
+                result(false);
+            } else {
+                const res = elyWSRegex.main.rename(ed.value(), value);
+                if (typeof res === "string") new elyNotificationView({message: res, title: "Ошибка!"}).present();
+                const bool = typeof res === "boolean" && res === true;
+                if (bool) {
+                    elyUIWorkshopElementsPanel.main.update();
+                    elyUIWSWorkspace.main.update();
+                }
+                result(bool);
+            }
+        });
+
         const v = new elyControl();
         v.addSubView("Элемент".textView().textSize(elySize.small).opacity(0.7));
-        v.addSubView(name.textView());
+        v.addSubView(ed);
         this.gridView.add(v);
 
         const data = elyUIWSMeta.metas[name].autoData;
