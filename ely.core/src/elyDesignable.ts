@@ -20,6 +20,7 @@
 
 import elyView from "@core/controls/elyView";
 import elyUtils from "@core/elyUtils";
+import elyControl from "@controls/action/elyControl";
 
 export const elyDesignableAutoFieldsData: { [className: string]: elyDesignableAutoFields } = {};
 
@@ -84,6 +85,14 @@ export class elyDesignableCore {
                         }
                     }
                 }
+                if (field.state === elyDesignableFieldState.VIEW) {
+                    const afv = (view as any)[field.name] as elyControl;
+                    if (afv && afv instanceof elyControl) {
+                        obj[field.name] = [];
+                        for (const o of afv.getSubViews())
+                            obj[field.name].push(elyDesignableCore.freeze(o));
+                    }
+                }
             }
         }
         return obj;
@@ -115,7 +124,7 @@ export function designable(name: string, state: elyDesignableFieldState, type = 
             name,
             state,
             type,
-            values
+            values,
         } as elyDesignableAutoFieldItem;
     };
 }

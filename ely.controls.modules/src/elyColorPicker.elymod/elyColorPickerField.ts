@@ -41,8 +41,8 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
  *
  *
  */
-// @autField("value", elyDesignableFieldState.GETSET, "string")
 @designable("value", elyDesignableFieldState.DENY)
+@designable("placeholder", elyDesignableFieldState.DENY)
 export default class elyColorPickerField extends elyField<elyColor> {
 
     /**
@@ -66,6 +66,7 @@ export default class elyColorPickerField extends elyField<elyColor> {
         super({}, new elyInput({...{class: "ef-input", tag: "input"}}));
 
         this.colorThumbnail = new elyControl();
+        // this.colorThumbnail.addClass("bg-primary");
         this.colorView = new elyControl({class: "ef-color-pict"});
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());

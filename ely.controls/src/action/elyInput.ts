@@ -33,11 +33,11 @@ export default class elyInput extends elyFieldProtocol<string> {
      * Конструктор
      * @param options
      */
-    public constructor(options: elyFieldOptions<string> & {type?: elyFieldType | string} = {}) {
+    public constructor(options: elyFieldOptions<string> & {type?: elyFieldType | string, noObservers?: boolean} = {}) {
         super({tag: options.tag || "input", class: "ef-input", ...options});
-        this.valueProperty.addChangeObserver((oldValue, newValue) => this.getDocument().value = newValue);
+        this.valueProperty.change((newValue) => this.getDocument().value = newValue);
         this.getDocument().onchange = () => this.value(this.getDocument().value);
-        this.editableProperty.addChangeObserver((oldValue, newValue) => this.getDocument().disabled = !newValue);
+        this.editableProperty.change((newValue) => this.getDocument().disabled = !newValue);
         if (options.type) this.attribute("type", options.type.toString());
         this.applyProtocolOptions(options);
         this.getDocument().oninput = () => this.notificate("input", [this.getDocument().value]);

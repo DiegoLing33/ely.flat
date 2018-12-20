@@ -55,6 +55,8 @@ interface elyStaticGridViewLocation {
  *
  * Обсерверы:
  * - col (colView, location, view)
+ * @class elyStaticGridView
+ * @augments elyRebuildableViewProtocol
  */
 @designable("rowsCount", elyDesignableFieldState.GETSET, "number")
 @designable("colsCount", elyDesignableFieldState.GETSET, "number")

@@ -483,8 +483,9 @@ export default abstract class elyView extends elyObject {
      * Удаляет элемент
      */
     public removeFromSuperview(): elyView {
-        if (this.getDocument().parentNode !== null)
+        if (this.getDocument().parentNode !== null) {
             this.getDocument().parentNode!.removeChild(this.getDocument());
+        }
         return this;
     }
 

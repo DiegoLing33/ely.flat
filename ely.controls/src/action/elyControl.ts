@@ -20,7 +20,7 @@
 
 import elyViewEntityProtocol from "@controls/protocols/elyViewEntityProtocol";
 import elyView from "@core/controls/elyView";
-import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import {designable, elyDesignableAutoFieldsData, elyDesignableFieldState} from "@core/elyDesignable";
 import elyUtils from "@core/elyUtils";
 import elyControlOptions from "@options/elyControlOptions";
 
@@ -52,9 +52,20 @@ export default class elyControl extends elyView {
         if (obj.line) return elyControl.line();
         const item = obj.item;
         if (item && window.hasOwnProperty(item)) {
-            const inst = new (window as any)[item](elyUtils.filter(obj, (k) => {
+            const opts = elyUtils.filter(obj, (k) => {
                 return ["item"].indexOf(k) === -1;
-            }));
+            });
+            const inst = new (window as any)[item](opts);
+            for (const afvName in elyDesignableAutoFieldsData[item].fields) {
+                if (!elyDesignableAutoFieldsData[item].fields.hasOwnProperty(afvName)) continue;
+                if (elyDesignableAutoFieldsData[item].fields[afvName].state === elyDesignableFieldState.VIEW
+                    && opts.hasOwnProperty(afvName)) {
+                    for (const afvv of opts[afvName]) {
+                        (inst[afvName] as elyControl).addSubView(elyControl.fromObject(afvv));
+                    }
+                }
+
+            }
             if (inst instanceof elyView || typeof inst.getView === "function")
                 return inst;
         }
@@ -158,4 +169,10 @@ export default class elyControl extends elyView {
         this.__view.innerHTML = "";
         return this;
     }
+
+    public removeViewContent(): elyView {
+        this.__subviews.splice(0, this.__subviews.length);
+        return super.removeViewContent();
+    }
+
 }

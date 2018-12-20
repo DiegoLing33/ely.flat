@@ -41,6 +41,33 @@ export default class elyObservable {
     }
 
     /**
+     * Удаляет обработчик
+     * @param event
+     * @param observer
+     */
+    public removeObserver(event: string, observer: any): elyObservable {
+        if (this.observers.hasOwnProperty(event)) {
+            this.observers[event].splice(this.observers[event].indexOf(observer), 1);
+        }
+        return this;
+    }
+
+    /**
+     * Удаляет все обработчики события или событий
+     * @param {String} [event] - Событие
+     */
+    public removeAllObservers(event?: string): elyObservable {
+        if (event !== undefined) {
+            if (this.observers.hasOwnProperty(event)) {
+                this.observers[event] = [];
+            }
+        } else {
+            this.observers = {};
+        }
+        return this;
+    }
+
+    /**
      * Сообщает о событие всех наблюдателей
      * @param {String} event
      * @param {*} args
