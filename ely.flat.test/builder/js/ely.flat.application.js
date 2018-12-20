@@ -1025,8 +1025,9 @@ var ely = (function () {
 	     * Удаляет элемент
 	     */
 	    removeFromSuperview() {
-	        if (this.getDocument().parentNode !== null)
+	        if (this.getDocument().parentNode !== null) {
 	            this.getDocument().parentNode.removeChild(this.getDocument());
+	        }
 	        return this;
 	    }
 	    /**
@@ -1068,6 +1069,7 @@ var ely = (function () {
 	 + Файл создан: 23.11.2018 23:03:37                                           +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	Object.defineProperty(exports, "__esModule", { value: true });
+
 
 	exports.elyDesignableAutoFieldsData = {};
 	/**
@@ -1113,6 +1115,14 @@ var ely = (function () {
 	                        }
 	                    }
 	                }
+	                if (field.state === elyDesignableFieldState.VIEW) {
+	                    const afv = view[field.name];
+	                    if (afv && afv instanceof elyControl_2.default) {
+	                        obj[field.name] = [];
+	                        for (const o of afv.getSubViews())
+	                            obj[field.name].push(elyDesignableCore.freeze(o));
+	                    }
+	                }
 	            }
 	        }
 	        return obj;
@@ -1141,7 +1151,7 @@ var ely = (function () {
 	            name,
 	            state,
 	            type,
-	            values
+	            values,
 	        };
 	    };
 	}
@@ -1210,9 +1220,20 @@ var ely = (function () {
 	            return elyControl_1.line();
 	        const item = obj.item;
 	        if (item && window.hasOwnProperty(item)) {
-	            const inst = new window[item](elyUtils_1.default.filter(obj, (k) => {
+	            const opts = elyUtils_1.default.filter(obj, (k) => {
 	                return ["item"].indexOf(k) === -1;
-	            }));
+	            });
+	            const inst = new window[item](opts);
+	            for (const afvName in elyDesignable.elyDesignableAutoFieldsData[item].fields) {
+	                if (!elyDesignable.elyDesignableAutoFieldsData[item].fields.hasOwnProperty(afvName))
+	                    continue;
+	                if (elyDesignable.elyDesignableAutoFieldsData[item].fields[afvName].state === elyDesignable.elyDesignableFieldState.VIEW
+	                    && opts.hasOwnProperty(afvName)) {
+	                    for (const afvv of opts[afvName]) {
+	                        inst[afvName].addSubView(elyControl_1.fromObject(afvv));
+	                    }
+	                }
+	            }
 	            if (inst instanceof elyView_1.default || typeof inst.getView === "function")
 	                return inst;
 	        }
@@ -1296,6 +1317,10 @@ var ely = (function () {
 	        this.__subviews.splice(0, this.__subviews.length);
 	        this.__view.innerHTML = "";
 	        return this;
+	    }
+	    removeViewContent() {
+	        this.__subviews.splice(0, this.__subviews.length);
+	        return super.removeViewContent();
 	    }
 	};
 	/**
@@ -1450,7 +1475,7 @@ var ely = (function () {
 	     */
 	    applyProtocolOptions(options = {}) {
 	        if (options.value)
-	            this.value(options.value);
+	            this.value(options.value || this.defaultValue());
 	        if (options.placeholder)
 	            this.placeholder(options.placeholder);
 	        if (options.editable)
@@ -7344,6 +7369,8 @@ var ely = (function () {
 	 *
 	 * Обсерверы:
 	 * - col (colView, location, view)
+	 * @class elyStaticGridView
+	 * @augments elyRebuildableViewProtocol
 	 */
 	let elyStaticGridView = elyStaticGridView_1 = class elyStaticGridView extends elyRebuildableViewProtocol_1.default {
 	    /**
@@ -8318,7 +8345,14 @@ var ely = (function () {
 	 + Файл изменен: 08.12.2018 03:43:04                                          +
 	 +                                                                            +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	var __decorate = (commonjsGlobal && commonjsGlobal.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
 	Object.defineProperty(exports, "__esModule", { value: true });
+
 
 
 	/**
@@ -8326,7 +8360,7 @@ var ely = (function () {
 	 * @class elyWorkspaceView
 	 * @augments elyView
 	 */
-	class elyWorkspaceView extends elyView_1.default {
+	let elyWorkspaceView = class elyWorkspaceView extends elyView_1.default {
 	    /**
 	     * Конструктор
 	     * @param props
@@ -8340,7 +8374,10 @@ var ely = (function () {
 	        this.content = new elyControl_2.default();
 	        this.getDocument().append(this.content.getDocument());
 	    }
-	}
+	};
+	elyWorkspaceView = __decorate([
+	    elyDesignable.designable("content", elyDesignable.elyDesignableFieldState.VIEW)
+	], elyWorkspaceView);
 	exports.default = elyWorkspaceView;
 	});
 
@@ -9759,7 +9796,6 @@ var ely = (function () {
 	 *
 	 *
 	 */
-	// @autField("value", elyDesignableFieldState.GETSET, "string")
 	let elyColorPickerField = class elyColorPickerField extends elyField_2.default {
 	    /**
 	     * Конструктор
@@ -9768,7 +9804,7 @@ var ely = (function () {
 	    constructor(options = {}) {
 	        super({}, new elyInput_1.default(Object.assign({ class: "ef-input", tag: "input" })));
 	        this.colorThumbnail = new elyControl_2.default();
-	        this.colorThumbnail.addClass("bg-primary");
+	        // this.colorThumbnail.addClass("bg-primary");
 	        this.colorView = new elyControl_2.default({ class: "ef-color-pict" });
 	        this.colorView.addSubView(this.colorThumbnail);
 	        this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
@@ -9829,7 +9865,8 @@ var ely = (function () {
 	    }
 	};
 	elyColorPickerField = __decorate([
-	    elyDesignable.designable("value", elyDesignable.elyDesignableFieldState.DENY)
+	    elyDesignable.designable("value", elyDesignable.elyDesignableFieldState.DENY),
+	    elyDesignable.designable("placeholder", elyDesignable.elyDesignableFieldState.DENY)
 	], elyColorPickerField);
 	exports.default = elyColorPickerField;
 	});
@@ -9912,58 +9949,6 @@ var ely = (function () {
 	});
 
 	unwrapExports(elySimpleJSONParser_1);
-
-	var elyGuard_1 = createCommonjsModule(function (module, exports) {
-	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 + ,--. o                   |    o                                            +
-	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
-	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
-	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
-	 +            `---'                    `---'                                  +
-	 +                                                                            +
-	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
-	 + Mail: <diegoling33@gmail.com>                                              +
-	 +                                                                            +
-	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
-	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
-	 +                                                                            +
-	 + Использование, изменение, копирование, распространение, обмен/продажа      +
-	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
-	 +                                                                            +
-	 + Файл: elyGuard.ts                                                          +
-	 + Файл создан: 23.11.2018 23:03:37                                           +
-	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-	Object.defineProperty(exports, "__esModule", { value: true });
-	/**
-	 * Безопасность значений
-	 */
-	class elyGuard {
-	    /**
-	     * Функция
-	     * @param func
-	     * @param args
-	     * @param callback
-	     * @param context
-	     */
-	    static func(func, args, callback, context) {
-	        const result = func.apply(context, args);
-	        if (result !== undefined && result !== null)
-	            callback(result);
-	    }
-	    /**
-	     * Значение
-	     * @param variable
-	     * @param callback
-	     */
-	    static variable(variable, callback) {
-	        if (variable !== undefined && variable !== null)
-	            callback(variable);
-	    }
-	}
-	exports.default = elyGuard;
-	});
-
-	unwrapExports(elyGuard_1);
 
 	var elyUIWSMeta_1 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -10055,9 +10040,8 @@ var ely = (function () {
 
 
 
-
 	/**
-	 * elyUIWorkshop реестер элементов
+	 * elyWorkshop реестер элементов
 	 */
 	class elyWSRegex extends elyObservable_1.default {
 	    /**
@@ -10123,6 +10107,7 @@ var ely = (function () {
 	        const viewName = forceName || view.constructor.name + "-" + id;
 	        view.attribute("ely-ws-view-name", viewName);
 	        this.views.add(viewName, view);
+	        elyWorkshop_1.default.logger.log(`Регистрация [${viewName}]`);
 	        this.notificate("reg", [viewName, view]);
 	        return viewName;
 	    }
@@ -10133,19 +10118,7 @@ var ely = (function () {
 	    unregView(viewName) {
 	        if (viewName === "workspace" || !this.views.remove(viewName))
 	            return false;
-	        // Удаляет регистрацию зависимостей
-	        for (const vn in this.dependencies)
-	            if (this.dependencies.hasOwnProperty(vn)) {
-	                for (const pn in this.dependencies[vn]) {
-	                    if (this.dependencies[vn][pn] && this.dependencies[vn][pn] === viewName)
-	                        this.dependencies[vn][pn] = null;
-	                }
-	            }
-	        elyGuard_1.default.variable(this.dependencies[viewName], deps => {
-	            for (const pn in deps)
-	                if (deps.hasOwnProperty(pn))
-	                    elyGuard_1.default.variable(this.dependencies[viewName][pn], value => elyUIWorkshop_1.default.remove(value));
-	        });
+	        elyWorkshop_1.default.logger.log(`Удаление регистрации [${viewName}]`);
 	        if (elyUIWSMeta_1.default.metas[viewName])
 	            delete elyUIWSMeta_1.default.metas[viewName];
 	        this.notificate("unreg", [true, viewName]);
@@ -10435,7 +10408,7 @@ var ely = (function () {
 	            });
 	            const nameView = new elyControl_2.default({ subviews: [nameTextView, typeNameView] });
 	            nameView.addClass("clickable").addObserver("click", () => {
-	                elyUIWorkshop_1.default.selectedViewName.set(key);
+	                elyWorkshop_1.default.selectedViewName.set(key);
 	            });
 	            const removeButton = new elyTextView_2.default({ iconName: "remove" });
 	            removeButton.addClass("clickable");
@@ -10449,7 +10422,7 @@ var ely = (function () {
 	                    }).present();
 	                    return;
 	                }
-	                elyUIWorkshop_1.default.remove(key);
+	                elyWorkshop_1.default.remove(key);
 	            });
 	            const numTextView = String(num).textView({ opacity: 0.7 });
 	            this.gridView.add(numTextView, nameView, removeButton);
@@ -10513,7 +10486,7 @@ var ely = (function () {
 	                try {
 	                    if (reader.result) {
 	                        const obj = JSON.parse(String(reader.result));
-	                        elyUIWorkshop_1.default.restoreSessionFromObject(obj, () => {
+	                        elyWorkshop_1.default.restoreSessionFromObject(obj, () => {
 	                            elyFlatApplicationPreloader_1.default.default.hideScreen();
 	                        });
 	                    }
@@ -10588,7 +10561,7 @@ var ely = (function () {
 	            text: "Сохранить проект",
 	        }).fill();
 	        button.click(() => {
-	            elyUIWorkshop_1.default.saveSessionToObject(sessionObject => {
+	            elyWorkshop_1.default.saveSessionToObject(sessionObject => {
 	                const item = document.createElement("a");
 	                const json = JSON.stringify(sessionObject);
 	                item.setAttribute("download", "project.elyws");
@@ -10844,8 +10817,6 @@ var ely = (function () {
 
 
 
-
-
 	/**
 	 * Элемент для замены его другим элементом
 	 */
@@ -10856,8 +10827,8 @@ var ely = (function () {
 	     */
 	    constructor(options) {
 	        super(options);
-	        this.__placeViewName = options.placeViewName;
-	        this.__autoViewName = options.autoViewName;
+	        this.__autoFieldName = options.autoFieldName;
+	        this.__autoView = options.view;
 	        this.getDocument().append(this.createPlaceHolderItemView().getDocument());
 	    }
 	    /**
@@ -10866,15 +10837,13 @@ var ely = (function () {
 	    createPlaceHolderItemView() {
 	        const view = new elyControl_2.default().addClass("elyuiws-placeolder-item");
 	        view.addSubView(new elyTextView_2.default({ text: "Empty" }));
-	        view.addSubView(new elyTextView_2.default({ text: this.__autoViewName }));
+	        view.addSubView(new elyTextView_2.default({ text: this.__autoFieldName }));
 	        view.addClass("clickable");
 	        view.addObserver("click", () => {
 	            elyWSCreateViewWindow_1.default.present(createdView => {
-	                elyUIWSWorkspace_1.default.main.canUpdate = false;
-	                elyWSRegex_1.default.main.dependencies[this.__placeViewName][this.__autoViewName]
-	                    = elyUIWorkshop_1.default.add(createdView);
-	                elyUIWSWorkspace_1.default.main.canUpdate = true;
-	                elyUIWSWorkspace_1.default.main.update();
+	                this.__autoView.removeSubView(this);
+	                this.__autoView.addSubView(createdView);
+	                elyWorkshop_1.default.add(createdView);
 	            });
 	        });
 	        return view;
@@ -10909,6 +10878,9 @@ var ely = (function () {
 
 
 
+
+
+
 	/**
 	 * Рабочая область
 	 */
@@ -10920,59 +10892,58 @@ var ely = (function () {
 	        super();
 	        this.canUpdate = true;
 	        this.getDocument().append(this.content.getDocument());
-	        elyWSRegex_1.default.main.regView(this, "workspace");
-	        elyWSRegex_1.default.main.dependencies.workspace = { content: null };
-	        this.update();
 	    }
 	    /**
 	     * Обновляет рабочую область
 	     */
 	    update() {
+	        elyWorkshop_1.default.logger.log("Отрисовка рабочей области...");
 	        if (!this.canUpdate)
 	            return;
 	        this.content.removeViewContent();
-	        if (elyWSRegex_1.default.main.dependencies.workspace.content)
-	            this.content.getDocument()
-	                .append(elyWSRegex_1.default.main.views.item(elyWSRegex_1.default.main.dependencies.workspace.content).getDocument());
-	        else
-	            this.applyPlaceHolder(this.content, "workspace", "content");
-	        for (const viewName in elyWSRegex_1.default.main.dependencies) {
-	            if (!elyWSRegex_1.default.main.dependencies.hasOwnProperty(viewName))
+	        if (elyWSRegex_1.default.main.views.contains("workspace"))
+	            this.content.addSubView(elyWSRegex_1.default.main.views.item("workspace"));
+	        for (const viewName in elyWSRegex_1.default.main.views.get()) {
+	            if (!elyWSRegex_1.default.main.views.contains(viewName))
 	                continue;
-	            const view = elyWSRegex_1.default.main.views.item(viewName);
-	            if (!view)
-	                continue;
-	            if (typeof elyWSRegex_1.default.main.dependencies[viewName] === "object") {
-	                for (const placerName in elyWSRegex_1.default.main.dependencies[viewName]) {
-	                    if (!elyWSRegex_1.default.main.dependencies[viewName].hasOwnProperty(placerName))
-	                        continue;
-	                    const placer = elyWSRegex_1.default.main.dependencies[viewName][placerName];
-	                    const placerView = view[placerName];
-	                    if (!placerView)
-	                        continue;
-	                    placerView.removeViewContent();
-	                    if (placer === null) {
-	                        this.applyPlaceHolder(placerView, viewName, placerName);
-	                    }
-	                    else {
-	                        const subView = elyWSRegex_1.default.main.views.item(placer);
-	                        if (subView)
-	                            placerView.getDocument().append(subView.getDocument());
-	                    }
+	            elyWorkshop_1.default.logger.log(`Отрисовка элемента [${viewName}]`);
+	            const viewObject = elyWSRegex_1.default.main.views.item(viewName);
+	            const placers = this.getViewPlacers(viewObject);
+	            console.log(viewName, placers);
+	            for (const afvName in placers) {
+	                if (!placers.hasOwnProperty(afvName))
+	                    continue;
+	                elyWorkshop_1.default.logger.log(`Элемент [${viewName}] --> поле [${afvName}]`);
+	                const obj = placers[afvName];
+	                if (obj.getSubViews().length === 1 && obj.getSubViews()[0] instanceof elyWSPlaceholderView_1.default) {
+	                    obj.removeViewContent();
+	                }
+	                if (obj.getSubViews().length === 0) {
+	                    elyWorkshop_1.default.logger.log(`Элемент [${viewName}] --> поле [${afvName}] --> {placeholder}`);
+	                    obj.addSubView(new elyWSPlaceholderView_1.default({ view: obj, autoFieldName: afvName }));
 	                }
 	            }
 	        }
 	    }
-	    /**
-	     * Создает и применяет холдер
-	     * @param view
-	     * @param placeViewName
-	     * @param autoViewName
-	     */
-	    applyPlaceHolder(view, placeViewName, autoViewName) {
-	        const holder = new elyWSPlaceholderView_1.default({ placeViewName, autoViewName });
-	        view.getDocument().append(holder.getDocument());
-	        return holder;
+	    getViewPlacers(view) {
+	        const views = {};
+	        const af = elyDesignable.elyDesignableAutoFieldsData[view.constructor.name];
+	        if (view instanceof elyStaticGridView_2.default) {
+	            for (let i = 0; i < view.rowsCount() * view.colsCount(); i++) {
+	                views["contentView" + i] = view["contentView" + i];
+	            }
+	        }
+	        if (af) {
+	            const fields = af.fields;
+	            for (const fieldName in fields) {
+	                if (!fields.hasOwnProperty(fieldName))
+	                    continue;
+	                if (fields[fieldName].state === elyDesignable.elyDesignableFieldState.VIEW) {
+	                    views[fieldName] = view[fieldName];
+	                }
+	            }
+	        }
+	        return views;
 	    }
 	}
 	/**
@@ -11054,7 +11025,7 @@ var ely = (function () {
 	     * @param name
 	     */
 	    applySettingsPanel(name) {
-	        elyUIWorkshop_1.default.tabBar.tabBarCurrentTabName("props");
+	        elyWorkshop_1.default.tabBar.tabBarCurrentTabName("props");
 	        const view = elyWSRegex_1.default.main.views.item(name);
 	        if (!view)
 	            return;
@@ -11189,6 +11160,58 @@ var ely = (function () {
 
 	unwrapExports(elyWSViewPropsPanel_1);
 
+	var elyGuard_1 = createCommonjsModule(function (module, exports) {
+	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 + ,--. o                   |    o                                            +
+	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
+	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+	 +            `---'                    `---'                                  +
+	 +                                                                            +
+	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+	 + Mail: <diegoling33@gmail.com>                                              +
+	 +                                                                            +
+	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+	 +                                                                            +
+	 + Использование, изменение, копирование, распространение, обмен/продажа      +
+	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+	 +                                                                            +
+	 + Файл: elyGuard.ts                                                          +
+	 + Файл создан: 23.11.2018 23:03:37                                           +
+	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	Object.defineProperty(exports, "__esModule", { value: true });
+	/**
+	 * Безопасность значений
+	 */
+	class elyGuard {
+	    /**
+	     * Функция
+	     * @param func
+	     * @param args
+	     * @param callback
+	     * @param context
+	     */
+	    static func(func, args, callback, context) {
+	        const result = func.apply(context, args);
+	        if (result !== undefined && result !== null)
+	            callback(result);
+	    }
+	    /**
+	     * Значение
+	     * @param variable
+	     * @param callback
+	     */
+	    static variable(variable, callback) {
+	        if (variable !== undefined && variable !== null)
+	            callback(variable);
+	    }
+	}
+	exports.default = elyGuard;
+	});
+
+	unwrapExports(elyGuard_1);
+
 	var elyUIWSContextMenu_1 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 + ,--. o                   |    o                                            +
@@ -11210,6 +11233,10 @@ var ely = (function () {
 	 + Файл создан: 23.11.2018 23:03:37                                           +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	Object.defineProperty(exports, "__esModule", { value: true });
+
+
+
+
 
 
 
@@ -11256,8 +11283,15 @@ var ely = (function () {
 	            this.flexGrid.add(new elyButton_1.default({ text: "Свойства", iconName: "cogs" }).click(() => {
 	                elyWSViewPropsPanel_1.default.main.applySettingsPanel(name);
 	            }).fill().buttonStyle(elyStyle_1.default.primary));
+	            this.flexGrid.add(elyControl_2.default.line());
+	            this.flexGrid.add(new elyButton_1.default({ text: "Код элемента" }).click(() => {
+	                const text = JSON.stringify(elyDesignable.elyDesignableCore.freeze(view), null, 4);
+	                new elyModalView_2.default({ modalTitle: "Код элемента" })
+	                    .modalContent(new elyTextAreaField_1.default({ rowsNumber: 12 }).value(text))
+	                    .present();
+	            }).fill().buttonStyle(elyStyle_1.default.primary));
 	            this.flexGrid.add(new elyButton_1.default({ text: "Удалить", iconName: "remove" }).click(() => {
-	                elyUIWorkshop_1.default.remove(name);
+	                elyWorkshop_1.default.remove(name);
 	            }).fill().buttonStyle(elyStyle_1.default.danger));
 	        });
 	    }
@@ -11350,15 +11384,10 @@ var ely = (function () {
 	                elyUtils_1.default.forEach(elyWSRegex_1.default.main.dependencies[viewName], (index, value) => {
 	                    const num = parseInt(String(index).replace("contentView", ""), 10);
 	                    if (num >= view.colsCount() * view.rowsCount()) {
-	                        delete elyWSRegex_1.default.main.dependencies[viewName][index];
 	                        if (value)
-	                            elyUIWorkshop_1.default.remove(value);
+	                            elyWorkshop_1.default.remove(value);
 	                    }
 	                });
-	                for (let i = 0; i < view.rowsCount() * view.colsCount(); i++) {
-	                    if (!elyWSRegex_1.default.main.dependencies[viewName]["contentView" + i])
-	                        elyWSRegex_1.default.main.dependencies[viewName]["contentView" + i] = null;
-	                }
 	                elyUIWSWorkspace_1.default.main.update();
 	            });
 	            view.rebuild();
@@ -11370,7 +11399,7 @@ var ely = (function () {
 
 	unwrapExports(elyUIWSViewsFactory_1);
 
-	var elyUIWorkshop_1 = createCommonjsModule(function (module, exports) {
+	var elyWorkshop_1 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 + ,--. o                   |    o                                            +
 	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -11387,7 +11416,7 @@ var ely = (function () {
 	 + Использование, изменение, копирование, распространение, обмен/продажа      +
 	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
 	 +                                                                            +
-	 + Файл: elyUIWorkshop.ts                                                     +
+	 + Файл: elyWorkshops                                                     +
 	 + Файл создан: 23.11.2018 23:03:37                                           +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -11411,7 +11440,10 @@ var ely = (function () {
 
 
 
-	class elyUIWorkshop {
+
+
+
+	class elyWorkshop {
 	    /**
 	     * Удаляет элемент
 	     * @param viewName
@@ -11419,10 +11451,19 @@ var ely = (function () {
 	    static remove(viewName) {
 	        if (viewName === "workspace")
 	            return false;
+	        elyWorkshop.logger.log(`Удаление [${viewName}]...`);
+	        const view = elyWSRegex_1.default.main.views.item(viewName);
+	        if (view && view.superview && view.superview instanceof elyControl_2.default) {
+	            view.superview.removeSubView(view);
+	        }
 	        if (elyWSRegex_1.default.main.unregView(viewName)) {
+	            elyUIWSWorkspace_1.default.main.update();
+	            elyUIWorkshopElementsPanel_1.default.main.update();
+	            elyWorkshop.logger.log(`Удаление [${viewName}] [OK]`);
 	            return true;
 	        }
 	        else {
+	            elyWorkshop.logger.log(`Удаление [${viewName}] [NO]`);
 	            new elyNotificationView_1.default({
 	                message: `Не удалось удалить элемент ${viewName}!`,
 	                title: "Удаление элемента",
@@ -11444,17 +11485,23 @@ var ely = (function () {
 	     * Создает фрейм
 	     */
 	    static create(root) {
-	        elyUIWorkshop.superView = root;
-	        if (elyUIWorkshop.view)
+	        elyWorkshop.superView = root;
+	        if (elyWorkshop.view)
 	            return;
+	        elyWorkshop.logger.log(`Инициилизация elyWorkshop...`);
 	        const workshopRow = new elyGridRowView_1.default();
+	        workshopRow.add(elyUIWSWorkspace_1.default.main);
 	        elyFlatApplicationPreloader_1.default.default.messageView.text("Загрузка данных...");
 	        elyFlatApplicationPreloader_1.default.default.hidden(false);
-	        setTimeout(() => {
-	            elyUIWorkshop.restoreSessionFromCookies(undefined, () => elyFlatApplicationPreloader_1.default.default.hidden(true));
-	        }, 500);
-	        elyUIWorkshop.addContextMenuAuto();
-	        workshopRow.add(elyUIWSWorkspace_1.default.main);
+	        elyWorkshop.restoreSessionFromCookies("workshop", () => {
+	            elyFlatApplicationPreloader_1.default.default.hidden(true);
+	            if (!elyWSRegex_1.default.main.views.contains("workspace")) {
+	                elyWSRegex_1.default.main.regView(new elyWorkspaceView_1.default(), "workspace");
+	                elyUIWSWorkspace_1.default.main.update();
+	            }
+	            elyUIWorkshopElementsPanel_1.default.main.update();
+	        });
+	        elyWorkshop.addContextMenuAuto();
 	        elyWSRegex_1.default.main.addRegObserver(() => {
 	            elyUIWSWorkspace_1.default.main.update();
 	            elyUIWorkshopElementsPanel_1.default.main.update();
@@ -11463,26 +11510,27 @@ var ely = (function () {
 	            elyUIWSWorkspace_1.default.main.update();
 	            elyUIWorkshopElementsPanel_1.default.main.update();
 	        });
-	        elyUIWorkshop.view = workshopRow;
+	        elyWorkshop.view = workshopRow;
 	        //
 	        // tabs
 	        //
-	        elyUIWorkshop.tabBar.getStyle().marginTop = elyFlatApplication_1.default.default.navigationView.height() + "px";
-	        elyUIWorkshop.tabBar.add("props", { text: "Свойства", iconName: "cogs", content: elyWSViewPropsPanel_1.default.main });
-	        elyUIWorkshop.tabBar.add("overview", {
+	        elyWorkshop.tabBar.getStyle().marginTop = elyFlatApplication_1.default.default.navigationView.height() + "px";
+	        elyWorkshop.tabBar.add("props", { text: "Свойства", iconName: "cogs", content: elyWSViewPropsPanel_1.default.main });
+	        elyWorkshop.tabBar.add("overview", {
 	            content: elyUIWorkshopElementsPanel_1.default.main,
 	            iconName: "list",
 	            text: "Обзор",
 	        });
-	        elyUIWorkshop.tabBar.add("settings", {
+	        elyWorkshop.tabBar.add("settings", {
 	            content: elyWSSettingsPanel_1.default.main,
 	            iconName: "support",
 	            text: "Инструменты",
 	        });
-	        if (elyUIWorkshop.superView) {
-	            elyUIWorkshop.superView.getDocument().append(elyUIWorkshop.tabBar.getDocument());
-	            elyUIWorkshop.superView.getDocument().append(elyUIWorkshop.view.getDocument());
+	        if (elyWorkshop.superView) {
+	            elyWorkshop.superView.getDocument().append(elyWorkshop.tabBar.getDocument());
+	            elyWorkshop.superView.getDocument().append(elyWorkshop.view.getDocument());
 	        }
+	        elyWorkshop.logger.log(`Инициилизация elyWorkshop [OK]`);
 	    }
 	    /**
 	     * Добавляет автоматическое контекстное мению
@@ -11524,7 +11572,7 @@ var ely = (function () {
 	     */
 	    static startAutoSaver() {
 	        setInterval(() => {
-	            elyUIWorkshop.saveSessionToCookies();
+	            elyWorkshop.saveSessionToCookies();
 	        }, 2000);
 	    }
 	    /**
@@ -11536,24 +11584,20 @@ var ely = (function () {
 	        const sessionObject = {};
 	        elySimpleJSONParser_1.default.parse(elyCookie_1.default.get(`ws-${name || "workshop"}-views`) || "{}", obj => {
 	            sessionObject.views = obj || {};
-	            elySimpleJSONParser_1.default.parse(elyCookie_1.default.get(`ws-${name || "workshop"}-meta`) || "{}", meta => {
-	                sessionObject.meta = meta || {};
-	                elySimpleJSONParser_1.default.parse(elyCookie_1.default.get(`ws-${name || "workshop"}-svs`) || "{}", svs => {
-	                    sessionObject.svs = svs || {};
-	                    elyUIWorkshop.restoreSessionFromObject(sessionObject, callback);
-	                });
-	            });
+	            elyWorkshop.restoreSessionFromObject(sessionObject, callback);
 	        });
 	    }
 	    /**
 	     * Очищает проект
 	     */
 	    static cleanProject() {
+	        elyWorkshop.logger.log(`Очистка проекта...`);
 	        elyUIWSWorkspace_1.default.main.canUpdate = false;
-	        elyWSRegex_1.default.main.views.forEach((key) => elyUIWorkshop.remove(key));
+	        elyWSRegex_1.default.main.views.forEach((key) => elyWorkshop.remove(key));
 	        elyUIWSMeta_1.default.metas = {};
 	        elyUIWSWorkspace_1.default.main.canUpdate = true;
 	        elyUIWSWorkspace_1.default.main.update();
+	        elyWorkshop.logger.log(`Очистка проекта [OK]`);
 	    }
 	    /**
 	     * Восстанавливает сессию из объекта
@@ -11561,12 +11605,15 @@ var ely = (function () {
 	     * @param callback
 	     */
 	    static restoreSessionFromObject(obj, callback) {
-	        elyUIWorkshop.cleanProject();
+	        elyWorkshop.logger.log(`Восстановление сессии проекта из объекта...`);
+	        elyWorkshop.cleanProject();
 	        elyUIWSWorkspace_1.default.main.canUpdate = false;
 	        elyUtils_1.default.forEach(obj.views, (index, value) => {
 	            const view = elyUIWSViewsFactory_1.default.custom(value);
+	            elyWorkshop.logger.log(`Найден объект [${index}]`);
 	            if (view) {
-	                elyUIWorkshop.add(view, index);
+	                elyWorkshop.add(view, index);
+	                elyWorkshop.logger.log(`Найден объект [${index}] [OK]`);
 	            }
 	            else {
 	                new elyNotificationView_1.default({
@@ -11575,30 +11622,8 @@ var ely = (function () {
 	                }).present();
 	            }
 	        });
-	        elyUtils_1.default.forEach(obj.meta, (index, value) => {
-	            if (elyUIWSMeta_1.default.metas.hasOwnProperty(index)) {
-	                elyUtils_1.default.forEach(value, (name, val) => {
-	                    elyUIWSMeta_1.default.metas[index][name] = val;
-	                });
-	            }
-	            else {
-	                new elyNotificationView_1.default({
-	                    message: `Не удалось восстановить мета данные элемента ${index}!`,
-	                    title: "Ошибка создания элемента",
-	                }).present();
-	            }
-	        });
-	        elyUtils_1.default.forEach(obj.svs, (index, value) => {
-	            if (elyWSRegex_1.default.main.dependencies[index]) {
-	                elyWSRegex_1.default.main.dependencies[index] = Object.assign({}, elyWSRegex_1.default.main.dependencies[index], value);
-	            }
-	            else {
-	                elyWSRegex_1.default.main.dependencies[index] = value;
-	            }
-	        });
 	        elyUIWSWorkspace_1.default.main.canUpdate = true;
 	        elyUIWSWorkspace_1.default.main.update();
-	        elyLogger_1.default.debug("Загрузка сессии WS...");
 	        elyLogger_1.default.debugObject(obj);
 	        if (callback)
 	            callback();
@@ -11612,8 +11637,6 @@ var ely = (function () {
 	        const views = {};
 	        elyWSRegex_1.default.main.views.forEach((key, value) => views[key] = elyDesignable.elyDesignableCore.freeze(value));
 	        sessionData.views = views;
-	        sessionData.meta = elyUIWSMeta_1.default.freezeAllMeta();
-	        sessionData.svs = elyWSRegex_1.default.main.dependencies;
 	        callback(sessionData);
 	    }
 	    /**
@@ -11622,10 +11645,8 @@ var ely = (function () {
 	     * @param callback
 	     */
 	    static saveSessionToCookies(name = "workshop", callback) {
-	        elyUIWorkshop.saveSessionToObject(sessionObject => {
-	            elyCookie_1.default.set("ws-" + name + "-svs", JSON.stringify(sessionObject.svs || {}));
+	        elyWorkshop.saveSessionToObject(sessionObject => {
 	            elyCookie_1.default.set("ws-" + name + "-views", JSON.stringify(sessionObject.views || {}));
-	            elyCookie_1.default.set("ws-" + name + "-meta", JSON.stringify(sessionObject.meta || {}));
 	            if (callback)
 	                callback(sessionObject);
 	        });
@@ -11634,18 +11655,22 @@ var ely = (function () {
 	/**
 	 * Выбранный элемент
 	 */
-	elyUIWorkshop.selectedViewName = new elyObservableProperty_1.default().change(value => {
+	elyWorkshop.selectedViewName = new elyObservableProperty_1.default().change(value => {
 	    elyWSViewPropsPanel_1.default.main.applySettingsPanel(value);
 	});
-	elyUIWorkshop.superView = null;
+	elyWorkshop.superView = null;
 	/**
 	 * Бар
 	 */
-	elyUIWorkshop.tabBar = new elyTabBarView_1.default({ tabBarSticky: true });
-	exports.default = elyUIWorkshop;
+	elyWorkshop.tabBar = new elyTabBarView_1.default({ tabBarSticky: true });
+	/**
+	 * Логгер
+	 */
+	elyWorkshop.logger = new elyXLogger_1.default({ mainPrefix: "WS", clear: true });
+	exports.default = elyWorkshop;
 	});
 
-	unwrapExports(elyUIWorkshop_1);
+	unwrapExports(elyWorkshop_1);
 
 	var ely_module$2 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -11673,7 +11698,7 @@ var ely = (function () {
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	Object.defineProperty(exports, "__esModule", { value: true });
 
-	window.elyWorkshop = elyUIWorkshop_1.default;
+	window.elyWorkshop = elyWorkshop_1.default;
 	});
 
 	unwrapExports(ely_module$2);
@@ -11703,6 +11728,7 @@ var ely = (function () {
 	 +                                                                            +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 	Object.defineProperty(exports, "__esModule", { value: true });
+
 
 
 
@@ -11928,6 +11954,10 @@ var ely = (function () {
 	//
 	//
 	/**
+	 * @alias elyXLogger.constructor
+	 */
+	window.elyXLogger = elyXLogger_1.default;
+	/**
 	 * @alias elyColor.constructor
 	 */
 	window.elyColor = elyColor_1.default;
@@ -11967,6 +11997,21 @@ var ely = (function () {
 	 * @alias elyWorkspaceView.constructor
 	 */
 	window.elyWorkspaceView = elyWorkspaceView_1.default;
+	//
+	//
+	// ----------------------------------------------------------------
+	//
+	//
+	/**
+	 * Ядро elyDesignable
+	 * @alias elyDesignableCore.constructor
+	 */
+	window.elyDesignableCore = elyDesignable.elyDesignableCore;
+	//
+	//
+	// ----------------------------------------------------------------
+	//
+	//
 	window.present = (viewController, completion) => {
 	    elyScreenController_1.default.default.present(viewController, completion);
 	};

@@ -23,7 +23,7 @@ import {elyDesignableCore} from "@core/elyDesignable";
 import elyGuard from "@core/elyGuard";
 import elyObservable from "@core/observable/elyObservable";
 import elyObservableDictionary from "@core/observable/properties/elyObservableDictionary";
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
 import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
 
@@ -44,7 +44,7 @@ type elyWSRegexLinkObserver = (result: boolean, viewName: string, superviewName:
                                view: elyView, superview: elyView) => void ;
 
 /**
- * elyUIWorkshop реестер элементов
+ * elyWorkshop реестер элементов
  */
 export default class elyWSRegex extends elyObservable {
 
@@ -118,6 +118,7 @@ export default class elyWSRegex extends elyObservable {
         const viewName = forceName || view.constructor.name + "-" + id;
         view.attribute("ely-ws-view-name", viewName);
         this.views.add(viewName, view);
+        elyWorkshop.logger.log(`Регистрация [${viewName}]`);
         this.notificate("reg", [viewName, view]);
         return viewName;
     }
@@ -128,21 +129,7 @@ export default class elyWSRegex extends elyObservable {
      */
     public unregView(viewName: string): boolean {
         if (viewName === "workspace" || !this.views.remove(viewName)) return false;
-
-        // Удаляет регистрацию зависимостей
-        for (const vn in this.dependencies)
-            if (this.dependencies.hasOwnProperty(vn)) {
-                for (const pn in this.dependencies[vn]) {
-                    if (this.dependencies[vn][pn] && this.dependencies[vn][pn] === viewName)
-                        this.dependencies[vn][pn] = null;
-                }
-            }
-        elyGuard.variable<{ [name: string]: string }>(this.dependencies[viewName], deps => {
-            for (const pn in deps)
-                if (deps.hasOwnProperty(pn))
-                    elyGuard.variable<string>(this.dependencies[viewName][pn], value => elyUIWorkshop.remove(value));
-        });
-
+        elyWorkshop.logger.log(`Удаление регистрации [${viewName}]`);
         if (elyUIWSMeta.metas[viewName]) delete elyUIWSMeta.metas[viewName];
         this.notificate("unreg", [true, viewName]);
         return true;

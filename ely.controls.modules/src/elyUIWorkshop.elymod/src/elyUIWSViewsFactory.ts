@@ -24,7 +24,7 @@ import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyView from "@core/controls/elyView";
 import {elyDesignableAutoFieldsData, elyDesignableFieldState} from "@core/elyDesignable";
 import elyUtils from "@core/elyUtils";
-import elyUIWorkshop from "../elyUIWorkshop";
+import elyWorkshop from "../elyWorkshop";
 import elyUIWSMeta from "./elyUIWSMeta";
 import elyUIWSWorkspace from "./elyUIWSWorkspace";
 import elyWSRegex from "./elyWSRegex";
@@ -83,15 +83,10 @@ export default class elyUIWSViewsFactory {
                 elyUtils.forEach(elyWSRegex.main.dependencies[viewName], (index, value) => {
                     const num = parseInt(String(index).replace("contentView", ""), 10);
                     if (num >= view.colsCount() * view.rowsCount()) {
-                        delete elyWSRegex.main.dependencies[viewName][index];
-                        if (value) elyUIWorkshop.remove(value);
+                        if (value) elyWorkshop.remove(value);
                     }
                 });
 
-                for (let i = 0; i < view.rowsCount() * view.colsCount(); i++) {
-                    if (!elyWSRegex.main.dependencies[viewName]["contentView" + i])
-                        elyWSRegex.main.dependencies[viewName]["contentView" + i] = null;
-                }
                 elyUIWSWorkspace.main.update();
             });
             view.rebuild();

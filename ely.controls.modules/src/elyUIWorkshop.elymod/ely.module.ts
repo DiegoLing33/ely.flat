@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 
 declare global {
     interface Window {
-        elyWorkshop: typeof elyUIWorkshop;
+        elyWorkshop: typeof elyWorkshop;
     }
 }
 
-window.elyWorkshop = elyUIWorkshop;
+window.elyWorkshop = elyWorkshop;

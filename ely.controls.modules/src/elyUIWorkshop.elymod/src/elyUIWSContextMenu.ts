@@ -19,11 +19,15 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyButton from "@controls/action/elyButton";
+import elyControl from "@controls/action/elyControl";
+import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyGridView from "@controls/flex/elyGridView";
+import elyModalView from "@controls/view/elyModalView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
+import {elyDesignableCore} from "@core/elyDesignable";
 import elyGuard from "@core/elyGuard";
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
 import elyWSViewPropsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyWSViewPropsPanel";
 import elySize from "@enums/elySize";
@@ -80,8 +84,17 @@ export default class elyUIWSContextMenu extends elyPanelView {
             this.flexGrid.add(new elyButton({text: "Свойства", iconName: "cogs"}).click(() => {
                 elyWSViewPropsPanel.main.applySettingsPanel(name);
             }).fill().buttonStyle(elyStyle.primary));
+            this.flexGrid.add(elyControl.line());
+            this.flexGrid.add(new elyButton({text: "Код элемента"}).click(() => {
+                const text = JSON.stringify(
+                    elyDesignableCore.freeze(view),
+                    null, 4);
+                new elyModalView({modalTitle: "Код элемента"})
+                    .modalContent(new elyTextAreaField({rowsNumber: 12}).value(text))
+                    .present();
+            }).fill().buttonStyle(elyStyle.primary));
             this.flexGrid.add(new elyButton({text: "Удалить", iconName: "remove"}).click(() => {
-                elyUIWorkshop.remove(name!);
+                elyWorkshop.remove(name!);
             }).fill().buttonStyle(elyStyle.danger));
         });
 

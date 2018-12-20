@@ -33,14 +33,14 @@ import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
 import {elyDesignableAutoFieldItem, elyDesignableCore, elyDesignableFieldState} from "@core/elyDesignable";
 import elyUtils from "@core/elyUtils";
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSRus from "@devMods/elyUIWorkshop.elymod/lang/elyWSRus";
 import elyUIWorkshopElementsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyUIWorkshopElementsPanel";
 import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
+import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
-import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace";
 
 /**
  * Панеь настройки элемента
@@ -83,7 +83,7 @@ export default class elyWSViewPropsPanel extends elyPanelView {
      * @param name
      */
     public applySettingsPanel(name: string): void {
-        elyUIWorkshop.tabBar.tabBarCurrentTabName("props");
+        elyWorkshop.tabBar.tabBarCurrentTabName("props");
         const view = elyWSRegex.main.views.item(name);
         if (!view) return;
         this.currentName = name;

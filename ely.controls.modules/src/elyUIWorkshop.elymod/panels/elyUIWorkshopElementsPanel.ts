@@ -24,7 +24,7 @@ import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyTextView from "@controls/text/elyTextView";
 import elyPanelView from "@controls/view/elyPanelView";
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elySize from "@enums/elySize";
 import elyWeight from "@enums/elyWeight";
@@ -78,7 +78,7 @@ export default class elyUIWorkshopElementsPanel extends elyPanelView {
 
             const nameView = new elyControl({subviews: [nameTextView, typeNameView]});
             nameView.addClass("clickable").addObserver("click", () => {
-                elyUIWorkshop.selectedViewName.set(key);
+                elyWorkshop.selectedViewName.set(key);
             });
 
             const removeButton = new elyTextView({iconName: "remove"});
@@ -93,7 +93,7 @@ export default class elyUIWorkshopElementsPanel extends elyPanelView {
                     }).present();
                     return;
                 }
-                elyUIWorkshop.remove(key);
+                elyWorkshop.remove(key);
             });
 
             const numTextView = String(num).textView({opacity: 0.7});

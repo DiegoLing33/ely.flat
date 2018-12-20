@@ -14,7 +14,7 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyUIWorkshop.ts                                                     +
+ + Файл: elyWorkshops                                                     +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -24,12 +24,14 @@ import elyGridRowView from "@controls/flex/elyGridRowView";
 import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyView from "@core/controls/elyView";
+import elyWorkspaceView from "@core/controls/elyWorkspaceView";
 import elyCookie from "@core/elyCookie";
 import {elyDesignableCore} from "@core/elyDesignable";
 import elyLogger from "@core/elyLogger";
 import elySimpleJSONParser from "@core/elySimpleJSONParser";
 import elyUtils from "@core/elyUtils";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyXLogger from "@core/utils/elyXLogger";
 import elyWSUtils from "@devMods/elyUIWorkshop.elymod/elyWSUtils";
 import elyTabBarView from "@devMods/elyUIWorkshop.elymod/navigation/elyTabBarView";
 import elyUIWorkshopElementsPanel from "@devMods/elyUIWorkshop.elymod/panels/elyUIWorkshopElementsPanel";
@@ -40,8 +42,10 @@ import elyUIWSMeta from "@devMods/elyUIWorkshop.elymod/src/elyUIWSMeta";
 import elyUIWSViewsFactory from "@devMods/elyUIWorkshop.elymod/src/elyUIWSViewsFactory";
 import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
+import elyControl from "@controls/action/elyControl";
+import elyGuard from "@core/elyGuard";
 
-export default class elyUIWorkshop {
+export default class elyWorkshop {
 
     /**
      * Выбранный элемент
@@ -59,14 +63,29 @@ export default class elyUIWorkshop {
     public static tabBar: elyTabBarView = new elyTabBarView({tabBarSticky: true});
 
     /**
+     * Логгер
+     */
+    public static logger = new elyXLogger({mainPrefix: "WS", clear: true});
+
+    /**
      * Удаляет элемент
      * @param viewName
      */
     public static remove(viewName: string): boolean {
         if (viewName === "workspace") return false;
+        elyWorkshop.logger.log(`Удаление [${viewName}]...`);
+
+        const view = elyWSRegex.main.views.item(viewName);
+        if (view && view.superview && view.superview instanceof elyControl) {
+            view.superview.removeSubView(view);
+        }
         if (elyWSRegex.main.unregView(viewName)) {
+            elyUIWSWorkspace.main.update();
+            elyUIWorkshopElementsPanel.main.update();
+            elyWorkshop.logger.log(`Удаление [${viewName}] [OK]`);
             return true;
         } else {
+            elyWorkshop.logger.log(`Удаление [${viewName}] [NO]`);
             new elyNotificationView({
                 message: `Не удалось удалить элемент ${viewName}!`,
                 title: "Удаление элемента",
@@ -90,21 +109,28 @@ export default class elyUIWorkshop {
      * Создает фрейм
      */
     public static create(root: elyView): void {
-        elyUIWorkshop.superView = root;
-        if (elyUIWorkshop.view) return;
+        elyWorkshop.superView = root;
+        if (elyWorkshop.view) return;
+
+        elyWorkshop.logger.log(`Инициилизация elyWorkshop...`);
 
         const workshopRow = new elyGridRowView();
 
+        workshopRow.add(elyUIWSWorkspace.main);
+
         elyFlatApplicationPreloader.default.messageView.text("Загрузка данных...");
         elyFlatApplicationPreloader.default.hidden(false);
-        setTimeout(() => {
-            elyUIWorkshop.restoreSessionFromCookies(undefined, () =>
-                elyFlatApplicationPreloader.default.hidden(true));
-        }, 500);
+        elyWorkshop.restoreSessionFromCookies("workshop", () => {
+            elyFlatApplicationPreloader.default.hidden(true);
 
-        elyUIWorkshop.addContextMenuAuto();
+            if (!elyWSRegex.main.views.contains("workspace")) {
+                elyWSRegex.main.regView(new elyWorkspaceView(), "workspace");
+                elyUIWSWorkspace.main.update();
+            }
+            elyUIWorkshopElementsPanel.main.update();
+        });
 
-        workshopRow.add(elyUIWSWorkspace.main);
+        elyWorkshop.addContextMenuAuto();
 
         elyWSRegex.main.addRegObserver(() => {
             elyUIWSWorkspace.main.update();
@@ -115,29 +141,31 @@ export default class elyUIWorkshop {
             elyUIWorkshopElementsPanel.main.update();
         });
 
-        elyUIWorkshop.view = workshopRow;
+        elyWorkshop.view = workshopRow;
 
         //
         // tabs
         //
 
-        elyUIWorkshop.tabBar.getStyle().marginTop = elyFlatApplication.default.navigationView.height() + "px";
-        elyUIWorkshop.tabBar.add("props", {text: "Свойства", iconName: "cogs", content: elyWSViewPropsPanel.main});
-        elyUIWorkshop.tabBar.add("overview", {
+        elyWorkshop.tabBar.getStyle().marginTop = elyFlatApplication.default.navigationView.height() + "px";
+        elyWorkshop.tabBar.add("props", {text: "Свойства", iconName: "cogs", content: elyWSViewPropsPanel.main});
+        elyWorkshop.tabBar.add("overview", {
             content: elyUIWorkshopElementsPanel.main,
             iconName: "list",
             text: "Обзор",
         });
-        elyUIWorkshop.tabBar.add("settings", {
+        elyWorkshop.tabBar.add("settings", {
             content: elyWSSettingsPanel.main,
             iconName: "support",
             text: "Инструменты",
         });
 
-        if (elyUIWorkshop.superView) {
-            elyUIWorkshop.superView.getDocument().append(elyUIWorkshop.tabBar.getDocument());
-            elyUIWorkshop.superView.getDocument().append(elyUIWorkshop.view.getDocument());
+        if (elyWorkshop.superView) {
+            elyWorkshop.superView.getDocument().append(elyWorkshop.tabBar.getDocument());
+            elyWorkshop.superView.getDocument().append(elyWorkshop.view.getDocument());
         }
+
+        elyWorkshop.logger.log(`Инициилизация elyWorkshop [OK]`);
     }
 
     /**
@@ -180,7 +208,7 @@ export default class elyUIWorkshop {
      */
     public static startAutoSaver(): void {
         setInterval(() => {
-            elyUIWorkshop.saveSessionToCookies();
+            elyWorkshop.saveSessionToCookies();
         }, 2000);
     }
 
@@ -193,13 +221,7 @@ export default class elyUIWorkshop {
         const sessionObject: any = {};
         elySimpleJSONParser.parse(elyCookie.get(`ws-${name || "workshop"}-views`) || "{}", obj => {
             sessionObject.views = obj || {};
-            elySimpleJSONParser.parse(elyCookie.get(`ws-${name || "workshop"}-meta`) || "{}", meta => {
-                sessionObject.meta = meta || {};
-                elySimpleJSONParser.parse(elyCookie.get(`ws-${name || "workshop"}-svs`) || "{}", svs => {
-                    sessionObject.svs = svs || {};
-                    elyUIWorkshop.restoreSessionFromObject(sessionObject, callback);
-                });
-            });
+            elyWorkshop.restoreSessionFromObject(sessionObject, callback);
         });
 
     }
@@ -208,11 +230,13 @@ export default class elyUIWorkshop {
      * Очищает проект
      */
     public static cleanProject(): void {
+        elyWorkshop.logger.log(`Очистка проекта...`);
         elyUIWSWorkspace.main.canUpdate = false;
-        elyWSRegex.main.views.forEach((key) => elyUIWorkshop.remove(key));
+        elyWSRegex.main.views.forEach((key) => elyWorkshop.remove(key));
         elyUIWSMeta.metas = {};
         elyUIWSWorkspace.main.canUpdate = true;
         elyUIWSWorkspace.main.update();
+        elyWorkshop.logger.log(`Очистка проекта [OK]`);
     }
 
     /**
@@ -221,12 +245,15 @@ export default class elyUIWorkshop {
      * @param callback
      */
     public static restoreSessionFromObject(obj: any, callback?: () => void): void {
-        elyUIWorkshop.cleanProject();
+        elyWorkshop.logger.log(`Восстановление сессии проекта из объекта...`);
+        elyWorkshop.cleanProject();
         elyUIWSWorkspace.main.canUpdate = false;
         elyUtils.forEach(obj.views, (index, value) => {
             const view = elyUIWSViewsFactory.custom(value);
+            elyWorkshop.logger.log(`Найден объект [${index}]`);
             if (view) {
-                elyUIWorkshop.add(view, index);
+                elyWorkshop.add(view, index);
+                elyWorkshop.logger.log(`Найден объект [${index}] [OK]`);
             } else {
                 new elyNotificationView({
                     message: `Не удалось создать элемент ${index}!`,
@@ -234,28 +261,8 @@ export default class elyUIWorkshop {
                 }).present();
             }
         });
-        elyUtils.forEach(obj.meta, (index, value) => {
-            if (elyUIWSMeta.metas.hasOwnProperty(index)) {
-                elyUtils.forEach(value, (name, val) => {
-                    (elyUIWSMeta.metas[index] as any)[name] = val;
-                });
-            } else {
-                new elyNotificationView({
-                    message: `Не удалось восстановить мета данные элемента ${index}!`,
-                    title: "Ошибка создания элемента",
-                }).present();
-            }
-        });
-        elyUtils.forEach(obj.svs, (index, value) => {
-            if (elyWSRegex.main.dependencies[index]) {
-                elyWSRegex.main.dependencies[index] = {...elyWSRegex.main.dependencies[index], ...value};
-            } else {
-                elyWSRegex.main.dependencies[index] = value;
-            }
-        });
         elyUIWSWorkspace.main.canUpdate = true;
         elyUIWSWorkspace.main.update();
-        elyLogger.debug("Загрузка сессии WS...");
         elyLogger.debugObject(obj);
         if (callback) callback();
     }
@@ -269,8 +276,6 @@ export default class elyUIWorkshop {
         const views: any = {};
         elyWSRegex.main.views.forEach((key, value) => views[key] = elyDesignableCore.freeze(value));
         sessionData.views = views;
-        sessionData.meta = elyUIWSMeta.freezeAllMeta();
-        sessionData.svs = elyWSRegex.main.dependencies;
         callback(sessionData);
     }
 
@@ -280,10 +285,8 @@ export default class elyUIWorkshop {
      * @param callback
      */
     public static saveSessionToCookies(name: string = "workshop", callback?: (sessionObject: any) => void): void {
-        elyUIWorkshop.saveSessionToObject(sessionObject => {
-            elyCookie.set("ws-" + name + "-svs", JSON.stringify(sessionObject.svs || {}));
+        elyWorkshop.saveSessionToObject(sessionObject => {
             elyCookie.set("ws-" + name + "-views", JSON.stringify(sessionObject.views || {}));
-            elyCookie.set("ws-" + name + "-meta", JSON.stringify(sessionObject.meta || {}));
             if (callback) callback(sessionObject);
         });
     }

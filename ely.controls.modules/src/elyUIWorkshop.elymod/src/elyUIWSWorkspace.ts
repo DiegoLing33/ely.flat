@@ -18,8 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyControl from "@controls/action/elyControl";
+import elyStaticGridView from "@controls/flex/elyStaticGridView";
 import elyView from "@core/controls/elyView";
 import elyWorkspaceView from "@core/controls/elyWorkspaceView";
+import {elyDesignableAutoFields, elyDesignableAutoFieldsData, elyDesignableFieldState} from "@core/elyDesignable";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elyWSPlaceholderView from "@devMods/elyUIWorkshop.elymod/views/elyWSPlaceholderView";
 
@@ -41,9 +45,6 @@ export default class elyUIWSWorkspace extends elyWorkspaceView {
     public constructor() {
         super();
         this.getDocument().append(this.content.getDocument());
-        elyWSRegex.main.regView(this, "workspace");
-        elyWSRegex.main.dependencies.workspace = {content: null};
-        this.update();
     }
 
     /**
@@ -51,47 +52,52 @@ export default class elyUIWSWorkspace extends elyWorkspaceView {
      */
     public update(): void {
 
+        elyWorkshop.logger.log("Отрисовка рабочей области...");
         if (!this.canUpdate) return;
         this.content.removeViewContent();
 
-        if (elyWSRegex.main.dependencies.workspace.content)
-            this.content.getDocument()
-                .append(elyWSRegex.main.views.item(elyWSRegex.main.dependencies.workspace.content)!.getDocument());
-        else
-            this.applyPlaceHolder(this.content, "workspace", "content");
+        if (elyWSRegex.main.views.contains("workspace"))
+            this.content.addSubView(elyWSRegex.main.views.item("workspace")!);
 
-        for (const viewName in elyWSRegex.main.dependencies) {
-            if (!elyWSRegex.main.dependencies.hasOwnProperty(viewName)) continue;
-            const view = elyWSRegex.main.views.item(viewName);
-            if (!view) continue;
-            if (typeof elyWSRegex.main.dependencies[viewName] === "object") {
-                for (const placerName in elyWSRegex.main.dependencies[viewName]) {
-                    if (!elyWSRegex.main.dependencies[viewName].hasOwnProperty(placerName)) continue;
-                    const placer = elyWSRegex.main.dependencies[viewName][placerName];
-                    const placerView = ((view as any)[placerName] as elyView);
-                    if (!placerView) continue;
-                    placerView.removeViewContent();
-                    if (placer === null) {
-                        this.applyPlaceHolder(placerView, viewName, placerName);
-                    } else {
-                        const subView = elyWSRegex.main.views.item(placer);
-                        if (subView) placerView.getDocument().append(subView.getDocument());
-                    }
+        for (const viewName in elyWSRegex.main.views.get()) {
+            if (!elyWSRegex.main.views.contains(viewName)) continue;
+            elyWorkshop.logger.log(`Отрисовка элемента [${viewName}]`);
+            const viewObject = elyWSRegex.main.views.item(viewName)!;
+            const placers = this.getViewPlacers(viewObject);
+            console.log(viewName, placers);
+            for (const afvName in placers) {
+                if (!placers.hasOwnProperty(afvName)) continue;
+                elyWorkshop.logger.log(`Элемент [${viewName}] --> поле [${afvName}]`);
+                const obj = placers[afvName] as elyControl;
+                if (obj.getSubViews().length === 1 && obj.getSubViews()[0] instanceof elyWSPlaceholderView) {
+                    obj.removeViewContent();
+                }
+                if (obj.getSubViews().length === 0) {
+                    elyWorkshop.logger.log(`Элемент [${viewName}] --> поле [${afvName}] --> {placeholder}`);
+                    obj.addSubView(new elyWSPlaceholderView({view: obj, autoFieldName: afvName}));
                 }
             }
+
         }
     }
 
-    /**
-     * Создает и применяет холдер
-     * @param view
-     * @param placeViewName
-     * @param autoViewName
-     */
-    protected applyPlaceHolder(view: elyView, placeViewName: string, autoViewName: string): elyWSPlaceholderView {
-        const holder = new elyWSPlaceholderView({placeViewName, autoViewName});
-        view.getDocument().append(holder.getDocument());
-        return holder;
+    protected getViewPlacers(view: elyView | any): { [name: string]: elyView } {
+        const views: any = {};
+        const af = elyDesignableAutoFieldsData[view.constructor.name];
+        if (view instanceof elyStaticGridView) {
+            for (let i = 0; i < view.rowsCount() * view.colsCount(); i++) {
+                views["contentView" + i] = view["contentView" + i];
+            }
+        }
+        if (af) {
+            const fields = af.fields;
+            for (const fieldName in fields) {
+                if (!fields.hasOwnProperty(fieldName)) continue;
+                if (fields[fieldName].state === elyDesignableFieldState.VIEW) {
+                    views[fieldName] = view[fieldName];
+                }
+            }
+        }
+        return views;
     }
-
 }

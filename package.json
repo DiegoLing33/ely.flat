@@ -4,7 +4,8 @@
   "description": "The ely.flat framework",
   "main": "index.js",
   "scripts": {
-    "ely.flat.builder": "ts-node ./bin/ely.flat.builder.ts"
+    "ely.flat.builder": "ts-node ./bin/ely.flat.builder.ts",
+    "update test": "ts-node ./bin/ely.flat.builder.ts --update test"
   },
   "repository": {
     "type": "git",

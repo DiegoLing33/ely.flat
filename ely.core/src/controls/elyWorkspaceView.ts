@@ -25,12 +25,14 @@
 import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
 import elyViewOptions from "@core/controls/elyViewOptions";
+import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 
 /**
  * Рабочая область для elyWSProjectLoader
  * @class elyWorkspaceView
  * @augments elyView
  */
+@designable("content", elyDesignableFieldState.VIEW)
 export default class elyWorkspaceView extends elyView {
 
     /**

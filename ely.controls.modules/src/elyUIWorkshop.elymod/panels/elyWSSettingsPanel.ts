@@ -24,7 +24,7 @@ import elyStylesheet from "@controls/elyStylesheet";
 import elySwitchField from "@controls/fields/elySwitchField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyPanelView from "@controls/view/elyPanelView";
-import elyUIWorkshop from "@devMods/elyUIWorkshop.elymod/elyUIWorkshop";
+import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSOpenProjectWindow from "@devMods/elyUIWorkshop.elymod/windows/elyWSOpenProjectWindow";
 import elyStyle from "@enums/elyStyle";
 
@@ -58,7 +58,7 @@ export default class elyWSSettingsPanel extends elyPanelView {
             text: "Сохранить проект",
         }).fill();
         button.click(() => {
-            elyUIWorkshop.saveSessionToObject(sessionObject => {
+            elyWorkshop.saveSessionToObject(sessionObject => {
                 const item = document.createElement("a");
                 const json = JSON.stringify(sessionObject);
                 item.setAttribute("download", "project.elyws");

@@ -24,7 +24,7 @@ import elyGridView from "@controls/flex/elyGridView";
 import elyModalView from "@controls/view/elyModalView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyFlatApplicationPreloader from "../../../../ely.application/src/app/content/elyFlatApplicationPreloader";
-import elyUIWorkshop from "../elyUIWorkshop";
+import elyWorkshop from "../elyWorkshop";
 
 /**
  * Окно выбора файла
@@ -50,7 +50,7 @@ export default class elyWSOpenProjectWindow {
                 try {
                     if (reader.result) {
                         const obj = JSON.parse(String(reader.result));
-                        elyUIWorkshop.restoreSessionFromObject(obj, () => {
+                        elyWorkshop.restoreSessionFromObject(obj, () => {
                             elyFlatApplicationPreloader.default.hideScreen();
                         });
 
