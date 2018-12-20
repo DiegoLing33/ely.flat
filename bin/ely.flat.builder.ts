@@ -32,14 +32,52 @@ import path = require("path");
 import prompt = require("prompt");
 import elyXLogger from "../ely.core/src/utils/elyXLogger";
 
+import process = require("process");
+
 const jsBuildPath = "ely.build.js";
 const productsPath = "products";
 const product_elyFlatAppPath = `${productsPath}/ely.flat.application`;
 const logger = new elyXLogger({mainPrefix: "Builder"});
 
-prompt.start();
+//
+//  CLI Performing
+//
 
-welcome();
+const cliArgs = process.argv.slice(2);
+if (cliArgs.length > 0) {
+    console.clear();
+    console.log(elyXLogger.styles.fgYellow + figlet.textSync(`e l y . f l a t . c l i`));
+    console.log(elyXLogger.styles.reset);
+    console.log();
+    logger.log("Добро пожаловать в строитель ely.flat!");
+    console.log();
+    logger.log(`Аргументы получены: [${cliArgs.join(", ")}]`);
+    switch (cliArgs[0]) {
+        case "--update":
+        case "-u":
+            if (cliArgs.length > 1) {
+
+                logger.log("Перестроение проекта...");
+                buildPaths(false, () => {
+                    commandCreateProjectStepByStep(cliArgs[1], () => {
+                        process.exit(0);
+                        logger.log("Проект успешно перестроен!");
+                    }, [6]);
+                });
+            }
+            break;
+        default:
+            process.exit(0);
+            break;
+    }
+
+} else {
+
+    prompt.start();
+
+    welcome();
+
+}
 
 /**
  * Функция привествия
