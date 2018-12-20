@@ -6,6 +6,7 @@
     "mainScript":           "app.js"
   },
   "template":   {
+    "color": "#194d6d",
     "maxContainerWidth": 700,
     "footer":            {
       "title":    "Works with ely.Flat Application Engine",
