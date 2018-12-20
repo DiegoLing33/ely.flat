@@ -72,6 +72,8 @@ import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
 import elyWeight from "@enums/elyWeight";
+import {elyDesignableCore} from "@core/elyDesignable";
+import elyRangeField from "@controls/fields/elyRangeField";
 //
 //  Деклорации
 //
@@ -252,6 +254,11 @@ declare global {
          */
         elyFileChooseField: typeof elyFileChooseField;
 
+        /**
+         * Поле ввода: Выбор значения
+         */
+        elyRangeField: typeof elyRangeField;
+
         //
         //  Оповещения
         //
@@ -293,6 +300,11 @@ declare global {
         //
         // Core
         //
+
+        /**
+         * Логгер
+         */
+        elyXLogger: typeof elyXLogger;
 
         /**
          * Цвет
@@ -343,6 +355,11 @@ declare global {
          * Пространтсво WS
          */
         elyWorkspaceView: typeof elyWorkspaceView;
+
+        /**
+         * Ядро elyDesign
+         */
+        elyDesignableCore: typeof elyDesignableCore;
 
         /**
          * Добавляет обработчик загрузки ely.flat
@@ -508,6 +525,10 @@ window.elyTextAreaField = elyTextAreaField;
  * @alias elyFileChooseField.constructor
  */
 window.elyFileChooseField = elyFileChooseField;
+/**
+ * @alias elyRangeField.constructor
+ */
+window.elyRangeField = elyRangeField;
 //
 //
 // ----------------------------------------------------------------
@@ -548,6 +569,10 @@ window.elyFieldType = elyFieldType;
 //
 //
 /**
+ * @alias elyXLogger.constructor
+ */
+window.elyXLogger = elyXLogger;
+/**
  * @alias elyColor.constructor
  */
 window.elyColor = elyColor;
@@ -587,7 +612,21 @@ window.elyWSProject = elyWSProjectLoader;
  * @alias elyWorkspaceView.constructor
  */
 window.elyWorkspaceView = elyWorkspaceView;
-
+//
+//
+// ----------------------------------------------------------------
+//
+//
+/**
+ * Ядро elyDesignable
+ * @alias elyDesignableCore.constructor
+ */
+window.elyDesignableCore = elyDesignableCore;
+//
+//
+// ----------------------------------------------------------------
+//
+//
 window.present = (viewController: elyViewController, completion?: () => void) => {
     elyScreenController.default.present(viewController, completion);
 };
@@ -606,3 +645,4 @@ window.onload = () => {
         //
     });
 };
+

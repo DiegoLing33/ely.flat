@@ -19,18 +19,22 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyView from "@core/controls/elyView";
+import elyObservableBoolean from "@core/observable/properties/elyObservableBoolean";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
  * Протокол поля ввода данных
  * @class elyFieldProtocol
+ * @template T
+ * @augments elyView
  */
 export default abstract class elyFieldProtocol<T> extends elyView {
     /**
      * Переменная изменения значения
+     * @type {elyObservableProperty}
      */
-    public editableProperty: elyObservableProperty<boolean>;
+    public editableProperty: elyObservableBoolean = new elyObservableBoolean(true);
 
     /**
      * Значение
@@ -42,24 +46,26 @@ export default abstract class elyFieldProtocol<T> extends elyView {
      */
     protected constructor(options: elyFieldOptions<T> = {}) {
         super(options);
-        this.valueProperty = new elyObservableProperty<T>(this.defaultValue());
-        this.editableProperty = new elyObservableProperty<boolean>(true);
+        this.valueProperty = new elyObservableProperty<T>();
     }
 
     /**
      * Возвращает значение
+     * @return {T}
      */
     public value(): T;
 
     /**
      * Устанавливает значение
-     * @param value
+     * @param {T} value - значение
+     * @return {this}
      */
     public value(value: T): elyFieldProtocol<T>;
 
     /**
      * Возвращает значение поля или устанавливает его
-     * @param value
+     * @param {T} [value] - значение
+     * @return {this}
      */
     public value(value?: T): elyFieldProtocol<T> | T {
         return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
@@ -67,7 +73,8 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Вовращает значение доступности поля или устанавливает его
-     * @param flag
+     * @param {boolean} [flag] - флаг доступности редактирования
+     * @return {elyFieldProtocol|boolean}
      */
     public editable(flag?: boolean): elyFieldProtocol<T> | boolean {
         return elyObservableProperty.simplePropertyAccess(this, flag, this.editableProperty);
@@ -77,7 +84,7 @@ export default abstract class elyFieldProtocol<T> extends elyView {
      * Сравнивает значения.
      * Возвращает true, если значения одинаковые.
      *
-     * @param {*} value - значения для сравнения
+     * @param {T} value - значения для сравнения
      * @return {boolean}
      */
     public compare(value: T): boolean {
@@ -86,6 +93,7 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Очищает значение
+     * @return {elyFieldProtocol}
      */
     public clearValue(): elyFieldProtocol<T> {
         return this.value(this.defaultValue());
@@ -94,11 +102,14 @@ export default abstract class elyFieldProtocol<T> extends elyView {
     /**
      * Возвращает true, если объект пустой.
      * @return boolean
+     * @abstract
      */
     public abstract isEmpty(): boolean;
 
     /**
      * Возвращает станлартное значение
+     * @abstract
+     * @return {*}
      */
     public abstract defaultValue(): T;
 
@@ -145,6 +156,8 @@ export default abstract class elyFieldProtocol<T> extends elyView {
      * что сброс значения активирует слушатель. Утсановите параметр clearanceSafe в true, тогда
      * добавленный наблюдатель observer будет немного модифицирован
      * (как описано в {@link elyFieldProtocol.isValueDefault}).
+     *
+     * @deprecated {@link elyFieldProtocol.change}
      */
     public addChangeValueObserver(observer: (oldValue: T, newValue: T) => void,
                                   clearanceSafe: boolean = false): elyFieldProtocol<T> {
@@ -152,6 +165,25 @@ export default abstract class elyFieldProtocol<T> extends elyView {
         else this.valueProperty.addChangeObserver((oldValue, newValue) => {
             if (this.isValueDefault(newValue)) return;
             observer(oldValue, newValue);
+        });
+        return this;
+    }
+
+    /**
+     * Добавляет слушатель изменения значения поля
+     * @param {Function} o
+     * @param {boolean} clearanceSafe - защита от сброса
+     *
+     * Из примера, указанного в методе {@link elyFieldProtocol.isValueDefault} известно,
+     * что сброс значения активирует слушатель. Утсановите параметр clearanceSafe в true, тогда
+     * добавленный наблюдатель observer будет немного модифицирован
+     * (как описано в {@link elyFieldProtocol.isValueDefault}).
+     */
+    public change(o: (val: T, oldVal: T | null) => void, clearanceSafe: boolean = false): elyFieldProtocol<T> {
+        if (!clearanceSafe) this.valueProperty.change(o);
+        else this.valueProperty.change((nv, ov) => {
+            if (this.isValueDefault(nv)) return;
+            o(nv, ov);
         });
         return this;
     }
@@ -167,15 +199,18 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Проверет валидность введенных данных
+     * @return {boolean}
+     * @abstract
      */
     public abstract isValidData(): boolean;
 
     /**
      * Применяет стандартные опции протокола
      * @param options
+     * @protected
      */
     protected applyProtocolOptions(options: elyFieldOptions<T> = {}) {
-        if (options.value) this.value(options.value);
+        this.value((options.value === undefined || options.value === null) ? this.defaultValue() : options.value);
         if (options.placeholder) this.placeholder(options.placeholder);
         if (options.editable) this.editable(options.editable);
         if (options.hint) this.hint(options.hint);

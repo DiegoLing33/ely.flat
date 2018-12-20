@@ -28,7 +28,8 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
 /**
  * Элемент: Поле ввода <T>
  *     @class elyField
- *     @augments elyFieldProtocol
+ *     @template T
+ *     @augments elyFieldProtocol<T>
  */
 @designable("editable", elyDesignableFieldState.GETSET, "boolean")
 @designable("placeholder", elyDesignableFieldState.SET, "string")
