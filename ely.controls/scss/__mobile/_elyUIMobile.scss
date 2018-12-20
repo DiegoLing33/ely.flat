@@ -1,0 +1,45 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _elyUIMobile.scss                                                     +
+// Файл создан: 13.12.2018 09:17:00                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../../../ely.core/scss/mixins/media";
+
+//
+//  Мобильная адаптация ely.Core.UI
+//
+
+@include mobile-only{
+  .ef-input{
+    font-size: 1.4rem;
+    padding: 13px;
+  }
+
+  .ef-input-status{
+    width: 48px;
+    padding: 13px;
+  }
+
+  .btn{
+    padding: 13px;
+    font-size: 1.4rem;
+  }
+
+  .ely-navigation-view{
+    padding: 16px 10px;
+    text-align: center;
+  }
+
+  .ef-sidenav-toggle .fa {
+    padding-top: 26px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: inline-block;
+  }
+}

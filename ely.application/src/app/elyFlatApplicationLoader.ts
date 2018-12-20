@@ -19,10 +19,10 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatApplicationConfig from "@app/app/options/elyFlatApplicationConfig";
+import elyUtils from "@core/elyUtils";
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
 import elyURL from "@core/web/url/elyURL";
-import elyUtils from "@core/elyUtils";
 
 export default class elyFlatApplicationLoader extends elyObservable {
 

@@ -66,7 +66,6 @@ export default class elyColorPickerField extends elyField<elyColor> {
         super({}, new elyInput({...{class: "ef-input", tag: "input"}}));
 
         this.colorThumbnail = new elyControl();
-        this.colorThumbnail.addClass("bg-primary");
         this.colorView = new elyControl({class: "ef-color-pict"});
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());

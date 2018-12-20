@@ -992,16 +992,25 @@ var ely = (function () {
 	     * @return {elyView}
 	     */
 	    hint(hint) {
-	        if (this.getDocument().querySelectorAll(".ef-hint").length > 0) {
-	            this.getDocument().querySelector(".ef-hint").innerHTML = hint;
+	        const selector = this.getDocument().querySelector(".ef-hint");
+	        if (typeof hint === "string") {
+	            if (selector) {
+	                selector.innerHTML = hint;
+	            }
+	            else {
+	                // this.fieldLineView.css({"margin-bottom": "15px"});
+	                const hintView = document.createElement("div");
+	                hintView.classList.add("ef-hint");
+	                hintView.innerText = hint;
+	                this.getDocument().appendChild(hintView);
+	            }
+	            return this;
 	        }
 	        else {
-	            const hintView = document.createElement("div");
-	            hintView.classList.add("ef-hint");
-	            hintView.innerText = hint;
-	            this.getDocument().appendChild(hintView);
+	            if (selector)
+	                return selector.innerHTML;
+	            return "";
 	        }
-	        return this;
 	    }
 	    /**
 	     * Устанавливает или возвращает доступность элемента
@@ -1980,17 +1989,24 @@ var ely = (function () {
 	     */
 	    hint(hint) {
 	        const selector = this.getDocument().querySelector(".ef-hint");
-	        if (selector) {
-	            selector.innerHTML = hint;
+	        if (typeof hint === "string") {
+	            if (selector) {
+	                selector.innerHTML = hint;
+	            }
+	            else {
+	                this.fieldLineView.css({ "margin-bottom": "15px" });
+	                const hintView = document.createElement("div");
+	                hintView.classList.add("ef-hint");
+	                hintView.innerText = hint;
+	                this.getDocument().appendChild(hintView);
+	            }
+	            return this;
 	        }
 	        else {
-	            this.fieldLineView.css({ "margin-bottom": "15px" });
-	            const hintView = document.createElement("div");
-	            hintView.classList.add("ef-hint");
-	            hintView.innerText = hint;
-	            this.getDocument().appendChild(hintView);
+	            if (selector)
+	                return selector.innerHTML;
+	            return "";
 	        }
-	        return this;
 	    }
 	    /**
 	     * Устанавливает подсказку для ввода
@@ -2018,7 +2034,7 @@ var ely = (function () {
 	elyField = elyField_1 = __decorate([
 	    elyDesignable.designable("editable", elyDesignable.elyDesignableFieldState.GETSET, "boolean"),
 	    elyDesignable.designable("placeholder", elyDesignable.elyDesignableFieldState.SET, "string"),
-	    elyDesignable.designable("hint", elyDesignable.elyDesignableFieldState.SET, "string"),
+	    elyDesignable.designable("hint", elyDesignable.elyDesignableFieldState.GETSET, "string"),
 	    elyDesignable.designable("value", elyDesignable.elyDesignableFieldState.GETSET, "string")
 	], elyField);
 	exports.default = elyField;
@@ -6755,6 +6771,7 @@ var ely = (function () {
 	        this.__setStaticIcon();
 	        this.__lock(true);
 	        this.applyProtocolOptions(options);
+	        this.tipsView.hidden(true);
 	        this.actionIconView.hidden(false);
 	    }
 	    /**
@@ -8959,6 +8976,8 @@ var ely = (function () {
 	        if (elyWSProjectLoader.DEBUG)
 	            logger.log("Компиляция проекта...");
 	        for (const name in this.__source.views) {
+	            if (name === "workspace")
+	                this.__source.views[name].item = "elyWorkspaceView";
 	            if (!this.__source.views.hasOwnProperty(name))
 	                continue;
 	            if (elyWSProjectLoader.DEBUG)
@@ -9713,8 +9732,15 @@ var ely = (function () {
 	 + Файл: elyColorPickerField.ts                                               +
 	 + Файл создан: 23.11.2018 23:03:37                                           +
 	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	var __decorate = (commonjsGlobal && commonjsGlobal.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	// import "../../../ely.flat";
+
 
 
 
@@ -9734,7 +9760,7 @@ var ely = (function () {
 	 *
 	 */
 	// @autField("value", elyDesignableFieldState.GETSET, "string")
-	class elyColorPickerField extends elyField_2.default {
+	let elyColorPickerField = class elyColorPickerField extends elyField_2.default {
 	    /**
 	     * Конструктор
 	     * @param options
@@ -9742,7 +9768,6 @@ var ely = (function () {
 	    constructor(options = {}) {
 	        super({}, new elyInput_1.default(Object.assign({ class: "ef-input", tag: "input" })));
 	        this.colorThumbnail = new elyControl_2.default();
-	        this.colorThumbnail.addClass("bg-primary");
 	        this.colorView = new elyControl_2.default({ class: "ef-color-pict" });
 	        this.colorView.addSubView(this.colorThumbnail);
 	        this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
@@ -9801,7 +9826,10 @@ var ely = (function () {
 	            this.editable(false);
 	        }
 	    }
-	}
+	};
+	elyColorPickerField = __decorate([
+	    elyDesignable.designable("value", elyDesignable.elyDesignableFieldState.DENY)
+	], elyColorPickerField);
 	exports.default = elyColorPickerField;
 	});
 
@@ -10026,6 +10054,7 @@ var ely = (function () {
 
 
 
+
 	/**
 	 * elyUIWorkshop реестер элементов
 	 */
@@ -10043,6 +10072,36 @@ var ely = (function () {
 	         * Зависимости элементов
 	         */
 	        this.dependencies = {};
+	    }
+	    rename(oldName, newName) {
+	        if (this.views.contains(newName))
+	            return "Имя элемента должно быть уникально!";
+	        if (!this.views.contains(oldName))
+	            return "Элемент не найден!";
+	        this.views.item(oldName).attribute(elyWSUtils_1.default.WS_NAME_ATTRIBUTE, newName);
+	        if (elyUIWSMeta_1.default.metas.hasOwnProperty(oldName)) {
+	            elyUIWSMeta_1.default.metas[newName] = elyUIWSMeta_1.default.metas[oldName];
+	            delete elyUIWSMeta_1.default.metas[oldName];
+	        }
+	        this.views.add(newName, this.views.item(oldName));
+	        this.views.remove(oldName);
+	        if (this.dependencies.hasOwnProperty(oldName)) {
+	            this.dependencies[newName] = Object.assign({}, this.dependencies[oldName]);
+	            delete this.dependencies[oldName];
+	        }
+	        for (const root in this.dependencies) {
+	            if (!this.dependencies.hasOwnProperty(root) && this.dependencies[root] !== null)
+	                continue;
+	            for (const af in this.dependencies[root]) {
+	                if (!this.dependencies[root].hasOwnProperty(af))
+	                    continue;
+	                if (this.dependencies[root][af] === oldName) {
+	                    this.dependencies[root][af] = newName;
+	                    return true;
+	                }
+	            }
+	        }
+	        return true;
 	    }
 	    /**
 	     * Замораживает элементы
@@ -10190,6 +10249,7 @@ var ely = (function () {
 
 
 
+
 	/**
 	 * Элемент отображения: Панель с табами
 	 *
@@ -10206,6 +10266,14 @@ var ely = (function () {
 	        this.tabsProperty = new elyObservableDictionary_1.default();
 	        this.contentView = new elyPanelView_1.default({ hidden: true });
 	        this.tabsProperty.change(() => this.rebuild());
+	        this.scrollView = new elyScrollView_1.default({ scrollVertical: true, scrollHorizontal: false });
+	        this.scrollView.resize(view => {
+	            view.height((window.innerHeight - this.getRect().top - 25) + "px");
+	        });
+	        this.contentView.resize(view => {
+	            view.getStyle().height = (window.innerHeight - this.getRect().top) + "px";
+	        });
+	        this.contentView.contentView.addSubView(this.scrollView);
 	        this.tabBarStyleProperty = new elyObservableProperty_1.default(elyStyle_1.default.default);
 	        this.tabBarStyleProperty.change((newValue, oldValue) => {
 	            if (oldValue)
@@ -10213,7 +10281,7 @@ var ely = (function () {
 	            this.addClass(`bg-${newValue.value}`);
 	        });
 	        this.tabBarCurrentTabNameProperty = new elyObservableProperty_1.default("");
-	        this.tabBarCurrentTabNameProperty.change((value, old) => {
+	        this.tabBarCurrentTabNameProperty.change((value) => {
 	            this.contentView.hidden(true);
 	            this.tabsProperty.forEach((key, tab) => {
 	                tab.selected = key === value;
@@ -10222,8 +10290,8 @@ var ely = (function () {
 	                    this.contentView.titleView.iconName(tab.iconName);
 	                    this.contentView.hidden(false);
 	                    if (tab.content) {
-	                        this.contentView.contentView.removeViewContent();
-	                        this.contentView.contentView.addSubView(tab.content);
+	                        this.scrollView.removeViewContent();
+	                        this.scrollView.addSubView(tab.content);
 	                    }
 	                }
 	            });
@@ -10286,7 +10354,6 @@ var ely = (function () {
 	        });
 	        this.contentView.getStyle().top = this.getRect().top + "px";
 	        this.contentView.getStyle().right = this.width() + "px";
-	        this.contentView.getStyle().height = (window.innerHeight - this.getRect().top) + "px";
 	        this.contentView.panelStyle(this.tabBarStyle());
 	        return this;
 	    }
@@ -10327,7 +10394,6 @@ var ely = (function () {
 
 
 
-
 	/**
 	 * Панель созданных элементов
 	 */
@@ -10338,13 +10404,7 @@ var ely = (function () {
 	         * Список элементов
 	         */
 	        this.gridView = new elyGridView_1.default({ flex: [[15, 70, 15]] });
-	        this.scrollView = new elyScrollView_1.default({
-	            scrollHorizontal: false,
-	            scrollSnapCenter: true,
-	            scrollVertical: true,
-	        }).height("100%");
-	        this.contentView.addSubView(this.scrollView);
-	        this.scrollView.addSubView(this.gridView);
+	        this.contentView.addSubView(this.gridView);
 	        elyStylesheet_1.default.global.addClass("builderRowItem", {
 	            cursor: "pointer",
 	            opacity: "0.6",
@@ -10609,269 +10669,6 @@ var ely = (function () {
 	});
 
 	unwrapExports(elyWSRus_1);
-
-	var elyWSViewPropsPanel_1 = createCommonjsModule(function (module, exports) {
-	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 + ,--. o                   |    o                                            +
-	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
-	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
-	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
-	 +            `---'                    `---'                                  +
-	 +                                                                            +
-	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
-	 + Mail: <diegoling33@gmail.com>                                              +
-	 +                                                                            +
-	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
-	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
-	 +                                                                            +
-	 + Использование, изменение, копирование, распространение, обмен/продажа      +
-	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
-	 +                                                                            +
-	 + Файл: elyWSViewPropsPanel.ts                                               +
-	 + Файл создан: 23.11.2018 23:03:37                                           +
-	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/**
-	 * Панеь настройки элемента
-	 */
-	class elyWSViewPropsPanel extends elyPanelView_1.default {
-	    constructor() {
-	        super({ title: "Элемент", hidden: true });
-	        /**
-	         * Текущее имя в редакторе
-	         */
-	        this.currentName = null;
-	        this.gridView = new elyGridView_1.default({ margin: { bottom: 10 } });
-	        this.contentView.addSubView(this.gridView);
-	        this.descriptionView.addSubView(new elyButton_1.default({ text: "Код" }).fill().click(() => {
-	            if (this.currentName) {
-	                const text = JSON.stringify(elyDesignable.elyDesignableCore.freeze(elyWSRegex_1.default.main.views.item(this.currentName)), null, 4);
-	                new elyModalView_2.default({ modalTitle: "Код элемента" })
-	                    .modalContent(new elyTextAreaField_1.default({ rowsNumber: 12 }).value(text))
-	                    .present();
-	            }
-	        }));
-	        this.titleView.hidden(true);
-	    }
-	    /**
-	     * Применяет панель настроек
-	     * @param name
-	     */
-	    applySettingsPanel(name) {
-	        elyUIWorkshop_1.default.tabBar.tabBarCurrentTabName("props");
-	        const view = elyWSRegex_1.default.main.views.item(name);
-	        if (!view)
-	            return;
-	        this.currentName = name;
-	        this.title(name);
-	        this.hidden(false);
-	        this.gridView.removeViewContent();
-	        const v = new elyControl_2.default();
-	        v.addSubView("Элемент".textView().textSize(elySize_1.default.small).opacity(0.7));
-	        v.addSubView(name.textView());
-	        this.gridView.add(v);
-	        const data = elyUIWSMeta_1.default.metas[name].autoData;
-	        if (!data || !data.fields)
-	            return;
-	        const autofields = elyUtils_1.default.sortAlphabetic(data.fields);
-	        elyUtils_1.default.forEach(autofields, (index, value) => {
-	            const ims = this.__create(view, value);
-	            if (ims) {
-	                const view = new elyControl_2.default();
-	                view.addSubView(ims[0].textSize(elySize_1.default.small).opacity(0.7));
-	                view.addSubView(ims[1]);
-	                this.gridView.add(view);
-	            }
-	        });
-	    }
-	    __create(view, afItem) {
-	        const titleTextView = new elyTextView_2.default({ text: (elyWSRus_1.default.props[afItem.name] || afItem.name) + ":" });
-	        let field = null;
-	        if (afItem.state === elyDesignable.elyDesignableFieldState.GETSET || afItem.state === elyDesignable.elyDesignableFieldState.SET) {
-	            if (afItem.values && typeof afItem.values === "object") {
-	                field = new elyComboField_1.default({ placeholder: afItem.name });
-	                elyUtils_1.default.forEach(afItem.values, (index, value) => {
-	                    field.add(index, value);
-	                });
-	                const preVal = typeof view[afItem.name] === "function" ? view[afItem.name]() : null;
-	                if (preVal) {
-	                    if (preVal.value) {
-	                        field.tryToSetValue(preVal.value);
-	                    }
-	                    else {
-	                        field.tryToSetValue(preVal);
-	                    }
-	                }
-	                field.addChangeValueObserver((oldValue, newValue) => {
-	                    view[afItem.name](newValue.value);
-	                    // this.data.add(afItem.name, newValue.key);
-	                });
-	            }
-	            else if (afItem.values === null && (afItem.type === "string" || afItem.type === "number")) {
-	                field = new elyTextField_1.default({
-	                    filedType: afItem.type === "string" ? elyFieldType_1.default.text : elyFieldType_1.default.number,
-	                    placeholder: afItem.name,
-	                });
-	                field.addInputObserver((value) => {
-	                    view[afItem.name](value);
-	                    // this.data.add(afItem.name, value);
-	                });
-	            }
-	            else if (afItem.values === null && afItem.type === "text") {
-	                field = new elyTextAreaField_1.default({
-	                    placeholder: afItem.name,
-	                });
-	                field.addInputObserver((value) => {
-	                    view[afItem.name](value);
-	                    // this.data.add(afItem.name, value);
-	                });
-	            }
-	            else if (afItem.values === null && afItem.type === "boolean") {
-	                field = new elySwitchField_1.default();
-	                field.addChangeValueObserver((oldValue, newValue) => {
-	                    view[afItem.name](newValue);
-	                    // this.data.add(afItem.name, newValue);
-	                });
-	            }
-	            else if (afItem.values === null && afItem.type === "[string]") {
-	                field = new elyGridRowView_1.default();
-	                const count = view[afItem.name + "Count"]();
-	                for (let i = 0; i < count; i++) {
-	                    const tv = new elyTextField_1.default({ placeholder: afItem.name });
-	                    field.add(tv);
-	                    tv.addInputObserver((value) => {
-	                        view[afItem.name](i, value);
-	                    });
-	                    if (i > 0)
-	                        tv.getStyle().paddingLeft = "5px";
-	                    const testValue = view[afItem.name](i);
-	                    if (testValue) {
-	                        tv.value(testValue);
-	                    }
-	                }
-	            }
-	        }
-	        if ([elyDesignable.elyDesignableFieldState.GET, elyDesignable.elyDesignableFieldState.GETSET].indexOf(afItem.state) > -1 && field) {
-	            const testValue = view[afItem.name]();
-	            if (testValue) {
-	                if (field instanceof elyComboField_1.default) {
-	                    field.tryToSetValue(testValue.value);
-	                }
-	                else {
-	                    if (typeof field.value === "function")
-	                        field.value(testValue);
-	                }
-	            }
-	        }
-	        if (field) {
-	            return [titleTextView, field];
-	        }
-	        return null;
-	    }
-	}
-	elyWSViewPropsPanel.main = new elyWSViewPropsPanel();
-	exports.default = elyWSViewPropsPanel;
-	});
-
-	unwrapExports(elyWSViewPropsPanel_1);
-
-	var elyUIWSContextMenu_1 = createCommonjsModule(function (module, exports) {
-	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	 + ,--. o                   |    o                                            +
-	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
-	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
-	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
-	 +            `---'                    `---'                                  +
-	 +                                                                            +
-	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
-	 + Mail: <diegoling33@gmail.com>                                              +
-	 +                                                                            +
-	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
-	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
-	 +                                                                            +
-	 + Использование, изменение, копирование, распространение, обмен/продажа      +
-	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
-	 +                                                                            +
-	 + Файл: elyUIWSContextMenu.ts                                                +
-	 + Файл создан: 23.11.2018 23:03:37                                           +
-	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-	Object.defineProperty(exports, "__esModule", { value: true });
-
-
-
-
-
-
-
-
-
-	class elyUIWSContextMenu extends elyPanelView_1.default {
-	    constructor() {
-	        super();
-	        this.flexGrid = new elyGridView_1.default({ margin: { left: 0, right: 0, top: 0, bottom: 5 } });
-	        this.title("");
-	        this.descriptionView.hidden(true);
-	        this.getStyle().position = "absolute";
-	        this.getStyle().width = "220px";
-	        this.hidden(true);
-	        document.body.append(this.getDocument());
-	        document.body.onclick = () => {
-	            this.hidden(true);
-	        };
-	        this.contentView.addSubView(this.flexGrid);
-	    }
-	    /**
-	     * Обновляет позицию
-	     * @param view
-	     * @param point
-	     */
-	    update(view, point) {
-	        this.flexGrid.removeViewContent();
-	        this.hidden(false);
-	        if (point) {
-	            this.getStyle().top = point.y + "px";
-	            this.getStyle().left = point.x + "px";
-	        }
-	        else {
-	            this.getStyle().top = (view.getDocument().offsetTop || 0) /*+ (view.getRect().height || 0)*/ + "px";
-	            this.getStyle().left = (view.getDocument().offsetLeft || 0) + 10 + (view.getRect().width || 0) + "px";
-	        }
-	        elyGuard_1.default.func(elyWSUtils_1.default.getWSName, [view], name => {
-	            this.titleView.textSize(elySize_1.default.small);
-	            this.title(name);
-	            this.flexGrid.add(new elyButton_1.default({ text: "Свойства", iconName: "cogs" }).click(() => {
-	                elyWSViewPropsPanel_1.default.main.applySettingsPanel(name);
-	            }).fill().buttonStyle(elyStyle_1.default.primary));
-	            this.flexGrid.add(new elyButton_1.default({ text: "Удалить", iconName: "remove" }).click(() => {
-	                elyUIWorkshop_1.default.remove(name);
-	            }).fill().buttonStyle(elyStyle_1.default.danger));
-	        });
-	    }
-	}
-	elyUIWSContextMenu.main = new elyUIWSContextMenu();
-	exports.default = elyUIWSContextMenu;
-	});
-
-	unwrapExports(elyUIWSContextMenu_1);
 
 	var elyWSCreateViewWindow_1 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -11186,6 +10983,290 @@ var ely = (function () {
 
 	unwrapExports(elyUIWSWorkspace_1);
 
+	var elyWSViewPropsPanel_1 = createCommonjsModule(function (module, exports) {
+	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 + ,--. o                   |    o                                            +
+	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
+	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+	 +            `---'                    `---'                                  +
+	 +                                                                            +
+	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+	 + Mail: <diegoling33@gmail.com>                                              +
+	 +                                                                            +
+	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+	 +                                                                            +
+	 + Использование, изменение, копирование, распространение, обмен/продажа      +
+	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+	 +                                                                            +
+	 + Файл: elyWSViewPropsPanel.ts                                               +
+	 + Файл создан: 23.11.2018 23:03:37                                           +
+	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 * Панеь настройки элемента
+	 */
+	class elyWSViewPropsPanel extends elyPanelView_1.default {
+	    constructor() {
+	        super({ title: "Элемент", hidden: true });
+	        /**
+	         * Текущее имя в редакторе
+	         */
+	        this.currentName = null;
+	        this.gridView = new elyGridView_1.default({ margin: { bottom: 10 } });
+	        this.contentView.addSubView(this.gridView);
+	        this.descriptionView.addSubView(new elyButton_1.default({ text: "Код" }).fill().click(() => {
+	            if (this.currentName) {
+	                const text = JSON.stringify(elyDesignable.elyDesignableCore.freeze(elyWSRegex_1.default.main.views.item(this.currentName)), null, 4);
+	                new elyModalView_2.default({ modalTitle: "Код элемента" })
+	                    .modalContent(new elyTextAreaField_1.default({ rowsNumber: 12 }).value(text))
+	                    .present();
+	            }
+	        }));
+	        this.titleView.hidden(true);
+	    }
+	    /**
+	     * Применяет панель настроек
+	     * @param name
+	     */
+	    applySettingsPanel(name) {
+	        elyUIWorkshop_1.default.tabBar.tabBarCurrentTabName("props");
+	        const view = elyWSRegex_1.default.main.views.item(name);
+	        if (!view)
+	            return;
+	        this.currentName = name;
+	        this.title(name);
+	        this.hidden(false);
+	        this.gridView.removeViewContent();
+	        const ed = elyTextView_2.default.editable(name.textView());
+	        ed.textViewEditableShouldSaveValue((value, result) => {
+	            if (ed.value() === "workspace") {
+	                new elyNotificationView_1.default({ message: "Нельзя переименовать рабочую область!" }).present();
+	                result(false);
+	            }
+	            else {
+	                const res = elyWSRegex_1.default.main.rename(ed.value(), value);
+	                if (typeof res === "string")
+	                    new elyNotificationView_1.default({ message: res, title: "Ошибка!" }).present();
+	                const bool = typeof res === "boolean" && res === true;
+	                if (bool) {
+	                    elyUIWorkshopElementsPanel_1.default.main.update();
+	                    elyUIWSWorkspace_1.default.main.update();
+	                }
+	                result(bool);
+	            }
+	        });
+	        const v = new elyControl_2.default();
+	        v.addSubView("Элемент".textView().textSize(elySize_1.default.small).opacity(0.7));
+	        v.addSubView(ed);
+	        this.gridView.add(v);
+	        const data = elyUIWSMeta_1.default.metas[name].autoData;
+	        if (!data || !data.fields)
+	            return;
+	        const autofields = elyUtils_1.default.sortAlphabetic(data.fields);
+	        elyUtils_1.default.forEach(autofields, (index, value) => {
+	            const ims = this.__create(view, value);
+	            if (ims) {
+	                const view = new elyControl_2.default();
+	                view.addSubView(ims[0].textSize(elySize_1.default.small).opacity(0.7));
+	                view.addSubView(ims[1]);
+	                this.gridView.add(view);
+	            }
+	        });
+	    }
+	    __create(view, afItem) {
+	        const titleTextView = new elyTextView_2.default({ text: (elyWSRus_1.default.props[afItem.name] || afItem.name) + ":" });
+	        let field = null;
+	        if (afItem.state === elyDesignable.elyDesignableFieldState.GETSET || afItem.state === elyDesignable.elyDesignableFieldState.SET) {
+	            if (afItem.values && typeof afItem.values === "object") {
+	                field = new elyComboField_1.default({ placeholder: afItem.name });
+	                elyUtils_1.default.forEach(afItem.values, (index, value) => {
+	                    field.add(index, value);
+	                });
+	                const preVal = typeof view[afItem.name] === "function" ? view[afItem.name]() : null;
+	                if (preVal) {
+	                    if (preVal.value) {
+	                        field.tryToSetValue(preVal.value);
+	                    }
+	                    else {
+	                        field.tryToSetValue(preVal);
+	                    }
+	                }
+	                field.addChangeValueObserver((oldValue, newValue) => {
+	                    view[afItem.name](newValue.value);
+	                    // this.data.add(afItem.name, newValue.key);
+	                });
+	            }
+	            else if (afItem.values === null && (afItem.type === "string" || afItem.type === "number")) {
+	                field = new elyTextField_1.default({
+	                    filedType: afItem.type === "string" ? elyFieldType_1.default.text : elyFieldType_1.default.number,
+	                    placeholder: afItem.name,
+	                });
+	                field.addInputObserver((value) => {
+	                    view[afItem.name](value);
+	                    // this.data.add(afItem.name, value);
+	                });
+	            }
+	            else if (afItem.values === null && afItem.type === "text") {
+	                field = new elyTextAreaField_1.default({
+	                    placeholder: afItem.name,
+	                });
+	                field.addInputObserver((value) => {
+	                    view[afItem.name](value);
+	                    // this.data.add(afItem.name, value);
+	                });
+	            }
+	            else if (afItem.values === null && afItem.type === "boolean") {
+	                field = new elySwitchField_1.default();
+	                field.addChangeValueObserver((oldValue, newValue) => {
+	                    view[afItem.name](newValue);
+	                    // this.data.add(afItem.name, newValue);
+	                });
+	            }
+	            else if (afItem.values === null && afItem.type === "[string]") {
+	                field = new elyGridRowView_1.default();
+	                const count = view[afItem.name + "Count"]();
+	                for (let i = 0; i < count; i++) {
+	                    const tv = new elyTextField_1.default({ placeholder: afItem.name });
+	                    field.add(tv);
+	                    tv.addInputObserver((value) => {
+	                        view[afItem.name](i, value);
+	                    });
+	                    if (i > 0)
+	                        tv.getStyle().paddingLeft = "5px";
+	                    const testValue = view[afItem.name](i);
+	                    if (testValue) {
+	                        tv.value(testValue);
+	                    }
+	                }
+	            }
+	        }
+	        if ([elyDesignable.elyDesignableFieldState.GET, elyDesignable.elyDesignableFieldState.GETSET].indexOf(afItem.state) > -1 && field) {
+	            const testValue = view[afItem.name]();
+	            if (testValue) {
+	                if (field instanceof elyComboField_1.default) {
+	                    field.tryToSetValue(testValue.value);
+	                }
+	                else {
+	                    if (typeof field.value === "function")
+	                        field.value(testValue);
+	                }
+	            }
+	        }
+	        if (field) {
+	            return [titleTextView, field];
+	        }
+	        return null;
+	    }
+	}
+	elyWSViewPropsPanel.main = new elyWSViewPropsPanel();
+	exports.default = elyWSViewPropsPanel;
+	});
+
+	unwrapExports(elyWSViewPropsPanel_1);
+
+	var elyUIWSContextMenu_1 = createCommonjsModule(function (module, exports) {
+	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 + ,--. o                   |    o                                            +
+	 + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+	 + |   |||---'|   ||   |    |    ||   ||   |                                  +
+	 + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+	 +            `---'                    `---'                                  +
+	 +                                                                            +
+	 + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+	 + Mail: <diegoling33@gmail.com>                                              +
+	 +                                                                            +
+	 + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+	 + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+	 +                                                                            +
+	 + Использование, изменение, копирование, распространение, обмен/продажа      +
+	 + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+	 +                                                                            +
+	 + Файл: elyUIWSContextMenu.ts                                                +
+	 + Файл создан: 23.11.2018 23:03:37                                           +
+	 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+
+
+
+
+
+
+
+
+	class elyUIWSContextMenu extends elyPanelView_1.default {
+	    constructor() {
+	        super();
+	        this.flexGrid = new elyGridView_1.default({ margin: { left: 0, right: 0, top: 0, bottom: 5 } });
+	        this.title("");
+	        this.descriptionView.hidden(true);
+	        this.getStyle().position = "absolute";
+	        this.getStyle().width = "220px";
+	        this.hidden(true);
+	        document.body.append(this.getDocument());
+	        document.body.onclick = () => {
+	            this.hidden(true);
+	        };
+	        this.contentView.addSubView(this.flexGrid);
+	    }
+	    /**
+	     * Обновляет позицию
+	     * @param view
+	     * @param point
+	     */
+	    update(view, point) {
+	        this.flexGrid.removeViewContent();
+	        this.hidden(false);
+	        if (point) {
+	            this.getStyle().top = point.y + "px";
+	            this.getStyle().left = point.x + "px";
+	        }
+	        else {
+	            this.getStyle().top = (view.getDocument().offsetTop || 0) /*+ (view.getRect().height || 0)*/ + "px";
+	            this.getStyle().left = (view.getDocument().offsetLeft || 0) + 10 + (view.getRect().width || 0) + "px";
+	        }
+	        elyGuard_1.default.func(elyWSUtils_1.default.getWSName, [view], name => {
+	            this.titleView.textSize(elySize_1.default.small);
+	            this.title(name);
+	            this.flexGrid.add(new elyButton_1.default({ text: "Свойства", iconName: "cogs" }).click(() => {
+	                elyWSViewPropsPanel_1.default.main.applySettingsPanel(name);
+	            }).fill().buttonStyle(elyStyle_1.default.primary));
+	            this.flexGrid.add(new elyButton_1.default({ text: "Удалить", iconName: "remove" }).click(() => {
+	                elyUIWorkshop_1.default.remove(name);
+	            }).fill().buttonStyle(elyStyle_1.default.danger));
+	        });
+	    }
+	}
+	elyUIWSContextMenu.main = new elyUIWSContextMenu();
+	exports.default = elyUIWSContextMenu;
+	});
+
+	unwrapExports(elyUIWSContextMenu_1);
+
 	var elyUIWSViewsFactory_1 = createCommonjsModule(function (module, exports) {
 	/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	 + ,--. o                   |    o                                            +
@@ -11381,7 +11462,6 @@ var ely = (function () {
 	            elyUIWSWorkspace_1.default.main.update();
 	            elyUIWorkshopElementsPanel_1.default.main.update();
 	        });
-	        // elyWSViewPropsPanel.main.applySettingsPanel("workspace");
 	        elyUIWorkshop.view = workshopRow;
 	        //
 	        // tabs

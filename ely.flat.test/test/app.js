@@ -1,6 +1,7 @@
 /**
  * Класс контроллера отображения Index (главной страницы)
  */
+
 class IndexViewController extends elySimplePageViewController {
 
     /**
@@ -13,20 +14,27 @@ class IndexViewController extends elySimplePageViewController {
     viewDidLoad() {
         super.viewDidLoad();
 
-        /*this.title("ely.flat *{* Application *}*");
+        this.title("ely.flat *{* Application *}*");
         this.description("Приложение разработано на основе ely.flat framework");
 
-        let cp = new elyColorPickerField({editable: true, value: new elyColor({hex: "00ff00"})});
+        let cp = new elyColorPickerField({editable: true, value: new elyColor({hex: "0000ff"})});
         cp.valueProperty.change(value => {
            console.log(value);
         });
-        this.view.add(cp);*/
-        elyWSProject.loadUrl("res1.elyws", project => {
-            this.view.add(project.getWorkspace());
-            project.getViewByName("elyButton-view-40").click(()=>{
-               new elyNotificationView({title: "lol"}).present();
-            });
-        });
+
+        let field = new elyTextField({placeholder: "Username"});
+        let pass = new elyTextField({placeholder: "Password", filedType: elyFieldType.password});
+
+        let btn = new elyButton({text: "Click me"}).fill();
+
+        this.view.setItemsMargin({top: 10, bottom: 10});
+
+        this.view.add(field);
+        this.view.add(pass);
+        this.view.add(btn);
+
+        this.view.add(elyControl.line());
+        this.view.add(cp);
     }
 }
 

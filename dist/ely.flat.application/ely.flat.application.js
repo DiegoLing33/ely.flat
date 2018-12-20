@@ -9768,7 +9768,6 @@ var ely = (function () {
 	    constructor(options = {}) {
 	        super({}, new elyInput_1.default(Object.assign({ class: "ef-input", tag: "input" })));
 	        this.colorThumbnail = new elyControl_2.default();
-	        this.colorThumbnail.addClass("bg-primary");
 	        this.colorView = new elyControl_2.default({ class: "ef-color-pict" });
 	        this.colorView.addSubView(this.colorThumbnail);
 	        this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
