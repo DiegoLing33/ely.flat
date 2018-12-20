@@ -72,6 +72,7 @@ export default class elyFlatSideNavigationView extends elyView {
             } else {
                 this.widthProperty.set(260);
             }
+            this.dismiss();
         });
 
     }
