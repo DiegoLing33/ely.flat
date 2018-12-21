@@ -39,7 +39,7 @@ export default class elyListView extends elyRebuildableViewProtocol {
      * Дополнительный класс для элементов списка
      * @ignore
      */
-    private readonly __listClass: string[] = [];
+    private __listClass: string[] = [];
 
     /**
      * Конструктор
@@ -55,6 +55,16 @@ export default class elyListView extends elyRebuildableViewProtocol {
             else this.__listClass = options.listItemsClass;
         }
         if (options.items) for (const item of options.items) this.add(item);
+    }
+
+    /**
+     * Устанавливает классы для всех элементов списка
+     * @param {...string} className
+     * @return {this}
+     */
+    public setListItemsClassName(...className: string[]): elyListView {
+        this.__listClass = className;
+        return this;
     }
 
     /**
@@ -80,13 +90,23 @@ export default class elyListView extends elyRebuildableViewProtocol {
     }
 
     /**
+     * Добавляет наблюдатель отрисовки элементов
+     * @param {function(index: number, listItemView: elyView, item: elyView)} o - наблюдатель
+     */
+    public addItemWillDrawObserver(o: (index: number, listItemView: elyView, item: elyView) => void): elyListView {
+        this.addObserver("itemWillDraw", o);
+        return this;
+    }
+
+    /**
      * Выполняет перестроение элементов
      */
     public __rebuild(): elyListView {
         this.removeViewContent();
-        this.items.items().forEach((item: elyView) => {
+        this.items.items().forEach((item: elyView, index) => {
             const listElement = new elyControl({tag: "li", class: "ely-list-item"});
             if (this.__listClass) listElement.addClass(...this.__listClass);
+            this.notificate("itemWillDraw", [index, listElement, item]);
             listElement.addSubView(item);
             this.getDocument().appendChild(listElement.getDocument());
         });

@@ -28,6 +28,7 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyStyle from "@enums/elyStyle";
 import elyRangeFieldOptions from "@options/fields/elyRangeFieldOptions";
+import elyListView from "@controls/view/elyListView";
 
 /**
  * @typedef {object} elyRangeFieldOptions
@@ -47,6 +48,11 @@ import elyRangeFieldOptions from "@options/fields/elyRangeFieldOptions";
 @designable("min", elyDesignableFieldState.GETSET, "number")
 @designable("value", elyDesignableFieldState.GETSET, "number")
 export default class elyRangeField extends elyField<number> {
+
+    /**
+     * Элементы
+     */
+    public readonly listView: elyListView = new elyListView({class: "range-labels"});
 
     /**
      * Свойство: стиль трека
@@ -89,23 +95,86 @@ export default class elyRangeField extends elyField<number> {
         super(options, new elyInput({type: "range", noObservers: true}));
 
         this.addClass("ef-range-field");
-
-        this.maxProperty.change(value => this.accessoryView.attribute("max", String(value)));
-        this.minProperty.change(value => this.accessoryView.attribute("min", String(value)));
-        this.stepProperty.change(value => this.accessoryView.attribute("step", String(value)));
-        this.valueProperty.change(value => this.accessoryView.getDocument().value = value);
-
+        this.maxProperty.change(value => {
+            this.accessoryView.attribute("max", String(value));
+            this.listView.items.clear();
+            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+                this.listView.add(String(i + this.min()));
+            }
+            this.listView.rebuild();
+        });
+        this.minProperty.change(value => {
+            this.accessoryView.attribute("min", String(value));
+            this.listView.items.clear();
+            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+                this.listView.add(String(i + this.min()));
+            }
+            this.listView.rebuild();
+        });
+        this.stepProperty.change(value => {
+            this.accessoryView.attribute("step", String(value));
+            this.listView.items.clear();
+            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+                this.listView.add(String(i + this.min()));
+            }
+            this.listView.rebuild();
+        });
+        this.valueProperty.change(value => {
+            this.accessoryView.getDocument().value = value;
+            this.listView.rebuild();
+        });
         this.accessoryView.valueProperty.removeAllObservers();
 
         const accessoryDoc = this.accessoryView.getDocument() as HTMLInputElement;
+
         accessoryDoc.onchange = () => {
             this.value(accessoryDoc.valueAsNumber);
         };
         (this.accessoryView as elyInput).valueProperty.change(value => this.value(parseInt(value, 10)));
 
-        this.max(10);
-        this.min(0);
-        this.step(1);
+        this.getDocument().append(this.listView.getDocument());
+        this.listView.addItemWillDrawObserver((i, listItemView) => {
+            const w = this.accessoryView.getRect().width;
+            let count = (this.max() + Math.abs(this.min() - this.step()));
+            count *= Math.abs((count * 0.016) - (1.83));
+
+            //  n * x = n
+            //  4 * x = 3 // x = 0.75
+            //  6 * x = 4 // x = 0.66666667
+            //  8 * x = 5 // x = 0.625
+            // 10 * x = 6 // x = 0.6
+            // 12 * x = 7 // x = 0,58333333
+
+            //  2 : 2
+            //  4 : 3
+            //  6 : 4
+            //  8 : 5
+            // 10 : 6
+            // 12 : 7
+            // 14 : 8
+            // 16 : 9
+            // 18 : 10
+            // 20 : 11
+            // 22 : 12 = 1,83
+            const index = this.value() - this.min();
+            const oneW = w / count;
+            // 11.5
+            if (i * this.step() === index) listItemView.addClass("active");
+            this.listView.getStyle().marginLeft = (-oneW / 2) + "px";
+            listItemView.css({width: oneW + "px", left: (oneW * i) + "px"});
+            listItemView.addObserver("click", () => {
+                this.value(i + this.min());
+            });
+        });
+        this.resize(() => {
+            this.listView.rebuild();
+        });
+
+        this.listView.denyRebuild(true);
+        this.min(options.min || 0);
+        this.step(options.step || 1);
+        this.max(options.max || 4);
+        this.listView.denyRebuild(false);
 
         this.value(this.min());
         this.applyProtocolOptions(options);

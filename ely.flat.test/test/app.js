@@ -33,7 +33,8 @@ class IndexViewController extends elySimplePageViewController {
         panel.contentView.addSubView(button);
         this.view.add(panel);
         this.view.add(elyControl.line());
-        let tf = new elyRangeField();
+        let tf = new elyRangeField({min: 0});
+
         this.view.add(tf);
         tf.change(val => {
            console.log(val, tf.max(), tf.min(), tf.step());

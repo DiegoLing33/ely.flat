@@ -165,6 +165,8 @@
   }
 
   input[type=range] {
+    position: relative;
+    z-index: 10;
     height: 29px;
     -webkit-appearance: none;
     margin: 10px 0;
@@ -198,7 +200,7 @@
     }
   }
 
-  input[type=range]::-webkit-slider-thumb{ -webkit-appearance: none; margin-top: -10px; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance: none; margin-top: -9px; }
 
   //
   //  Трек
@@ -235,4 +237,47 @@
   input[type=range]::-ms-thumb { margin-top: 1px; }
   input[type=range]:focus::-ms-fill-lower {background: #A9A9A9; }
   input[type=range]:focus::-ms-fill-upper {background: #A9A9A9;}
+
+  // Labels below slider
+  .range-labels {
+    z-index: 1;
+    margin-top: -5px;
+    padding: 0;
+    list-style: none;
+    @include deny-selection();
+
+    li {
+      position: relative;
+      float: left;
+      width: 20%;
+      text-align: center;
+      color: #A9A9A9;
+      font-size: 12px;
+      padding-left: 5px;
+      cursor: pointer;
+
+      &::before {
+        position: absolute;
+        top: -24px;
+        right: 0;
+        left: 0;
+        content: "";
+        margin: 0 auto;
+        width: 7px;
+        height: 7px;
+        background: #A9A9A9;
+        border-radius: 50%;
+      }
+    }
+
+    .active {
+      .ef-text {
+        color: #194d6d;
+      }
+    }
+
+    .active.selected::before {
+      display: none;
+    }
+  }
 }

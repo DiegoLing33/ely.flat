@@ -3894,6 +3894,15 @@ var ely = (function () {
 	                this.add(item);
 	    }
 	    /**
+	     * Устанавливает классы для всех элементов списка
+	     * @param {...string} className
+	     * @return {this}
+	     */
+	    setListItemsClassName(...className) {
+	        this.__listClass = className;
+	        return this;
+	    }
+	    /**
 	     * Добавляет элемент в список
 	     * @param item
 	     * @param index
@@ -3919,14 +3928,23 @@ var ely = (function () {
 	        return this;
 	    }
 	    /**
+	     * Добавляет наблюдатель отрисовки элементов
+	     * @param {function(index: number, listItemView: elyView, item: elyView)} o - наблюдатель
+	     */
+	    addItemWillDrawObserver(o) {
+	        this.addObserver("itemWillDraw", o);
+	        return this;
+	    }
+	    /**
 	     * Выполняет перестроение элементов
 	     */
 	    __rebuild() {
 	        this.removeViewContent();
-	        this.items.items().forEach((item) => {
+	        this.items.items().forEach((item, index) => {
 	            const listElement = new elyControl_2.default({ tag: "li", class: "ely-list-item" });
 	            if (this.__listClass)
 	                listElement.addClass(...this.__listClass);
+	            this.notificate("itemWillDraw", [index, listElement, item]);
 	            listElement.addSubView(item);
 	            this.getDocument().appendChild(listElement.getDocument());
 	        });
@@ -11851,6 +11869,7 @@ var ely = (function () {
 
 
 
+
 	/**
 	 * @typedef {object} elyRangeFieldOptions
 	 * @property {number} [max] - Максимальное значение
@@ -11870,6 +11889,10 @@ var ely = (function () {
 	     */
 	    constructor(options = {}) {
 	        super(options, new elyInput_1.default({ type: "range", noObservers: true }));
+	        /**
+	         * Элементы
+	         */
+	        this.listView = new elyListView_1.default({ class: "range-labels" });
 	        /**
 	         * Свойство: стиль трека
 	         * @protected
@@ -11896,19 +11919,75 @@ var ely = (function () {
 	         */
 	        this.maxProperty = new elyObservableProperty_1.default(10);
 	        this.addClass("ef-range-field");
-	        this.maxProperty.change(value => this.accessoryView.attribute("max", String(value)));
-	        this.minProperty.change(value => this.accessoryView.attribute("min", String(value)));
-	        this.stepProperty.change(value => this.accessoryView.attribute("step", String(value)));
-	        this.valueProperty.change(value => this.accessoryView.getDocument().value = value);
+	        this.maxProperty.change(value => {
+	            this.accessoryView.attribute("max", String(value));
+	            this.listView.items.clear();
+	            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+	                this.listView.add(String(i + this.min()));
+	            }
+	            this.listView.rebuild();
+	        });
+	        this.minProperty.change(value => {
+	            this.accessoryView.attribute("min", String(value));
+	            this.listView.items.clear();
+	            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+	                this.listView.add(String(i + this.min()));
+	            }
+	            this.listView.rebuild();
+	        });
+	        this.stepProperty.change(value => {
+	            this.accessoryView.attribute("step", String(value));
+	            this.listView.items.clear();
+	            for (let i = 0; i <= this.max() - this.min(); i += this.step()) {
+	                this.listView.add(String(i + this.min()));
+	            }
+	            this.listView.rebuild();
+	        });
+	        this.valueProperty.change(value => {
+	            this.accessoryView.getDocument().value = value;
+	            this.listView.rebuild();
+	        });
 	        this.accessoryView.valueProperty.removeAllObservers();
 	        const accessoryDoc = this.accessoryView.getDocument();
 	        accessoryDoc.onchange = () => {
 	            this.value(accessoryDoc.valueAsNumber);
 	        };
 	        this.accessoryView.valueProperty.change(value => this.value(parseInt(value, 10)));
-	        this.max(10);
-	        this.min(0);
-	        this.step(1);
+	        this.getDocument().append(this.listView.getDocument());
+	        this.listView.addItemWillDrawObserver((i, listItemView) => {
+	            const w = this.accessoryView.getRect().width;
+	            let count = (this.max() + Math.abs(this.min() - this.step()));
+	            count *= Math.abs((count * 0.016) - (1.83));
+	            //  2 : 2 = 1
+	            //  4 : 3
+	            //  6 : 4
+	            //  8 : 5
+	            // 10 : 6
+	            // 12 : 7
+	            // 14 : 8
+	            // 16 : 9
+	            // 18 : 10
+	            // 20 : 11
+	            // 22 : 12 = 1,83
+	            const index = this.value() - this.min();
+	            const oneW = w / count;
+	            // 11.5
+	            if (i * this.step() === index)
+	                listItemView.addClass("active");
+	            this.listView.getStyle().marginLeft = (-oneW / 2) + "px";
+	            listItemView.css({ width: oneW + "px", left: (oneW * i) + "px" });
+	            listItemView.addObserver("click", () => {
+	                this.value(i + this.min());
+	            });
+	        });
+	        this.resize(() => {
+	            this.listView.rebuild();
+	        });
+	        this.listView.denyRebuild(true);
+	        this.min(options.min || 0);
+	        this.step(options.step || 1);
+	        this.max(options.max || 4);
+	        this.listView.denyRebuild(false);
 	        this.value(this.min());
 	        this.applyProtocolOptions(options);
 	    }
