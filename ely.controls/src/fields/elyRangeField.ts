@@ -24,11 +24,11 @@
 
 import elyInput from "@controls/action/elyInput";
 import elyField from "@controls/fields/elyField";
+import elyListView from "@controls/view/elyListView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyStyle from "@enums/elyStyle";
 import elyRangeFieldOptions from "@options/fields/elyRangeFieldOptions";
-import elyListView from "@controls/view/elyListView";
 
 /**
  * @typedef {object} elyRangeFieldOptions
@@ -42,6 +42,8 @@ import elyListView from "@controls/view/elyListView";
  * Поле ввода: Выбор значения
  * @class elyRangeField
  * @augments elyField
+ *
+ * fixme Не отображает нормальный размер сразу
  */
 @designable("step", elyDesignableFieldState.GETSET, "number")
 @designable("max", elyDesignableFieldState.GETSET, "number")
@@ -134,50 +136,45 @@ export default class elyRangeField extends elyField<number> {
 
         this.getDocument().append(this.listView.getDocument());
         this.listView.addItemWillDrawObserver((i, listItemView) => {
-            const w = this.accessoryView.getRect().width;
-            let count = (this.max() + Math.abs(this.min() - this.step()));
-            count *= Math.abs((count * 0.016) - (1.83));
-
-            //  n * x = n
-            //  4 * x = 3 // x = 0.75
-            //  6 * x = 4 // x = 0.66666667
-            //  8 * x = 5 // x = 0.625
-            // 10 * x = 6 // x = 0.6
-            // 12 * x = 7 // x = 0,58333333
-
-            //  2 : 2
-            //  4 : 3
-            //  6 : 4
-            //  8 : 5
-            // 10 : 6
-            // 12 : 7
-            // 14 : 8
-            // 16 : 9
-            // 18 : 10
-            // 20 : 11
-            // 22 : 12 = 1,83
-            const index = this.value() - this.min();
-            const oneW = w / count;
-            // 11.5
+            const w        = this.accessoryView.getRect().width;
+            let count      = (this.max() + Math.abs(this.min() - this.step()));
+            count          = (count * 2) - 2; // fixme Кастыльное решение, не будет работать с float
+            const index    = this.value() - this.min();
+            const oneW     = w / count;
+            const kf       = (w / 4) - (oneW * i);
+            let offsetLeft = 0;
+            if (kf > 0) {
+                offsetLeft = 5 - 1;
+            } else if (kf > 0) {
+                offsetLeft = 5 + (i * 2.5);
+                offsetLeft *= -1;
+            }
+            // 0 - 4
+            // 1 - 3
+            // 2 - 2
+            // 3 - 1
             if (i * this.step() === index) listItemView.addClass("active");
             this.listView.getStyle().marginLeft = (-oneW / 2) + "px";
-            listItemView.css({width: oneW + "px", left: (oneW * i) + "px"});
+            listItemView.css({width: oneW + "px", left: ((oneW * i) + offsetLeft) + "px"});
             listItemView.addObserver("click", () => {
                 this.value(i + this.min());
             });
-        });
-        this.resize(() => {
-            this.listView.rebuild();
         });
 
         this.listView.denyRebuild(true);
         this.min(options.min || 0);
         this.step(options.step || 1);
-        this.max(options.max || 4);
+        this.max(options.max || 10);
         this.listView.denyRebuild(false);
 
         this.value(this.min());
         this.applyProtocolOptions(options);
+
+        this.elyViewWillDraw(view => {
+            this.resize(() => {
+                this.listView.rebuild();
+            });
+        });
     }
 
     /**
@@ -283,5 +280,4 @@ export default class elyRangeField extends elyField<number> {
     public isEmpty(): boolean {
         return false;
     }
-
 }

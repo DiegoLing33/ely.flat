@@ -735,6 +735,12 @@ var ely = (function () {
 	            this.opacity(options.opacity);
 	        if (options.disabled)
 	            this.disabled(options.disabled);
+	        const wait = setInterval(() => {
+	            if (this.getRect().width) {
+	                clearInterval(wait);
+	                this.notificate("viewWillDraw", [this]);
+	            }
+	        }, 10);
 	    }
 	    /**
 	     * Возвращает HTML элемент
@@ -1067,6 +1073,9 @@ var ely = (function () {
 	        });
 	        closure(this, bd.clientWidth, bd.clientHeight);
 	        return this;
+	    }
+	    elyViewWillDraw(o) {
+	        this.addObserver("viewWillDraw", o);
 	    }
 	}
 	exports.default = elyView;
@@ -11881,6 +11890,8 @@ var ely = (function () {
 	 * Поле ввода: Выбор значения
 	 * @class elyRangeField
 	 * @augments elyField
+	 *
+	 * fixme Не отображает нормальный размер сразу
 	 */
 	let elyRangeField = class elyRangeField extends elyField_2.default {
 	    /**
@@ -11957,39 +11968,42 @@ var ely = (function () {
 	        this.listView.addItemWillDrawObserver((i, listItemView) => {
 	            const w = this.accessoryView.getRect().width;
 	            let count = (this.max() + Math.abs(this.min() - this.step()));
-	            count *= Math.abs((count * 0.016) - (1.83));
-	            //  2 : 2 = 1
-	            //  4 : 3
-	            //  6 : 4
-	            //  8 : 5
-	            // 10 : 6
-	            // 12 : 7
-	            // 14 : 8
-	            // 16 : 9
-	            // 18 : 10
-	            // 20 : 11
-	            // 22 : 12 = 1,83
+	            count = (count * 2) - 2; // fixme Кастыльное решение, не будет работать с float
 	            const index = this.value() - this.min();
 	            const oneW = w / count;
-	            // 11.5
+	            const kf = (w / 4) - (oneW * i);
+	            let offsetLeft = 0;
+	            if (kf > 0) {
+	                offsetLeft = 5 - 1;
+	            }
+	            else if (kf > 0) {
+	                offsetLeft = 5 + (i * 2.5);
+	                offsetLeft *= -1;
+	            }
+	            // 0 - 4
+	            // 1 - 3
+	            // 2 - 2
+	            // 3 - 1
 	            if (i * this.step() === index)
 	                listItemView.addClass("active");
 	            this.listView.getStyle().marginLeft = (-oneW / 2) + "px";
-	            listItemView.css({ width: oneW + "px", left: (oneW * i) + "px" });
+	            listItemView.css({ width: oneW + "px", left: ((oneW * i) + offsetLeft) + "px" });
 	            listItemView.addObserver("click", () => {
 	                this.value(i + this.min());
 	            });
 	        });
-	        this.resize(() => {
-	            this.listView.rebuild();
-	        });
 	        this.listView.denyRebuild(true);
 	        this.min(options.min || 0);
 	        this.step(options.step || 1);
-	        this.max(options.max || 4);
+	        this.max(options.max || 10);
 	        this.listView.denyRebuild(false);
 	        this.value(this.min());
 	        this.applyProtocolOptions(options);
+	        this.elyViewWillDraw(view => {
+	            this.resize(() => {
+	                this.listView.rebuild();
+	            });
+	        });
 	    }
 	    /**
 	     * Возвращает и устанавливает стиль трека

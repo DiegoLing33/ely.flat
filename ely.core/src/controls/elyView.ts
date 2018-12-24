@@ -82,6 +82,13 @@ export default abstract class elyView extends elyObject {
         this.hidden(options.hidden || false);
         if (options.opacity) this.opacity(options.opacity);
         if (options.disabled) this.disabled(options.disabled);
+
+        const wait = setInterval(() => {
+            if (this.getRect().width) {
+                clearInterval(wait);
+                this.notificate("viewWillDraw", [this]);
+            }
+        }, 10);
     }
 
     /**
@@ -500,5 +507,9 @@ export default abstract class elyView extends elyObject {
         });
         closure(this, bd.clientWidth, bd.clientHeight);
         return this;
+    }
+
+    protected elyViewWillDraw(o: (view: elyView) => void): void {
+        this.addObserver("viewWillDraw", o);
     }
 }
