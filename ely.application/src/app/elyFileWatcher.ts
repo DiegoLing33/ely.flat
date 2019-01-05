@@ -1,4 +1,3 @@
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
  + ,--. o                   |    o                                            +
@@ -44,6 +43,11 @@ export default class elyFileWatcher extends elyObservable {
     public lastFileSize: number = -1;
 
     /**
+     * Стартовое значение на первой итерации
+     */
+    public startValue: number | null = null;
+
+    /**
      * Поток
      */
     protected thread: any | null = null;
@@ -63,6 +67,7 @@ export default class elyFileWatcher extends elyObservable {
         view.getStyle().bottom = "0";
         view.getStyle().left = "0";
         view.getStyle().right = "0";
+        view.getStyle().zIndex = "1000";
         view.getStyle().padding = "15px";
         const iconView = new elyIconView({iconName: "refresh"});
         iconView.iconSpinning(true);
@@ -87,6 +92,15 @@ export default class elyFileWatcher extends elyObservable {
     }
 
     /**
+     * Добавляет слушатель изменения файла по отношению к первоначальной стадии
+     * @param observer
+     */
+    public addUpdateListener(observer: (size: number) => void): elyFileWatcher {
+        this.addObserver("updated", observer);
+        return this;
+    }
+
+    /**
      * Запускает систему прослушивания
      */
     public start(): elyFileWatcher {
@@ -100,6 +114,8 @@ export default class elyFileWatcher extends elyObservable {
                     if (this.lastFileSize === -1) this.lastFileSize = size;
                     if (size !== this.lastFileSize) this.notificate("changed", [size]);
                     this.lastFileSize = size;
+                    if (this.startValue === null) this.startValue = size;
+                    if (this.startValue !== size) this.notificate("updated", [size]);
                 }
             };
             xhr.send();

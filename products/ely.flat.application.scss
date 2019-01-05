@@ -4,6 +4,17 @@
 //                                                                             +
 // Проект: ely.flat                                                            +
 //                                                                             +
+// Файл: ely.flat.application.scss                                             +
+// Файл создан: 05.01.2019 23:09:33                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
 // Файл: ely.flat.scss                                                         +
 // Файл создан: 05.12.2018 23:20:06                                            +
 //                                                                             +
@@ -24,14 +35,20 @@
 //
 //  Core include
 //
-@import "../../../ely.core/scss/main";
+@import "../ely.core/scss/main";
 
 //
 //  Items
 //
-@import "../../../ely.controls/scss/main";
+@import "../ely.controls/scss/main";
 
 //
 //  Application
 //
-@import "../../../ely.application/scss/main";
+@import "../ely.application/scss/main";
+
+//
+//  Application
+//
+@import "../ely.flat.cnv/scss/main";
+

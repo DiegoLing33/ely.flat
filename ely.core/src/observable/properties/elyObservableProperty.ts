@@ -30,6 +30,7 @@ type elyObservablePropChangeHandler<T> = (value: T, oldVal: T | null) => void;
 /**
  * Обрабатываемое значение
  * @class elyObservableProperty
+ * @template T
  * @augments elyObservable
  */
 export default class elyObservableProperty<T> extends elyObservable {
@@ -49,6 +50,7 @@ export default class elyObservableProperty<T> extends elyObservable {
     /**
      * Значение
      * @protected
+     * @type {T}
      */
     protected value: T | null;
 
@@ -56,80 +58,131 @@ export default class elyObservableProperty<T> extends elyObservable {
      * Флаг защиты от перезаписи
      * @ignore
      * @protected
+     * @type {boolean}
      */
     protected isOverwriteProtected: boolean = false;
 
     /**
      * Конструктор
-     * @param defaultValue
+     * @param {T|null} defaultValue
      */
     constructor(defaultValue: T | null = null) {
         super();
+        /**
+         * @protected
+         * @type {T}
+         */
         this.value = defaultValue;
     }
 
     /**
      * Возвращает значение
+     * @return {T|null}
+     * @deprecated не рекомендовано использовать метод `get()` без
+     * `guard` значения!
+     *
+     * Внимание. Пометка deprecated к данному методу не говорит о его ближайшем
+     * сокращении. Только лишь о безопасности.
      */
     public get(): T | null;
 
     /**
      * Возвращает значение или guard если значение null
-     * @param guard
+     * @param {T} guard
+     * @return {T}
      */
     public get(guard: T): T;
 
     /**
-     * Возвращает значение или guard если значение null
-     * @param guard
+     * Возвращает значение или guard если значение null.
+     *
+     * Данный метод никогда не возвращает значение null. В случае, если значение
+     * прослушиваемого параметра null или undefined, возвращает `guard` значение.
+     *
+     * @param {T} [guard]
+     * @return {T}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new elyObservableProperty<string>();
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get( "test" ) ); // test
+     *
+     *
      */
     public get(guard?: T): T | null {
-        if ((this.value === undefined || this.value === null) && guard !== null)
+        if ((this.isNull()) && guard !== null)
             return guard!;
         return this.value;
     }
 
     /**
-     * Устанавливает флаг защиты от перезаписи
-     * @param flag
+     * Устанавливает флаг защиты от перезаписи.
+     *
+     * @param {boolean} flag
+     * @return {this}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new elyObservableProperty<string>();
+     *     prop.set( "Tom" );
+     *
+     *     // Запрещаем перезапись
+     *     prop.overwrite(false);
+     *
+     *     prop.set( "John" );
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get() ); // Tom
+     *
+     *
      */
-    public overwrite(flag: boolean): elyObservableProperty<T>{
+    public overwrite(flag: boolean): elyObservableProperty<T> {
         this.isOverwriteProtected = flag;
         return this;
     }
 
     /**
-     * Устанавливает значение
-     * @param value
+     * Устанавливает значение и вызывает оповещение `change`, прослушиваемое
+     * методом {@link elyObservableProperty.change}.
+     *
+     * @param {T} value
+     * @return {this}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new elyObservableProperty<string>();
+     *     prop.set( "Tom" );
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get() ); // Tom
+     *
+     *
      */
     public set(value: T): elyObservableProperty<T> {
         if (this.isOverwriteProtected) return this;
         const old = this.value;
+        /**
+         * @type {T}
+         * @protected
+         */
         this.value = value;
         this.notificate("change", [old, value]);
         return this;
     }
 
     /**
-     * Возвращает true, если объект null
+     * Возвращает true, если объект null или undefined.
+     * @return {boolean}
      */
     public isNull(): boolean {
         return this.value === null || this.value === undefined;
     }
 
     /**
-     * Добавляет наблюдателя за изменением значения
-     * @param observer
-     * @deprecated
-     */
-    public addChangeObserver(observer: elyObservablePropertyHandler<T>): elyObservableProperty<T> {
-        this.addObserver("change", observer);
-        return this;
-    }
-
-    /**
      * Добавляет наблюдатель за изменением значения
-     * @param observer - наблюдатель {@link elyObservablePropChangeHandler}
+     * @param {{function(value:T, oldValue:T?)}} observer - наблюдатель
      *
      *
      *
@@ -159,6 +212,7 @@ export default class elyObservableProperty<T> extends elyObservable {
 
     /**
      * Преобразует объект в строку
+     * @return {string}
      */
     public toString(): string {
         return this.get() + "";

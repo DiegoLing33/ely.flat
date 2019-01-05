@@ -33,6 +33,19 @@ export default class elyXLogger {
     public static default = new elyXLogger({mainPrefix: "Default"});
 
     /**
+     * Формирует строку `[ OK ]` или `[ NO ]` в зависимости от условия
+     * @param {boolean} condition
+     * @return {string}
+     */
+    public static getOkNoString(condition: boolean): string {
+        if (condition) {
+            return "[ OK ]";
+        } else {
+            return "[ NO ]";
+        }
+    }
+
+    /**
      * Уровни логирования
      */
     public static loggerLevels = {

@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,24 +15,36 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: IPosition.ts                                                         +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ely.flat.play.ts                                                     +
+ + Файл изменен: 05.01.2019 23:09:43                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-/**
- * @interface IPosition
- * @property {number|string} [top]
- * @property {number|string} [right]
- * @property {number|string} [bottom]
- * @property {number|string} [left]
- */
+//
+//  ely.flat.play -- модификация для ely.flat, с возможностью
+//  разработки 2D tile-based игры.
+//
 
-/**
- * Позиции
- */
-export default interface IPosition {
-    top?: number|string;
-    right?: number|string;
-    bottom?: number|string;
-    left?: number|string;
-}
+import efKeyboard from "@play/controllers/efKeyboard";
+import efMouse from "@play/controllers/efMouse";
+import ef2DSprite from "@play/ef2DSprite";
+import efGame from "@play/efGame";
+import efGameCanvas from "@play/efGameCanvas";
+import efGameRenderer from "@play/efGameRenderer";
+import efCharacter from "@play/entities/efCharacter";
+import efEntity from "@play/entities/efEntity";
+import ef2DSpritesManager from "@play/managers/ef2DSpritesManager";
+
+export {
+    ef2DSpritesManager,
+    efKeyboard,
+    efMouse,
+    efGameCanvas,
+    efGameRenderer,
+    ef2DSprite,
+    efEntity,
+    efCharacter,
+    efGame,
+};

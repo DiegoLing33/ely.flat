@@ -290,35 +290,28 @@ export default class elyFlatApplication extends elyObservable {
         elyLogger.debugObject(this.config);
         this.applyConfiguration(config);
 
-        elyLogger.debug("---> Загрузка скрипта приложения: " + this.config.app!.mainScript);
-        const script = document.createElement("script") as HTMLScriptElement;
-        script.src = this.config.app!.mainScript!;
-        document.head!.appendChild(script);
-        script.onload = () => {
-            elyLogger.debug("[OK] Скрипт загружен");
-            this.notificate("ready", [(flag: boolean, message?: string) => {
-                elyLogger.debug(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
-                elyLogger.debug(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
-                if (!flag) {
-                    this.preloader.iconLabel
-                        .removeClass("fa-refresh")
-                        .addClass("fa-times")
-                        .removeClass("fa-spin");
-                    this.preloader.messageView.text(message || "Загрузка была остановлена...");
-                    throw Error("Остановка приложения...");
-                    return;
+        this.notificate("ready", [(flag: boolean, message?: string) => {
+            elyLogger.debug(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
+            elyLogger.debug(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
+            if (!flag) {
+                this.preloader.iconLabel
+                    .removeClass("fa-refresh")
+                    .addClass("fa-times")
+                    .removeClass("fa-spin");
+                this.preloader.messageView.text(message || "Загрузка была остановлена...");
+                throw Error("Остановка приложения...");
+                return;
+            }
+            this.readySignalsShouldBeReceived--;
+            elyLogger.debug("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
+            if (this.readySignalsShouldBeReceived === 0) {
+                if (this.config!.app!.useContentController) {
+                    __applyElyOneActions(this);
                 }
-                this.readySignalsShouldBeReceived--;
-                elyLogger.debug("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
-                if (this.readySignalsShouldBeReceived === 0) {
-                    if (this.config!.app!.useContentController) {
-                        __applyElyOneActions(this);
-                    }
-                    elyScreenController.default.present("index");
-                    this.preloader.hidden(true);
-                }
-            }]);
-        };
+                elyScreenController.default.present("index");
+                this.preloader.hidden(true);
+            }
+        }]);
     }
 
     /**

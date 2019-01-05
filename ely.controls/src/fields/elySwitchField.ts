@@ -29,6 +29,8 @@ import elySwitchFieldOptions from "@options/fields/elySwitchFieldOptions";
 /**
  * Поле: Переключатель
  * @version 1.0
+ * @class elySwitchField
+ * @augments {elyField<boolean>}
  */
 @designable("value", elyDesignableFieldState.GETSET, "boolean")
 @designable("title", elyDesignableFieldState.GETSET, "string")
@@ -37,47 +39,52 @@ export default class elySwitchField extends elyField<boolean> {
 
     /**
      * Отображение заголовка
+     * @readonly
+     * @type {elyTextView}
      */
-    public readonly titleView: elyTextView;
+    public readonly titleView: elyTextView = new elyTextView({class: "title"});
 
     /**
      * Заголовок
+     * @readonly
+     * @type {elyObservableProperty<string>}
      */
-    public readonly titleProperty: elyObservableProperty<string>;
+    public readonly titleProperty: elyObservableProperty<string> = new elyObservableProperty<string>();
 
     /**
      * Иконка переключателя
+     * @readonly
+     * @protected
+     * @type {elyControl}
      */
-    protected readonly switcherView: elyControl;
+    protected readonly switcherView: elyControl = new elyControl({class: "switcher"});
 
     /**
      * Элемент с переключателем
+     * @readonly
+     * @protected
+     * @type {elyControl}
      */
-    protected readonly switcherBox: elyControl;
+    protected readonly switcherBox: elyControl = new elyControl({tag: "label", class: "ef-switch"});
 
     /**
      * Конструктор
-     * @param options
+     * @param {elySwitchFieldOptions} options
      */
     public constructor(options: elySwitchFieldOptions = {}) {
         super(options, new elyInput({type: "checkbox"}));
 
+        /**
+         * @type {elyObservableProperty<boolean>}
+         */
         this.valueProperty = new elyObservableProperty<boolean>(false);
-        this.editableProperty.addChangeObserver((oldValue, newValue) => {
-            this.accessoryView.editable(newValue);
-        });
 
-        this.valueProperty.addChangeObserver((oldValue, newValue) => {
-            this.accessoryView.getDocument().checked = newValue;
-        });
-
-        this.accessoryView.valueProperty.addChangeObserver(() =>
+        this.editableProperty.change((newValue) => this.accessoryView.editable(newValue));
+        this.valueProperty.change((newValue) => this.accessoryView.getDocument().checked = newValue);
+        this.titleProperty.change((newValue) => this.titleView.text(newValue));
+        this.editableProperty.change((newValue) => this.accessoryView.getDocument().disabled = !newValue);
+        this.accessoryView.valueProperty.change(() =>
             this.valueProperty.set(this.accessoryView.getDocument().checked || false));
-
-        this.switcherView  = new elyControl({class: "switcher"});
-        this.switcherBox   = new elyControl({tag: "label", class: "ef-switch"});
-        this.titleView    = new elyTextView({class: "title"});
-        this.titleProperty = new elyObservableProperty<string>();
 
         this.addClass("ef-input-switch");
         this.removeViewContent();
@@ -85,16 +92,10 @@ export default class elySwitchField extends elyField<boolean> {
         this.switcherBox.addSubView(this.switcherView);
         this.fieldLineView.addSubView(this.switcherBox);
         this.fieldLineView.addSubView(this.titleView);
+
         this.accessoryView.attribute("type", "checkbox");
 
         this.getDocument().appendChild(this.fieldLineView.getDocument());
-
-        this.titleProperty.addChangeObserver((oldValue, newValue) => {
-            this.titleView.text(newValue);
-        });
-
-        this.editableProperty.addChangeObserver((oldValue, newValue) =>
-            this.accessoryView.getDocument().disabled = !newValue);
 
         if (options.title) this.titleProperty.set(options.title);
         this.applyProtocolOptions(options);
@@ -103,6 +104,7 @@ export default class elySwitchField extends elyField<boolean> {
 
     /**
      * Стандартное значение
+     * @return {boolean}
      */
     public defaultValue(): boolean {
         return false;
@@ -111,6 +113,7 @@ export default class elySwitchField extends elyField<boolean> {
     /**
      * Проверка на пустоту значения elySwitchField, которое всегда отрицательно.
      * Иными словами, поле {@link elySwitchField} не может быть пустым!
+     * @return {boolean}
      */
     public isEmpty(): boolean {
         return false;
@@ -126,7 +129,8 @@ export default class elySwitchField extends elyField<boolean> {
 
     /**
      * Устаналивает или возращает заголовок
-     * @param title
+     * @param {string} [title]
+     * @return {this|string}
      */
     public title(title?: string): string | null | elySwitchField {
         return elyObservableProperty.simplePropertyAccess(this, title, this.titleProperty);

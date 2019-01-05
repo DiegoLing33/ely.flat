@@ -105,7 +105,7 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
 
     /**
      * Конструктор
-     * @param options
+     * @param {{rowsCount?: number, colsCount?: number, flexMap?: *, flexMapValues?: *}} options
      */
     public constructor(options: elyStaticGridViewOptions = {}) {
         super(options);
@@ -141,7 +141,7 @@ export default class elyStaticGridView extends elyRebuildableViewProtocol {
      * @param margin
      */
     public setItemsMargin(margin: IPosition): elyStaticGridView {
-        margin       = {...{top: 0, bottom: 0, left: 0, right: 0}, ...margin};
+        margin = {...{top: 0, bottom: 0, left: 0, right: 0}, ...margin};
         const styles = {};
         elyUtils.applySrc(margin, ["top", "bottom", "left", "right"], styles, "margin-", (val) => {
             return typeof val === "string" ? val : val + "px";

@@ -149,7 +149,7 @@ export default class elyStyle {
     /**
      * Преобразует в строку
      */
-    public toStirng() {
+    public toString() {
         return this.value;
     }
 }

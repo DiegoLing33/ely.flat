@@ -18,7 +18,6 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-// import "../../../ely.flat";
 import "@devMods/elyColorPicker.elymod/color.picker";
 
 import elyControl from "@controls/action/elyControl";
@@ -29,6 +28,8 @@ import elyColor from "@core/elyColor";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 
 /**
+ * @class elyColorPickerField
+ * @augments {elyField<string>}
  * Поле выблора цвета
  *
  *
@@ -53,10 +54,15 @@ export default class elyColorPickerField extends elyField<elyColor> {
 
     /**
      * Элемент отображения цвета
+     * @type {elyControl}
      */
-    public colorView: elyControl;
+    public colorView: elyControl = new elyControl({class: "ef-color-pict"});
 
-    public colorThumbnail: elyControl;
+    /**
+     * Иконка цвета
+     * @type {elyControl}
+     */
+    public colorThumbnail: elyControl = new elyControl();
 
     /**
      * Конструктор
@@ -65,9 +71,7 @@ export default class elyColorPickerField extends elyField<elyColor> {
     public constructor(options: elyFieldOptions<elyColor> = {}) {
         super({}, new elyInput({...{class: "ef-input", tag: "input"}}));
 
-        this.colorThumbnail = new elyControl();
         // this.colorThumbnail.addClass("bg-primary");
-        this.colorView = new elyControl({class: "ef-color-pict"});
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
         this.actionIconView.removeClass("fa").addClass("ef-color-pict");
@@ -81,9 +85,9 @@ export default class elyColorPickerField extends elyField<elyColor> {
             this.accessoryView.css({color: value.getDarker(0.14).toString()});
         });
 
-        this.editableProperty.addChangeObserver((oldValue, newValue) => {
-            this.accessoryView.getDocument().disabled = !newValue;
-            if (newValue) this.picker.create();
+        this.editableProperty.change((value) => {
+            this.accessoryView.getDocument().disabled = !value;
+            if (value) this.picker.create();
             else this.picker.destroy();
         });
 
@@ -96,10 +100,7 @@ export default class elyColorPickerField extends elyField<elyColor> {
                 this.value(ec);
             }
         });
-        // (this.accessoryView as elyInput).addInputObserver(value => {
-        //    const color = new elyColor({hex: value});
-        //    this.value(color);
-        // });
+
         this.picker.on("change", (color: string) => {
             if ("#" + color === this.value().toString()) return;
             const ec = new elyColor({hex: color});

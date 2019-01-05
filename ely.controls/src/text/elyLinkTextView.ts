@@ -45,9 +45,7 @@ export default class elyLinkTextView extends elyTextView {
         super({tag: "a", ...options});
 
         this.urlProperty = new elyObservableProperty<string>();
-        this.urlProperty.addChangeObserver((oldValue, newValue) => {
-            this.attribute("href", newValue);
-        });
+        this.urlProperty.change((newValue) => this.attribute("href", newValue));
 
         if (options.url) this.url(options.url);
         else this.url("#");

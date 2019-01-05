@@ -146,7 +146,7 @@ export default class elyWSViewPropsPanel extends elyPanelView {
                         (field as elyComboField).tryToSetValue(preVal);
                     }
                 }
-                (field as elyComboField).addChangeValueObserver((oldValue, newValue) => {
+                (field as elyComboField).change((newValue) => {
                     view[afItem.name](newValue.value);
                     // this.data.add(afItem.name, newValue.key);
                 });
@@ -169,7 +169,7 @@ export default class elyWSViewPropsPanel extends elyPanelView {
                 });
             } else if (afItem.values === null && afItem.type === "boolean") {
                 field = new elySwitchField();
-                (field as elySwitchField).addChangeValueObserver((oldValue, newValue) => {
+                (field as elySwitchField).change((newValue) => {
                     view[afItem.name](newValue);
                     // this.data.add(afItem.name, newValue);
                 });

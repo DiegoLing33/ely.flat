@@ -93,7 +93,7 @@ export default class elyTableView extends elyRebuildableViewProtocol {
         this.headView      = new elyControl({tag: "thead"});
         this.bodyView      = new elyControl({tag: "tbody"});
         this.titleProperty = new elyObservableProperty<string>();
-        this.titleProperty.addChangeObserver((oldValue, newValue) => this.titleView.text(newValue));
+        this.titleProperty.change((newValue) => this.titleView.text(newValue));
         if (options.title) this.title(options.title);
 
         this.rebuild();

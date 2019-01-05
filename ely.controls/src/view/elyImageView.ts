@@ -46,9 +46,7 @@ export default class elyImageView extends elyView {
         super({tag: "img", ...options});
         this.urlProperty = new elyObservableProperty<string>(null);
         this.getDocument().onload = (e: any) => this.notificate("loaded", [e]);
-        this.urlProperty.addChangeObserver((oldValue, newValue) => {
-            this.getDocument().src = newValue;
-        });
+        this.urlProperty.change((newValue) => this.getDocument().src = newValue);
         if (options.url) this.url(options.url);
     }
 

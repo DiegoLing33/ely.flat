@@ -15,63 +15,91 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat.application                                               +
+ + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyViewController.ts                                                 +
- + Файл изменен: 30.11.2018 00:25:05                                          +
+ + Файл: efDirectionName.ts                                                   +
+ + Файл изменен: 28.12.2018 01:05:58                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyScreenController from "@controllers/elyScreenController";
-import elyControl from "@controls/action/elyControl";
-import elyView from "@core/controls/elyView";
-import elyObservable from "@core/observable/elyObservable";
-
 /**
- * Контроллер элемента отображения
- * @class elyViewController
- * @augments elyObservable
+ * Перечисление направлений
  */
-export default class elyViewController extends elyObservable {
+export default class efDirectionName {
 
     /**
-     * Текущий контроллер
+     * Наверх
+     */
+    public static readonly up = new efDirectionName("top");
+
+    /**
+     * Наверх
+     */
+    public static readonly down = new efDirectionName("bottom");
+
+    /**
+     * Наверх
+     */
+    public static readonly top = new efDirectionName("top");
+
+    /**
+     * Вниз
+     */
+    public static readonly bottom = new efDirectionName("bottom");
+
+    /**
+     * Налево
+     */
+    public static readonly left = new efDirectionName("left");
+
+    /**
+     * Направо
+     */
+    public static readonly right = new efDirectionName("right");
+
+    /**
+     * Список
+     */
+    public static rawList() {
+        return {
+            bottom: efDirectionName.bottom.value,
+            left: efDirectionName.left.value,
+            right: efDirectionName.right.value,
+            top: efDirectionName.top.value,
+        };
+    }
+
+    /**
+     * Список
+     */
+    public static list() {
+        return {
+            bottom: efDirectionName.bottom,
+            left: efDirectionName.left,
+            right: efDirectionName.right,
+            top: efDirectionName.top,
+        };
+    }
+
+    /**
+     * Значение
      * @ignore
      */
-    public static __thisControllers: string[] = [];
-
-    /**
-     * Элемент отображения
-     * @type {elyControl}
-     */
-    public readonly view: elyControl | elyView = elyControl.empty();
+    public readonly value: string;
 
     /**
      * Конструктор
+     * @ignore
+     * @param val
      */
-    protected constructor() {
-        super();
+    protected constructor(val: string) {
+        this.value = val;
     }
 
     /**
-     * Делегат окончания инициилизации объекта
-     * @param screen - экран
+     * Преобразует в строку
      */
-    public viewWillAppear(screen: elyScreenController): void {
-        // Nothing is done
-    }
-
-    /**
-     * Делегат окончания загрузки элемента
-     */
-    public viewDidLoad(): void {
-        // Nothing is done
-    }
-
-    /**
-     * Делегат окончания отображения элемента
-     */
-    public viewDidAppear(): void {
-        // Nothing is done
+    public toString() {
+        return this.value;
     }
 }

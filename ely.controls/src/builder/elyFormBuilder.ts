@@ -254,7 +254,7 @@ export default class elyFormBuilder extends elyView {
         this.options = options;
         this.denyRebuildFlag = options.denyRebuild || false;
         this.accessories = new elyObservableDictionary<elyView>();
-        this.accessories.addChangeObserver(() => this.rebuild());
+        this.accessories.change(() => this.rebuild());
         this.optionalFieldsIdentifiers = [];
         this.denyRebuildFlag = false;
 
@@ -273,13 +273,13 @@ export default class elyFormBuilder extends elyView {
             .textCenter(true);
 
         this.titleProperty = new elyObservableProperty<string>();
-        this.titleProperty.addChangeObserver((oldValue, newValue) => {
+        this.titleProperty.change((newValue) => {
             this.header.titleTextView.text(newValue);
             this.rebuild();
         });
 
         this.descriptionProperty = new elyObservableProperty<string>();
-        this.descriptionProperty.addChangeObserver((oldValue, newValue) => {
+        this.descriptionProperty.change((newValue) => {
             this.header.descriptionTextView.text(newValue);
             this.rebuild();
         });

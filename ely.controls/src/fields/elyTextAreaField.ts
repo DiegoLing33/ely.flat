@@ -42,9 +42,8 @@ export default class elyTextAreaField extends elyField<string> {
         { rowsNumber?: number } = {}) {
         super(options, new elyInput({tag: "textarea"}));
         this.rowsNumberProperty = new elyObservableProperty<number>();
-        this.rowsNumberProperty.addChangeObserver((oldValue, newValue) => {
-            (this.accessoryView.getDocument() as HTMLTextAreaElement).rows = newValue;
-        });
+        this.rowsNumberProperty.change((newValue) =>
+            (this.accessoryView.getDocument() as HTMLTextAreaElement).rows = newValue);
         this.valueProperty = this.accessoryView.valueProperty;
         this.applyProtocolOptions(options);
         this.rowsNumber(options.rowsNumber || 4);

@@ -57,9 +57,9 @@ export default class elyNavigationView extends elyControl {
      */
     constructor(options: elyControlOptions = {}) {
         super(options);
-        this.itemsView                  = new elyListView();
-        this.titleView                  = new elyLinkTextView({text: "ely.Flat", url: "#", class: "title"});
-        this.imageView                  = new elyImageView();
+        this.itemsView = new elyListView();
+        this.titleView = new elyLinkTextView({text: "ely.Flat", url: "#", class: "title"});
+        this.imageView = new elyImageView();
         this.navigationBarColorProperty = new elyObservableProperty<elyColor>();
 
         this.addSubView(this.imageView);
@@ -69,9 +69,9 @@ export default class elyNavigationView extends elyControl {
         this.addClass("ely-navigation-view");
 
         this.imageView.hidden(true);
-        this.navigationBarColorProperty.addChangeObserver((oldValue, newValue) => {
+        this.navigationBarColorProperty.change((newValue) => {
             const backgroundColor = newValue.toString();
-            let borderColor       = newValue.getLighter(0.3).toString();
+            let borderColor = newValue.getLighter(0.3).toString();
             if (!newValue.isDarker()) {
                 this.addClass("light");
                 borderColor = newValue.getDarker(0.05).toString();

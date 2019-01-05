@@ -61,7 +61,7 @@ export default class elyPanelView extends elyControl {
         this.contentView        = new elyControl({class: "ef-panel-content", subviews});
         this.descriptionView    = new elyControl({class: "ef-panel-description"});
         this.panelStyleProperty = new elyObservableProperty<elyStyle>();
-        this.panelStyleProperty.addChangeObserver((oldValue, newValue) => {
+        this.panelStyleProperty.change((newValue, oldValue) => {
             if (oldValue) {
                 this.titleView.removeClass(`bg-${oldValue.value}`);
                 this.removeClass(`brd-${oldValue.value}`);

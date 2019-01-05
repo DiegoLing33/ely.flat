@@ -93,7 +93,7 @@ export default class elyFileChooseField extends elyField<File[]> {
     constructor(options: elyFileChooseFieldOptions = {}) {
         super({}, new elyInput({type: "file"}));
         this.titleProperty = new elyObservableProperty<string>("Выбрать файл");
-        this.titleProperty.addChangeObserver((oldValue, newValue) => {
+        this.titleProperty.change((newValue) => {
             this.titleView.text(newValue);
         });
         this.titleView = new elyTextView({class: "title", text: this.titleProperty.get("")});
@@ -107,7 +107,7 @@ export default class elyFileChooseField extends elyField<File[]> {
         });
 
         this.multiplyFilesProperty = new elyObservableProperty<boolean>(true);
-        this.multiplyFilesProperty.addChangeObserver((oldValue, newValue) => {
+        this.multiplyFilesProperty.change((newValue) => {
             if (newValue) (this.accessoryView as elyControl).attribute("multiple", "multiple");
             else (this.accessoryView as elyControl).attribute("multiple", null);
         });

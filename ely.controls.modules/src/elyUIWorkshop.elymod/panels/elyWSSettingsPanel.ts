@@ -47,7 +47,7 @@ export default class elyWSSettingsPanel extends elyPanelView {
         grid.add(new elySwitchField({
             hint: "Скрывает все view-холдеры (empty элементы) из workshop.",
             title: "скрыть view-холдеры",
-        }).addChangeValueObserver((oldValue, newValue) => {
+        }).change((newValue) => {
             elyStylesheet.global.addClass("elyuiws-placeolder-item", {display: newValue ? "none" : "block"});
         }));
         grid.add(elyControl.line());

@@ -27,6 +27,8 @@ import elyFlexGridViewOptions from "@options/elyFlexGridViewOptions";
 
 /**
  * Элемент отображения: Флекс сетка
+ * @class elyGridView
+ * @augments {elyView}
  */
 export default class elyGridView extends elyView {
 
@@ -44,7 +46,7 @@ export default class elyGridView extends elyView {
 
     /**
      * Конструктор
-     * @param options
+     * @param {elyFlexGridViewOptions} options
      */
     public constructor(options: elyFlexGridViewOptions = {}) {
         super(options);
@@ -56,7 +58,7 @@ export default class elyGridView extends elyView {
 
     /**
      * Устанавливает внитринний отступ элементов сетки
-     * @param margin
+     * @param {IPosition} margin
      */
     public setItemsMargin(margin: IPosition): elyGridView {
         margin       = {...{top: 0, bottom: 0, left: 0, right: 0}, ...margin};
@@ -70,6 +72,7 @@ export default class elyGridView extends elyView {
 
     /**
      * Возвращает строки
+     * @return {elyGridRowView[]}
      */
     public getRows(): elyGridRowView[] {
         return this.__rows;
@@ -77,7 +80,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Удаляет строку
-     * @param index
+     * @param {number} index
+     * @return {this}
      */
     public removeRow(index: number): elyGridView {
         this.__rows[index].removeFromSuperview();
@@ -86,7 +90,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Возвращает индекс строки, в которой находится элемент
-     * @param view
+     * @param {elyView} view
+     * @return {number}
      */
     public viewRowIndex(view: elyView): number {
         let i = 0;
@@ -99,7 +104,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Возвращает полный адрес элемента: `{rowIndex: number, viewIndex: number}`
-     * @param view
+     * @param {elyView} view
+     * @return {{rowIndex: number, viewIndex: number}}
      */
     public viewIndex(view: elyView): { rowIndex: number, viewIndex: number } {
         for (let rowIndex = 0; rowIndex < this.__rows.length; rowIndex++) {
@@ -111,7 +117,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Возвращает строку по индексу
-     * @param index
+     * @param {number} index
+     * @return {elyGridRowView|null}
      */
     public rowAt(index: number): elyGridRowView | null {
         return this.__rows[index];
@@ -119,7 +126,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Удаляет элемент
-     * @param view
+     * @param {elyView} view
+     * @return {this}
      */
     public removeView(view: elyView): elyGridView {
         const index = this.viewRowIndex(view);
@@ -129,7 +137,8 @@ export default class elyGridView extends elyView {
 
     /**
      * Добавляет строку
-     * @param row
+     * @param {...elyView} row
+     * @return {this}
      */
     public add(...row: elyView[]): elyGridView {
         return this.insert(null, ...row);
@@ -138,8 +147,9 @@ export default class elyGridView extends elyView {
     /**
      * Вставляет строку по индексу
      *
-     * @param index
-     * @param row
+     * @param {number} index
+     * @param {...elyView} row
+     * @return {this}
      */
     public insert(index: number | null = null, ...row: elyView[]): elyGridView {
         const rowView  = new elyGridRowView();
@@ -172,6 +182,7 @@ export default class elyGridView extends elyView {
 
     /**
      * Удаляет содержимое сетки
+     * @return {this}
      */
     public removeViewContent(): elyGridView {
         super.removeViewContent();
@@ -181,6 +192,7 @@ export default class elyGridView extends elyView {
 
     /**
      * Возвращает количество строк
+     * @return {number}
      */
     public rowsCount(): number {
         return this.__rows.length;

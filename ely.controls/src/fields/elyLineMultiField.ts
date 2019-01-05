@@ -85,7 +85,7 @@ export default class elyLineMultiField extends elyFieldProtocol<{ [key: string]:
         this.__items.push(field);
         if (field instanceof elyFieldProtocol) {
             const id = this.__fields.length.toString();
-            field.addChangeValueObserver((oldValue, newValue) => {
+            field.change((newValue) => {
                 this.valueProperty.add(id, newValue);
             });
             if (this.listenInput && field instanceof elyTextField) {

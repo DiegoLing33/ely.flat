@@ -31,17 +31,19 @@ import elyWeight from "@enums/elyWeight";
 /**
  * Контроллер с шаблоном макета приложения
  * @class elySimplePageViewController
- * @augments elyGridViewController
+ * @augments {elyGridViewController}
  */
 export default class elySimplePageViewController extends elyGridViewController {
 
     /**
      * Основной заголовок
+     * @type {elyTextView}
      */
     public readonly titleView: elyTextView = new elyTextView({class: "ef-title"});
 
     /**
      * Описание страницы
+     * @type {elyTextView}
      */
     public readonly descriptionView: elyTextView = new elyTextView({class: "ef-description"});
 
@@ -54,7 +56,7 @@ export default class elySimplePageViewController extends elyGridViewController {
 
         const headerView = new elyControl({class: "ef-content-head"});
 
-        this.titleView.textSize(elySize.large).textWeight(elyWeight.normal).textCenter(true);
+        (this.titleView.textSize(elySize.large).textWeight(elyWeight.normal) as elyTextView).textCenter(true);
         this.descriptionView.textSize(elySize.middle).textCenter(true);
 
         headerView.addSubView(this.titleView);
@@ -64,19 +66,23 @@ export default class elySimplePageViewController extends elyGridViewController {
 
     /**
      * Устанавливает или возвращает заголовок
-     * @param value
+     * @param {string} [value]
+     * @return {this|string}
      */
-    public title(value?: string): void | string {
+    public title(value?: string): elySimplePageViewController | string {
         if (value === undefined) return this.titleView.text();
         this.titleView.text(value);
+        return this;
     }
 
     /**
      * Устанавливает или возвращает описание контента
-     * @param value
+     * @param {string} [value]
+     * @return {this|string}
      */
-    public description(value?: string): void | string {
+    public description(value?: string): elySimplePageViewController | string {
         if (value === undefined) return this.descriptionView.text();
         this.descriptionView.text(value);
+        return this;
     }
 }

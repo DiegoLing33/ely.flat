@@ -101,7 +101,7 @@
   opacity: 0.8;
   cursor: pointer;
   @include deny-selection();
-  background-color: rgba(0,0,0,0.31);
+  //background-color: rgba(0,0,0,0.31);
   transition: opacity 0.4s;
   //padding: $navigationBarTopBottomPadding $navigationBarTopBottomPadding+10;
   //margin: -$navigationBarTopBottomPadding;

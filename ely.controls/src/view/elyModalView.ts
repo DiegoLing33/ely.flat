@@ -31,6 +31,8 @@ import elyModalViewOptions from "@options/elyModalViewOptions";
 /**w
  * Элемент отображения: Модальное окно
  * @version 1.0
+ * @class elyModalView
+ * @augments {elyView}
  */
 @designable("modalTitle", elyDesignableFieldState.GETSET, "string")
 @designable("modalContent", elyDesignableFieldState.GETSET, "string")
@@ -39,16 +41,21 @@ export default class elyModalView extends elyView {
 
     /**
      * Текущее окно
+     * @type {elyModalView|null}
      */
     public static currentModal: elyModalView | null = null;
 
     /**
      * Очередь из объектов
+     * @protected
+     * @type {elyModalView[]}
      */
     protected static queue: elyModalView[] = [];
 
     /**
      * Открывает следующее модальное окно из стэка
+     * @protected
+     * @static
      */
     protected static next(): void {
         if (elyModalView.queue.length > 0 && elyModalView.currentModal === null) {
@@ -60,47 +67,76 @@ export default class elyModalView extends elyView {
 
     /**
      * Элемент модального окна
+     * @readonly
+     * @type {elyControl}
      */
-    public readonly modalContainerView: elyControl;
+    public readonly modalContainerView: elyControl
+        = new elyControl({class: "ef-modal-container"});
 
     /**
      * Элемент заголовка
+     * @readonly
+     * @type {elyTextView}
      */
-    public readonly modalTitleView: elyTextView;
+    public readonly modalTitleView: elyTextView
+        = new elyTextView({class: "title"});
 
     /**
      * Кнопка закрытия
+     * @type {elyIconView}
+     * @readonly
      */
-    public readonly modalCloseButtonView: elyIconView;
+    public readonly modalCloseButtonView: elyIconView
+        = new elyIconView({iconName: "close", class: "close"});
 
     /**
      * Элемент контента
+     * @type {elyView}
+     * @readonly
+     * @protected
      */
-    protected readonly modalContentView: elyView;
+    protected readonly modalContentView: elyView
+        = new elyControl({class: "content"});
 
     /**
      * Свойство: заголовок окна
      * @ignore
+     * @protected
+     * @type {elyObservableProperty<string>}
+     * @readonly
      */
-    protected readonly modalTitleProperty: elyObservableProperty<string>;
+    protected readonly modalTitleProperty: elyObservableProperty<string>
+        = new elyObservableProperty<string>();
 
     /**
      * Свойство: флаг возможности скрытия окна
      * @ignore
+     * @protected
+     * @type {elyObservableProperty<boolean>}
+     * @readonly
      */
-    protected readonly modalClosableProperty: elyObservableProperty<boolean>;
+    protected readonly modalClosableProperty: elyObservableProperty<boolean>
+        = new elyObservableProperty<boolean>(true);
 
     /**
      * Свойство: содержимое модального окна
      * @ignore
+     * @protected
+     * @type {elyObservableProperty<elyView>}
+     * @readonly
      */
-    protected readonly modalContentProperty: elyObservableProperty<elyView>;
+    protected readonly modalContentProperty: elyObservableProperty<elyView> =
+        new elyObservableProperty<elyView>();
 
     /**
      * Свойство: стиль модального окна
      * @ignore
+     * @protected
+     * @type {elyObservableProperty<elyStyle>}
+     * @readonly
      */
-    protected readonly modalStyleProperty: elyObservableProperty<elyStyle>;
+    protected readonly modalStyleProperty: elyObservableProperty<elyStyle>
+        = new elyObservableProperty<elyStyle>();
 
     /**
      * Конструктор
@@ -110,27 +146,17 @@ export default class elyModalView extends elyView {
         super(options);
         this.addClass("ef-modal");
 
-        // Init
-        this.modalTitleProperty = new elyObservableProperty<string>();
-        this.modalClosableProperty = new elyObservableProperty<boolean>(true);
-        this.modalContentProperty = new elyObservableProperty<elyView>();
-        this.modalStyleProperty = new elyObservableProperty<elyStyle>();
-        this.modalContainerView = new elyControl({class: "ef-modal-container"});
-        this.modalTitleView = new elyTextView({class: "title"});
-        this.modalContentView = new elyControl({class: "content"});
-        this.modalCloseButtonView = new elyIconView({iconName: "close", class: "close"});
-
         // Observe
-        this.modalTitleProperty.addChangeObserver((oldValue, newValue) => this.modalTitleView.text(newValue));
-        this.modalContentProperty.addChangeObserver((oldValue, newValue) => {
+        this.modalTitleProperty.change((newValue) => this.modalTitleView.text(newValue));
+        this.modalContentProperty.change((newValue) => {
             this.modalContentView.removeViewContent();
             this.modalContentView.getDocument().append(newValue.getDocument());
         });
-        this.modalStyleProperty.addChangeObserver((oldValue, newValue) => {
+        this.modalStyleProperty.change((newValue, oldValue) => {
             if (oldValue) this.modalTitleView.removeClass(`bg-${oldValue.value}`);
             this.modalTitleView.addClass(`bg-${newValue.value}`);
         });
-        this.modalClosableProperty.addChangeObserver((oldValue, newValue) =>
+        this.modalClosableProperty.change((newValue) =>
             this.modalCloseButtonView.hidden(!newValue));
         this.modalCloseButtonView.addObserver("click", () => this.dismiss());
 
@@ -150,6 +176,7 @@ export default class elyModalView extends elyView {
 
     /**
      * Отображает модальное окно
+     * @return
      */
     public present(): void {
         this.notificate("present", [this]);
@@ -159,13 +186,16 @@ export default class elyModalView extends elyView {
 
     /**
      * Скрывает модальное окно
-     * @param force
+     * @param {boolean} [force = false]
+     * @return
      *
      * Модальное окно может быть "незакрываемым", тогда
      * удалить его можно только используя параметр `force`.
      *
-     * @example
-     * myModal.dismiss(true); // Force dismiss modal
+     *
+     *     myModal.dismiss(true); // Force dismiss modal
+     *
+     *
      */
     public dismiss(force: boolean = false): void {
         if (this.modalClosable() || force) {
@@ -180,16 +210,21 @@ export default class elyModalView extends elyView {
 
     /**
      * Возвращает заголовок окна
+     * @return {string}
      */
     public modalTitle(): string;
 
     /**
      * Устанавливает заголовок окна
+     * @param {string} value
+     * @return {this}
      */
     public modalTitle(value: string): elyModalView;
 
     /**
      * Возвращает и устанавливает заголовок окна
+     * @param {string} [value]
+     * @return {this|string}
      */
     public modalTitle(value?: string): string | null | elyModalView {
         return elyObservableProperty.simplePropertyAccess(this, value, this.modalTitleProperty);
@@ -207,6 +242,8 @@ export default class elyModalView extends elyView {
 
     /**
      * Возвращает и устанавливает содержимое модального окна
+     * @param {elyView|string} [value]
+     * @return {elyView|null|this}
      */
     public modalContent(value?: elyView | string): elyView | null | elyModalView {
         if (typeof value === "string") value = new elyTextView({text: value});
@@ -225,6 +262,8 @@ export default class elyModalView extends elyView {
 
     /**
      * Возвращает и устанавливает флаг возможности скрытия окна
+     * @param {boolean} [value]
+     * @return {boolean|this}
      */
     public modalClosable(value?: boolean): boolean | null | elyModalView {
         return elyObservableProperty.simplePropertyAccess(this, value, this.modalClosableProperty);
@@ -242,6 +281,8 @@ export default class elyModalView extends elyView {
 
     /**
      * Возвращает и устанавливает стиль модального окна
+     * @param {elyStyle|string} [value]
+     * @return {this|elyStyle}
      */
     public modalStyle(value?: elyStyle | string): elyStyle | null | elyModalView {
         if (typeof value === "string") value = elyStyle.byName(value);

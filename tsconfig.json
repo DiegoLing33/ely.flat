@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
     "module": "commonjs",
+//    "moduleResolution": "node",
+    "target": "es6",
     "lib": [
       "dom",
       "es6"
     ],
     "outDir": "./ely.build.js",
     "strict": true,
+    "noEmit": true,
     "baseUrl": "./",
     "paths": {
       "@app/*": [
@@ -30,14 +32,23 @@
       ],
       "@enums/*": [
         "./ely.flat.enums/src/*"
+      ],
+      "@cnv/*": [
+        "./ely.flat.cnv/src/*"
+      ],
+      "@play/*": [
+        "./ely.flat.play/src/*"
       ]
     },
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "declaration": true,
+    "declarationDir": "ely.d.types"
   },
   "exclude": [
     "./node_modules",
     "./extra",
     "./ely.documentation",
-    "./bin"
+    "./bin",
+    "./dist"
   ]
 }

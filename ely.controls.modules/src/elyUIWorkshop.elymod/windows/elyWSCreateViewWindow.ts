@@ -99,7 +99,7 @@ export default class elyWSCreateViewWindow {
         catSelection.add("Элементы отображения", "views");
         catSelection.add("Элементы управления", "actions");
         catSelection.add("Поля ввода данных", "fields");
-        catSelection.addChangeValueObserver((oldValue, newValue) => {
+        catSelection.change((newValue) => {
             viewSelection.clearValue();
             viewSelection.items.clear();
             (objs[newValue.value] as elyView[]).forEach((value, index) => {
@@ -109,7 +109,7 @@ export default class elyWSCreateViewWindow {
             });
             viewSelection.editable(true);
         }, true);
-        viewSelection.addChangeValueObserver((oldValue, newValue) => {
+        viewSelection.change((newValue) => {
             builder.removeViewContent();
             result.removeViewContent();
             // @ts-ignore

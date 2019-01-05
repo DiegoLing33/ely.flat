@@ -81,7 +81,7 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
      */
     public push(item: T): elyObservableArray<T> {
         this.value!.push(item);
-        this.notificate("change");
+        this.notificate("change", [this.get()]);
         this.notificate("add", [item, this.value!.length - 1]);
         return this;
     }
@@ -92,8 +92,8 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
      * @param items
      */
     public insert(index: number, ...items: T[]) {
-    this.value!.splice(index, 0, ...items);
-        this.notificate("change");
+        this.value!.splice(index, 0, ...items);
+        this.notificate("change", [this.get()]);
         this.notificate("add", [index, ...items]);
         return this;
     }
@@ -105,7 +105,7 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
     public remove(index: number): elyObservableArray<T> {
         const item = this.item(index);
         this.value = this.value!.splice(index, 1);
-        this.notificate("change");
+        this.notificate("change", [this.get()]);
         this.notificate("remove", [item]);
         return this;
     }
@@ -121,8 +121,8 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
     /**
      * Возвращает последний элемент
      */
-    public last(): T{
-        return this.value![this.value!.length-1];
+    public last(): T {
+        return this.value![this.value!.length - 1];
     }
 
     /**
@@ -136,7 +136,7 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
      * Возвращает true, если существует индекс
      * @param index
      */
-    public hasIndex(index: number): boolean{
+    public hasIndex(index: number): boolean {
         return !!this.value![index];
     }
 
@@ -161,7 +161,7 @@ export default class elyObservableArray<T> extends elyObservableProperty<T[]> {
      */
     public clear(): elyObservableArray<T> {
         this.value = [];
-        this.notificate("change");
+        this.notificate("change", [this.get()]);
         this.notificate("clear", []);
         return this;
     }

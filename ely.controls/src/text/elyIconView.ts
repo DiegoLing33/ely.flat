@@ -52,7 +52,7 @@ export default class elyIconView extends elyView {
         this.addClass("fa");
 
         this.iconNameProperty = new elyObservableProperty<string>();
-        this.iconNameProperty.addChangeObserver((oldValue, newValue) => {
+        this.iconNameProperty.change((newValue, oldValue) => {
             if (oldValue) this.removeClass(`fa-${oldValue}`);
             this.addClass(`fa-${newValue}`);
         });

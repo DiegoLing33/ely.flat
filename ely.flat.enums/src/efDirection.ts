@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,24 +15,29 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: IPosition.ts                                                         +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efDirection.ts                                                       +
+ + Файл изменен: 28.12.2018 01:03:22                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /**
- * @interface IPosition
- * @property {number|string} [top]
- * @property {number|string} [right]
- * @property {number|string} [bottom]
- * @property {number|string} [left]
+ * Перечисление направлений в измерении
  */
+export default class efDirection {
+    /**
+     * Направление X
+     */
+    public static readonly x = "x";
 
-/**
- * Позиции
- */
-export default interface IPosition {
-    top?: number|string;
-    right?: number|string;
-    bottom?: number|string;
-    left?: number|string;
+    /**
+     * Направление Y
+     */
+    public static readonly y = "y";
+
+    /**
+     * Направление Z
+     */
+    public static readonly z = "z";
 }

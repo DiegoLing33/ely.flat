@@ -29,20 +29,20 @@ import elyView from "@core/controls/elyView";
 /**
  * Контроллер с сеткой в основании
  * @class elyGridViewController
- * @augments elyViewController
+ * @augments {elyViewController}
  */
 export default class elyGridViewController extends elyViewController {
 
     /**
      * Элемент отображения
+     * @type {elyGridView|elyView}
      */
-    public readonly view: elyGridView & elyView;
+    public readonly view: elyGridView & elyView = new elyGridView();
 
     /**
      * Конструктор
      */
     public constructor() {
         super();
-        this.view = new elyGridView();
     }
 }

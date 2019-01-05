@@ -18,10 +18,11 @@
 
 
 @import "elyFlatContentBuilder";
-
 @import "elyFlatNavigationView";
 @import "elyFlatSideNavigationView";
 
 @import "../../ely.controls.modules/src/elyColorPicker.elymod/_style";
 @import "../../ely.controls.modules/src/elyChartView.elymod/_style";
 @import "../../ely.controls.modules/src/elyUIWorkshop.elymod/_style";
+
+@import "__mobile/elyFlatMobile";

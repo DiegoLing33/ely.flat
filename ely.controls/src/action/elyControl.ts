@@ -51,11 +51,11 @@ export default class elyControl extends elyView {
     public static fromObject(obj: elyViewEntityProtocol): elyView {
         if (obj.line) return elyControl.line();
         const item = obj.item;
-        if (item && window.hasOwnProperty(item)) {
+        if (item && window.elyflatobjects.hasOwnProperty(item)) {
             const opts = elyUtils.filter(obj, (k) => {
                 return ["item"].indexOf(k) === -1;
             });
-            const inst = new (window as any)[item](opts);
+            const inst = new (window.elyflatobjects as any)[item](opts);
             for (const afvName in elyDesignableAutoFieldsData[item].fields) {
                 if (!elyDesignableAutoFieldsData[item].fields.hasOwnProperty(afvName)) continue;
                 if (elyDesignableAutoFieldsData[item].fields[afvName].state === elyDesignableFieldState.VIEW

@@ -87,18 +87,18 @@ export default class elyComboField extends elyField<elyComboFieldItemProtocol> {
             }
 
         });
-        this.valueProperty.addChangeObserver((oldValue, newValue) => {
+        this.valueProperty.change((newValue) => {
             this.tipsBoxVisibility.set(false);
             this.accessoryView.value(newValue.key);
         });
 
-        this.editableProperty.addChangeObserver((oldValue, newValue) => {
+        this.editableProperty.change((newValue) => {
             if (newValue) this.opacity(1);
             else this.opacity(0.74);
         });
 
         this.searchResults = new elyObservableDictionary<string>();
-        this.searchResults.addChangeObserver(() => this.__updateTips());
+        this.searchResults.change(() => this.__updateTips());
 
         this.items = new elyObservableDictionary<string>();
         this.items.change(() =>  this.clearValue());

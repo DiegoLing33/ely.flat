@@ -102,8 +102,8 @@ export default class elyChartView extends elyControl {
         this.chartBackgroundView = new elyControl({class: "chart-bg"});
         this.addSubView(this.chartBackgroundView);
 
-        this.step.addChangeObserver(() => this.update());
-        this.maxHeight.addChangeObserver(() => this.update());
+        this.step.change(() => this.update());
+        this.maxHeight.change(() => this.update());
         this.data.addNewItemObserver(() => this.update());
         this.data.addRemoveObserver(() => this.update());
         this.data.addClearObserver(() => this.update());

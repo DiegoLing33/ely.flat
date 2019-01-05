@@ -28,25 +28,28 @@ import elyFieldOptions from "@options/fields/elyFieldOptions";
  * @class elyFieldProtocol
  * @template T
  * @augments elyView
+ * @version 1.2
+ *
+ * #Лог важных изменений:
  */
 export default abstract class elyFieldProtocol<T> extends elyView {
     /**
      * Переменная изменения значения
-     * @type {elyObservableProperty}
+     * @type {elyObservableProperty<boolean>}
      */
     public editableProperty: elyObservableBoolean = new elyObservableBoolean(true);
 
     /**
      * Значение
+     * @type {elyObservableProperty<{T}>}
      */
-    public valueProperty: elyObservableProperty<T>;
+    public valueProperty: elyObservableProperty<T> = new elyObservableProperty<T>();
 
     /**
      * Конструктор
      */
     protected constructor(options: elyFieldOptions<T> = {}) {
         super(options);
-        this.valueProperty = new elyObservableProperty<T>();
     }
 
     /**
@@ -101,7 +104,7 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Возвращает true, если объект пустой.
-     * @return boolean
+     * @return {boolean}
      * @abstract
      */
     public abstract isEmpty(): boolean;
@@ -109,13 +112,14 @@ export default abstract class elyFieldProtocol<T> extends elyView {
     /**
      * Возвращает станлартное значение
      * @abstract
-     * @return {*}
+     * @return {T}
      */
     public abstract defaultValue(): T;
 
     /**
      * Отмечает поле, как поле с ошибкой
      * @param flag
+     * @return {this}
      */
     public error(flag: boolean): elyFieldProtocol<T> | any {
         // Nothing is done.
@@ -130,8 +134,8 @@ export default abstract class elyFieldProtocol<T> extends elyView {
      *
      *
      *     let field = new ely.textField();
-     *     field.addChangeValueObserver( (oldValue, newValue) => {
-     *        if(field.isValueDefault(newValue) === false){
+     *     field.change( (value) => {
+     *        if(field.isValueDefault(value) === false){
      *            // Теперь мы уверены, что значение было
      *            // изменено, а не сброшено.
      *        }
@@ -139,9 +143,10 @@ export default abstract class elyFieldProtocol<T> extends elyView {
      *
      *
      *
-     * Метод {@link elyFieldProtocol.addChangeValueObserver} имеет параметр clearanceSafe.
-     * Подробнее смотрите {@link elyFieldProtocol.addChangeValueObserver}.
-     * @param value
+     * Метод {@link elyFieldProtocol.change} имеет параметр clearanceSafe.
+     * Подробнее смотрите {@link elyFieldProtocol.change}.
+     * @param {T} value
+     * @return {boolean}
      */
     public isValueDefault(value: T): boolean {
         return value === this.defaultValue();
@@ -149,29 +154,7 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Добавляет слушатель изменения значения поля
-     * @param observer
-     * @param clearanceSafe - защита от сброса
-     *
-     * Из примера, указанного в методе {@link elyFieldProtocol.isValueDefault} известно,
-     * что сброс значения активирует слушатель. Утсановите параметр clearanceSafe в true, тогда
-     * добавленный наблюдатель observer будет немного модифицирован
-     * (как описано в {@link elyFieldProtocol.isValueDefault}).
-     *
-     * @deprecated {@link elyFieldProtocol.change}
-     */
-    public addChangeValueObserver(observer: (oldValue: T, newValue: T) => void,
-                                  clearanceSafe: boolean = false): elyFieldProtocol<T> {
-        if (!clearanceSafe) this.valueProperty.addChangeObserver(observer);
-        else this.valueProperty.addChangeObserver((oldValue, newValue) => {
-            if (this.isValueDefault(newValue)) return;
-            observer(oldValue, newValue);
-        });
-        return this;
-    }
-
-    /**
-     * Добавляет слушатель изменения значения поля
-     * @param {Function} o
+     * @param {function(val: T, oldVal: T | null)} o
      * @param {boolean} clearanceSafe - защита от сброса
      *
      * Из примера, указанного в методе {@link elyFieldProtocol.isValueDefault} известно,
@@ -190,7 +173,8 @@ export default abstract class elyFieldProtocol<T> extends elyView {
 
     /**
      * Устанавливает строку для преложения ввода
-     * @param text
+     * @param {string} [text]
+     * @return {this|string}
      */
     public placeholder(text?: string): string | null | elyView {
         if (text === undefined) return this.attribute("placeholder");

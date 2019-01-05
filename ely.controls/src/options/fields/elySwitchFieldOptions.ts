@@ -20,6 +20,10 @@
 
 import elyFieldOptions from "./elyFieldOptions";
 
+/**
+ * @interface elySwitchFieldOptions
+ * @property {string?} title
+ */
 export default interface elySwitchFieldOptions extends elyFieldOptions<boolean> {
 
     /**
