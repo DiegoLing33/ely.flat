@@ -23,7 +23,6 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efSize from "@cnv/objs/efSize";
-import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 
 /**
@@ -40,18 +39,18 @@ export default class ef2DRect {
 
     /**
      * Положение прямоугольника
-     * @type {ef2DVector}
+     * @type {ef2DVectorValues}
      * @readonly
      */
-    public readonly position: ef2DVector;
+    public readonly position: ef2DVectorValues;
 
     /**
      * Конструктор
-     * @param {{ position: ef2DVector | ef2DVectorValues, size: efSize }} props
+     * @param {{ position: ef2DVectorValues, size: efSize }} props
      */
-    public constructor(props: { position: ef2DVector | ef2DVectorValues, size: efSize }) {
+    public constructor(props: { position: ef2DVectorValues, size: efSize }) {
         this.size = props.size;
-        this.position = props.position instanceof ef2DVectorValues ? props.position.getVector() : props.position;
+        this.position = props.position;
     }
 
     /**
@@ -60,8 +59,8 @@ export default class ef2DRect {
      */
     public getSecondPosition(): ef2DVectorValues {
         return new ef2DVectorValues({
-            x: this.position.x() + this.size.width(),
-            y: this.position.y() + this.size.height(),
+            x: this.position.x + this.size.width(),
+            y: this.position.y + this.size.height(),
         });
     }
 
@@ -71,9 +70,23 @@ export default class ef2DRect {
      */
     public getCenterPosition(): ef2DVectorValues {
         return new ef2DVectorValues({
-            x: this.position.x() + (this.size.width() / 2),
-            y: this.position.y() + (this.size.height() / 2),
+            x: this.position.x + (this.size.width() / 2),
+            y: this.position.y + (this.size.height() / 2),
         });
+    }
+
+    /**
+     * Возвращает true, если точка находится в квадрате
+     * @param {ef2DVectorValues} point
+     * @return {boolean}
+     */
+    public isPointInRect(point: ef2DVectorValues): boolean {
+        const x = point.x;
+        const y = point.y;
+        const pos = this.position;
+
+        return y >= pos.y && y < pos.y + this.size.height()
+            && x >= pos.x && x < pos.x + this.size.width();
     }
 
 }
