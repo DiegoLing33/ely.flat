@@ -26,9 +26,9 @@ import efContextElement from "@cnv/context/efContextElement";
 import efContextImage from "@cnv/context/efContextImage";
 import efContextRect from "@cnv/context/efContextRect";
 import efContextText from "@cnv/context/efContextText";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import efSize from "@cnv/objs/efSize";
 import elyView from "@core/controls/elyView";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 
 export default class efCanvasLayer extends elyView {
 
@@ -73,33 +73,49 @@ export default class efCanvasLayer extends elyView {
      */
     public draw(e: efContextElement): void {
         this.getContext().save();
-        if (e.angle) this.rotateCanvas({vector: e.vector, size: e.size, angle: e.angle});
+        if (e.angle) this.rotateCanvas({vector: e.rect.position, size: e.rect.size, angle: e.angle});
         if (e.filter) this.getContext().filter = e.filter;
         if (e instanceof efContextRect) {
             if (e.fillColor) {
-                this.getContext().fillStyle = e.fillColor;
-                this.getContext().fillRect(e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().fillStyle = e.fillColor.getHexString();
+                this.getContext().fillRect(
+                    e.rect.position.x,
+                    e.rect.position.y,
+                    e.rect.size.width(),
+                    e.rect.size.height(),
+                );
             }
             if (e.strokeColor) {
-                this.getContext().strokeStyle = e.strokeColor;
+                this.getContext().strokeStyle = e.strokeColor.getHexString();
                 this.getContext().lineWidth = e.strokeWidth;
-                this.getContext().strokeRect(e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().strokeRect(
+                    e.rect.position.x,
+                    e.rect.position.y,
+                    e.rect.size.width(),
+                    e.rect.size.height(),
+                );
             }
         } else if (e instanceof efContextImage) {
             if (e.subImage) {
                 this.getContext().drawImage(
                     e.image,
-                    e.vector.x,
-                    e.vector.y,
-                    e.size.width(),
-                    e.size.height(),
-                    e.subImage.vector.x,
-                    e.subImage.vector.y,
+                    e.rect.position.x,
+                    e.rect.position.y,
+                    e.rect.size.width(),
+                    e.rect.size.height(),
+                    e.subImage.position.x,
+                    e.subImage.position.y,
                     e.subImage.size.width(),
                     e.subImage.size.height(),
                 );
             } else {
-                this.getContext().drawImage(e.image, e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().drawImage(
+                    e.image,
+                    e.rect.position.x,
+                    e.rect.position.y,
+                    e.rect.size.width(),
+                    e.rect.size.height(),
+                );
             }
         } else if (e instanceof efContextText) {
             if (e.font) this.getContext().font = `${e.font.size}px ${e.font.fontName}`;
@@ -109,12 +125,12 @@ export default class efCanvasLayer extends elyView {
             let y = e.font.size;
             for (const str of pieces) {
                 if (e.fillColor) {
-                    this.getContext().fillStyle = e.fillColor;
-                    this.getContext().fillText(str, e.vector.x, e.vector.y + y, e.maxWidth);
+                    this.getContext().fillStyle = e.fillColor.getHexString();
+                    this.getContext().fillText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
                 }
                 if (e.strokeColor) {
-                    this.getContext().strokeStyle = e.strokeColor;
-                    this.getContext().strokeText(str, e.vector.x, e.vector.y + y, e.maxWidth);
+                    this.getContext().strokeStyle = e.strokeColor.getHexString();
+                    this.getContext().strokeText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
                 }
                 y += (e.font.size + e.lineSpacing);
             }

@@ -23,8 +23,8 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efContextElement from "@cnv/context/efContextElement";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
-import efSize from "@cnv/objs/efSize";
+import elyColor from "@core/elyColor";
+import ef2DRect from "@math/ef2DRect";
 
 /**
  * Прямоугольник `ef.cnv`
@@ -33,29 +33,31 @@ export default class efContextRect extends efContextElement {
 
     /**
      * Цвет заливки
+     * @type {elyColor?}
      */
-    public fillColor?: string;
+    public fillColor?: elyColor;
 
     /**
      * Цвет заливки обводки
+     * @type {elyColor?}
      */
-    public strokeColor?: string;
+    public strokeColor?: elyColor;
 
     /**
      * Толщина линии обводки
+     * @type {number}
      */
     public strokeWidth: number = 1;
 
     /**
      * Конструктор
-     * @param {{vector: ef2DVectorValues, size: efSize, fillColor?: string,
-     * strokeColor?: string, strokeWidth?: number, angle?: number}} props - параметры
+     * @param {{rect: ef2DRect, fillColor?: elyColor,
+     * strokeColor?: elyColor, strokeWidth?: number, angle?: number}} props - параметры
      */
     public constructor(props: {
-        vector: ef2DVectorValues,
-        size: efSize,
-        fillColor?: string,
-        strokeColor?: string,
+        rect: ef2DRect,
+        fillColor?: elyColor,
+        strokeColor?: elyColor,
         strokeWidth?: number,
         angle?: number,
     }) {

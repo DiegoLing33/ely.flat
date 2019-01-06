@@ -22,8 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
-import efSize from "@cnv/objs/efSize";
+import ef2DRect from "@math/ef2DRect";
 
 /**
  * Элемент контекста `ef.cnv`
@@ -36,14 +35,9 @@ export default class efContextElement {
     public angle?: number;
 
     /**
-     * Вектор положения
+     * Прямоугольник
      */
-    public vector: ef2DVectorValues;
-
-    /**
-     * Размер элемента
-     */
-    public size: efSize;
+    public rect: ef2DRect;
 
     /**
      * Фильтр
@@ -52,11 +46,10 @@ export default class efContextElement {
 
     /**
      * Конструктор
-     * @param {{ vector: ef2DVectorValues, size: efSize, angle?: number, filter?: string }} props - параметры
+     * @param {{ rect: ef2DRect, angle?: number, filter?: string }} props - параметры
      */
-    public constructor(props: { vector: ef2DVectorValues, size: efSize, angle?: number, filter?: string }) {
-        this.vector = props.vector;
-        this.size = props.size;
+    public constructor(props: { rect: ef2DRect, angle?: number, filter?: string }) {
+        this.rect = props.rect;
         this.angle = props.angle || undefined;
         this.filter = props.filter || undefined;
     }

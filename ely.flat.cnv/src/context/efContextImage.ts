@@ -23,8 +23,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efContextElement from "@cnv/context/efContextElement";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
-import efSize from "@cnv/objs/efSize";
+import ef2DRect from "@math/ef2DRect";
 
 /**
  * Изображение `ef.cnv`
@@ -38,22 +37,21 @@ export default class efContextImage extends efContextElement {
 
     /**
      * Картинка в картинке
-     * @type {{ vector: ef2DVectorValues, size: efSize }}
+     * @type {ef2DRect}
      */
-    public subImage?: { vector: ef2DVectorValues, size: efSize };
+    public subImage?: ef2DRect;
 
     /**
      * Конструктор
-     * @param {{ vector: ef2DVectorValues, size: efSize, image: CanvasImageSource,
-     * subImage?: { vector: ef2DVectorValues, size: efSize, angle?: number, filter?: string }}} props - параметры
+     * @param {{ rect: ef2DRect, image: CanvasImageSource, subImage?:
+     * ef2DRect, angle?: number, filter?: string}} props - параметры
      */
     public constructor(props: {
-        vector: ef2DVectorValues,
-        size: efSize,
+        rect: ef2DRect,
         image: CanvasImageSource,
         angle?: number,
         filter?: string,
-        subImage?: { vector: ef2DVectorValues, size: efSize },
+        subImage?: ef2DRect,
     }) {
         super(props);
         this.image = props.image;
