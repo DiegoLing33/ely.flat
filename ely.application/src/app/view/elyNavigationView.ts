@@ -71,10 +71,10 @@ export default class elyNavigationView extends elyControl {
         this.imageView.hidden(true);
         this.navigationBarColorProperty.change((newValue) => {
             const backgroundColor = newValue.toString();
-            let borderColor = newValue.getLighter(0.3).toString();
+            let borderColor = newValue.getLighterColor(0.3).toString();
             if (!newValue.isDarker()) {
                 this.addClass("light");
-                borderColor = newValue.getDarker(0.05).toString();
+                borderColor = newValue.getDarkerColor(0.05).toString();
             } else this.removeClass("light");
 
             this.css({"background-color": backgroundColor, "border-bottom": "4px solid " + borderColor});

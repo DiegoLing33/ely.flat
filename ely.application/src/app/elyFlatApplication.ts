@@ -237,8 +237,8 @@ export default class elyFlatApplication extends elyObservable {
      * @param color
      */
     protected applyApplicationColor(color: elyColor): elyFlatApplication {
-        const darker = color.getDarker(0.1);
-        const lighter = color.getLighter(0.18);
+        const darker = color.getDarkerColor(0.1);
+        const lighter = color.getLighterColor(0.18);
         elyStylesheet.global.addClass("bg-primary", {
             backgroundColor: color.toString(),
             color: color.isDarker() ? "white" : "black",
