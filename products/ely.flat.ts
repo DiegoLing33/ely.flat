@@ -26,8 +26,8 @@ import elyFileWatcher from "../ely.application/src/app/elyFileWatcher";
 import elyFlatApplication from "../ely.application/src/app/elyFlatApplication";
 import efCanvas from "../ely.flat.cnv/src/efCanvas";
 import efCanvasLayer from "../ely.flat.cnv/src/efCanvasLayer";
-import ef2DVector from "../ely.flat.cnv/src/objs/ef2DVector";
-import ef2DVectorValues from "../ely.flat.cnv/src/objs/ef2DVectorValues";
+import ef2DVector from "../ely.flat.math/src/ef2DVector";
+import ef2DVectorValues from "../ely.flat.math/src/ef2DVectorValues";
 import efOffset from "../ely.flat.cnv/src/objs/efOffset";
 import efSize from "../ely.flat.cnv/src/objs/efSize";
 import elyScreenController from "../ely.controls.controllers/src/elyScreenController";
@@ -49,8 +49,8 @@ import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
 import elyUtils from "@core/elyUtils";
 import elyXLogger from "@core/utils/elyXLogger";
-import efDirection from "@enums/efDirection";
-import efDirectionName from "@enums/efDirectionName";
+import elyAxis from "@enums/elyAxis";
+import elyDirection from "@enums/elyDirection";
 import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
@@ -156,8 +156,8 @@ window.elyflatobjects = {
     elyStyle,
     elyFieldType,
     efSize,
-    efDirection,
-    efDirectionName,
+    efDirection: elyAxis,
+    efDirectionName: elyDirection,
 
     ef2DVector,
     ef2DVectorValues,
@@ -205,8 +205,8 @@ export {
     elyStyle,
     elyFieldType,
     efSize,
-    efDirection,
-    efDirectionName,
+    elyAxis,
+    elyDirection,
 
     ef2DVector,
     ef2DVectorValues,
