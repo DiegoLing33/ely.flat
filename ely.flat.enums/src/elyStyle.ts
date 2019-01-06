@@ -23,11 +23,14 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import IStyleType from "@controls/interfaces/IStyleType";
+import elyEnum from "@enums/elyEnum";
 
 /**
  * Стили ely.flat
+ * @class elyStyle
+ * @augments {elyEnum}
  */
-export default class elyStyle {
+export default class elyStyle extends elyEnum<string> {
 
     /**
      * Стандартный стиль
@@ -132,24 +135,11 @@ export default class elyStyle {
     }
 
     /**
-     * Значение
-     * @ignore
-     */
-    public value: string;
-
-    /**
      * Конструктор
      * @ignore
      * @param val
      */
     protected constructor(val: string) {
-        this.value = val;
-    }
-
-    /**
-     * Преобразует в строку
-     */
-    public toString() {
-        return this.value;
+        super(val);
     }
 }

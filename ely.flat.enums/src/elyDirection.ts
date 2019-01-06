@@ -17,27 +17,80 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efDirection.ts                                                       +
- + Файл изменен: 28.12.2018 01:03:22                                          +
+ + Файл: elyDirection.ts                                                +
+ + Файл изменен: 28.12.2018 01:05:58                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyEnum from "@enums/elyEnum";
+
 /**
- * Перечисление направлений в измерении
+ * Перечисление направлений
+ * @class elyDirection
+ * @augments {elyEnum<string>}
  */
-export default class efDirection {
-    /**
-     * Направление X
-     */
-    public static readonly x = "x";
+export default class elyDirection extends elyEnum<string> {
 
     /**
-     * Направление Y
+     * Наверх
      */
-    public static readonly y = "y";
+    public static readonly up = new elyDirection("top");
 
     /**
-     * Направление Z
+     * Наверх
      */
-    public static readonly z = "z";
+    public static readonly down = new elyDirection("bottom");
+
+    /**
+     * Наверх
+     */
+    public static readonly top = new elyDirection("top");
+
+    /**
+     * Вниз
+     */
+    public static readonly bottom = new elyDirection("bottom");
+
+    /**
+     * Налево
+     */
+    public static readonly left = new elyDirection("left");
+
+    /**
+     * Направо
+     */
+    public static readonly right = new elyDirection("right");
+
+    /**
+     * Список
+     */
+    public static rawList() {
+        return {
+            bottom: elyDirection.bottom.value,
+            left: elyDirection.left.value,
+            right: elyDirection.right.value,
+            top: elyDirection.top.value,
+        };
+    }
+
+    /**
+     * Список
+     */
+    public static list() {
+        return {
+            bottom: elyDirection.bottom,
+            left: elyDirection.left,
+            right: elyDirection.right,
+            top: elyDirection.top,
+        };
+    }
+
+    /**
+     * Конструктор
+     * @ignore
+     * @param val
+     */
+    protected constructor(val: string) {
+        super(val);
+    }
 }

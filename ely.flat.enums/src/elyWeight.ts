@@ -23,11 +23,14 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import IWeight from "@controls/interfaces/IWeight";
+import elyEnum from "@enums/elyEnum";
 
 /**
  * Толщина ely.flat
+ * @class elyWeight
+ * @augments {elyEnum<number>}
  */
-export default class elyWeight {
+export default class elyWeight extends elyEnum<number> {
 
     /**
      * Стандартная толщина
@@ -87,24 +90,11 @@ export default class elyWeight {
     }
 
     /**
-     * Значение
-     * @ignore
-     */
-    public value: number;
-
-    /**
      * Конструктор
      * @ignore
      * @param val
      */
     protected constructor(val: number) {
-        this.value = val;
-    }
-
-    /**
-     * Преобразует в строку
-     */
-    public toString() {
-        return this.value;
+        super(val);
     }
 }

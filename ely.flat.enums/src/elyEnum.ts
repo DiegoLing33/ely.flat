@@ -17,68 +17,47 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyFieldType.ts                                                      +
- + Файл изменен: 05.12.2018 23:47:11                                          +
+ + Файл: elyEnum.ts                                                           +
+ + Файл изменен: 06.01.2019 04:55:09                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import IFieldType from "@controls/interfaces/IFieldType";
-import elyEnum from "@enums/elyEnum";
-
 /**
- * Типы ввода данных
- * @class elyFieldType
- * @augments {elyEnum<string>}
+ * Перечисление
+ * @class elyEnum
+ * @template T
+ * @abstract
  */
-export default class elyFieldType extends elyEnum<string> {
+export default abstract class elyEnum<T> {
 
     /**
-     * Текст
+     * Значение
+     * @type {T}
      */
-    public static readonly text = new elyFieldType("text");
-
-    /**
-     * Пароль
-     */
-    public static readonly password = new elyFieldType("password");
-
-    /**
-     * Число
-     */
-    public static readonly number = new elyFieldType("number");
-
-    /**
-     * Почта
-     */
-    public static readonly mail = new elyFieldType("mail");
-
-    /**
-     * Тип по имени
-     * @param value
-     */
-    public static byName(value: string | number): elyFieldType {
-        if (typeof value === "number") value = value.toString() + "px";
-        return new elyFieldType(value);
-    }
-
-    /**
-     * Список
-     */
-    public static rawList(): IFieldType {
-        return {
-            mail: elyFieldType.mail.value,
-            number: elyFieldType.number.value,
-            password: elyFieldType.password.value,
-            text: elyFieldType.text.value,
-        };
-    }
+    public value: T;
 
     /**
      * Конструктор
-     * @ignore
-     * @param val
+     * @param {T} value
      */
-    protected constructor(val: string) {
-        super(val);
+    protected constructor(value: T) {
+        this.value = value;
+    }
+
+    /**
+     * Преобразование в строку
+     * @return {string}
+     */
+    public toString(): string {
+        return String(this.value);
+    }
+
+    /**
+     * Возвращает true, если объекты одинаковые
+     * @param {elyEnum} obj
+     * @return {boolean}
+     */
+    public equals(obj: elyEnum<T>): boolean {
+        return this.value === obj.value;
     }
 }

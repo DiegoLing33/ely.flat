@@ -23,12 +23,14 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import ISize from "@controls/interfaces/ISize";
+import elyEnum from "@enums/elyEnum";
 
 /**
  * Размеры ely.flat
  * @class elySize
+ * @augments {elyEnum<string>}
  */
-export default class elySize {
+export default class elySize extends elyEnum<string> {
 
     /**
      * Стандартный размер
@@ -105,12 +107,6 @@ export default class elySize {
     }
 
     /**
-     * Значение
-     * @ignore
-     */
-    public value: string;
-
-    /**
      * Кастомный размер
      * @ignore
      */
@@ -123,14 +119,7 @@ export default class elySize {
      * @param custom
      */
     protected constructor(val: string, custom: boolean = false) {
-        this.value  = val;
+        super(val);
         this.custom = custom;
-    }
-
-    /**
-     * Преобразует в строку
-     */
-    public toString() {
-        return this.value;
     }
 }
