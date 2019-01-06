@@ -81,8 +81,8 @@ export default class elyColorPickerField extends elyField<elyColor> {
         this.valueProperty.change(value => {
             this.picker.set(value.toString());
             this.accessoryView.value(value.toString());
-            this.colorThumbnail.css({"background-color": value.getDarker(0.2).toString()});
-            this.accessoryView.css({color: value.getDarker(0.14).toString()});
+            this.colorThumbnail.css({"background-color": value.getDarkerColor(0.2).toString()});
+            this.accessoryView.css({color: value.getDarkerColor(0.14).toString()});
         });
 
         this.editableProperty.change((value) => {
@@ -105,8 +105,8 @@ export default class elyColorPickerField extends elyField<elyColor> {
             if ("#" + color === this.value().toString()) return;
             const ec = new elyColor({hex: color});
             this.accessoryView.value(ec.toString());
-            this.colorThumbnail.css({"background-color": ec.getDarker(0.2).toString()});
-            this.accessoryView.css({color: ec.getDarker(0.14).toString()});
+            this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
+            this.accessoryView.css({color: ec.getDarkerColor(0.14).toString()});
         });
 
         this.placeholder("#______");
