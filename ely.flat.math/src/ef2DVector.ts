@@ -18,14 +18,14 @@
  + Проект: ely.flat                                                           +
  +                                                                            +
  + Файл: ef2DVector.ts                                                        +
- + Файл изменен: 28.12.2018 00:43:18                                          +
+ + Файл изменен: 06.01.2019 05:03:43                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import elyObservable from "@core/observable/elyObservable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import efDirection from "@enums/efDirection";
+import elyAxis from "@enums/elyAxis";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 
 /**
  * Прослушиваемый вектор.
@@ -67,9 +67,9 @@ export default class ef2DVector extends elyObservable {
             this.y(props.y || 0);
         }
         this.xProperty.change(value =>
-            this.notificate("changed", [efDirection.x, value, this.y()]));
+            this.notificate("changed", [elyAxis.x, value, this.y()]));
         this.yProperty.change(value =>
-            this.notificate("changed", [efDirection.y, this.x(), value]));
+            this.notificate("changed", [elyAxis.y, this.x(), value]));
     }
 
     /**
@@ -125,7 +125,7 @@ export default class ef2DVector extends elyObservable {
      *
      *
      *     vc.addChangeObserver( (dir, nX, nY) => {
-     *        if( dir === efDirection.x){
+     *        if( dir === elyAxis.x){
      *          // Изменился X
      *        } else {
      *          // Изменился Y
@@ -153,16 +153,6 @@ export default class ef2DVector extends elyObservable {
      */
     public equals(vector: ef2DVector): boolean {
         return this.x() === vector.x() && this.y() === vector.y();
-    }
-
-    /**
-     * Возвращает инкриминированный вектор
-     * @param {number} incX
-     * @param {number} incY
-     * @return {ef2DVector}
-     */
-    public getIncVector(incX: number = 0, incY: number = 0): ef2DVector {
-        return new ef2DVector({x: this.x() + incX, y: this.y() + incY});
     }
 
     /**

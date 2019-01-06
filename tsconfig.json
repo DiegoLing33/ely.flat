@@ -38,6 +38,9 @@
       ],
       "@play/*": [
         "./ely.flat.play/src/*"
+      ],
+      "@math/*": [
+        "./ely.flat.math/src/*"
       ]
     },
     "experimentalDecorators": true,

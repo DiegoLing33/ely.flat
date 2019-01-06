@@ -18,11 +18,11 @@
  + Проект: ely.flat                                                           +
  +                                                                            +
  + Файл: ef2DVectorValues.ts                                                  +
- + Файл изменен: 02.01.2019 04:41:50                                          +
+ + Файл изменен: 04.01.2019 22:39:06                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVector from "@cnv/objs/ef2DVector";
+import ef2DVector from "@math/ef2DVector";
 
 /**
  * Векторные константные значения
@@ -31,18 +31,30 @@ import ef2DVector from "@cnv/objs/ef2DVector";
 export default class ef2DVectorValues {
 
     /**
+     * Создает и возвращает нулевой вектор
+     * @return {ef2DVectorValues}
+     */
+    public static zero(): ef2DVectorValues {
+        return new ef2DVectorValues({x: 0, y: 0});
+    }
+
+    /**
      * Значение по оси X
+     * @readonly
+     * @type {number}
      */
     public readonly x: number;
 
     /**
      * Значение по оси Y
+     * @readonly
+     * @type {number}
      */
     public readonly y: number;
 
     /**
      * Конструктор
-     * @param {{ point?: ef2DVector, x?: number, y?: number }} props
+     * @param {{ point?: ef2DVector, x?: number, y?: number }} props - параметры
      */
     public constructor(props: { point?: ef2DVector, x?: number, y?: number }) {
         if (props.point) {
@@ -56,9 +68,18 @@ export default class ef2DVectorValues {
 
     /**
      * Создает вектор из значений
+     * @return {ef2DVector}
      */
     public getVector(): ef2DVector {
         return new ef2DVector({values: this});
+    }
+
+    /**
+     * Возвращает true, если векторные значения идентичны
+     * @param {ef2DVectorValues} vector - вектор сравнения
+     */
+    public equals(vector: ef2DVectorValues): boolean {
+        return this.x === vector.x && this.y === vector.y;
     }
 
     /**
