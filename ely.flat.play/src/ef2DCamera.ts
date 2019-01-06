@@ -22,17 +22,17 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import efSize from "@cnv/objs/efSize";
 import elyXLogger from "@core/utils/elyXLogger";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efEntity from "@play/entities/efEntity";
-import ef2DMovableEntityProtocol from "@play/protocols/ef2DMovableEntityProtocol";
+import ef2DMovableSizableEntityProtocol from "@play/protocols/ef2DMovableSizableEntityProtocol";
 
 /**
  * Камера
  * @class ef2DCamera
  */
-export default class ef2DCamera extends ef2DMovableEntityProtocol {
+export default class ef2DCamera extends ef2DMovableSizableEntityProtocol {
 
     /**
      * Размер камеры
@@ -68,14 +68,13 @@ export default class ef2DCamera extends ef2DMovableEntityProtocol {
      * @param point
      */
     public isVisiblePosition(point: ef2DVectorValues): boolean {
-        const x = point.x;
-        const y = point.y;
-        const grid = this.getGridPosition();
-
-        return y >= grid.y && y < grid.y + this.size.height()
-            && x >= grid.x && x < grid.x + this.size.width();
+        return this.getGridRect().isPointInRect(point);
     }
 
+    /**
+     * Возвращает true, если существо находится внутри камеры
+     * @param entity
+     */
     public isVisible(entity: efEntity): boolean {
         return this.isVisiblePosition(entity.getGridPosition());
     }

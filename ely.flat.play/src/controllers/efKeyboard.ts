@@ -46,7 +46,7 @@ var Key = {
  *
  */
 
-import elyObservable from "../../../ely.core/src/observable/elyObservable";
+import elyObservable from "@core/observable/elyObservable";
 
 /**
  * Клавиатура

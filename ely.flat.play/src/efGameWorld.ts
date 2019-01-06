@@ -22,25 +22,25 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVector from "@cnv/objs/ef2DVector";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import efSize from "@cnv/objs/efSize";
 import elyUtils from "@core/elyUtils";
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
 import elyGetRequest from "@core/web/request/elyGetRequest";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
+import ef2DGridButch from "@play/ef2DGridButch";
 import efGame from "@play/efGame";
 import efPathfinder from "@play/efPathfinder";
 import efCharacter from "@play/entities/efCharacter";
 import efEntity from "@play/entities/efEntity";
-import ef2DGridButch from "./ef2DGridButch";
 
 interface efGameWorld_worldData {
     name: string;
     size: { width: number, height: number };
     map: number[][];
     collision: number[][];
-    sprites: string[]
+    sprites: string[];
 }
 
 /**

@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
-import efDirectionName from "@enums/efDirectionName";
+import elyDirection from "@enums/elyDirection";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efGame from "@play/efGame";
 import efGameSettings from "@play/efGameSettings";
 import efCharacter from "@play/entities/efCharacter";
@@ -91,7 +91,7 @@ export default class efGameUpdater {
         const tick = Math.round(efGameSettings.tileSize / Math.round((character.speedValues.move /
             (1000 / this.game.renderer.FPS))));
         if (character.isMoving() && !character.movement.isInProgress()) {
-            if (character.directionName === efDirectionName.left) {
+            if (character.directionName === elyDirection.left) {
                 character.movement.start(
                     this.game.currentTime,
                     (x: number) => {
@@ -112,7 +112,7 @@ export default class efGameUpdater {
                     character.getAbsolutePosition().x - efGameSettings.tileSize,
                     character.speedValues.move,
                 );
-            } else if (character.directionName === efDirectionName.right) {
+            } else if (character.directionName === elyDirection.right) {
                 character.movement.start(
                     this.game.currentTime,
                     (x: number) => {
@@ -133,7 +133,7 @@ export default class efGameUpdater {
                     character.getAbsolutePosition().x + efGameSettings.tileSize,
                     character.speedValues.move,
                 );
-            } else if (character.directionName === efDirectionName.up) {
+            } else if (character.directionName === elyDirection.up) {
                 character.movement.start(
                     this.game.currentTime,
                     (y: number) => {
@@ -154,7 +154,7 @@ export default class efGameUpdater {
                     character.getAbsolutePosition().y - efGameSettings.tileSize,
                     character.speedValues.move,
                 );
-            } else if (character.directionName === efDirectionName.down) {
+            } else if (character.directionName === elyDirection.down) {
                 character.movement.start(
                     this.game.currentTime,
                     (y: number) => {

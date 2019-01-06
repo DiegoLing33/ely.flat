@@ -17,59 +17,54 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efMouse.ts                                                           +
- + Файл изменен: 28.12.2018 18:44:50                                          +
+ + Файл: ef2DMovableSizableEntityProtocol.ts                                  +
+ + Файл изменен: 06.01.2019 05:57:36                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@math/ef2DVectorValues";
+import efSize from "@cnv/objs/efSize";
+import ef2DRect from "@math/ef2DRect";
+import efGameSettings from "@play/efGameSettings";
 import ef2DMovableEntityProtocol from "@play/protocols/ef2DMovableEntityProtocol";
 
 /**
- * Мышь
+ * Протокол перемещаемого существа с размером
+ * @class ef2DMovableSizableEntityProtocol
+ * @augments {ef2DMovableEntityProtocol}
  */
-export default class efMouse extends ef2DMovableEntityProtocol {
+export default class ef2DMovableSizableEntityProtocol extends ef2DMovableEntityProtocol {
 
     /**
-     * Стандартный контроллеры мыши
-     * @type {efMouse}
+     * Размер
      */
-    public static default = new efMouse();
+    public readonly size: efSize = efSize.zero();
 
     /**
-     * Конструктор
+     * Возвращает прямоугольник камеры
+     * @return {ef2DRect}
      */
-    public constructor() {
-        super();
-        // Nothing is done
+    public getAbsoluteRect(): ef2DRect {
+        return new ef2DRect({
+            position: this.getAbsolutePosition(),
+            size: new efSize({
+                height: this.size.height() * efGameSettings.tileSize,
+                width: this.size.width() * efGameSettings.tileSize,
+            }),
+        });
     }
 
     /**
-     * Запускает прослушивание событий
+     * Возвращает прямоугольник камеры
+     * @return {ef2DRect}
      */
-    public startListening(): void {
-        window.onmousemove = (e: MouseEvent) => {
-            if (e.offsetX) {
-                this.setAbsolutePosition(new ef2DVectorValues({x: e.offsetX, y: e.offsetY}));
-            } else if (e.layerX) {
-                this.setAbsolutePosition(new ef2DVectorValues({x: e.layerX, y: e.layerY}));
-            }
-        };
-        window.onclick = () => {
-            this.notificate("click", [this.getAbsolutePosition(), this.getGridPosition()]);
-        };
-    }
-
-    /**
-     * Добавляет наблюдатель: клик
-     *
-     * Имя обсервера: click
-     *
-     * @param {{function(abs: ef2DVectorValues, grid: ef2DVectorValues)}} o - наблюдатель
-     */
-    public addClickObserver(o: (abs: ef2DVectorValues, grid: ef2DVectorValues) => void): efMouse {
-        this.addObserver("click", o);
-        return this;
+    public getGridRect(): ef2DRect {
+        return new ef2DRect({
+            position: this.getGridPosition(),
+            size: new efSize({
+                height: this.size.height(),
+                width: this.size.width(),
+            }),
+        });
     }
 
 }

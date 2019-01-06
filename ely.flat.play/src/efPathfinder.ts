@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import elyObservable from "@core/observable/elyObservable";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efGameWorld from "@play/efGameWorld";
 import efCharacter from "@play/entities/efCharacter";
 import efEntity from "@play/entities/efEntity";

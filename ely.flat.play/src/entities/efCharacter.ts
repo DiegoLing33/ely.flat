@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVector from "@cnv/objs/ef2DVector";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import elyXLogger from "@core/utils/elyXLogger";
-import efDirectionName from "@enums/efDirectionName";
+import elyDirection from "@enums/elyDirection";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import ef2DSprite from "@play/ef2DSprite";
 import efEntity from "@play/entities/efEntity";
 
@@ -47,6 +47,10 @@ export default class efCharacter extends efEntity {
      * Таргет
      */
     public target: efEntity | null = null;
+
+    public __nextStepDelegate: (cb: (res: boolean) => void) => void = (cb => {
+        cb(true);
+    });
 
     /**
      * Путь
@@ -98,19 +102,19 @@ export default class efCharacter extends efEntity {
      * Поворачивает объект
      * @param direction
      */
-    public turnTo(direction: efDirectionName): void {
+    public turnTo(direction: elyDirection): void {
         this.directionName = direction;
         switch (direction) {
-            case efDirectionName.up:
+            case elyDirection.up:
                 this.angle = 0;
                 break;
-            case efDirectionName.down:
+            case elyDirection.down:
                 this.angle = 180;
                 break;
-            case efDirectionName.left:
+            case elyDirection.left:
                 this.angle = -90;
                 break;
-            case efDirectionName.right:
+            case elyDirection.right:
                 this.angle = 90;
                 break;
         }
@@ -268,16 +272,16 @@ export default class efCharacter extends efEntity {
             const p = this.__path;
             const i = this.__step;
             if (p[i].x < p[i - 1].x) {
-                this.turnTo(efDirectionName.left);
+                this.turnTo(elyDirection.left);
             }
             if (p[i].x > p[i - 1].x) {
-                this.turnTo(efDirectionName.right);
+                this.turnTo(elyDirection.right);
             }
             if (p[i].y < p[i - 1].y) {
-                this.turnTo(efDirectionName.up);
+                this.turnTo(elyDirection.up);
             }
             if (p[i].y > p[i - 1].y) {
-                this.turnTo(efDirectionName.down);
+                this.turnTo(elyDirection.down);
             }
         }
     }
@@ -347,10 +351,6 @@ export default class efCharacter extends efEntity {
     public didMoved(): void {
         this.notificate("didMove", [this]);
     }
-
-    public __nextStepDelegate: (cb: (res: boolean) => void) => void = (cb => {
-        cb(true);
-    });
 
     /**
      * Выполняет перемещение

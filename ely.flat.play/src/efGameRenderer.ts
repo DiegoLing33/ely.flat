@@ -25,13 +25,13 @@
 import efContextImage from "@cnv/context/efContextImage";
 import efContextRect from "@cnv/context/efContextRect";
 import efContextText from "@cnv/context/efContextText";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
-import efSize from "@cnv/objs/efSize";
+import elyColor from "@core/elyColor";
+import ef2DRect from "@math/ef2DRect";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efMouse from "@play/controllers/efMouse";
 import efGame from "@play/efGame";
 import efGameCanvas from "@play/efGameCanvas";
 import efGameSettings from "@play/efGameSettings";
-import efCharacter from "@play/entities/efCharacter";
 import efEntity from "@play/entities/efEntity";
 
 /**
@@ -96,19 +96,20 @@ export default class efGameRenderer {
     public renderBackground(): void {
         this.canvas.backgroundLayer.clear();
         this.canvas.backgroundLayer.draw(new efContextRect({
-            fillColor: "black",
-            size: this.canvas.size,
-            vector: new ef2DVectorValues({x: 0, y: 0}),
+            fillColor: elyColor.black(),
+            rect: new ef2DRect({position: ef2DVectorValues.zero(), size: this.canvas.size}),
         }));
         this.game.world.worldData!.map.forEach((row, rowIndex) => {
             row.forEach((col: any, colIndex) => {
                 if (col === 0) {
                     this.canvas.backgroundLayer.draw(new efContextRect({
-                        fillColor: "#000",
-                        size: efGameSettings.getTileSize(),
-                        vector: new ef2DVectorValues({
-                            x: colIndex * efGameSettings.tileSize,
-                            y: rowIndex * efGameSettings.tileSize,
+                        fillColor: elyColor.black(),
+                        rect: new ef2DRect({
+                            position: new ef2DVectorValues({
+                                x: colIndex * efGameSettings.tileSize,
+                                y: rowIndex * efGameSettings.tileSize,
+                            }),
+                            size: efGameSettings.getTileSize(),
                         }),
                     }));
                 } else if (typeof col === "object" && typeof col.n === "string") {
@@ -117,10 +118,12 @@ export default class efGameRenderer {
                     this.canvas.backgroundLayer.draw(new efContextImage({
                         angle: col.a || undefined,
                         image: sprite.getImage()!,
-                        size: efGameSettings.getTileSize(),
-                        vector: new ef2DVectorValues({
-                            x: colIndex, y: rowIndex,
-                        }).getMultiplied({xy: efGameSettings.tileSize}),
+                        rect: new ef2DRect({
+                            position: new ef2DVectorValues({
+                                x: colIndex, y: rowIndex,
+                            }).getMultiplied({xy: efGameSettings.tileSize}),
+                            size: efGameSettings.getTileSize(),
+                        }),
                     }));
                 }
             });
@@ -144,19 +147,23 @@ export default class efGameRenderer {
                 data.push(`Direct: ${this.game.target.directionName}`);
             }
             this.canvas.foregroundLayer.draw(new efContextText({
-                fillColor: "#fff",
+                fillColor: elyColor.white(),
                 text: data.join("\n"),
                 vector: new ef2DVectorValues({x: 10, y: 10}),
             }));
         }
 
-        let mc = "#ccc";
-        if (this.game.world.isEntityAt(efMouse.default.getGridPosition())) mc = "#fdc784";
-        if (!this.game.world.isPathing(efMouse.default.getGridPosition())) mc = "#fd3439";
+        let mc = new elyColor({hex: "#ccc"});
+        if (this.game.world.isEntityAt(efMouse.default.getGridPosition()))
+            mc = new elyColor({hex: "#fdc784"});
+        if (!this.game.world.isPathing(efMouse.default.getGridPosition()))
+            mc = new elyColor({hex: "#fd3439"});
         this.canvas.foregroundLayer.draw(new efContextRect({
-            size: new efSize({d: efGameSettings.tileSize}),
+            rect: new ef2DRect({
+                position: efMouse.default.getGridPosition().getMultiplied({xy: efGameSettings.tileSize}),
+                size: efGameSettings.getTileSize(),
+            }),
             strokeColor: mc,
-            vector: efMouse.default.getGridPosition().getMultiplied({xy: efGameSettings.tileSize}),
         }));
     }
 
@@ -170,14 +177,12 @@ export default class efGameRenderer {
             this.canvas.entityLayer.draw(new efContextImage({
                 angle: entity.angle,
                 image: sprite.getImage()!,
-                size: efGameSettings.getTileSize(),
-                vector: entity.getAbsolutePosition(),
+                rect: entity.getAbsoluteRect(),
             }));
             this.canvas.entityLayer.draw(new efContextRect({
                 angle: entity.angle,
-                size: efGameSettings.getTileSize(),
-                strokeColor: (entity instanceof efCharacter && entity.isMotionPaused) ? "red" : "green",
-                vector: entity.getAbsolutePosition(),
+                rect: entity.getAbsoluteRect(),
+                strokeColor: elyColor.red(),
             }));
         }
     }

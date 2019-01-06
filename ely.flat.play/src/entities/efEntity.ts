@@ -22,19 +22,20 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVector from "@cnv/objs/ef2DVector";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import efDirectionName from "@enums/efDirectionName";
+import elyDirection from "@enums/elyDirection";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import ef2DSprite from "@play/ef2DSprite";
 import efEntityTransition from "@play/efEntityTransition";
 import efGameWorld from "@play/efGameWorld";
-import ef2DMovableEntityProtocol from "@play/protocols/ef2DMovableEntityProtocol";
+import ef2DMovableSizableEntityProtocol from "@play/protocols/ef2DMovableSizableEntityProtocol";
+import efGameSettings from "@play/efGameSettings";
 
 /**
  * Существо
  */
-export default class efEntity extends ef2DMovableEntityProtocol {
+export default class efEntity extends ef2DMovableSizableEntityProtocol {
 
     /**
      * Следующая позиция
@@ -44,7 +45,7 @@ export default class efEntity extends ef2DMovableEntityProtocol {
     /**
      * Имя направления персонажа
      */
-    public directionName: efDirectionName = efDirectionName.down;
+    public directionName: elyDirection = elyDirection.down;
 
     /**
      * Значение движения
@@ -104,6 +105,8 @@ export default class efEntity extends ef2DMovableEntityProtocol {
         this.id = props.id;
         this.angle = props.angle || 0;
         props.position = props.position || ef2DVector.zero();
+        this.size.width(1);
+        this.size.height(1);
         this.setGridPosition(props.position);
     }
 
@@ -210,13 +213,13 @@ export default class efEntity extends ef2DMovableEntityProtocol {
      */
     public getNextPointByDirection(val: number = 1): ef2DVectorValues {
         switch (this.directionName) {
-            case efDirectionName.up:
+            case elyDirection.up:
                 return this.getGridPosition().getAdd({x: 0, y: -val});
-            case efDirectionName.down:
+            case elyDirection.down:
                 return this.getGridPosition().getAdd({x: 0, y: val});
-            case efDirectionName.left:
+            case elyDirection.left:
                 return this.getGridPosition().getAdd({x: val, y: 0});
-            case efDirectionName.right:
+            case elyDirection.right:
                 return this.getGridPosition().getAdd({x: -val, y: 0});
         }
         return this.getGridPosition();
@@ -225,16 +228,16 @@ export default class efEntity extends ef2DMovableEntityProtocol {
     /**
      * Возвращает обратное направление
      */
-    public getMirrorDirectionName(): efDirectionName {
+    public getMirrorDirectionName(): elyDirection {
         switch (this.directionName.value) {
-            case efDirectionName.up.value:
-                return efDirectionName.down;
-            case efDirectionName.down.value:
-                return efDirectionName.up;
-            case efDirectionName.left.value:
-                return efDirectionName.right;
-            case efDirectionName.right.value:
-                return efDirectionName.left;
+            case elyDirection.up.value:
+                return elyDirection.down;
+            case elyDirection.down.value:
+                return elyDirection.up;
+            case elyDirection.left.value:
+                return elyDirection.right;
+            case elyDirection.right.value:
+                return elyDirection.left;
         }
         return this.directionName;
     }

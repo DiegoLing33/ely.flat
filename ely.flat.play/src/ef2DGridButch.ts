@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVectorValues from "../../ely.flat.cnv/src/objs/ef2DVectorValues";
-import efSize from "../../ely.flat.cnv/src/objs/efSize";
+import efSize from "@cnv/objs/efSize";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 
 /**
  * Объект сетки

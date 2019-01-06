@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ef2DVector from "@cnv/objs/ef2DVector";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
+import elyObservable from "@core/observable/elyObservable";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efGameSettings from "@play/efGameSettings";
-import elyObservable from "../../../ely.core/src/observable/elyObservable";
 
-/**
+/**å
  * Протокол перемещаемых объектов в 2D Tiled
  * @class ef2DMovableEntityProtocol
  * @augments {elyObservable}

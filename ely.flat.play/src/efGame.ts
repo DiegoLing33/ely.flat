@@ -23,23 +23,23 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efCanvas from "@cnv/efCanvas";
-import ef2DVector from "@cnv/objs/ef2DVector";
-import ef2DVectorValues from "@cnv/objs/ef2DVectorValues";
 import efSize from "@cnv/objs/efSize";
 import elyControl from "@controls/action/elyControl";
 import elyView from "@core/controls/elyView";
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
 import efKeyboard from "@play/controllers/efKeyboard";
 import efMouse from "@play/controllers/efMouse";
+import ef2DCamera from "@play/ef2DCamera";
 import efGameCanvas from "@play/efGameCanvas";
 import efGameRenderer from "@play/efGameRenderer";
+import efGameSettings from "@play/efGameSettings";
 import efGameUpdater from "@play/efGameUpdater";
 import efGameWorld from "@play/efGameWorld";
-import efGameSettings from "@play/efGameSettings";
 import efEntity from "@play/entities/efEntity";
 import ef2DSpritesManager from "@play/managers/ef2DSpritesManager";
-import ef2DCamera from "./ef2DCamera";
 
 export default class efGame extends elyObservable {
 
