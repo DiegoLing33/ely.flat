@@ -21,12 +21,12 @@
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
 import elyStylesheet from "@controls/elyStylesheet";
-import elySwitchField from "@controls/fields/elySwitchField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyWorkshop from "@devMods/elyUIWorkshop.elymod/elyWorkshop";
 import elyWSOpenProjectWindow from "@devMods/elyUIWorkshop.elymod/windows/elyWSOpenProjectWindow";
 import elyStyle from "@enums/elyStyle";
+import {elySwitchField} from "@fields/elySwitchField";
 
 /**
  * Панель инструментов

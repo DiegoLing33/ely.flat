@@ -25,7 +25,7 @@ function getHeap() {
 // @ts-ignore
 const astar = {
     /**
-     * Perform an A* Search on a graph given a start and end node.
+     * Perform an A* Search on a graph given a start and addEndObserver node.
      * @param {Graph} graph
      * @param {GridNode} start
      * @param {GridNode} end
@@ -300,7 +300,7 @@ function BinaryHeap(scoreFunction) {
 BinaryHeap.prototype = {
     // @ts-ignore-block
     push: function (element) {
-        // Add the new element to the end of the array.
+        // Add the new element to the addEndObserver of the array.
         this.content.push(element);
 
         // Allow it to sink down.
@@ -309,9 +309,9 @@ BinaryHeap.prototype = {
     pop: function () {
         // Store the first element so we can return it later.
         var result = this.content[0];
-        // Get the element at the end of the array.
+        // Get the element at the addEndObserver of the array.
         var end = this.content.pop();
-        // If there are any elements left, put the end element at the
+        // If there are any elements left, put the addEndObserver element at the
         // start, and let it bubble up.
         if (this.content.length > 0) {
             this.content[0] = end;
@@ -417,5 +417,5 @@ BinaryHeap.prototype = {
         }
     }
 };
-// @ts-ignore-end
+// @ts-ignore-addEndObserver
 export {astar, Graph};

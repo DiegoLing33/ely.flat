@@ -30,7 +30,7 @@ export default class elyGuard {
      * @param callback
      * @param context
      */
-    public static func<T>(func: Function, args: any[], callback: (value: T) => void, context?: any): void {
+    public static func<T>(func: any, args: any[], callback: (value: T) => void, context?: any): void {
         const result = func.apply(context, args);
         if (result !== undefined && result !== null) callback(result);
     }
@@ -44,4 +44,21 @@ export default class elyGuard {
         if (variable !== undefined && variable !== null) callback(variable);
     }
 
+    /**
+     * Возвращает true, если obj undefined или null.
+     * @param {*} obj
+     * @return {boolean}
+     */
+    public static isNone(obj: any): obj is null {
+        return obj === undefined || obj === null;
+    }
+
+    /**
+     * Возвращает true, если obj не undefined
+     * @param {*} obj
+     * @return {boolean}
+     */
+    public static isSet(obj: any): boolean {
+        return obj !== undefined;
+    }
 }

@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,48 +15,27 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldOptions.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efErrorDisplayProtocolcol.ts                                         +
+ + Файл изменен: 08.01.2019 00:50:08                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../elyControlOptions";
+import {efProtocol} from "@protocols/efProtocol";
 
 /**
- * Опции поля ввода данных
+ * Протокол объекта, который может быть помечен, как "объект с ошибкой"
+ * @class efErrorDisplayProtocol
  */
-export default interface elyFieldOptions<T> extends elyControlOptions {
+export class efErrorDisplayProtocol extends efProtocol {
     /**
-     * Значение
+     * Помечает объект как неисправный
+     * @param {boolean} flag
+     * @return {this}
      */
-    value?: T;
+    public error(flag: boolean): efErrorDisplayProtocol {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
 
-    /**
-     * Пример ввода
-     */
-    placeholder?: string;
-
-    /**
-     * Стандартное значение
-     */
-    defaultValue?: T;
-
-    /**
-     * Флаг редактирования поля
-     */
-    editable?: boolean;
-
-    /**
-     * Подсказка
-     */
-    hint?: string;
-
-    /**
-     * Иконка активации
-     */
-    actionIcon?: string;
-
-    /**
-     * Иконка
-     */
-    fieldIcon?: string;
 }

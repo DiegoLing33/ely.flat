@@ -21,12 +21,12 @@
 import elyFlatServer from "@app/app/ely.server/elyFlatServer";
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
-import elyTextField from "@controls/fields/elyTextField";
 import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyImageView from "@controls/view/elyImageView";
 import elyModalView from "@controls/view/elyModalView";
 import elyEncrypt from "@core/secure/elyEncrypt";
 import elySize from "@enums/elySize";
+import {elyTextField} from "@fields/elyTextField";
 
 /**
  * Тест каптчи

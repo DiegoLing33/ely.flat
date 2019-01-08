@@ -20,6 +20,7 @@
 
 import elyUtils from "@core/elyUtils";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyGuard from "@core/elyGuard";
 
 /**
  * Элемент свойства словаря
@@ -30,6 +31,8 @@ interface elyObservableDictionaryItem<T> {
 
 /**
  * Свойство словаря
+ * @class elyObservableDictionary
+ * @template T
  */
 export default class elyObservableDictionary<T> extends elyObservableProperty<elyObservableDictionaryItem<T>> {
 
@@ -79,7 +82,8 @@ export default class elyObservableDictionary<T> extends elyObservableProperty<el
      * @param key
      */
     public item(key: string): T | null {
-        return (this.value || {})[key] || null;
+        const val = (this.value || {})[key];
+        return elyGuard.isNone(val) ? null : val;
     }
 
     /**

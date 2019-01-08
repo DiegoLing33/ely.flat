@@ -29,16 +29,11 @@
   box-shadow: none;
   background: transparent;
 
-  .ef-input-group {
-    box-shadow: none;
-    background: transparent;
-
-    .title {
-      display: inline-block;
-      top: -7px;
-      position: relative;
-      color: rgb(131, 131, 131);
-    }
+  .title {
+    display: inline-block;
+    top: -7px;
+    position: relative;
+    color: rgb(131, 131, 131);
   }
 
 }

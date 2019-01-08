@@ -22,11 +22,11 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyTextField from "@controls/fields/elyTextField";
 import elyTextView from "@controls/text/elyTextView";
 import elyView from "@core/controls/elyView";
 import elyViewOptions from "@core/controls/elyViewOptions";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import {elyTextField} from "@fields/elyTextField";
 
 /**
  * Делегат вызывается для проверки возможности сохранить значение
@@ -85,7 +85,7 @@ export default class elyTextViewEditable extends elyView {
     /**
      * Поле редактирования текста
      */
-    protected readonly textEditField: elyTextField = new elyTextField({actionIcon: "check"});
+    protected readonly textEditField: elyTextField = new elyTextField(/*{actionIcon: "check"}*/);
 
     /**
      * Делегат: проверка возможности сохранить значение
@@ -123,8 +123,8 @@ export default class elyTextViewEditable extends elyView {
             this.__isChecking = true;
 
             // Изменяет состояния иконки
-            this.textEditField.actionIconView.iconName("refresh");
-            this.textEditField.actionIconView.iconSpinning(true);
+            // this.textEditField.actionIconView.iconName("refresh");
+            // this.textEditField.actionIconView.iconSpinning(true);
 
             /**
              * Выполняет попытку сохранить результаты,
@@ -132,10 +132,11 @@ export default class elyTextViewEditable extends elyView {
              */
             const tryToSaveResults = (callback: (res: boolean) => void) => {
                 if (this.textView.text() === this.textEditField.value()) {
-                    this.value(this.textEditField.value());
+                    // this.value(this.textEditField.value());
                     callback(true);
                     this.setEditorViewState(elyTextViewEditableState.PRESENT);
                 } else {
+                    /*
                     this.shouldSaveValueDelegate(this.textEditField.value(), res => {
                         if (res) {
                             this.value(this.textEditField.value());
@@ -147,7 +148,7 @@ export default class elyTextViewEditable extends elyView {
                             callback(false);
                             this.setEditorViewState(elyTextViewEditableState.EDIT);
                         }
-                    });
+                    });*/
                 }
             };
 
@@ -252,8 +253,8 @@ export default class elyTextViewEditable extends elyView {
     protected setEditorViewState(state: elyTextViewEditableState): elyTextViewEditable {
         this.textEditField.hidden(state === elyTextViewEditableState.PRESENT);
         this.textView.hidden(state === elyTextViewEditableState.EDIT);
-        this.textEditField.actionIconView.iconName("check");
-        this.textEditField.actionIconView.iconSpinning(false);
+        // this.textEditField.actionIconView.iconName("check");
+        // this.textEditField.actionIconView.iconSpinning(false);
         return this;
     }
 }

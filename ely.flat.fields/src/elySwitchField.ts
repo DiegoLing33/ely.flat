@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,17 +15,28 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
  + Файл: elySwitchField.ts                                                    +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Файл изменен: 06.01.2019 00:25:54                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyControl from "@controls/action/elyControl";
-import elyInput from "@controls/action/elyInput";
-import elyField from "@controls/fields/elyField";
 import elyTextView from "@controls/text/elyTextView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
-import elySwitchFieldOptions from "@options/fields/elySwitchFieldOptions";
+import {elyFieldView, elyFieldViewOptions} from "@fields/elyFieldView";
+
+/**
+ * Опции {@link elySwitchField}
+ */
+export interface elySwitchFieldOptions extends elyFieldViewOptions<boolean> {
+    /**
+     * Заголовок
+     */
+    title?: string;
+}
 
 /**
  * Поле: Переключатель
@@ -35,7 +47,7 @@ import elySwitchFieldOptions from "@options/fields/elySwitchFieldOptions";
 @designable("value", elyDesignableFieldState.GETSET, "boolean")
 @designable("title", elyDesignableFieldState.GETSET, "string")
 @designable("placeholder", elyDesignableFieldState.DENY)
-export default class elySwitchField extends elyField<boolean> {
+export class elySwitchField extends elyFieldView<boolean> {
 
     /**
      * Отображение заголовка
@@ -69,45 +81,29 @@ export default class elySwitchField extends elyField<boolean> {
 
     /**
      * Конструктор
-     * @param {elySwitchFieldOptions} options
+     * @param {elySwitchFieldOptions} props
      */
-    public constructor(options: elySwitchFieldOptions = {}) {
-        super(options, new elyInput({type: "checkbox"}));
+    public constructor(props: elySwitchFieldOptions = {}) {
+        super({accessory: new elyControl({tag: "input", class: "ef-input"})});
+        const accessory = this.accessoryView.getDocument() as HTMLInputElement;
+        accessory.type = "checkbox";
+        accessory.onchange = () => this.value(accessory.checked);
 
-        /**
-         * @type {elyObservableProperty<boolean>}
-         */
-        this.valueProperty = new elyObservableProperty<boolean>(false);
-
-        this.editableProperty.change((newValue) => this.accessoryView.editable(newValue));
-        this.valueProperty.change((newValue) => this.accessoryView.getDocument().checked = newValue);
+        this.editableProperty.change((newValue) => accessory.disabled = !newValue);
+        this.valueProperty.change((newValue) => accessory.checked = newValue);
         this.titleProperty.change((newValue) => this.titleView.text(newValue));
-        this.editableProperty.change((newValue) => this.accessoryView.getDocument().disabled = !newValue);
-        this.accessoryView.valueProperty.change(() =>
-            this.valueProperty.set(this.accessoryView.getDocument().checked || false));
 
         this.addClass("ef-input-switch");
         this.removeViewContent();
         this.switcherBox.addSubView(this.accessoryView);
         this.switcherBox.addSubView(this.switcherView);
-        this.fieldLineView.addSubView(this.switcherBox);
-        this.fieldLineView.addSubView(this.titleView);
+        this.getDocument().append(this.switcherBox.getDocument());
+        this.getDocument().append(this.titleView.getDocument());
 
-        this.accessoryView.attribute("type", "checkbox");
+        this.editable(true);
+        if (props.title) this.titleProperty.set(props.title);
+        if (props.value) this.value(props.value);
 
-        this.getDocument().appendChild(this.fieldLineView.getDocument());
-
-        if (options.title) this.titleProperty.set(options.title);
-        this.applyProtocolOptions(options);
-
-    }
-
-    /**
-     * Стандартное значение
-     * @return {boolean}
-     */
-    public defaultValue(): boolean {
-        return false;
     }
 
     /**

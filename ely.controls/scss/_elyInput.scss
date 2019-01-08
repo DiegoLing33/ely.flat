@@ -33,6 +33,24 @@
 @import "../../ely.core/scss/mixins/media";
 
 
+//
+//  Поле ввода
+//
+.ef-field{
+  display: table;
+  width: 100%;
+  background-color: white;
+  border: 1px solid transparent;
+  transition: border 0.2s;
+  position: relative;
+
+  &.error {
+    border: 1px solid rgba(232, 0, 0, 0.86);
+  }
+
+  @include box-shadow-core($controlDefaultShadow);
+}
+
 /** Группа элементов на контроллере ввода */
 
 .ef-input-group {
@@ -99,11 +117,10 @@
 
 /** Подсказка элемента управления */
 .ef-hint {
-  //margin-bottom: -15px;
   text-align: left;
   color: rgba(0, 0, 0, 0.32);
   font-size: 12px;
-  margin-top: -12px;
+  margin-top: 2px;
   //margin-bottom: 15px;
   cursor: default;
   box-shadow: none !important;
@@ -120,8 +137,6 @@
   background-clip: padding-box;
   border: none;
   border-radius: 0;
-
-  @include box-shadow-core($controlDefaultShadow);
 
   &.static {
     @include box-shadow-core(none);

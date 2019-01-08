@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,48 +15,35 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldOptions.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efValidatableProtocol.ts                                             +
+ + Файл изменен: 08.01.2019 00:36:49                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../elyControlOptions";
+import {efProtocol} from "@protocols/efProtocol";
 
 /**
- * Опции поля ввода данных
+ * Протокол валидации данных
+ * @class {efValidatableProtocol}
  */
-export default interface elyFieldOptions<T> extends elyControlOptions {
-    /**
-     * Значение
-     */
-    value?: T;
+export class efValidatableProtocol extends efProtocol {
 
     /**
-     * Пример ввода
+     * Возвращает true, если данные валидны
+     * @return {boolean}
      */
-    placeholder?: string;
+    public isValid(): boolean {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
 
     /**
-     * Стандартное значение
+     * Возвращает true, если данные пусты
+     * @return {boolean}
      */
-    defaultValue?: T;
+    public isEmpty(): boolean {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
 
-    /**
-     * Флаг редактирования поля
-     */
-    editable?: boolean;
-
-    /**
-     * Подсказка
-     */
-    hint?: string;
-
-    /**
-     * Иконка активации
-     */
-    actionIcon?: string;
-
-    /**
-     * Иконка
-     */
-    fieldIcon?: string;
 }

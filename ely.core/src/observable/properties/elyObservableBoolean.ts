@@ -41,8 +41,8 @@ export default class elyObservableBoolean extends elyObservableProperty<boolean>
     /**
      * Переключает значение
      */
-    public toggle(): elyObservableBoolean{
-        this.value = !this.value;
+    public toggle(): elyObservableBoolean {
+        this.set(!this.value);
         return this;
     }
 }

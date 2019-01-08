@@ -19,6 +19,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFieldProtocol from "@controls/protocols/elyFieldProtocol";
+import elyIconView from "@controls/text/elyIconView";
 import elyFieldType from "@enums/elyFieldType";
 import elyFieldOptions from "@options/fields/elyFieldOptions";
 
@@ -33,7 +34,10 @@ export default class elyInput extends elyFieldProtocol<string> {
      * Конструктор
      * @param options
      */
-    public constructor(options: elyFieldOptions<string> & {type?: elyFieldType | string, noObservers?: boolean} = {}) {
+    public constructor(options: elyFieldOptions<string> & {
+        type?: elyFieldType | string, noObservers?: boolean,
+        fieldIcon?: string,
+    } = {}) {
         super({tag: options.tag || "input", class: "ef-input", ...options});
         this.valueProperty.change((newValue) => this.getDocument().value = newValue);
         this.getDocument().onchange = () => this.value(this.getDocument().value);
@@ -41,6 +45,14 @@ export default class elyInput extends elyFieldProtocol<string> {
         if (options.type) this.attribute("type", options.type.toString());
         this.applyProtocolOptions(options);
         this.getDocument().oninput = () => this.notificate("input", [this.getDocument().value]);
+        if (options.fieldIcon) {
+            this.elyViewWillDraw(() => {
+                this.getDocument().before(new elyIconView({
+                    class: "ef-input-status",
+                    iconName: options.fieldIcon,
+                }).getDocument());
+            });
+        }
     }
 
     /**

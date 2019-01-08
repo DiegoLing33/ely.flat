@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,48 +15,18 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldOptions.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efInput.ts                                                           +
+ + Файл изменен: 08.01.2019 00:15:57                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../elyControlOptions";
+import elyView from "@core/controls/elyView";
+import {efValueProtocol} from "@protocols/efValueProtocol";
 
-/**
- * Опции поля ввода данных
- */
-export default interface elyFieldOptions<T> extends elyControlOptions {
-    /**
-     * Значение
-     */
-    value?: T;
+export class efInput<T> extends elyView implements efValueProtocol<T>{
 
-    /**
-     * Пример ввода
-     */
-    placeholder?: string;
 
-    /**
-     * Стандартное значение
-     */
-    defaultValue?: T;
 
-    /**
-     * Флаг редактирования поля
-     */
-    editable?: boolean;
-
-    /**
-     * Подсказка
-     */
-    hint?: string;
-
-    /**
-     * Иконка активации
-     */
-    actionIcon?: string;
-
-    /**
-     * Иконка
-     */
-    fieldIcon?: string;
 }

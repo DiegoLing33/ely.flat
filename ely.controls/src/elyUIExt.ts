@@ -20,6 +20,7 @@
 
 import elyButton from "@controls/action/elyButton";
 import elyGridView from "@controls/flex/elyGridView";
+import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyIconView from "@controls/text/elyIconView";
 import elyTextView from "@controls/text/elyTextView";
 import elyListView from "@controls/view/elyListView";
@@ -66,6 +67,16 @@ declare global {
          * @param options
          */
         listView(options?: elyListViewOptions): elyListView;
+    }
+
+    interface Window {
+        /**
+         * Создает оповещение
+         * @param {string} text - текст
+         * @param {string?} title - заголовок
+         * @param {string?} content - контент
+         */
+        notifi: (text: string, title?: string, content?: string) => void;
     }
 }
 
@@ -114,4 +125,15 @@ Array.prototype.flexGridView = function() {
  */
 Array.prototype.listView = function(options?: elyListViewOptions) {
     return new elyListView({items: this, ...options});
+};
+
+/**
+ * Создает оповещение
+ * @function
+ * @param {string} text - текст оповещения
+ * @param {string?} title - заголовок оповещения
+ * @param {string?} content - контента
+ */
+Window.prototype.notifi = (text, title, content) => {
+    new elyNotificationView({title, message: text, content}).present();
 };

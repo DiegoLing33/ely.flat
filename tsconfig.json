@@ -41,6 +41,12 @@
       ],
       "@math/*": [
         "./ely.flat.math/src/*"
+      ],
+      "@protocols/*": [
+        "./ely.flat.protocols/*"
+      ],
+      "@fields/*": [
+        "./ely.flat.fields/src/*"
       ]
     },
     "experimentalDecorators": true,

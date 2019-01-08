@@ -26,6 +26,17 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyFieldOptions from "@options/fields/elyFieldOptions";
 
 /**
+ * @interface elyDataFieldOptions
+ * @template T
+ * @property {T?} value
+ * @property {string?} placeholder
+ * @property {T?} defaultValue
+ * @property {boolean?} editable
+ * @property {string?} actionIcon
+ * @property {string?} hint
+ */
+
+/**
  * Элемент: Поле ввода <T>
  *     @class elyField
  *     @template T

@@ -22,8 +22,6 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyColor from "@core/elyColor";
-import elyMath from "@math/elyMath";
 
 /**
  * @interface elyColorRGB
@@ -74,101 +72,92 @@ export class elyColorUtils {
 
     /**
      * Преобразует HSV цвет в RGB
-     * @param hue
-     * @param saturation
-     * @param value
+     * @param color
      */
-    public static hsv2rgb(hue: number | elyColorHSV, saturation?: number, value?: number): elyColorRGB {
-        if (typeof hue === "object") {
-            saturation = hue.saturation;
-            value = hue.value;
-            hue = hue.hue;
-        }
-        let rgb = {red: 0, green: 0, blue: 0};
-
-        const i = Math.floor(hue * 6) || 0;
-        const f = hue * 6 - i;
-        const p = value! * (1 - saturation!);
-        const q = (value! * (1 - f * saturation!)) || 0;
-        const t = (value! * (1 - (1 - f) * saturation!)) || 0;
+    public static hsv2rgb(color: elyColorHSV): elyColorRGB {
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        const i = Math.floor(color.hue * 6);
+        const f = color.hue * 6 - i;
+        const p = color.value * (1 - color.saturation);
+        const q = color.value * (1 - f * color.saturation);
+        const t = color.value * (1 - (1 - f) * color.saturation);
         switch (i % 6) {
             case 0:
-                rgb = {red: value!, green: t, blue: p};
+                red = color.value;
+                green = t;
+                blue = p;
                 break;
             case 1:
-                rgb = {red: q, green: value!, blue: p};
+                red = q;
+                green = color.value;
+                blue = p;
                 break;
             case 2:
-                rgb = {red: p, green: value!, blue: t};
+                red = p;
+                green = color.value;
+                blue = t;
                 break;
             case 3:
-                rgb = {red: p, green: q, blue: value!};
+                red = p;
+                green = q;
+                blue = color.value;
                 break;
             case 4:
-                rgb = {red: t, green: p, blue: value!};
+                red = t;
+                green = p;
+                blue = color.value;
                 break;
             case 5:
-                rgb = {red: value!, green: p, blue: q};
+                red = color.value;
+                green = p;
+                blue = q;
                 break;
         }
-
-        return {
-            blue: Math.round(rgb.blue * 255),
-            green: Math.round(rgb.green * 255),
-            red: Math.round(rgb.red * 255),
-        };
+        return {red, green, blue};
     }
 
     /**
      * Преобразует RGB цвет в HSV
-     * @param red
-     * @param green
-     * @param blue
+     * @param color
      */
-    public static rgb2hsv(red: number | elyColorRGB, green?: number, blue?: number): elyColorHSV {
-        if (typeof red === "object") {
-            green = red.green;
-            blue = red.blue;
-            red = red.red;
-        }
+    public static rgb2hsv(color: elyColorRGB): elyColorHSV {
 
-        const hsv: elyColorHSV = {hue: 0, saturation: 0, value: 0};
-
-        const max = Math.max(red, green!, blue!);
-        const min = Math.min(red, green!, blue!);
+        const max = Math.max(color.red, color.green, color.blue);
+        const min = Math.min(color.red, color.green, color.blue);
         const d = max - min;
-
-        hsv.saturation = (max === 0 ? 0 : d / max);
-        hsv.value = max / 255;
+        let hue = 0;
+        const saturation = (max === 0 ? 0 : d / max);
+        const value = max / 255;
 
         switch (max) {
             case min:
-                hsv.hue = 0;
+                hue = 0;
                 break;
-            case red:
-                hsv.hue = (green! - blue!) + d * (green! < blue! ? 6 : 0);
-                hsv.hue /= 6 * d;
+            case color.red:
+                hue = (color.green - color.blue) + d * (color.green < color.blue ? 6 : 0);
+                hue /= 6 * d;
                 break;
-            case green:
-                hsv.hue = (blue! - red) + d * 2;
-                hsv.hue /= 6 * d;
+            case color.green:
+                hue = (color.blue - color.red) + d * 2;
+                hue /= 6 * d;
                 break;
-            case blue:
-                hsv.hue = (red - green!) + d * 4;
-                hsv.hue /= 6 * d;
+            case color.blue:
+                hue = (color.red - color.green) + d * 4;
+                hue /= 6 * d;
                 break;
         }
-        return hsv;
+
+        return {hue, saturation, value};
     }
 
     /**
      * Преобразует HSV в __hex
-     * @param hue
-     * @param saturation
-     * @param value
+     * @param color
      */
-    public static hsv2hex(hue: number | elyColorHSV, saturation?: number, value?: number): string {
-        return elyColorUtils.rgb2hex(elyColorUtils.hsv2rgb(hue, saturation, value));
+    public static hsv2hex(color: elyColorHSV): string {
+        return elyColorUtils.rgb2hex(elyColorUtils.hsv2rgb(color));
     }
 
     /**
@@ -195,12 +184,10 @@ export class elyColorUtils {
     }
 
     /**
-     * Преобразует RGB в __hex
-     * @param red
-     * @param green
-     * @param blue
+     * Преобразует RGB в HEX
+     * @param color
      */
-    public static rgb2hex(red: number | elyColorRGB, green?: number, blue?: number): string {
+    public static rgb2hex(color: elyColorRGB): string {
         const rgbToHex = (rgb: any) => {
             let hex = Number(rgb).toString(16);
             if (hex.length < 2) {
@@ -208,31 +195,6 @@ export class elyColorUtils {
             }
             return hex;
         };
-
-        if (typeof red === "object") {
-            blue = red.blue;
-            green = red.green;
-            red = red.red;
-        }
-        if (red > 255) red = 255;
-        if (green! > 255) green = 255;
-        if (blue! > 255) blue = 255;
-        if (red < 0) red = 0;
-        if (green! < 0) green = 0;
-
-        if (blue! < 0) blue = 0;
-        return rgbToHex(red) + rgbToHex(green) + rgbToHex(blue);
-    }
-
-    public static getFadeStepHex(step: number, from: elyColor, to: elyColor): elyColor {
-        const f = from.getRGBBytes();
-        const t = to.getRGBBytes();
-        return new elyColor({
-            hex: elyColorUtils.rgb2hex(
-                Math.round(elyMath.map(step, 0, 255, f.red, t.red)),
-                Math.round(elyMath.map(step, 0, 255, f.green, t.green)),
-                Math.round(elyMath.map(step, 0, 255, f.blue, t.blue)),
-            ),
-        });
+        return (rgbToHex(color.red) + rgbToHex(color.green) + rgbToHex(color.blue)).toUpperCase();
     }
 }

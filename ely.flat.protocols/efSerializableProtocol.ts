@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,48 +15,27 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldOptions.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efSerializableProtocol.ts                                            +
+ + Файл изменен: 07.01.2019 23:56:45                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../elyControlOptions";
+import {efProtocol} from "@protocols/efProtocol";
 
 /**
- * Опции поля ввода данных
+ * Протокол сериализации
+ * @class efSerializableProtocol
+ * @template <T>
  */
-export default interface elyFieldOptions<T> extends elyControlOptions {
-    /**
-     * Значение
-     */
-    value?: T;
+export default class efSerializableProtocol<T> extends efProtocol {
 
     /**
-     * Пример ввода
+     * Сериализует объект
+     * @return {string}
      */
-    placeholder?: string;
-
-    /**
-     * Стандартное значение
-     */
-    defaultValue?: T;
-
-    /**
-     * Флаг редактирования поля
-     */
-    editable?: boolean;
-
-    /**
-     * Подсказка
-     */
-    hint?: string;
-
-    /**
-     * Иконка активации
-     */
-    actionIcon?: string;
-
-    /**
-     * Иконка
-     */
-    fieldIcon?: string;
+    public serialize(): string {
+        return "";
+    }
 }

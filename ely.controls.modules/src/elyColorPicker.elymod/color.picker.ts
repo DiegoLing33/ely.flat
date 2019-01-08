@@ -1,4 +1,3 @@
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -20,27 +19,15 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /* tslint:disable */
-(function(win, doc, NS) {
+import elyGuard from "@core/elyGuard";
+import elyUtils from "@core/elyUtils";
+import {elyColorUtils} from "@core/elyColorUtils";
+
+(function (win, doc, NS) {
 
     var instance = '__instance__',
         first = 'firstChild',
         delay = setTimeout;
-
-    function is_set(x: any) {
-        return typeof x !== "undefined";
-    }
-
-    function is_string(x: any) {
-        return typeof x === "string";
-    }
-
-    function is_object(x: any) {
-        return typeof x === "object";
-    }
-
-    function object_length(x: any) {
-        return Object.keys(x).length;
-    }
 
     function edge(a: any, b: any, c: any) {
         if (a < b) return b;
@@ -52,95 +39,22 @@
         return parseInt(i, j || 10);
     }
 
-    function round(i: any) {
-        return Math.round(i);
+    function HSV2RGB(a: number[]) {
+        const rgb = elyColorUtils.hsv2rgb({hue: +a[0], saturation: +a[1], value: +a[2]});
+        return [Math.round(rgb.red * 255), Math.round(rgb.green * 255), Math.round(rgb.blue * 255)];
     }
 
-    // OK
-    // [h, s, v] ... 0 <= h, s, v <= 1
-    // @ts-ignore
-    function HSV2RGB(a) {
-        var h = +a[0],
-            s = +a[1],
-            v = +a[2],
-            r, g, b, i, f, p, q, t;
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        i = i || 0;
-        q = q || 0;
-        t = t || 0;
-        switch (i % 6) {
-            case 0:
-                r = v, g = t, b = p;
-                break;
-            case 1:
-                r = q, g = v, b = p;
-                break;
-            case 2:
-                r = p, g = v, b = t;
-                break;
-            case 3:
-                r = p, g = q, b = v;
-                break;
-            case 4:
-                r = t, g = p, b = v;
-                break;
-            case 5:
-                r = v, g = p, b = q;
-                break;
-        }
-        // @ts-ignore
-        return [round(r * 255), round(g * 255), round(b * 255)];
-    }
-
-    // OK
-    // @ts-ignore
-    function HSV2HEX(a) {
+    function HSV2HEX(a: number[]) {
         return RGB2HEX(HSV2RGB(a));
     }
 
-    // OK
-    // [r, g, b] ... 0 <= r, g, b <= 255
-    // @ts-ignore
-    function RGB2HSV(a) {
-        var r = +a[0],
-            g = +a[1],
-            b = +a[2],
-            max = Math.max(r, g, b),
-            min = Math.min(r, g, b),
-            d = max - min,
-            h, s = (max === 0 ? 0 : d / max),
-            v = max / 255;
-        switch (max) {
-            case min:
-                h = 0;
-                break;
-            case r:
-                h = (g - b) + d * (g < b ? 6 : 0);
-                h /= 6 * d;
-                break;
-            case g:
-                h = (b - r) + d * 2;
-                h /= 6 * d;
-                break;
-            case b:
-                h = (r - g) + d * 4;
-                h /= 6 * d;
-                break;
-        }
-        return [h, s, v];
+    function RGB2HSV(a: number[]) {
+        const res = elyColorUtils.rgb2hsv({red: +a[0], green: +a[1], blue: +a[2]});
+        return [res.hue, res.saturation, res.value];
     }
 
-    // OK
     function RGB2HEX(a: any[]) {
-        var s = +a[2] | (+a[1] << 8) | (+a[0] << 16);
-        // @ts-ignore
-        s = '000000' + s.toString(16);
-        // @ts-ignore
-        return s.slice(-6);
+        return elyColorUtils.rgb2hex({red: +a[0], green: +a[1], blue: +a[2]});
     }
 
     // rrggbb or rgb //ok
@@ -164,7 +78,7 @@
 
     // convert range from `0` to `1` into `0` to `360` and `0` to `100` in color
     function _2HSV_pub(a: (any | undefined)[]) {
-        return [round(+a[0] * 360), round(+a[1] * 100), round(+a[2] * 100)];
+        return [Math.round(+a[0] * 360), Math.round(+a[1] * 100), Math.round(+a[2] * 100)];
     }
 
     // convert range from `0` to `255` in color into range from `0` to `1`
@@ -174,7 +88,7 @@
 
     // *
     function parse(x: any) {
-        if (is_object(x)) return x;
+        if (typeof x === "object") return x;
         var rgb = /\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i.exec(x),
             hsv = /\s*hsv\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i.exec(x),
             hex = x[0] === '#' && x.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
@@ -188,7 +102,7 @@
         return [0, 1, 1]; // default is red
     }
 
-    (function($) {
+    (function ($) {
 
         // plugin version
         // @ts-ignore
@@ -200,8 +114,8 @@
 
         // plug to all instance(s)
         // @ts-ignore
-        $.each = function(fn, t) {
-            return delay(function() {
+        $.each = function (fn, t) {
+            return delay(function () {
                 // @ts-ignore
                 var ins = $[instance], i;
                 for (i in ins) {
@@ -222,31 +136,31 @@
         // @ts-ignore
         $._HEX2HSV = HEX2HSV;
         // @ts-ignore
-        $._HEX2RGB = function(a) {
+        $._HEX2RGB = function (a) {
             return _2RGB_pri(HEX2RGB(a));
         };
         // @ts-ignore
-        $.HSV2RGB = function(a) {
+        $.HSV2RGB = function (a) {
             return HSV2RGB(_2HSV_pri(a));
         };
         // @ts-ignore
-        $.HSV2HEX = function(a) {
+        $.HSV2HEX = function (a) {
             return HSV2HEX(_2HSV_pri(a));
         };
         // @ts-ignore
-        $.RGB2HSV = function(a) {
+        $.RGB2HSV = function (a) {
             return _2HSV_pub(RGB2HSV(a));
         };
         // @ts-ignore
         $.RGB2HEX = RGB2HEX;
         // @ts-ignore
-        $.HEX2HSV = function(s) {
+        $.HEX2HSV = function (s) {
             return _2HSV_pub(HEX2HSV(s));
         };
         // @ts-ignore
         $.HEX2RGB = HEX2RGB;
-    // @ts-ignore
-    })(win[NS] = function(source, events, parent) {
+        // @ts-ignore
+    })(win[NS] = function (source, events, parent) {
 
         var b = doc.body,
             h = doc.documentElement,
@@ -267,10 +181,10 @@
         }
 
         // store color picker instance to `CP.__instance__`
-        $$[instance][source.id || source.name || object_length($$[instance])] = $;
+        $$[instance][source.id || source.name || elyUtils.count($$[instance])] = $;
 
         // trigger color picker panel on click by default
-        if (!is_set(events) || events === true) {
+        if (!elyGuard.isSet(events) || events === true) {
             events = on_down;
         }
 
@@ -325,7 +239,7 @@
 
         // get closest parent
         function closest(a: any, b: any) {
-            while ((a = a.parentElement) && a !== b);
+            while ((a = a.parentElement) && a !== b) ;
             return a;
         }
 
@@ -347,7 +261,7 @@
 
         // get color data
         function get_data(a: any) {
-            return _ || (is_set(a) ? a : false);
+            return _ || (elyGuard.isSet(a) ? a : false);
         }
 
         // set color data
@@ -357,22 +271,22 @@
 
         // add hook
         function add(ev: any, fn: any, id: any) {
-            if (!is_set(ev)) return hooks;
+            if (!elyGuard.isSet(ev)) return hooks;
             // @ts-ignore
-            if (!is_set(fn)) return hooks[ev];
+            if (!elyGuard.isSet(fn)) return hooks[ev];
             // @ts-ignore
-            if (!is_set(hooks[ev])) hooks[ev] = {};
+            if (!elyGuard.isSet(hooks[ev])) hooks[ev] = {};
             // @ts-ignore
-            if (!is_set(id)) id = object_length(hooks[ev]);
+            if (!elyGuard.isSet(id)) id = elyUtils.count(hooks[ev]);
             // @ts-ignore
             return hooks[ev][id] = fn, $;
         }
 
         // remove hook
         function remove(ev: any, id: any) {
-            if (!is_set(ev)) return hooks = {}, $;
+            if (!elyGuard.isSet(ev)) return hooks = {}, $;
             // @ts-ignore
-            if (!is_set(id)) return hooks[ev] = {}, $;
+            if (!elyGuard.isSet(id)) return hooks[ev] = {}, $;
             // @ts-ignore
             return delete hooks[ev][id], $;
         }
@@ -380,8 +294,8 @@
         // trigger hook
         function trigger(ev: any, a: any[], id: any) {
             // @ts-ignore
-            if (!is_set(hooks[ev])) return $;
-            if (!is_set(id)) {
+            if (!elyGuard.isSet(hooks[ev])) return $;
+            if (!elyGuard.isSet(id)) {
                 // @ts-ignore
                 for (var i in hooks[ev]) {
                     // @ts-ignore
@@ -389,7 +303,7 @@
                 }
             } else {
                 // @ts-ignore
-                if (is_set(hooks[ev][id])) {
+                if (elyGuard.isSet(hooks[ev][id])) {
                     // @ts-ignore
                     hooks[ev][id].apply($, a);
                 }
@@ -447,6 +361,7 @@
                 // @ts-ignore
                 (parent || bucket || b).appendChild(self), $.visible = true;
             }
+
             function click(e: any) {
                 const t = e.target,
                     is_source = t === source || closest(t, source) === source;
@@ -460,6 +375,7 @@
                 // @ts-ignore
                 trigger(is_source ? "enter" : "exit", [$]);
             }
+
             P_W = size(self).w;
             P_H = size(self).h;
             var SV_size = size(SV),
@@ -476,12 +392,12 @@
                     on(events, source, click);
                 }
                 // @ts-ignore
-                $.create = function() {
+                $.create = function () {
                     // @ts-ignore
                     return create(1), trigger("create", [$]), $;
                 };
                 // @ts-ignore
-                $.destroy = function() {
+                $.destroy = function () {
                     if (events !== false) {
                         off(events, source, click);
                     }
@@ -493,7 +409,7 @@
             } else {
                 fit();
             }
-            set = function() {
+            set = function () {
                 // @ts-ignore
                 HSV = get_data(HSV), color();
                 H_point.style.top = (H_H - (H_point_H / 2) - (H_H * +HSV[0])) + 'px';
@@ -501,7 +417,7 @@
                 SV_point.style.top = (SV_H - (SV_point_H / 2) - (SV_H * +HSV[2])) + 'px';
             };
             // @ts-ignore
-            $.exit = function(e) {
+            $.exit = function (e) {
                 if (visible()) {
                     // @ts-ignore
                     visible().removeChild(self);
@@ -515,6 +431,7 @@
                 off(on_resize, win, fit);
                 return $;
             };
+
             function color(e: any) {
                 var a = HSV2RGB(HSV),
                     b = HSV2RGB([HSV[0], 1, 1]);
@@ -523,12 +440,14 @@
                 prevent(e);
             };
             set();
+
             function do_H(e: any) {
                 var y = edge(point(H, e).y, 0, H_H);
                 HSV[0] = (H_H - y) / H_H;
                 H_point.style.top = (y - (H_point_H / 2)) + 'px';
                 color(e);
             }
+
             function do_SV(e: any) {
                 var o = point(SV, e),
                     x = edge(o.x, 0, SV_W),
@@ -539,6 +458,7 @@
                 SV_point.style.top = (y - (SV_point_H / 2)) + 'px';
                 color(e);
             }
+
             function move(e: any) {
                 if (drag_H) {
                     do_H(e), v = HSV2HEX(HSV);
@@ -563,6 +483,7 @@
                 start_H = 0,
                     start_SV = 0;
             }
+
             // @ts-ignore
             function stop(e) {
                 var t = e.target,
@@ -586,6 +507,7 @@
                 drag_H = 0,
                     drag_SV = 0;
             }
+
             // @ts-ignore
             function down_H(e) {
                 start_H = 1,
@@ -597,6 +519,7 @@
                 trigger("start", [v, $]);
                 trigger_("h", [v, $]);
             }
+
             // @ts-ignore
             function down_SV(e) {
                 start_SV = 1,
@@ -608,6 +531,7 @@
                 trigger("start", [v, $]);
                 trigger_("sv", [v, $]);
             }
+
             if (!first) {
                 on(on_down, H, down_H);
                 on(on_down, SV, down_SV);
@@ -616,9 +540,12 @@
                 on(on_resize, win, fit);
             }
             // @ts-ignore
-        } create(1);
+        }
 
-        delay(function() {
+        // @ts-ignore
+        create(1);
+
+        delay(function () {
             var a = [HSV2HEX(HSV), $];
             // @ts-ignore
             trigger("create", a);
@@ -627,7 +554,7 @@
 
         // fit to window
         // @ts-ignore
-        $.fit = function(o) {
+        $.fit = function (o) {
             var w = size(win),
                 y = size(h),
                 screen_w = w.w - y.w, // vertical scroll bar
@@ -637,9 +564,9 @@
                 to = offset(source);
             left = to.l + ww.l;
             top = to.t + ww.t + size(source).h; // drop!
-            if (is_object(o)) {
-                is_set(o[0]) && (left = o[0]);
-                is_set(o[1]) && (top = o[1]);
+            if (typeof o === "object") {
+                elyGuard.isSet(o[0]) && (left = o[0]);
+                elyGuard.isSet(o[1]) && (top = o[1]);
             } else {
                 var min_x = ww.l,
                     min_y = ww.t,
@@ -662,10 +589,10 @@
 
         // set hidden color picker data
         // @ts-ignore
-        $.set = function(a) {
+        $.set = function (a) {
             // @ts-ignore
-            if (!is_set(a)) return get_data();
-            if (is_string(a)) {
+            if (a === undefined) return get_data();
+            if (typeof a === "string") {
                 a = $$.parse(a);
             }
             // @ts-ignore
@@ -674,7 +601,7 @@
 
         // alias for `$.set()`
         // @ts-ignore
-        $.get = function(a) {
+        $.get = function (a) {
             return get_data(a);
         };
 
@@ -694,7 +621,7 @@
         // @ts-ignore
         $.hooks = hooks;
         // @ts-ignore
-        $.enter = function(bucket) {
+        $.enter = function (bucket) {
             return create(0, bucket);
         };
 

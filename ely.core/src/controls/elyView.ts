@@ -453,7 +453,6 @@ export default abstract class elyView extends elyObject {
             if (selector) {
                 selector.innerHTML = hint;
             } else {
-                // this.fieldLineView.css({"margin-bottom": "15px"});
                 const hintView = document.createElement("div");
                 hintView.classList.add("ef-hint");
                 hintView.innerText = hint;

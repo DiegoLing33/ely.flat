@@ -29,6 +29,8 @@ export default {
             "@cnv": path.resolve('./ely.flat.cnv/src'),
             "@play": path.resolve('./ely.flat.play/src'),
             "@math": path.resolve('./ely.flat.math/src'),
+            "@protocols": path.resolve('./ely.flat.protocols'),
+            "@fields": path.resolve('./ely.flat.fields/src'),
         }),
         typescript({tsConfigDirectory: path.resolve('./')}),
     ]

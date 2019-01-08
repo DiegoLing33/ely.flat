@@ -18,9 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyGuard from "@core/elyGuard";
 import elyObservable from "@core/observable/elyObservable";
-
-type elyObservablePropertyHandler<T> = (oldValue: T, newValue: T) => void;
 
 /**
  * Новый обработчик
@@ -42,7 +41,7 @@ export default class elyObservableProperty<T> extends elyObservable {
      * @param prop
      */
     public static simplePropertyAccess(context: any, value: any, prop: elyObservableProperty<any>): any {
-        if (value === undefined) return prop.get();
+        if (!elyGuard.isSet(value)) return prop.get(null);
         prop.set(value);
         return context;
     }
@@ -72,7 +71,7 @@ export default class elyObservableProperty<T> extends elyObservable {
          * @protected
          * @type {T}
          */
-        this.value = defaultValue;
+        this.value = defaultValue || null;
     }
 
     /**
@@ -112,8 +111,9 @@ export default class elyObservableProperty<T> extends elyObservable {
      *
      */
     public get(guard?: T): T | null {
-        if ((this.isNull()) && guard !== null)
-            return guard!;
+        if (this.isNull() && guard !== null) return guard!;
+        else if (this.isNull()) return null;
+
         return this.value;
     }
 
@@ -177,7 +177,7 @@ export default class elyObservableProperty<T> extends elyObservable {
      * @return {boolean}
      */
     public isNull(): boolean {
-        return this.value === null || this.value === undefined;
+        return elyGuard.isNone(this.value);
     }
 
     /**

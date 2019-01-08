@@ -31,6 +31,7 @@ import elyComboFieldOptions from "@options/fields/elyComboFieldOptions";
 
 /**
  * Элемент: Поле выбора значения
+ * @deprecated
  */
 export default class elyComboField extends elyField<elyComboFieldItemProtocol> {
 
@@ -58,7 +59,7 @@ export default class elyComboField extends elyField<elyComboFieldItemProtocol> {
      * @param {*} [options={}] - параметры
      */
     constructor(options: elyComboFieldOptions = {}) {
-        super(options, new elyInput({class: "ef-input"}));
+        super(options, new elyInput({class: "ef-input", fieldIcon: options.fieldIcon}));
 
         this.tipsView          = new elyControl({class: "ef-tips-view"});
         this.tipsBoxVisibility = new elyObservableProperty<boolean>(false);

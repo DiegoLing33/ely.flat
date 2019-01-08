@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,48 +15,26 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldOptions.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efProtocol.ts                                                        +
+ + Файл изменен: 08.01.2019 00:55:09                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../elyControlOptions";
+export class efProtocol {
+    // empty
+}
 
 /**
- * Опции поля ввода данных
+ * Возвращает true, если объект obj подчиняется протоколу protocol
+ * @param {*} obj
+ * @param protocol
  */
-export default interface elyFieldOptions<T> extends elyControlOptions {
-    /**
-     * Значение
-     */
-    value?: T;
-
-    /**
-     * Пример ввода
-     */
-    placeholder?: string;
-
-    /**
-     * Стандартное значение
-     */
-    defaultValue?: T;
-
-    /**
-     * Флаг редактирования поля
-     */
-    editable?: boolean;
-
-    /**
-     * Подсказка
-     */
-    hint?: string;
-
-    /**
-     * Иконка активации
-     */
-    actionIcon?: string;
-
-    /**
-     * Иконка
-     */
-    fieldIcon?: string;
+export function hasProtocol<T extends efProtocol>(obj: any, protocol: typeof efProtocol): obj is T {
+    for (const name of Object.getOwnPropertyNames(protocol.prototype)) {
+        if (name === "constructor") continue;
+        if (obj[name] === undefined) return false;
+    }
+    return true;
 }

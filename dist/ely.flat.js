@@ -274,14 +274,20 @@ class elyUtils {
         return null;
     }
     /**
+     * Возвращает массив значений
+     * @param obj
+     */
+    static values(obj) {
+        const values = [];
+        elyUtils.forEach(obj, (index, value) => values.push(value));
+        return values;
+    }
+    /**
      * Возвращает количество элементов в объекте
      * @param obj
      */
     static count(obj) {
-        let c = 0;
-        for (const index in obj)
-            c++;
-        return c;
+        return Object.keys(obj).length;
     }
     /**
      * Цикл по эелментам
@@ -514,6 +520,68 @@ elyUtils.BREAK_FLAG = "ely_for_loop_break_312441edq2jhd78q2df67q";
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
+ + Файл: elyGuard.ts                                                          +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Безопасность значений
+ */
+class elyGuard {
+    /**
+     * Функция
+     * @param func
+     * @param args
+     * @param callback
+     * @param context
+     */
+    static func(func, args, callback, context) {
+        const result = func.apply(context, args);
+        if (result !== undefined && result !== null)
+            callback(result);
+    }
+    /**
+     * Значение
+     * @param variable
+     * @param callback
+     */
+    static variable(variable, callback) {
+        if (variable !== undefined && variable !== null)
+            callback(variable);
+    }
+    /**
+     * Возвращает true, если obj undefined или null.
+     * @param {*} obj
+     * @return {boolean}
+     */
+    static isNone(obj) {
+        return obj === undefined || obj === null;
+    }
+    /**
+     * Возвращает true, если obj не undefined
+     * @param {*} obj
+     * @return {boolean}
+     */
+    static isSet(obj) {
+        return obj !== undefined;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
  + Файл: elyObservableProperty.ts                                             +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -541,7 +609,7 @@ class elyObservableProperty extends elyObservable {
          * @protected
          * @type {T}
          */
-        this.value = defaultValue;
+        this.value = defaultValue || null;
     }
     /**
      * Простое автоматизированное свойство
@@ -550,8 +618,8 @@ class elyObservableProperty extends elyObservable {
      * @param prop
      */
     static simplePropertyAccess(context, value, prop) {
-        if (value === undefined)
-            return prop.get();
+        if (!elyGuard.isSet(value))
+            return prop.get(null);
         prop.set(value);
         return context;
     }
@@ -574,8 +642,10 @@ class elyObservableProperty extends elyObservable {
      *
      */
     get(guard) {
-        if ((this.isNull()) && guard !== null)
+        if (this.isNull() && guard !== null)
             return guard;
+        else if (this.isNull())
+            return null;
         return this.value;
     }
     /**
@@ -637,7 +707,7 @@ class elyObservableProperty extends elyObservable {
      * @return {boolean}
      */
     isNull() {
-        return this.value === null || this.value === undefined;
+        return elyGuard.isNone(this.value);
     }
     /**
      * Добавляет наблюдатель за изменением значения
@@ -1041,7 +1111,6 @@ class elyView extends elyObject {
                 selector.innerHTML = hint;
             }
             else {
-                // this.fieldLineView.css({"margin-bottom": "15px"});
                 const hintView = document.createElement("div");
                 hintView.classList.add("ef-hint");
                 hintView.innerText = hint;
@@ -1336,6 +1405,60 @@ var elyControl$1 = elyControl;
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
+ + Файл: elyEnum.ts                                                           +
+ + Файл изменен: 06.01.2019 04:55:09                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Перечисление
+ * @class elyEnum
+ * @template T
+ * @abstract
+ */
+class elyEnum {
+    /**
+     * Конструктор
+     * @param {T} value
+     */
+    constructor(value) {
+        this.value = value;
+    }
+    /**
+     * Преобразование в строку
+     * @return {string}
+     */
+    toString() {
+        return String(this.value);
+    }
+    /**
+     * Возвращает true, если объекты одинаковые
+     * @param {elyEnum} obj
+     * @return {boolean}
+     */
+    equals(obj) {
+        return this.value === obj.value;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
  + Файл: elySize.ts                                                           +
  + Файл изменен: 05.12.2018 23:47:11                                          +
  +                                                                            +
@@ -1343,8 +1466,9 @@ var elyControl$1 = elyControl;
 /**
  * Размеры ely.flat
  * @class elySize
+ * @augments {elyEnum<string>}
  */
-class elySize {
+class elySize extends elyEnum {
     /**
      * Конструктор
      * @ignore
@@ -1352,7 +1476,7 @@ class elySize {
      * @param custom
      */
     constructor(val, custom = false) {
-        this.value = val;
+        super(val);
         this.custom = custom;
     }
     /**
@@ -1385,12 +1509,6 @@ class elySize {
             regular: elySize.regular.value,
             small: elySize.small.value,
         };
-    }
-    /**
-     * Преобразует в строку
-     */
-    toString() {
-        return this.value;
     }
 }
 /**
@@ -1452,15 +1570,17 @@ elySize.extraSmall = new elySize("extraSmall");
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Толщина ely.flat
+ * @class elyWeight
+ * @augments {elyEnum<number>}
  */
-class elyWeight {
+class elyWeight extends elyEnum {
     /**
      * Конструктор
      * @ignore
      * @param val
      */
     constructor(val) {
-        this.value = val;
+        super(val);
     }
     /**
      * Свой размер
@@ -1481,12 +1601,6 @@ class elyWeight {
             regular: elyWeight.regular.value,
             thin: elyWeight.thin.value,
         };
-    }
-    /**
-     * Преобразует в строку
-     */
-    toString() {
-        return this.value;
     }
 }
 /**
@@ -1612,6 +1726,194 @@ elyIconView = __decorate([
 ], elyIconView);
 var elyIconView$1 = elyIconView;
 
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyFieldType.ts                                                      +
+ + Файл изменен: 05.12.2018 23:47:11                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Типы ввода данных
+ * @class elyFieldType
+ * @augments {elyEnum<string>}
+ */
+class elyFieldType extends elyEnum {
+    /**
+     * Конструктор
+     * @ignore
+     * @param val
+     */
+    constructor(val) {
+        super(val);
+    }
+    /**
+     * Тип по имени
+     * @param value
+     */
+    static byName(value) {
+        if (typeof value === "number")
+            value = value.toString() + "px";
+        return new elyFieldType(value);
+    }
+    /**
+     * Список
+     */
+    static rawList() {
+        return {
+            mail: elyFieldType.mail.value,
+            number: elyFieldType.number.value,
+            password: elyFieldType.password.value,
+            text: elyFieldType.text.value,
+        };
+    }
+}
+/**
+ * Текст
+ */
+elyFieldType.text = new elyFieldType("text");
+/**
+ * Пароль
+ */
+elyFieldType.password = new elyFieldType("password");
+/**
+ * Число
+ */
+elyFieldType.number = new elyFieldType("number");
+/**
+ * Почта
+ */
+elyFieldType.mail = new elyFieldType("mail");
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyTimer.ts                                                          +
+ + Файл изменен: 08.01.2019 01:11:46                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Таймер
+ * @class {elyTimer}
+ */
+class elyTimer extends elyObservable {
+    /**
+     * Конструктор
+     * @param props
+     */
+    constructor(props) {
+        super();
+        /**
+         * Циклический таймер
+         * @type {boolean}
+         * @protected
+         */
+        this.__loop = false;
+        /**
+         * @protected
+         */
+        this.__duration = props.duration;
+        /**
+         * @protected
+         */
+        this.__loop = props.loop || false;
+    }
+    /**
+     * Добавляет наблюдатель: окончание таймера
+     *
+     * Если таймер циклический, данный метод будет вызван каждый цикл
+     *
+     * Имя обсервера: addEndObserver
+     *
+     * @param o - наблюдатель
+     */
+    addEndObserver(o) {
+        this.addObserver("endTimer", o);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: запускт таймера
+     *
+     * Имя обсервера: startTimer
+     *
+     * @param o - наблюдатель
+     */
+    addStartObserver(o) {
+        this.addObserver("startTimer", o);
+        return this;
+    }
+    /**
+     * Запускает таймер
+     */
+    start() {
+        if (this.__thread !== null)
+            return;
+        this.notificate("startTimer");
+        if (this.__loop)
+            this.__thread = setInterval(() => {
+                this.stop(true);
+            }, this.__duration);
+        else {
+            this.__thread = setTimeout(() => {
+                this.stop(true);
+            }, this.__duration);
+        }
+    }
+    /**
+     * Перезапускает таймер
+     */
+    restart() {
+        this.stop(false);
+        this.start();
+    }
+    /**
+     * Останавливает таймер
+     * @param {boolean} [notificate = true] - если установлено значение true,
+     * после выполнения метода, будет вызвано событие `endTimer` {@link elyTimer.addEndObserver}
+     */
+    stop(notificate = true) {
+        if (this.__loop)
+            clearInterval(this.__thread);
+        else
+            clearTimeout(this.__thread);
+        if (notificate)
+            this.notificate("endTimer");
+        this.__thread = null;
+    }
+}
+
 /*
  *
  *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1651,7 +1953,7 @@ class elyObservableBoolean extends elyObservableProperty {
      * Переключает значение
      */
     toggle() {
-        this.value = !this.value;
+        this.set(!this.value);
         return this;
     }
 }
@@ -1672,382 +1974,92 @@ class elyObservableBoolean extends elyObservableProperty {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFieldProtocol.ts                                                  +
+ + Файл: elyCookie.ts                                                         +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Протокол поля ввода данных
- * @class elyFieldProtocol
- * @template T
- * @augments elyView
- * @version 1.2
- *
- * #Лог важных изменений:
+ * Печеньки
  */
-class elyFieldProtocol extends elyView {
+class elyCookie {
     /**
-     * Конструктор
+     * Возвращает данные cookie
+     * @param name
      */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Переменная изменения значения
-         * @type {elyObservableProperty<boolean>}
-         */
-        this.editableProperty = new elyObservableBoolean(true);
-        /**
-         * Значение
-         * @type {elyObservableProperty<{T}>}
-         */
-        this.valueProperty = new elyObservableProperty();
+    static get(name) {
+        const matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"));
+        const val = matches ? decodeURIComponent(matches[1]) : null;
+        if (val && (val === "undefined" || val === "null"))
+            return null;
+        return val;
     }
     /**
-     * Возвращает значение поля или устанавливает его
-     * @param {T} [value] - значение
-     * @return {this}
-     */
-    value(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
-    }
-    /**
-     * Вовращает значение доступности поля или устанавливает его
-     * @param {boolean} [flag] - флаг доступности редактирования
-     * @return {elyFieldProtocol|boolean}
-     */
-    editable(flag) {
-        return elyObservableProperty.simplePropertyAccess(this, flag, this.editableProperty);
-    }
-    /**
-     * Сравнивает значения.
-     * Возвращает true, если значения одинаковые.
-     *
-     * @param {T} value - значения для сравнения
-     * @return {boolean}
-     */
-    compare(value) {
-        return this.value() === value;
-    }
-    /**
-     * Очищает значение
-     * @return {elyFieldProtocol}
-     */
-    clearValue() {
-        return this.value(this.defaultValue());
-    }
-    /**
-     * Отмечает поле, как поле с ошибкой
-     * @param flag
-     * @return {this}
-     */
-    error(flag) {
-        // Nothing is done.
-        return this;
-    }
-    /**
-     * Возвращает true, если value идентично стандартному значению.
-     *
-     * Такой метод необходим в проверке изменения значения, ведь, когда вызывается метод
-     * elyField.clearValue(), он активирует изменения valueProperty поля.
-     *
-     *
-     *     let field = new ely.textField();
-     *     field.change( (value) => {
-     *        if(field.isValueDefault(value) === false){
-     *            // Теперь мы уверены, что значение было
-     *            // изменено, а не сброшено.
-     *        }
-     *     });
-     *
-     *
-     *
-     * Метод {@link elyFieldProtocol.change} имеет параметр clearanceSafe.
-     * Подробнее смотрите {@link elyFieldProtocol.change}.
-     * @param {T} value
-     * @return {boolean}
-     */
-    isValueDefault(value) {
-        return value === this.defaultValue();
-    }
-    /**
-     * Добавляет слушатель изменения значения поля
-     * @param {function(val: T, oldVal: T | null)} o
-     * @param {boolean} clearanceSafe - защита от сброса
-     *
-     * Из примера, указанного в методе {@link elyFieldProtocol.isValueDefault} известно,
-     * что сброс значения активирует слушатель. Утсановите параметр clearanceSafe в true, тогда
-     * добавленный наблюдатель observer будет немного модифицирован
-     * (как описано в {@link elyFieldProtocol.isValueDefault}).
-     */
-    change(o, clearanceSafe = false) {
-        if (!clearanceSafe)
-            this.valueProperty.change(o);
-        else
-            this.valueProperty.change((nv, ov) => {
-                if (this.isValueDefault(nv))
-                    return;
-                o(nv, ov);
-            });
-        return this;
-    }
-    /**
-     * Устанавливает строку для преложения ввода
-     * @param {string} [text]
-     * @return {this|string}
-     */
-    placeholder(text) {
-        if (text === undefined)
-            return this.attribute("placeholder");
-        return this.attribute("placeholder", text);
-    }
-    /**
-     * Применяет стандартные опции протокола
-     * @param options
-     * @protected
-     */
-    applyProtocolOptions(options = {}) {
-        this.value((options.value === undefined || options.value === null) ? this.defaultValue() : options.value);
-        if (options.placeholder)
-            this.placeholder(options.placeholder);
-        if (options.editable)
-            this.editable(options.editable);
-        if (options.hint)
-            this.hint(options.hint);
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyInput.ts                                                          +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент: Элемент ввода текст
- * @version 1.0
- * @class elyInput
- */
-class elyInput extends elyFieldProtocol {
-    /**
-     * Конструктор
+     * Устанавливает cookie
+     * @param name
+     * @param value
      * @param options
      */
-    constructor(options = {}) {
-        super(Object.assign({ tag: options.tag || "input", class: "ef-input" }, options));
-        this.valueProperty.change((newValue) => this.getDocument().value = newValue);
-        this.getDocument().onchange = () => this.value(this.getDocument().value);
-        this.editableProperty.change((newValue) => this.getDocument().disabled = !newValue);
-        if (options.type)
-            this.attribute("type", options.type.toString());
-        this.applyProtocolOptions(options);
-        this.getDocument().oninput = () => this.notificate("input", [this.getDocument().value]);
-    }
-    /**
-     * Возвращает исходной элемент
-     */
-    getDocument() {
-        return this.__view;
-    }
-    /**
-     * Возвращает значение по умолчанию
-     */
-    defaultValue() {
-        return "";
-    }
-    /**
-     * Возвращает true, если значение пустое
-     */
-    isEmpty() {
-        return this.value() === "";
-    }
-    /**
-     * Добавляет слушатель изменения поля
-     * @param observer
-     */
-    addInputObserver(observer) {
-        this.addObserver("input", observer);
-        return this;
-    }
-    isValidData() {
-        return true;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyField.ts                                                          +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-var elyField_1;
-/**
- * Элемент: Поле ввода <T>
- *     @class elyField
- *     @template T
- *     @augments elyFieldProtocol<T>
- */
-let elyField = elyField_1 = class elyField extends elyFieldProtocol {
-    /**
-     * Конструктор
-     * @param options
-     * @param accessory
-     */
-    constructor(options = {}, accessory) {
-        super();
-        /**
-         * Таймер выделения
-         */
-        this.__markTimer = null;
-        this.addClass("ef-control", "ef-control-opacity");
-        this.fieldLineView = new elyControl$1({ class: "ef-input-group" });
-        this.accessoryView = accessory;
-        this.actionIconView = new elyIconView$1({ class: "ef-input-status" });
-        this.acceptDoubleClickActivation = true;
-        this.actionIconView.hidden(true);
-        if (options.actionIcon) {
-            this.actionIconView.iconName(options.actionIcon).hidden(false);
+    static set(name, value, options) {
+        options = options || {};
+        let expires = options.expires;
+        if (typeof expires === "number" && expires) {
+            const d = new Date();
+            d.setTime(d.getTime() + expires * 1000);
+            expires = options.expires = d;
         }
-        this.fieldLineView.addSubView(this.accessoryView);
-        this.fieldLineView.addSubView(this.actionIconView);
-        this.getDocument().appendChild(this.fieldLineView.getDocument());
-        this.actionIconView.getDocument().onclick = () => {
-            this.notificate("actionClick");
-            this.actionIconDidClick();
-        };
-        this.getDocument().ondblclick = () => {
-            if (this.acceptDoubleClickActivation)
-                this.actionIconDidClick();
-        };
-        if (options.hint)
-            this.hint(options.hint);
-    }
-    /**
-     * Возвращает true, если объект elyField
-     * @param view
-     */
-    static isField(view) {
-        return view instanceof elyField_1;
-    }
-    /**
-     * Стандартное значение
-     */
-    defaultValue() {
-        // @ts-ignore
-        return this.__defaultValue === undefined ? null : this.__defaultValue;
-    }
-    /**
-     * Устанавливает ручной обработчик
-     * @param closure
-     */
-    setManualValidation(closure) {
-        this.manualValidation = closure;
-        return this;
-    }
-    /**
-     * Помечает поле, как ошибочное.
-     *
-     * Отметка выполняется графически, применяя класс
-     * `error` к классу `ef-input-group`.
-     *
-     * @param flag
-     */
-    error(flag = true) {
-        if (this.__markTimer) {
-            clearTimeout(this.__markTimer);
+        if (expires && expires.toUTCString) {
+            options.expires = expires.toUTCString();
         }
-        if (flag) {
-            this.fieldLineView.addClass("error");
-            this.__markTimer = setTimeout(() => {
-                this.error(false);
-                this.__markTimer = null;
-            }, 1500);
-        }
-        else {
-            this.fieldLineView.removeClass("error");
-        }
-        return this;
-    }
-    /**
-     * Утанавливает подсказку
-     * @param {String} hint - подсказка
-     * @return {elyView}
-     */
-    hint(hint) {
-        const selector = this.getDocument().querySelector(".ef-hint");
-        if (typeof hint === "string") {
-            if (selector) {
-                selector.innerHTML = hint;
+        value = encodeURIComponent(value);
+        let updatedCookie = name + "=" + value;
+        for (const propName in options) {
+            if (!options.hasOwnProperty(propName))
+                continue;
+            updatedCookie += "; " + propName;
+            const propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
             }
-            else {
-                this.fieldLineView.css({ "margin-bottom": "15px" });
-                const hintView = document.createElement("div");
-                hintView.classList.add("ef-hint");
-                hintView.innerText = hint;
-                this.getDocument().appendChild(hintView);
-            }
-            return this;
         }
-        else {
-            if (selector)
-                return selector.innerHTML;
-            return "";
-        }
+        document.cookie = updatedCookie;
     }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyMath.ts                                                           +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Библиотека математики
+ */
+class elyMath {
     /**
-     * Устанавливает подсказку для ввода
-     * @param text
+     * Преобразовывает значение переменной X из одного диапазона в другой.
+     *
+     * @param x
+     * @param inMin
+     * @param inMax
+     * @param outMin
+     * @param outMax
      */
-    placeholder(text) {
-        this.accessoryView.placeholder(text);
-        return this;
+    static map(x, inMin, inMax, outMin, outMax) {
+        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
     }
-    /**
-     * Проверяет валидость данных
-     */
-    isValidData() {
-        if (this.manualValidation)
-            return this.manualValidation(this.value());
-        return true;
-    }
-    /**
-     * Обработчик нажатия на иконку активации
-     */
-    actionIconDidClick() {
-        // Nothing is done
-    }
-};
-elyField = elyField_1 = __decorate([
-    designable("editable", elyDesignableFieldState.GETSET, "boolean"),
-    designable("placeholder", elyDesignableFieldState.SET, "string"),
-    designable("hint", elyDesignableFieldState.GETSET, "string"),
-    designable("value", elyDesignableFieldState.GETSET, "string")
-], elyField);
-var elyField$1 = elyField;
+}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -2068,65 +2080,142 @@ var elyField$1 = elyField;
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyFieldType.ts                                                      +
- + Файл изменен: 05.12.2018 23:47:11                                          +
+ + Файл: elyColorUtils.ts                                                     +
+ + Файл изменен: 06.01.2019 05:32:41                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Типы ввода данных
+ * Утилиты для работы с цветом
  */
-class elyFieldType {
+class elyColorUtils {
     /**
-     * Конструктор
-     * @ignore
-     * @param val
+     * Преобразует HSV цвет в RGB
+     * @param color
      */
-    constructor(val) {
-        this.value = val;
+    static hsv2rgb(color) {
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        const i = Math.floor(color.hue * 6);
+        const f = color.hue * 6 - i;
+        const p = color.value * (1 - color.saturation);
+        const q = color.value * (1 - f * color.saturation);
+        const t = color.value * (1 - (1 - f) * color.saturation);
+        switch (i % 6) {
+            case 0:
+                red = color.value;
+                green = t;
+                blue = p;
+                break;
+            case 1:
+                red = q;
+                green = color.value;
+                blue = p;
+                break;
+            case 2:
+                red = p;
+                green = color.value;
+                blue = t;
+                break;
+            case 3:
+                red = p;
+                green = q;
+                blue = color.value;
+                break;
+            case 4:
+                red = t;
+                green = p;
+                blue = color.value;
+                break;
+            case 5:
+                red = color.value;
+                green = p;
+                blue = q;
+                break;
+        }
+        return { red, green, blue };
     }
     /**
-     * Тип по имени
-     * @param value
+     * Преобразует RGB цвет в HSV
+     * @param color
      */
-    static byName(value) {
-        if (typeof value === "number")
-            value = value.toString() + "px";
-        return new elyFieldType(value);
+    static rgb2hsv(color) {
+        const max = Math.max(color.red, color.green, color.blue);
+        const min = Math.min(color.red, color.green, color.blue);
+        const d = max - min;
+        let hue = 0;
+        const saturation = (max === 0 ? 0 : d / max);
+        const value = max / 255;
+        switch (max) {
+            case min:
+                hue = 0;
+                break;
+            case color.red:
+                hue = (color.green - color.blue) + d * (color.green < color.blue ? 6 : 0);
+                hue /= 6 * d;
+                break;
+            case color.green:
+                hue = (color.blue - color.red) + d * 2;
+                hue /= 6 * d;
+                break;
+            case color.blue:
+                hue = (color.red - color.green) + d * 4;
+                hue /= 6 * d;
+                break;
+        }
+        return { hue, saturation, value };
     }
     /**
-     * Список
+     * Преобразует HSV в __hex
+     * @param color
      */
-    static rawList() {
+    static hsv2hex(color) {
+        return elyColorUtils.rgb2hex(elyColorUtils.hsv2rgb(color));
+    }
+    /**
+     * Преобразует HEX в RGB
+     * @param hex
+     */
+    static hex2rgb(hex) {
+        if (hex.length === 3) {
+            hex = hex.replace(/./g, "$&$&");
+        }
         return {
-            mail: elyFieldType.mail.value,
-            number: elyFieldType.number.value,
-            password: elyFieldType.password.value,
-            text: elyFieldType.text.value,
+            blue: parseInt(hex[4] + hex[5], 16),
+            green: parseInt(hex[2] + hex[3], 16),
+            red: parseInt(hex[0] + hex[1], 16),
         };
     }
     /**
-     * Преобразует в строку
+     * Преобразует __hex цвет в hsv
+     * @param hex
      */
-    toString() {
-        return this.value;
+    static hex2hsv(hex) {
+        return elyColorUtils.rgb2hsv(elyColorUtils.hex2rgb(hex));
+    }
+    /**
+     * Преобразует RGB в HEX
+     * @param color
+     */
+    static rgb2hex(color) {
+        const rgbToHex = (rgb) => {
+            let hex = Number(rgb).toString(16);
+            if (hex.length < 2) {
+                hex = "0" + hex;
+            }
+            return hex;
+        };
+        return (rgbToHex(color.red) + rgbToHex(color.green) + rgbToHex(color.blue)).toUpperCase();
     }
 }
 /**
- * Текст
+ * Код белого цвета
  */
-elyFieldType.text = new elyFieldType("text");
+elyColorUtils.whiteNumber = 16777215;
 /**
- * Пароль
+ * Код черного цвета
  */
-elyFieldType.password = new elyFieldType("password");
-/**
- * Число
- */
-elyFieldType.number = new elyFieldType("number");
-/**
- * Почта
- */
-elyFieldType.mail = new elyFieldType("mail");
+elyColorUtils.blackNumber = 0;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -2144,8 +2233,380 @@ elyFieldType.mail = new elyFieldType("mail");
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyTextField.ts                                                      +
+ + Файл: elyColor.ts                                                          +
  + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Цвет
+ * @class elyColor
+ */
+class elyColor {
+    /**
+     * Конструктор
+     * @param {{ __hex?: string, rgb?: elyColorRGB, hsv?: elyColorHSV }} props - параметры
+     */
+    constructor(props = {}) {
+        /**
+         * 16 код цвета
+         * @protected
+         * @type {string}
+         */
+        this.__hex = "000000";
+        if (props.hex)
+            this.__hex = props.hex.startsWith("#") ? props.hex.substr(1) : props.hex;
+        else if (props.rgb)
+            this.__hex = elyColorUtils.rgb2hex(props.rgb);
+        else if (props.hsv)
+            this.__hex = elyColorUtils.hsv2hex(props.hsv);
+        else
+            this.__hex = elyColor.black().getHexString().substr(1);
+    }
+    /**
+     * Возвращает черный цвет
+     * @return {elyColor}
+     */
+    static black() {
+        return new elyColor({ hex: "#000000" });
+    }
+    /**
+     * Возвращает белый цвет
+     * @return {elyColor}
+     */
+    static white() {
+        return new elyColor({ hex: "#ffffff" });
+    }
+    /**
+     * Возвращает красный цвет
+     * @return {elyColor}
+     */
+    static red() {
+        return new elyColor({ hex: "#ff0000" });
+    }
+    /**
+     * Возвращает зеленый цвет
+     * @return {elyColor}
+     */
+    static green() {
+        return new elyColor({ hex: "#00ff00" });
+    }
+    /**
+     * Возвращает синий цвет
+     * @return {elyColor}
+     */
+    static blue() {
+        return new elyColor({ hex: "#0000ff" });
+    }
+    /**
+     * Возвращает число цвета
+     * @return {number}
+     */
+    getByte() {
+        return parseInt(this.__hex, 16);
+    }
+    /**
+     * Возвращает true, если цвет темный
+     * @return {boolean}
+     */
+    isDarker() {
+        return this.getByte() < (elyColorUtils.whiteNumber / 1.8);
+    }
+    /**
+     * Возвращает байты цветов
+     * @return {elyColorRGB}
+     */
+    getRGBBytes() {
+        return {
+            blue: parseInt(this.__hex.substr(4, 2), 16),
+            green: parseInt(this.__hex.substr(2, 2), 16),
+            red: parseInt(this.__hex.substr(0, 2), 16),
+        };
+    }
+    /**
+     * Устанавливает RGB цвета
+     *
+     * @param {{elyColorRGB}} props
+     */
+    setRGBBytes(props) {
+        if (props.rgb.red > 255)
+            props.rgb.red = 255;
+        if (props.rgb.green > 255)
+            props.rgb.green = 255;
+        if (props.rgb.blue > 255)
+            props.rgb.blue = 255;
+        if (props.rgb.red < 0)
+            props.rgb.red = 0;
+        if (props.rgb.green < 0)
+            props.rgb.green = 0;
+        if (props.rgb.blue < 0)
+            props.rgb.blue = 0;
+        this.__hex = props.rgb.red.toString(16) +
+            props.rgb.green.toString(16) +
+            props.rgb.blue.toString(16);
+    }
+    /**
+     * Возвращает цвет светлее
+     * @param {number} percentage
+     * @return {elyColor}
+     */
+    getLighterColor(percentage) {
+        const rgb = this.getRGBBytes();
+        percentage = 1 - percentage;
+        const val = Math.round(255 - (255 * percentage));
+        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 255));
+        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 255));
+        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 255));
+        return new elyColor({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
+    }
+    /**
+     * Возвращает цвет тмнее
+     * @param {number} percentage
+     * @return {elyColor}
+     */
+    getDarkerColor(percentage) {
+        const rgb = this.getRGBBytes();
+        percentage = 1 - percentage;
+        const val = Math.round(255 - (255 * percentage));
+        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 0));
+        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 0));
+        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 0));
+        return new elyColor({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
+    }
+    /**
+     * Возвращает HEX с символом # в начале
+     * @return {string}
+     */
+    getHexString() {
+        return `#${this.__hex}`;
+    }
+    /**
+     * Возвращает HEX с символом # в начале
+     * @return {string}
+     */
+    toString() {
+        return this.getHexString();
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyFieldView.ts                                                      +
+ + Файл изменен: 08.01.2019 02:43:40                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Поле ввоода
+ * @class elyFieldView
+ * @template T
+ * @augments {efEditableProtocol}
+ * @augments {efValueProtocol<T>}
+ * @augments {efErrorDisplayProtocol}
+ * @augments {efValidatableProtocol}
+ */
+class elyFieldView extends elyView {
+    /**
+     * Конструктор
+     * @param props
+     */
+    constructor(props) {
+        super(props);
+        /**
+         * Свойство: значение поля ввода
+         * @type {elyObservableProperty<T>}
+         */
+        this.valueProperty = new elyObservableProperty();
+        /**
+         * Свойство: флаг возможности редактирования
+         * @type {elyObservableBoolean}
+         */
+        this.editableProperty = new elyObservableBoolean(true);
+        /**
+         * Таймер
+         * @protected
+         * @type {elyTimer}
+         */
+        this.__errorDisplayTimer = new elyTimer({ duration: 1500 });
+        this.addClass("ef-field");
+        this.__errorDisplayTimer.addEndObserver(() => {
+            this.removeClass("error");
+        });
+        this.__errorDisplayTimer.addStartObserver(() => {
+            this.addClass("error");
+        });
+        this.accessoryView = props.accessory;
+        this.getDocument().append(this.accessoryView.getDocument());
+        if (props.hint)
+            this.hint(props.hint);
+    }
+    /**
+     * Возвращает и устанавливает значение поля ввода
+     * @param {T|null} [value] - значение
+     * @returns {T|this|null}
+     */
+    value(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
+    }
+    /**
+     * Очищает значение
+     * @return {this}
+     */
+    clearValue() {
+        this.value(null);
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает флаг возможности редактирования
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this}
+     */
+    editable(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.editableProperty);
+    }
+    /**
+     * Возвращает true, если данные валидны
+     * @return {boolean}
+     */
+    isValid() {
+        if (this.__isValidDelegate)
+            return this.__isValidDelegate(this.value());
+        return true;
+    }
+    /**
+     * Возвращает true, если данные пусты
+     * @return {boolean}
+     */
+    isEmpty() {
+        return this.valueProperty.isNull();
+    }
+    /**
+     * Помечает объект как неисправный
+     * @param {boolean} flag
+     * @return {this}
+     */
+    error(flag) {
+        if (flag)
+            this.__errorDisplayTimer.restart();
+        else
+            this.__errorDisplayTimer.stop();
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает делегает валидации
+     * @param {(data: T | null) => boolean} [value] - значение
+     * @returns {this}
+     */
+    setIsValidDelegate(value) {
+        this.__isValidDelegate = value;
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает плейслхолдер для ввода
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    placeholder(value) {
+        throw Error(`Method placeholder is not implemented in class ${this}!`);
+    }
+    /**
+     * Добавляет слушатель изменения значения поля
+     *
+     * @param {function(value: T, oldVal: T | null)} o
+     * @param {boolean} clearanceSafe - защита от сброса
+     * @return {this}
+     */
+    change(o, clearanceSafe = false) {
+        if (!clearanceSafe)
+            this.valueProperty.change(o);
+        else
+            this.valueProperty.change((nv, ov) => {
+                o(nv, ov);
+            });
+        return this;
+    }
+    /**
+     * Утанавливает подсказку
+     * @param {String} hint - подсказка
+     * @return {elyView}
+     */
+    hint(hint) {
+        if (hint === undefined)
+            return "";
+        const hintView = new elyControl$1({ class: "ef-hint" });
+        hintView.getDocument().innerHTML = hint;
+        this.elyViewWillDraw(() => {
+            this.getDocument().after(hintView.getDocument());
+        });
+        return this;
+    }
+    /**
+     * Experimental
+     *
+     * @param name
+     */
+    tempData(name) {
+        this.change(value => {
+            elyCookie.set(`tfd-${name}`, `${value.constructor.name},${value}`, { expires: 5 * 60 });
+        });
+        this.elyViewWillDraw(() => {
+            let val = elyCookie.get(`tfd-${name}`);
+            if (elyGuard.isNone(val))
+                return;
+            const arr = val.split(",");
+            const cns = arr.shift();
+            if (cns) {
+                if (cns === "elyColor") {
+                    val = new elyColor({ hex: arr.join(",") });
+                }
+                else if (cns === "Number") {
+                    val = parseInt(arr.join(","), 10);
+                }
+                else {
+                    val = arr.join(",");
+                }
+            }
+            this.value(val);
+        });
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyTextField.ts                                                      +
+ + Файл изменен: 08.01.2019 02:54:20                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Поле: Ввод текста
@@ -2153,13 +2614,13 @@ elyFieldType.mail = new elyFieldType("mail");
  * @class elyTextField
  * @augments {elyField<string>}
  */
-let elyTextField = class elyTextField extends elyField$1 {
+let elyTextField = class elyTextField extends elyFieldView {
     /**
      * Конструктор
-     * @param options
+     * @param {elyTextFieldOptions} props
      */
-    constructor(options = {}) {
-        super(options, new elyInput({ type: options.filedType }));
+    constructor(props = { fieldType: elyFieldType.text, encrypted: false }) {
+        super({ accessory: new elyControl$1({ tag: "input", class: "ef-input" }) });
         /**
          * Флаг шифрования данных
          *
@@ -2169,51 +2630,31 @@ let elyTextField = class elyTextField extends elyField$1 {
          * @type {boolean}
          */
         this.encrypted = false;
-        /**
-         * Значение
-         * @type {elyObservableProperty<string>}
-         */
-        this.valueProperty = this.accessoryView.valueProperty;
-        /**
-         * @type {elyObservableProperty<boolean>}
-         */
-        this.editableProperty = this.accessoryView.editableProperty;
-        /**
-         * @type {elyObservableProperty<elyFieldType>}
-         * @protected
-         */
-        this.fieldTypeProperty = new elyObservableProperty(elyFieldType.text);
-        this.fieldTypeProperty.change((newValue) => this.accessoryView.attribute("type", newValue.value));
-        this.fieldType(options.filedType || elyFieldType.text.value);
-        if (options.fieldIcon)
-            this.setIcon(options.fieldIcon);
-        this.encrypted = options.encrypted || false;
-        this.accessoryView.addInputObserver((value) => this.notificate("input", [value]));
-        this.applyProtocolOptions(options);
+        this.__fieldType = props.fieldType || elyFieldType.text;
+        const accessory = this.accessoryView.getDocument();
+        accessory.onchange = () => {
+            this.value(accessory.value);
+        };
+        this.valueProperty.change((newValue) => accessory.value = newValue);
+        if (props.placeholder)
+            accessory.placeholder = props.placeholder;
+        if (props.value)
+            this.value(props.value);
+        accessory.type = this.fieldType().value;
     }
     /**
-     * Возвращает и устанавливает тип вводимых данных
-     * @param {elyFieldType|string} [value]
-     * @return {null|elyFieldType|this}
+     * Возвращает тип поля ввода
+     * @return {elyFieldType}
      */
-    fieldType(value) {
-        if (typeof value === "string")
-            value = elyFieldType.byName(value);
-        return elyObservableProperty.simplePropertyAccess(this, value, this.fieldTypeProperty);
-    }
-    /**
-     * Возвращает стандартное значение
-     * @return {string}
-     */
-    defaultValue() {
-        return super.defaultValue() || "";
+    fieldType() {
+        return this.__fieldType;
     }
     /**
      * Возвращает true, если поле пустое
      * @return {boolean}
      */
     isEmpty() {
-        return this.value() === "";
+        return super.isEmpty() || this.value() === "";
     }
     /**
      * Добавляет слушатель изменения поля
@@ -2228,33 +2669,32 @@ let elyTextField = class elyTextField extends elyField$1 {
      * Возвращает true, если данные введены правильно
      * @return {boolean}
      */
-    isValidData() {
-        if (this.manualValidation)
-            return this.manualValidation(this.value());
+    isValid() {
+        let result = false;
         if (this.fieldType().value === elyFieldType.mail.value) {
-            return /^(.+)@(.+)\.(.+)/.test(this.value());
+            result = /^([^ {}\]\[,]+)@(.+)\.(.+)/.test(this.valueProperty.get(""));
         }
-        return true;
+        else {
+            result = true;
+        }
+        return result && super.isValid();
     }
     /**
-     * Устанавливает иконку
-     * @param {string} iconName - имя иконки
-     * @return elyTextField
+     * Возвращает и устанавливает плейслхолдер для ввода
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
      */
-    setIcon(iconName) {
-        this.accessoryView.removeFromSuperview();
-        // Помещает иконку в левую часть
-        this.fieldLineView.getDocument().append(this.accessoryView.getDocument());
-        this.actionIconView.iconName(iconName);
-        this.actionIconView.hidden(false);
+    placeholder(value) {
+        if (value === undefined)
+            return this.accessoryView.getDocument().placeholder;
+        this.accessoryView.getDocument().placeholder = value;
         return this;
     }
 };
 elyTextField = __decorate([
     designable("value", elyDesignableFieldState.GETSET, "string"),
-    designable("fieldType", elyDesignableFieldState.GETSET, "string", elyFieldType.rawList())
+    designable("fieldType", elyDesignableFieldState.GET, "string", elyFieldType.rawList())
 ], elyTextField);
-var elyTextField$1 = elyTextField;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -2324,7 +2764,7 @@ class elyTextViewEditable extends elyView {
         /**
          * Поле редактирования текста
          */
-        this.textEditField = new elyTextField$1({ actionIcon: "check" });
+        this.textEditField = new elyTextField( /*{actionIcon: "check"}*/);
         /**
          * Делегат: проверка возможности сохранить значение
          */
@@ -2351,32 +2791,17 @@ class elyTextViewEditable extends elyView {
                 return;
             this.__isChecking = true;
             // Изменяет состояния иконки
-            this.textEditField.actionIconView.iconName("refresh");
-            this.textEditField.actionIconView.iconSpinning(true);
+            // this.textEditField.actionIconView.iconName("refresh");
+            // this.textEditField.actionIconView.iconSpinning(true);
             /**
              * Выполняет попытку сохранить результаты,
              * проходя все необходимые проверки и делигаты.
              */
             const tryToSaveResults = (callback) => {
                 if (this.textView.text() === this.textEditField.value()) {
-                    this.value(this.textEditField.value());
+                    // this.value(this.textEditField.value());
                     callback(true);
                     this.setEditorViewState(elyTextViewEditableState.PRESENT);
-                }
-                else {
-                    this.shouldSaveValueDelegate(this.textEditField.value(), res => {
-                        if (res) {
-                            this.value(this.textEditField.value());
-                            callback(res);
-                            this.setEditorViewState(elyTextViewEditableState.PRESENT);
-                        }
-                        else {
-                            this.value(this.textView.text());
-                            this.textEditField.error(true);
-                            callback(false);
-                            this.setEditorViewState(elyTextViewEditableState.EDIT);
-                        }
-                    });
                 }
             };
             /**
@@ -2444,8 +2869,8 @@ class elyTextViewEditable extends elyView {
     setEditorViewState(state) {
         this.textEditField.hidden(state === elyTextViewEditableState.PRESENT);
         this.textView.hidden(state === elyTextViewEditableState.EDIT);
-        this.textEditField.actionIconView.iconName("check");
-        this.textEditField.actionIconView.iconSpinning(false);
+        // this.textEditField.actionIconView.iconName("check");
+        // this.textEditField.actionIconView.iconSpinning(false);
         return this;
     }
 }
@@ -4003,6 +4428,8 @@ class elyFooterView extends elyControl$1 {
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Свойство словаря
+ * @class elyObservableDictionary
+ * @template T
  */
 class elyObservableDictionary extends elyObservableProperty {
     /**
@@ -4046,7 +4473,8 @@ class elyObservableDictionary extends elyObservableProperty {
      * @param key
      */
     item(key) {
-        return (this.value || {})[key] || null;
+        const val = (this.value || {})[key];
+        return elyGuard.isNone(val) ? null : val;
     }
     /**
      * Возвращает элемент по индексу
@@ -4458,679 +4886,6 @@ elyImageView = __decorate([
 var elyImageView$1 = elyImageView;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: ef2DVectorValues.ts                                                  +
- + Файл изменен: 02.01.2019 04:41:50                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Векторные константные значения
- * @class ef2DVectorValues
- */
-class ef2DVectorValues {
-    /**
-     * Конструктор
-     * @param {{ point?: ef2DVector, x?: number, y?: number }} props
-     */
-    constructor(props) {
-        if (props.point) {
-            this.x = props.point.x();
-            this.y = props.point.y();
-        }
-        else {
-            this.x = props.x || 0;
-            this.y = props.y || 0;
-        }
-    }
-    /**
-     * Создает вектор из значений
-     */
-    getVector() {
-        return new ef2DVector({ values: this });
-    }
-    /**
-     * Преобразует объект в строку
-     */
-    toString() {
-        return `{x: ${this.x}, y: ${this.y}}`;
-    }
-    /**
-     * Возвращает новые значения, умноженные на x,y или на xy
-     * @param {{ x?: number, y?: number, xy?: number }} props
-     * @return {ef2DVectorValues}
-     */
-    getMultiplied(props) {
-        if (props.x && props.y)
-            return new ef2DVectorValues({ x: this.x * props.x, y: this.y * props.y });
-        if (props.xy)
-            return new ef2DVectorValues({ x: this.x * props.xy, y: this.y * props.xy });
-        return new ef2DVectorValues({ x: this.x, y: this.y });
-    }
-    /**
-     * Возвращает новые значения, сумированные с x,y или с xy
-     * @param {{ x?: number, y?: number, xy?: number }} props
-     * @return {ef2DVectorValues}
-     */
-    getAdd(props) {
-        if (props.x && props.y)
-            return new ef2DVectorValues({ x: this.x + props.x, y: this.y + props.y });
-        if (props.xy)
-            return new ef2DVectorValues({ x: this.x + props.xy, y: this.y + props.xy });
-        return new ef2DVectorValues({ x: this.x, y: this.y });
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efDirection.ts                                                       +
- + Файл изменен: 28.12.2018 01:03:22                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Перечисление направлений в измерении
- */
-class efDirection {
-}
-/**
- * Направление X
- */
-efDirection.x = "x";
-/**
- * Направление Y
- */
-efDirection.y = "y";
-/**
- * Направление Z
- */
-efDirection.z = "z";
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: ef2DVector.ts                                                        +
- + Файл изменен: 28.12.2018 00:43:18                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Прослушиваемый вектор.
- *
- * Используйте метод {@link ef2DVector::addChangeObserver} для прослушивания изменений вектора.
- * @class ef2DVector
- * @augments {elyObservable}
- */
-class ef2DVector extends elyObservable {
-    /**
-     * Конструктор
-     * @param props
-     */
-    constructor(props = { x: 0, y: 0 }) {
-        super();
-        /**
-         * Свойство: ось x
-         */
-        this.xProperty = new elyObservableProperty(0);
-        /**
-         * Свойство: ось y
-         */
-        this.yProperty = new elyObservableProperty(0);
-        if (props.values) {
-            this.x(props.values.x);
-            this.y(props.values.y);
-        }
-        else {
-            this.x(props.x || 0);
-            this.y(props.y || 0);
-        }
-        this.xProperty.change(value => this.notificate("changed", [efDirection.x, value, this.y()]));
-        this.yProperty.change(value => this.notificate("changed", [efDirection.y, this.x(), value]));
-    }
-    /**
-     * Нулевой вектор
-     * @return {ef2DVector}
-     */
-    static zero() {
-        return new ef2DVector();
-    }
-    /**
-     * Возвращает и устанавливает ось x
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    x(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.xProperty);
-    }
-    /**
-     * Возвращает и устанавливает ось y
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    y(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.yProperty);
-    }
-    /**
-     * Добавляет наблюдатель: изменение координат
-     *
-     * Имя обсервера: changed
-     *
-     * @param o - наблюдатель
-     *
-     *
-     *     vc.addChangeObserver( (dir, nX, nY) => {
-     *        if( dir === efDirection.x){
-     *          // Изменился X
-     *        } else {
-     *          // Изменился Y
-     *        }
-     *     });
-     *
-     *
-     */
-    addChangeObserver(o) {
-        this.addObserver("changed", o);
-        return this;
-    }
-    /**
-     * Преобразует объект в строку
-     * @return {string}
-     */
-    toString() {
-        return `ef2DVector{x: ${this.x()}, y: ${this.y()}}`;
-    }
-    /**
-     * Возвращает true, если векторы идентичны
-     * @param vector
-     */
-    equals(vector) {
-        return this.x() === vector.x() && this.y() === vector.y();
-    }
-    /**
-     * Возвращает инкриминированный вектор
-     * @param {number} incX
-     * @param {number} incY
-     * @return {ef2DVector}
-     */
-    getIncVector(incX = 0, incY = 0) {
-        return new ef2DVector({ x: this.x() + incX, y: this.y() + incY });
-    }
-    /**
-     * Возвращает константные значения вектора
-     */
-    getValues() {
-        return new ef2DVectorValues({ point: this });
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyMath.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Библиотека математики
- */
-class elyMath {
-    /**
-     * Преобразовывает значение переменной X из одного диапазона в другой.
-     *
-     * @param x
-     * @param inMin
-     * @param inMax
-     * @param outMin
-     * @param outMax
-     */
-    static map(x, inMin, inMax, outMin, outMax) {
-        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-    /**
-     * Find point after rotation around another point by X degrees
-     *
-     * @param {Array} point The point to be rotated [X,Y]
-     * @param {Array} rotationCenterPoint The point that should be rotated around [X,Y]
-     * @param {Number} degrees The degrees to rotate the point
-     * @return {Array} Returns point after rotation [X,Y]
-     */
-    static rotatePoint(point, rotationCenterPoint, degrees) {
-        // Using radians for this formula
-        const radians = degrees * Math.PI / 180;
-        // Translate the plane on which rotation is occurring.
-        // We want to rotate around 0,0. We'll add these back later.
-        point[0] -= rotationCenterPoint[0];
-        point[1] -= rotationCenterPoint[1];
-        // Perform the rotation
-        const newPoint = [];
-        newPoint[0] = point[0] * Math.cos(radians) - point[1] * Math.sin(radians);
-        newPoint[1] = point[0] * Math.sin(radians) + point[1] * Math.cos(radians);
-        // Translate the plane back to where it was.
-        newPoint[0] += rotationCenterPoint[0];
-        newPoint[1] += rotationCenterPoint[1];
-        return new ef2DVector({ x: newPoint[0], y: newPoint[1] });
-    }
-    /**
-     * Find the vertices of a rotating rectangle
-     *
-     * @param {Array} position From left, top [X,Y]
-     * @param {Array} size Lengths [X,Y]
-     * @param {Number} degrees Degrees rotated around center
-     * @return {Object} Arrays LT, RT, RB, LB [X,Y]
-     */
-    static findRectVertices(position, size, degrees) {
-        const left = position.x();
-        const right = position.x() + size.width();
-        const top = position.y();
-        const bottom = position.y() + size.height();
-        const center = [right - left, bottom - top];
-        const LT = [left, top];
-        const RT = [right, top];
-        const RB = [right, bottom];
-        const LB = [left, bottom];
-        return {
-            LB: elyMath.rotatePoint(LB, center, degrees),
-            LT: elyMath.rotatePoint(LT, center, degrees),
-            RB: elyMath.rotatePoint(RB, center, degrees),
-            RT: elyMath.rotatePoint(RT, center, degrees),
-        };
-    }
-    /**
-     * Distance formula
-     *
-     * @param {Array} p1 First point [X,Y]
-     * @param {Array} p2 Second point [X,Y]
-     * @return {Number} Returns distance between points
-     */
-    static distance(p1, p2) {
-        return Math.sqrt(Math.pow(p1.x() - p2.x(), 2) + Math.pow(p1.y() - p2.y(), 2));
-    }
-    /**
-     * Heron's formula (triangle area)
-     *
-     * @param {Number} d1 Distance, side 1
-     * @param {Number} d2 Distance, side 2
-     * @param {Number} d3 Distance, side 3
-     * @return {Number} Returns area of triangle
-     */
-    static triangleArea(d1, d2, d3) {
-        // See https://en.wikipedia.org/wiki/Heron's_formula
-        const s = (d1 + d2 + d3) / 2;
-        return Math.sqrt(s * (s - d1) * (s - d2) * (s - d3));
-    }
-    /**
-     * Determine if a click hit a rotated rectangle
-     *
-     * @param {Array} check Click position [X,Y]
-     * @param {Array} position Rect from left, top [X,Y]
-     * @param {Array} size Rect size as lengths [X,Y]
-     * @param {Number} degrees Degrees rotated around center
-     * @return {Boolean} Returns true if hit, false if miss
-     */
-    static checkPointInRect(check, position, size, degrees) {
-        // Find the area of the rectangle
-        // Round to avoid small JS math differences
-        const rectArea = Math.round(size.width() * size.height());
-        // Find the vertices
-        const vertices = elyMath.findRectVertices(position, size, degrees);
-        // Create an array of the areas of the four triangles
-        let triArea = [
-            // Click, LT, RT
-            elyMath.triangleArea(elyMath.distance(check, vertices.LT), elyMath.distance(vertices.LT, vertices.RT), elyMath.distance(vertices.RT, check)),
-            // Click, RT, RB
-            elyMath.triangleArea(elyMath.distance(check, vertices.RT), elyMath.distance(vertices.RT, vertices.RB), elyMath.distance(vertices.RB, check)),
-            // Click, RB, LB
-            elyMath.triangleArea(elyMath.distance(check, vertices.RB), elyMath.distance(vertices.RB, vertices.LB), elyMath.distance(vertices.LB, check)),
-            // Click, LB, LT
-            elyMath.triangleArea(elyMath.distance(check, vertices.LB), elyMath.distance(vertices.LB, vertices.LT), elyMath.distance(vertices.LT, check)),
-        ];
-        // Reduce this array with a sum function
-        // Round to avoid small JS math differences
-        triArea = Math.round(triArea.reduce((a, b) => {
-            return a + b;
-        }, 0));
-        // Finally do that simple thing we visualized earlier
-        return triArea > rectArea;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyColor.ts                                                          +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Цвет
- */
-class elyColor {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        /**
-         * 16 код цвета
-         */
-        this.hex = "000000";
-        if (options.hex)
-            this.hex = options.hex.indexOf("#") > -1 ? options.hex.substr(1) : options.hex;
-    }
-    /**
-     * Преобразует HSV цвет в RGB
-     * @param hue
-     * @param saturation
-     * @param value
-     */
-    static hsv2rgb(hue, saturation, value) {
-        if (typeof hue === "object") {
-            saturation = hue.saturation;
-            value = hue.value;
-            hue = hue.hue;
-        }
-        let rgb = { red: 0, green: 0, blue: 0 };
-        const i = Math.floor(hue * 6) || 0;
-        const f = hue * 6 - i;
-        const p = value * (1 - saturation);
-        const q = (value * (1 - f * saturation)) || 0;
-        const t = (value * (1 - (1 - f) * saturation)) || 0;
-        switch (i % 6) {
-            case 0:
-                rgb = { red: value, green: t, blue: p };
-                break;
-            case 1:
-                rgb = { red: q, green: value, blue: p };
-                break;
-            case 2:
-                rgb = { red: p, green: value, blue: t };
-                break;
-            case 3:
-                rgb = { red: p, green: q, blue: value };
-                break;
-            case 4:
-                rgb = { red: t, green: p, blue: value };
-                break;
-            case 5:
-                rgb = { red: value, green: p, blue: q };
-                break;
-        }
-        return {
-            blue: Math.round(rgb.blue * 255),
-            green: Math.round(rgb.green * 255),
-            red: Math.round(rgb.red * 255),
-        };
-    }
-    /**
-     * Преобразует RGB цвет в HSV
-     * @param red
-     * @param green
-     * @param blue
-     */
-    static rgb2hsv(red, green, blue) {
-        if (typeof red === "object") {
-            green = red.green;
-            blue = red.blue;
-            red = red.red;
-        }
-        const hsv = { hue: 0, saturation: 0, value: 0 };
-        const max = Math.max(red, green, blue);
-        const min = Math.min(red, green, blue);
-        const d = max - min;
-        hsv.saturation = (max === 0 ? 0 : d / max);
-        hsv.value = max / 255;
-        switch (max) {
-            case min:
-                hsv.hue = 0;
-                break;
-            case red:
-                hsv.hue = (green - blue) + d * (green < blue ? 6 : 0);
-                hsv.hue /= 6 * d;
-                break;
-            case green:
-                hsv.hue = (blue - red) + d * 2;
-                hsv.hue /= 6 * d;
-                break;
-            case blue:
-                hsv.hue = (red - green) + d * 4;
-                hsv.hue /= 6 * d;
-                break;
-        }
-        return hsv;
-    }
-    /**
-     * Преобразует HSV в hex
-     * @param hue
-     * @param saturation
-     * @param value
-     */
-    static hsv2hex(hue, saturation, value) {
-        return elyColor.rgb2hex(elyColor.hsv2rgb(hue, saturation, value));
-    }
-    /**
-     * Преобразует HEX в RGB
-     * @param hex
-     */
-    static hex2rgb(hex) {
-        if (hex.length === 3) {
-            hex = hex.replace(/./g, "$&$&");
-        }
-        return {
-            blue: parseInt(hex[4] + hex[5], 16),
-            green: parseInt(hex[2] + hex[3], 16),
-            red: parseInt(hex[0] + hex[1], 16),
-        };
-    }
-    /**
-     * Преобразует hex цвет в hsv
-     * @param hex
-     */
-    static hex2hsv(hex) {
-        return elyColor.rgb2hsv(elyColor.hex2rgb(hex));
-    }
-    /**
-     * Преобразует RGB в hex
-     * @param red
-     * @param green
-     * @param blue
-     */
-    static rgb2hex(red, green, blue) {
-        const rgbToHex = (rgb) => {
-            let hex = Number(rgb).toString(16);
-            if (hex.length < 2) {
-                hex = "0" + hex;
-            }
-            return hex;
-        };
-        if (typeof red === "object") {
-            blue = red.blue;
-            green = red.green;
-            red = red.red;
-        }
-        if (red > 255)
-            red = 255;
-        if (green > 255)
-            green = 255;
-        if (blue > 255)
-            blue = 255;
-        if (red < 0)
-            red = 0;
-        if (green < 0)
-            green = 0;
-        if (blue < 0)
-            blue = 0;
-        return rgbToHex(red) + rgbToHex(green) + rgbToHex(blue);
-    }
-    static getFadeStepHex(step, from, to) {
-        const f = from.getRGBBytes();
-        const t = to.getRGBBytes();
-        return new elyColor({
-            hex: elyColor.rgb2hex(Math.round(elyMath.map(step, 0, 255, f.red, t.red)), Math.round(elyMath.map(step, 0, 255, f.green, t.green)), Math.round(elyMath.map(step, 0, 255, f.blue, t.blue))),
-        });
-    }
-    /**
-     * Возвращает число цвета
-     */
-    getByte() {
-        return parseInt(this.hex, 16);
-    }
-    /**
-     * Возвращает true, если цвет темный
-     */
-    isDarker() {
-        return this.getByte() < (elyColor.whiteNumber / 1.8);
-    }
-    /**
-     * Возвращает байты цветов
-     */
-    getRGBBytes() {
-        return {
-            blue: parseInt(this.hex.substr(4, 2), 16),
-            green: parseInt(this.hex.substr(2, 2), 16),
-            red: parseInt(this.hex.substr(0, 2), 16),
-        };
-    }
-    /**
-     * Устанавливает RGB цвета
-     *
-     * @param red
-     * @param green
-     * @param blue
-     */
-    setRGBBytes(red, green, blue) {
-        if (typeof red === "object") {
-            green = red.green;
-            blue = red.blue;
-            red = red.red;
-        }
-        if (red > 255)
-            red = 255;
-        if (green > 255)
-            green = 255;
-        if (blue > 255)
-            blue = 255;
-        if (red < 0)
-            red = 0;
-        if (green < 0)
-            green = 0;
-        if (blue < 0)
-            blue = 0;
-        this.hex = red.toString(16) + green.toString(16) + blue.toString(16);
-    }
-    /**
-     * Возвращает цвет светлее
-     * @param percentage
-     */
-    getLighter(percentage) {
-        const rgb = this.getRGBBytes();
-        percentage = 1 - percentage;
-        const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 255));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 255));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 255));
-        return new elyColor({ hex: "#" + elyColor.rgb2hex(rgb) });
-    }
-    /**
-     * Возвращает цвет тмнее
-     * @param percentage
-     */
-    getDarker(percentage) {
-        const rgb = this.getRGBBytes();
-        percentage = 1 - percentage;
-        const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 0));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 0));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 0));
-        return new elyColor({ hex: "#" + elyColor.rgb2hex(rgb) });
-    }
-    /**
-     * Преобразует HEX в строку с #
-     */
-    toString() {
-        return `#${this.hex}`;
-    }
-}
-/**
- * Код белого цвета
- */
-elyColor.whiteNumber = 16777215;
-/**
- * Код черного цвета
- */
-elyColor.blackNumber = 0;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -5170,10 +4925,10 @@ class elyNavigationView extends elyControl$1 {
         this.imageView.hidden(true);
         this.navigationBarColorProperty.change((newValue) => {
             const backgroundColor = newValue.toString();
-            let borderColor = newValue.getLighter(0.3).toString();
+            let borderColor = newValue.getLighterColor(0.3).toString();
             if (!newValue.isDarker()) {
                 this.addClass("light");
-                borderColor = newValue.getDarker(0.05).toString();
+                borderColor = newValue.getDarkerColor(0.05).toString();
             }
             else
                 this.removeClass("light");
@@ -5880,8 +5635,8 @@ class elyFlatApplication extends elyObservable {
      * @param color
      */
     applyApplicationColor(color) {
-        const darker = color.getDarker(0.1);
-        const lighter = color.getLighter(0.18);
+        const darker = color.getDarkerColor(0.1);
+        const lighter = color.getLighterColor(0.18);
         elyStylesheet.global.addClass("bg-primary", {
             backgroundColor: color.toString(),
             color: color.isDarker() ? "white" : "black",
@@ -6291,11 +6046,10 @@ class efCanvas extends elyView {
 class efContextElement {
     /**
      * Конструктор
-     * @param {{ vector: ef2DVectorValues, size: efSize, angle?: number, filter?: string }} props - параметры
+     * @param {{ rect: ef2DRect, angle?: number, filter?: string }} props - параметры
      */
     constructor(props) {
-        this.vector = props.vector;
-        this.size = props.size;
+        this.rect = props.rect;
         this.angle = props.angle || undefined;
         this.filter = props.filter || undefined;
     }
@@ -6330,8 +6084,8 @@ class efContextElement {
 class efContextImage extends efContextElement {
     /**
      * Конструктор
-     * @param {{ vector: ef2DVectorValues, size: efSize, image: CanvasImageSource,
-     * subImage?: { vector: ef2DVectorValues, size: efSize, angle?: number, filter?: string }}} props - параметры
+     * @param {{ rect: ef2DRect, image: CanvasImageSource, subImage?:
+     * ef2DRect, angle?: number, filter?: string}} props - параметры
      */
     constructor(props) {
         super(props);
@@ -6369,18 +6123,347 @@ class efContextImage extends efContextElement {
 class efContextRect extends efContextElement {
     /**
      * Конструктор
-     * @param {{vector: ef2DVectorValues, size: efSize, fillColor?: string,
-     * strokeColor?: string, strokeWidth?: number, angle?: number}} props - параметры
+     * @param {{rect: ef2DRect, fillColor?: elyColor,
+     * strokeColor?: elyColor, strokeWidth?: number, angle?: number}} props - параметры
      */
     constructor(props) {
         super(props);
         /**
          * Толщина линии обводки
+         * @type {number}
          */
         this.strokeWidth = 1;
         this.strokeColor = props.strokeColor || undefined;
         this.fillColor = props.fillColor || undefined;
         this.strokeWidth = props.strokeWidth === undefined ? 1 : props.strokeWidth;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyAxis                                                              +
+ + Файл изменен: 28.12.2018 01:03:22                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Перечисление направлений в измерении
+ */
+class elyAxis {
+}
+/**
+ * Направление X
+ */
+elyAxis.x = "x";
+/**
+ * Направление Y
+ */
+elyAxis.y = "y";
+/**
+ * Направление Z
+ */
+elyAxis.z = "z";
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ef2DVector.ts                                                        +
+ + Файл изменен: 06.01.2019 05:03:43                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Прослушиваемый вектор.
+ *
+ * Используйте метод {@link ef2DVector::addChangeObserver} для прослушивания изменений вектора.
+ * @class ef2DVector
+ * @augments {elyObservable}
+ */
+class ef2DVector extends elyObservable {
+    /**
+     * Конструктор
+     * @param props
+     */
+    constructor(props = { x: 0, y: 0 }) {
+        super();
+        /**
+         * Свойство: ось x
+         */
+        this.xProperty = new elyObservableProperty(0);
+        /**
+         * Свойство: ось y
+         */
+        this.yProperty = new elyObservableProperty(0);
+        if (props.values) {
+            this.x(props.values.x);
+            this.y(props.values.y);
+        }
+        else {
+            this.x(props.x || 0);
+            this.y(props.y || 0);
+        }
+        this.xProperty.change(value => this.notificate("changed", [elyAxis.x, value, this.y()]));
+        this.yProperty.change(value => this.notificate("changed", [elyAxis.y, this.x(), value]));
+    }
+    /**
+     * Нулевой вектор
+     * @return {ef2DVector}
+     */
+    static zero() {
+        return new ef2DVector();
+    }
+    /**
+     * Возвращает и устанавливает ось x
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    x(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.xProperty);
+    }
+    /**
+     * Возвращает и устанавливает ось y
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    y(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.yProperty);
+    }
+    /**
+     * Добавляет наблюдатель: изменение координат
+     *
+     * Имя обсервера: changed
+     *
+     * @param o - наблюдатель
+     *
+     *
+     *     vc.addChangeObserver( (dir, nX, nY) => {
+     *        if( dir === elyAxis.x){
+     *          // Изменился X
+     *        } else {
+     *          // Изменился Y
+     *        }
+     *     });
+     *
+     *
+     */
+    addChangeObserver(o) {
+        this.addObserver("changed", o);
+        return this;
+    }
+    /**
+     * Преобразует объект в строку
+     * @return {string}
+     */
+    toString() {
+        return `ef2DVector{x: ${this.x()}, y: ${this.y()}}`;
+    }
+    /**
+     * Возвращает true, если векторы идентичны
+     * @param vector
+     */
+    equals(vector) {
+        return this.x() === vector.x() && this.y() === vector.y();
+    }
+    /**
+     * Возвращает константные значения вектора
+     */
+    getValues() {
+        return new ef2DVectorValues({ point: this });
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ef2DVectorValues.ts                                                  +
+ + Файл изменен: 04.01.2019 22:39:06                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Векторные константные значения
+ * @class ef2DVectorValues
+ */
+class ef2DVectorValues {
+    /**
+     * Создает и возвращает нулевой вектор
+     * @return {ef2DVectorValues}
+     */
+    static zero() {
+        return new ef2DVectorValues({ x: 0, y: 0 });
+    }
+    /**
+     * Конструктор
+     * @param {{ point?: ef2DVector, x?: number, y?: number }} props - параметры
+     */
+    constructor(props) {
+        if (props.point) {
+            this.x = props.point.x();
+            this.y = props.point.y();
+        }
+        else {
+            this.x = props.x || 0;
+            this.y = props.y || 0;
+        }
+    }
+    /**
+     * Создает вектор из значений
+     * @return {ef2DVector}
+     */
+    getVector() {
+        return new ef2DVector({ values: this });
+    }
+    /**
+     * Возвращает true, если векторные значения идентичны
+     * @param {ef2DVectorValues} vector - вектор сравнения
+     */
+    equals(vector) {
+        return this.x === vector.x && this.y === vector.y;
+    }
+    /**
+     * Преобразует объект в строку
+     */
+    toString() {
+        return `{x: ${this.x}, y: ${this.y}}`;
+    }
+    /**
+     * Возвращает новые значения, умноженные на x,y или на xy
+     * @param {{ x?: number, y?: number, xy?: number }} props
+     * @return {ef2DVectorValues}
+     */
+    getMultiplied(props) {
+        if (props.x && props.y)
+            return new ef2DVectorValues({ x: this.x * props.x, y: this.y * props.y });
+        if (props.xy)
+            return new ef2DVectorValues({ x: this.x * props.xy, y: this.y * props.xy });
+        return new ef2DVectorValues({ x: this.x, y: this.y });
+    }
+    /**
+     * Возвращает новые значения, сумированные с x,y или с xy
+     * @param {{ x?: number, y?: number, xy?: number }} props
+     * @return {ef2DVectorValues}
+     */
+    getAdd(props) {
+        if (props.x && props.y)
+            return new ef2DVectorValues({ x: this.x + props.x, y: this.y + props.y });
+        if (props.xy)
+            return new ef2DVectorValues({ x: this.x + props.xy, y: this.y + props.xy });
+        return new ef2DVectorValues({ x: this.x, y: this.y });
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ef2DRect.ts                                                          +
+ + Файл изменен: 06.01.2019 05:09:28                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Прямоугольник
+ */
+class ef2DRect {
+    /**
+     * Конструктор
+     * @param {{ position: ef2DVectorValues, size: efSize }} props
+     */
+    constructor(props) {
+        this.size = props.size;
+        this.position = props.position;
+    }
+    /**
+     * Возвращает вторую точку прямоугольника
+     * @return {ef2DVectorValues}
+     */
+    getSecondPosition() {
+        return new ef2DVectorValues({
+            x: this.position.x + this.size.width(),
+            y: this.position.y + this.size.height(),
+        });
+    }
+    /**
+     * Возвращает центральную позицию прямоугольника
+     * @return {ef2DVectorValues}
+     */
+    getCenterPosition() {
+        return new ef2DVectorValues({
+            x: this.position.x + (this.size.width() / 2),
+            y: this.position.y + (this.size.height() / 2),
+        });
+    }
+    /**
+     * Возвращает true, если точка находится в квадрате
+     * @param {ef2DVectorValues} point
+     * @return {boolean}
+     */
+    isPointInRect(point) {
+        const x = point.x;
+        const y = point.y;
+        const pos = this.position;
+        return y >= pos.y && y < pos.y + this.size.height()
+            && x >= pos.x && x < pos.x + this.size.width();
     }
 }
 
@@ -6413,12 +6496,12 @@ class efContextRect extends efContextElement {
 class efContextText extends efContextElement {
     /**
      * Конструктор
-     * @param {{ text: string, vector: ef2DVectorValues, font?: { size: number, fontName: string }, fillColor?: string,
-     * strokeColor?: string, strokeWidth?: number, alignCenter?: number, maxWidth?: number,
+     * @param {{ text: string, vector: ef2DVectorValues, font?: { size: number, fontName: string },
+     * fillColor?: elyColor, strokeColor?: elyColor, strokeWidth?: number, alignCenter?: number, maxWidth?: number,
      * lineSpacing?: number }} props
      */
     constructor(props) {
-        super(Object.assign({}, props, { size: efSize.zero() }));
+        super(Object.assign({}, props, { rect: new ef2DRect({ position: props.vector, size: efSize.zero() }) }));
         /**
          * Шрифт
          */
@@ -6501,26 +6584,26 @@ class efCanvasLayer extends elyView {
     draw(e) {
         this.getContext().save();
         if (e.angle)
-            this.rotateCanvas({ vector: e.vector, size: e.size, angle: e.angle });
+            this.rotateCanvas({ vector: e.rect.position, size: e.rect.size, angle: e.angle });
         if (e.filter)
             this.getContext().filter = e.filter;
         if (e instanceof efContextRect) {
             if (e.fillColor) {
-                this.getContext().fillStyle = e.fillColor;
-                this.getContext().fillRect(e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().fillStyle = e.fillColor.getHexString();
+                this.getContext().fillRect(e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
             }
             if (e.strokeColor) {
-                this.getContext().strokeStyle = e.strokeColor;
+                this.getContext().strokeStyle = e.strokeColor.getHexString();
                 this.getContext().lineWidth = e.strokeWidth;
-                this.getContext().strokeRect(e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().strokeRect(e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
             }
         }
         else if (e instanceof efContextImage) {
             if (e.subImage) {
-                this.getContext().drawImage(e.image, e.vector.x, e.vector.y, e.size.width(), e.size.height(), e.subImage.vector.x, e.subImage.vector.y, e.subImage.size.width(), e.subImage.size.height());
+                this.getContext().drawImage(e.image, e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height(), e.subImage.position.x, e.subImage.position.y, e.subImage.size.width(), e.subImage.size.height());
             }
             else {
-                this.getContext().drawImage(e.image, e.vector.x, e.vector.y, e.size.width(), e.size.height());
+                this.getContext().drawImage(e.image, e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
             }
         }
         else if (e instanceof efContextText) {
@@ -6534,12 +6617,12 @@ class efCanvasLayer extends elyView {
             let y = e.font.size;
             for (const str of pieces) {
                 if (e.fillColor) {
-                    this.getContext().fillStyle = e.fillColor;
-                    this.getContext().fillText(str, e.vector.x, e.vector.y + y, e.maxWidth);
+                    this.getContext().fillStyle = e.fillColor.getHexString();
+                    this.getContext().fillText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
                 }
                 if (e.strokeColor) {
-                    this.getContext().strokeStyle = e.strokeColor;
-                    this.getContext().strokeText(str, e.vector.x, e.vector.y + y, e.maxWidth);
+                    this.getContext().strokeStyle = e.strokeColor.getHexString();
+                    this.getContext().strokeText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
                 }
                 y += (e.font.size + e.lineSpacing);
             }
@@ -6587,227 +6670,23 @@ class efCanvasLayer extends elyView {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efDirectionName.ts                                                   +
- + Файл изменен: 28.12.2018 01:05:58                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Перечисление направлений
- */
-class efDirectionName {
-    /**
-     * Конструктор
-     * @ignore
-     * @param val
-     */
-    constructor(val) {
-        this.value = val;
-    }
-    /**
-     * Список
-     */
-    static rawList() {
-        return {
-            bottom: efDirectionName.bottom.value,
-            left: efDirectionName.left.value,
-            right: efDirectionName.right.value,
-            top: efDirectionName.top.value,
-        };
-    }
-    /**
-     * Список
-     */
-    static list() {
-        return {
-            bottom: efDirectionName.bottom,
-            left: efDirectionName.left,
-            right: efDirectionName.right,
-            top: efDirectionName.top,
-        };
-    }
-    /**
-     * Преобразует в строку
-     */
-    toString() {
-        return this.value;
-    }
-}
-/**
- * Наверх
- */
-efDirectionName.up = new efDirectionName("top");
-/**
- * Наверх
- */
-efDirectionName.down = new efDirectionName("bottom");
-/**
- * Наверх
- */
-efDirectionName.top = new efDirectionName("top");
-/**
- * Вниз
- */
-efDirectionName.bottom = new efDirectionName("bottom");
-/**
- * Налево
- */
-efDirectionName.left = new efDirectionName("left");
-/**
- * Направо
- */
-efDirectionName.right = new efDirectionName("right");
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efOffset.ts                                                          +
- + Файл изменен: 28.12.2018 00:40:39                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Пзиция отступа
- */
-class efOffset extends elyObservable {
-    /**
-     * Конструктор
-     * @param props
-     */
-    constructor(props = {
-        bottom: 0,
-        left: 0,
-        right: 0,
-        top: 0,
-    }) {
-        super();
-        /**
-         * Свойство: положение сверху
-         */
-        this.topProperty = new elyObservableProperty(0);
-        /**
-         * Свойство: положение снизу
-         */
-        this.bottomProperty = new elyObservableProperty(0);
-        /**
-         * Свойство: положение слева
-         */
-        this.leftProperty = new elyObservableProperty(0);
-        /**
-         * Свойство: положение справа
-         */
-        this.rightProperty = new elyObservableProperty(0);
-        this.top(props.top);
-        this.left(props.left);
-        this.right(props.right);
-        this.bottom(props.bottom);
-        this.topProperty.change(value => this.notificate("changed", [efDirectionName.top, value, this.bottom(), this.left(), this.right()]));
-        this.bottomProperty.change(value => this.notificate("changed", [efDirectionName.bottom, this.top(), value, this.left(), this.right()]));
-        this.leftProperty.change(value => this.notificate("changed", [efDirectionName.left, this.top(), this.bottom(), value, this.right()]));
-        this.rightProperty.change(value => this.notificate("changed", [efDirectionName.right, this.top(), this.bottom(), this.left(), value]));
-    }
-    /**
-     * Возвращает и устанавливает положение сверху
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    top(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.topProperty);
-    }
-    /**
-     * Возвращает и устанавливает положение снизу
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    bottom(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.bottomProperty);
-    }
-    /**
-     * Возвращает и устанавливает положение слева
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    left(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.leftProperty);
-    }
-    /**
-     * Возвращает и устанавливает положение справа
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    right(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.rightProperty);
-    }
-    /**
-     * Добавляет наблюдатель: изменение отступа
-     *
-     * Имя обсервера: changed
-     *
-     * @param o - наблюдатель
-     *
-     *
-     *     vc.addChangeObserver( (dir, nTop, nBottom, nLeft, nRight) => {
-     *        if( dir === efDirectionName.top){
-     *          // Изменился top
-     *        } // ...
-     *     });
-     *
-     *
-     */
-    addChangeObserver(o) {
-        this.addObserver("changed", o);
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
  + Файл: elyStyle.ts                                                          +
  + Файл изменен: 05.12.2018 23:47:11                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Стили ely.flat
+ * @class elyStyle
+ * @augments {elyEnum}
  */
-class elyStyle {
+class elyStyle extends elyEnum {
     /**
      * Конструктор
      * @ignore
      * @param val
      */
     constructor(val) {
-        this.value = val;
+        super(val);
     }
     /**
      * Список
@@ -6852,12 +6731,6 @@ class elyStyle {
      */
     static byName(name) {
         return new elyStyle(name);
-    }
-    /**
-     * Преобразует в строку
-     */
-    toString() {
-        return this.value;
     }
 }
 /**
@@ -7065,6 +6938,541 @@ var elyButton$1 = elyButton;
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
+ + Файл: elyFieldProtocol.ts                                                  +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Протокол поля ввода данных
+ * @class elyFieldProtocol
+ * @template T
+ * @augments elyView
+ * @version 1.2
+ *
+ * #Лог важных изменений:
+ */
+class elyFieldProtocol extends elyView {
+    /**
+     * Конструктор
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Переменная изменения значения
+         * @type {elyObservableProperty<boolean>}
+         */
+        this.editableProperty = new elyObservableBoolean(true);
+        /**
+         * Значение
+         * @type {elyObservableProperty<{T}>}
+         */
+        this.valueProperty = new elyObservableProperty();
+    }
+    /**
+     * Возвращает значение поля или устанавливает его
+     * @param {T} [value] - значение
+     * @return {this}
+     */
+    value(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
+    }
+    /**
+     * Вовращает значение доступности поля или устанавливает его
+     * @param {boolean} [flag] - флаг доступности редактирования
+     * @return {elyFieldProtocol|boolean}
+     */
+    editable(flag) {
+        return elyObservableProperty.simplePropertyAccess(this, flag, this.editableProperty);
+    }
+    /**
+     * Сравнивает значения.
+     * Возвращает true, если значения одинаковые.
+     *
+     * @param {T} value - значения для сравнения
+     * @return {boolean}
+     */
+    compare(value) {
+        return this.value() === value;
+    }
+    /**
+     * Очищает значение
+     * @return {elyFieldProtocol}
+     */
+    clearValue() {
+        return this.value(this.defaultValue());
+    }
+    /**
+     * Отмечает поле, как поле с ошибкой
+     * @param flag
+     * @return {this}
+     */
+    error(flag) {
+        // Nothing is done.
+        return this;
+    }
+    /**
+     * Возвращает true, если value идентично стандартному значению.
+     *
+     * Такой метод необходим в проверке изменения значения, ведь, когда вызывается метод
+     * elyField.clearValue(), он активирует изменения valueProperty поля.
+     *
+     *
+     *     let field = new ely.textField();
+     *     field.change( (value) => {
+     *        if(field.isValueDefault(value) === false){
+     *            // Теперь мы уверены, что значение было
+     *            // изменено, а не сброшено.
+     *        }
+     *     });
+     *
+     *
+     *
+     * Метод {@link elyFieldProtocol.change} имеет параметр clearanceSafe.
+     * Подробнее смотрите {@link elyFieldProtocol.change}.
+     * @param {T} value
+     * @return {boolean}
+     */
+    isValueDefault(value) {
+        return value === this.defaultValue();
+    }
+    /**
+     * Добавляет слушатель изменения значения поля
+     * @param {function(val: T, oldVal: T | null)} o
+     * @param {boolean} clearanceSafe - защита от сброса
+     *
+     * Из примера, указанного в методе {@link elyFieldProtocol.isValueDefault} известно,
+     * что сброс значения активирует слушатель. Утсановите параметр clearanceSafe в true, тогда
+     * добавленный наблюдатель observer будет немного модифицирован
+     * (как описано в {@link elyFieldProtocol.isValueDefault}).
+     */
+    change(o, clearanceSafe = false) {
+        if (!clearanceSafe)
+            this.valueProperty.change(o);
+        else
+            this.valueProperty.change((nv, ov) => {
+                if (this.isValueDefault(nv))
+                    return;
+                o(nv, ov);
+            });
+        return this;
+    }
+    /**
+     * Устанавливает строку для преложения ввода
+     * @param {string} [text]
+     * @return {this|string}
+     */
+    placeholder(text) {
+        if (text === undefined)
+            return this.attribute("placeholder");
+        return this.attribute("placeholder", text);
+    }
+    /**
+     * Применяет стандартные опции протокола
+     * @param options
+     * @protected
+     */
+    applyProtocolOptions(options = {}) {
+        this.value((options.value === undefined || options.value === null) ? this.defaultValue() : options.value);
+        if (options.placeholder)
+            this.placeholder(options.placeholder);
+        if (options.editable)
+            this.editable(options.editable);
+        if (options.hint)
+            this.hint(options.hint);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyInput.ts                                                          +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент: Элемент ввода текст
+ * @version 1.0
+ * @class elyInput
+ */
+class elyInput extends elyFieldProtocol {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(Object.assign({ tag: options.tag || "input", class: "ef-input" }, options));
+        this.valueProperty.change((newValue) => this.getDocument().value = newValue);
+        this.getDocument().onchange = () => this.value(this.getDocument().value);
+        this.editableProperty.change((newValue) => this.getDocument().disabled = !newValue);
+        if (options.type)
+            this.attribute("type", options.type.toString());
+        this.applyProtocolOptions(options);
+        this.getDocument().oninput = () => this.notificate("input", [this.getDocument().value]);
+        if (options.fieldIcon) {
+            this.elyViewWillDraw(() => {
+                this.getDocument().before(new elyIconView$1({
+                    class: "ef-input-status",
+                    iconName: options.fieldIcon,
+                }).getDocument());
+            });
+        }
+    }
+    /**
+     * Возвращает исходной элемент
+     */
+    getDocument() {
+        return this.__view;
+    }
+    /**
+     * Возвращает значение по умолчанию
+     */
+    defaultValue() {
+        return "";
+    }
+    /**
+     * Возвращает true, если значение пустое
+     */
+    isEmpty() {
+        return this.value() === "";
+    }
+    /**
+     * Добавляет слушатель изменения поля
+     * @param observer
+     */
+    addInputObserver(observer) {
+        this.addObserver("input", observer);
+        return this;
+    }
+    isValidData() {
+        return true;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyBodyView.ts                                                       +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/*
+ *
+ *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ *   ,--. o                   |    o
+ *   |   |.,---.,---.,---.    |    .,---.,---.
+ *   |   |||---'|   ||   |    |    ||   ||   |
+ *   `--' ``---'`---|`---'    `---'``   '`---|
+ *              `---'                    `---'
+ *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
+ * Mail: <diegoling33@gmail.com>
+ *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле
+ * COPYING, который Вы должны были получить в рамках распространения ПО.
+ *
+ * Использование, изменение, копирование, распространение, обмен/продажа
+ * могут выполняться исключительно в согласии с условиями файла COPYING.
+ *
+ * Файл: elyBodyView.ts
+ * Файл создан: 19.11.2018 20:52:55
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ *
+ */
+/**
+ * Тело документа
+ */
+class elyBodyView extends elyControl$1 {
+    /**
+     * Конструктор
+     * @ignore
+     */
+    constructor() {
+        super({ element: document.body });
+    }
+}
+/**
+ * Основной объект тела документа
+ */
+elyBodyView.default = new elyBodyView();
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyNotificationView.ts                                               +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Оповещения
+ *
+ * elyNotification (TypeScript)
+ * version 0.1
+ */
+class elyNotificationView extends elyControl$1 {
+    /**
+     * Конструктор
+     * @param props
+     */
+    constructor(props = elyNotificationView.defaults) {
+        super(props);
+        this.notificationHeight = 0;
+        /**
+         * Флаг нотифицирования
+         */
+        this._isNotified = false;
+        this._isClosable = true;
+        this.options = elyNotificationView.defaults;
+        for (const index in props)
+            this.options[index] = props[index];
+        const scsize = window.outerWidth;
+        if (this.options.width > scsize)
+            this.options.width = scsize - 20;
+        const absoluteWidth = (this.options.width) - 37;
+        // this.identifier("notification_" + Math.floor(Math.random() * (999999 - 1000 + 1) + 1000));
+        this.addClass("ely-notification-panel");
+        this.css({ "background-color": this.options.backgroundColor, "width": this.options.width });
+        const obj = {};
+        obj[this.getDisplayPositions()[0]] = 10 + "px";
+        obj[this.getDisplayPositions()[1]] = 10 + "px";
+        this.css(obj);
+        //
+        //  Close button
+        //
+        this.closeButton = new elyControl$1({ tag: "b", class: "ely-notification-close-button" });
+        this.closeButton.css({ color: this.options.titleColor });
+        this.closeButton.getDocument().innerHTML = "&times;";
+        //
+        //  Title
+        //
+        this.titleView = new elyControl$1({ class: "ely-notification-title-label" });
+        this.titleView.css({ width: absoluteWidth + "px", color: this.options.titleColor });
+        this.titleView.getDocument().innerHTML = this.options.title || "";
+        //
+        //  Message
+        //
+        this.messageView = new elyControl$1({ class: "ely-notification-message-label" });
+        this.messageView.css({ width: absoluteWidth + "px", color: this.options.messageColor });
+        this.messageView.getDocument().innerHTML = this.options.message || "";
+        this.contentView = new elyControl$1({ class: "ely-notification-content" });
+        this.contentView.css({
+            "border-top": "1px solid " + this.options.sepColor,
+            "color": this.options.contentColor,
+            "width": this.options.width + "px",
+        });
+        if (this.options.content)
+            this.contentView.addSubView(new elyTextView$1({ text: this.options.content }));
+        this.hide();
+        this.closable(this.options.closable);
+    }
+    /**
+     * Закрывает все уведомения, кроме последнего
+     */
+    static closeAllNotificationsToLast() {
+        if (elyNotificationView.defaults.notificationsData.length > 0) {
+            for (let i = 0; i < elyNotificationView.defaults.notificationsData.length - 1; i++)
+                elyNotificationView.defaults.notificationsData[i].dismiss();
+        }
+    }
+    /**
+     * Возвращает позиции оповещения
+     */
+    getDisplayPositions() {
+        return this.options.displayPosition.split("/");
+    }
+    /**
+     * Оторбражает оповещение
+     */
+    present() {
+        if (this._isNotified)
+            return this;
+        //
+        // Set-up
+        //
+        if (this.closable())
+            this.addSubView(this.closeButton);
+        if (this.options.title || this.titleView.getDocument().innerHTML !== "")
+            this.addSubView(this.titleView);
+        this.addSubView(this.messageView);
+        if (this.options.content || this.contentView.getDocument().innerHTML !== "")
+            this.addSubView(this.contentView);
+        this._isNotified = true;
+        elyBodyView.default.addSubView(this);
+        this.show();
+        this.notificationHeight = this.offSize().height;
+        this.hide();
+        const notifications = elyNotificationView.defaults.notificationsData;
+        const margin = elyNotificationView.defaults.notificationsMargin + this.notificationHeight;
+        const displayPositions = this.getDisplayPositions();
+        this.notificate("show");
+        if (notifications.length > 0) { // In case if notifications are on the screen
+            switch (displayPositions[0]) { // Moves all notifications in true direction
+                case "bottom":
+                    for (const item of notifications)
+                        item.css({ bottom: "+=" + margin + "px" });
+                    break;
+                default:
+                    for (const item of notifications)
+                        item.css({ top: "+=" + margin + "px" });
+                    break;
+            }
+        }
+        notifications.push(this); // Adds notification to list
+        // In case if notifications is too much, clear all to last
+        if (notifications.length > elyNotificationView.defaults.limit)
+            elyNotificationView.closeAllNotificationsToLast();
+        // Fading and moving the notification
+        if (notifications.length > 0)
+            setTimeout(() => {
+                this.fadeIn();
+            }, this.options.moveTime);
+        else
+            this.fadeIn();
+        this.closeButton.addObserver("click", () => {
+            this.dismiss();
+        });
+        if (this.isNotified() && this.closable())
+            setTimeout(() => {
+                this.dismiss();
+            }, this.options.fadeTime + this.options.delay);
+        return this;
+    }
+    /**
+     * Удаляет оповещение с экрана
+     *
+     * @param force - принудительное удаление объкта с экранаx
+     */
+    dismiss(force = false) {
+        if (this.closable() || force) {
+            this.notificate("close");
+            this._isNotified = false;
+            this.fadeOut();
+            const noties = elyNotificationView.defaults.notificationsData;
+            setTimeout(() => {
+                if (noties.length > 0)
+                    if (this.options.displayPosition.split("/")[0] === "top")
+                        for (let j = noties.indexOf(this); j >= 0; j--)
+                            noties[j].css({
+                                top: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
+                            });
+                    else
+                        for (let j = noties.indexOf(this); j >= 0; j--)
+                            noties[j].css({
+                                bottom: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
+                            });
+                const cache = [];
+                for (const item of noties)
+                    if (item !== this)
+                        cache.push(item);
+                elyNotificationView.defaults.notificationsData = cache;
+                try {
+                    this.getDocument().parentNode.removeChild(this.getDocument());
+                }
+                catch (e) {
+                    // Nothing is done
+                }
+            }, this.options.fadeTime);
+        }
+    }
+    /**
+     * Состояние закрывающегося оповещения
+     * @param value
+     */
+    closable(value) {
+        if (value === undefined) {
+            return this._isClosable;
+        }
+        this._isClosable = value;
+        return this;
+    }
+    /**
+     * Возвращает состояние оповещения
+     */
+    isNotified() {
+        return this._isNotified;
+    }
+    hide() {
+        this.hidden(true);
+    }
+    show() {
+        this.hidden(false);
+    }
+}
+/**
+ * Стандартные параметры
+ */
+elyNotificationView.defaults = {
+    animateDuration: 60000,
+    animateSpeed: 700,
+    animation: false,
+    backgroundColor: "#FFFFFF",
+    closable: true,
+    contentColor: "#595959",
+    delay: 5000,
+    displayPosition: "top/right",
+    fadeTime: 500,
+    limit: 15,
+    messageColor: "#595959",
+    moveTime: 500,
+    notificationsData: [],
+    notificationsMargin: 10,
+    sepColor: "#EEEEEE",
+    titleColor: "#595959",
+    width: 400,
+};
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
  + Файл: elyUIExt.ts                                                          +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -7111,6 +7519,190 @@ Array.prototype.flexGridView = function () {
 Array.prototype.listView = function (options) {
     return new elyListView(Object.assign({ items: this }, options));
 };
+/**
+ * Создает оповещение
+ * @function
+ * @param {string} text - текст оповещения
+ * @param {string?} title - заголовок оповещения
+ * @param {string?} content - контента
+ */
+Window.prototype.notifi = (text, title, content) => {
+    new elyNotificationView({ title, message: text, content }).present();
+};
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyField.ts                                                          +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+var elyField_1;
+/**
+ * @interface elyDataFieldOptions
+ * @template T
+ * @property {T?} value
+ * @property {string?} placeholder
+ * @property {T?} defaultValue
+ * @property {boolean?} editable
+ * @property {string?} actionIcon
+ * @property {string?} hint
+ */
+/**
+ * Элемент: Поле ввода <T>
+ *     @class elyField
+ *     @template T
+ *     @augments elyFieldProtocol<T>
+ */
+let elyField = elyField_1 = class elyField extends elyFieldProtocol {
+    /**
+     * Конструктор
+     * @param options
+     * @param accessory
+     */
+    constructor(options = {}, accessory) {
+        super();
+        /**
+         * Таймер выделения
+         */
+        this.__markTimer = null;
+        this.addClass("ef-control", "ef-control-opacity");
+        this.fieldLineView = new elyControl$1({ class: "ef-input-group" });
+        this.accessoryView = accessory;
+        this.actionIconView = new elyIconView$1({ class: "ef-input-status" });
+        this.acceptDoubleClickActivation = true;
+        this.actionIconView.hidden(true);
+        if (options.actionIcon) {
+            this.actionIconView.iconName(options.actionIcon).hidden(false);
+        }
+        this.fieldLineView.addSubView(this.accessoryView);
+        this.fieldLineView.addSubView(this.actionIconView);
+        this.getDocument().appendChild(this.fieldLineView.getDocument());
+        this.actionIconView.getDocument().onclick = () => {
+            this.notificate("actionClick");
+            this.actionIconDidClick();
+        };
+        this.getDocument().ondblclick = () => {
+            if (this.acceptDoubleClickActivation)
+                this.actionIconDidClick();
+        };
+        if (options.hint)
+            this.hint(options.hint);
+    }
+    /**
+     * Возвращает true, если объект elyField
+     * @param view
+     */
+    static isField(view) {
+        return view instanceof elyField_1;
+    }
+    /**
+     * Стандартное значение
+     */
+    defaultValue() {
+        // @ts-ignore
+        return this.__defaultValue === undefined ? null : this.__defaultValue;
+    }
+    /**
+     * Устанавливает ручной обработчик
+     * @param closure
+     */
+    setManualValidation(closure) {
+        this.manualValidation = closure;
+        return this;
+    }
+    /**
+     * Помечает поле, как ошибочное.
+     *
+     * Отметка выполняется графически, применяя класс
+     * `error` к классу `ef-input-group`.
+     *
+     * @param flag
+     */
+    error(flag = true) {
+        if (this.__markTimer) {
+            clearTimeout(this.__markTimer);
+        }
+        if (flag) {
+            this.fieldLineView.addClass("error");
+            this.__markTimer = setTimeout(() => {
+                this.error(false);
+                this.__markTimer = null;
+            }, 1500);
+        }
+        else {
+            this.fieldLineView.removeClass("error");
+        }
+        return this;
+    }
+    /**
+     * Утанавливает подсказку
+     * @param {String} hint - подсказка
+     * @return {elyView}
+     */
+    hint(hint) {
+        const selector = this.getDocument().querySelector(".ef-hint");
+        if (typeof hint === "string") {
+            if (selector) {
+                selector.innerHTML = hint;
+            }
+            else {
+                this.fieldLineView.css({ "margin-bottom": "15px" });
+                const hintView = document.createElement("div");
+                hintView.classList.add("ef-hint");
+                hintView.innerText = hint;
+                this.getDocument().appendChild(hintView);
+            }
+            return this;
+        }
+        else {
+            if (selector)
+                return selector.innerHTML;
+            return "";
+        }
+    }
+    /**
+     * Устанавливает подсказку для ввода
+     * @param text
+     */
+    placeholder(text) {
+        this.accessoryView.placeholder(text);
+        return this;
+    }
+    /**
+     * Проверяет валидость данных
+     */
+    isValidData() {
+        if (this.manualValidation)
+            return this.manualValidation(this.value());
+        return true;
+    }
+    /**
+     * Обработчик нажатия на иконку активации
+     */
+    actionIconDidClick() {
+        // Nothing is done
+    }
+};
+elyField = elyField_1 = __decorate([
+    designable("editable", elyDesignableFieldState.GETSET, "boolean"),
+    designable("placeholder", elyDesignableFieldState.SET, "string"),
+    designable("hint", elyDesignableFieldState.GETSET, "string"),
+    designable("value", elyDesignableFieldState.GETSET, "string")
+], elyField);
+var elyField$1 = elyField;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -7402,67 +7994,6 @@ var elyStaticGridView$1 = elyStaticGridView;
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyBodyView.ts                                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/*
- *
- *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *   ,--. o                   |    o
- *   |   |.,---.,---.,---.    |    .,---.,---.
- *   |   |||---'|   ||   |    |    ||   ||   |
- *   `--' ``---'`---|`---'    `---'``   '`---|
- *              `---'                    `---'
- *
- * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
- * Mail: <diegoling33@gmail.com>
- *
- * Это программное обеспечение имеет лицензию, как это сказано в файле
- * COPYING, который Вы должны были получить в рамках распространения ПО.
- *
- * Использование, изменение, копирование, распространение, обмен/продажа
- * могут выполняться исключительно в согласии с условиями файла COPYING.
- *
- * Файл: elyBodyView.ts
- * Файл создан: 19.11.2018 20:52:55
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *
- */
-/**
- * Тело документа
- */
-class elyBodyView extends elyControl$1 {
-    /**
-     * Конструктор
-     * @ignore
-     */
-    constructor() {
-        super({ element: document.body });
-    }
-}
-/**
- * Основной объект тела документа
- */
-elyBodyView.default = new elyBodyView();
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
  + Файл: elyPanelView.ts                                                      +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -7527,6 +8058,91 @@ elyPanelView = __decorate([
 var elyPanelView$1 = elyPanelView;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyDirection.ts                                                +
+ + Файл изменен: 28.12.2018 01:05:58                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Перечисление направлений
+ * @class elyDirection
+ * @augments {elyEnum<string>}
+ */
+class elyDirection extends elyEnum {
+    /**
+     * Конструктор
+     * @ignore
+     * @param val
+     */
+    constructor(val) {
+        super(val);
+    }
+    /**
+     * Список
+     */
+    static rawList() {
+        return {
+            bottom: elyDirection.bottom.value,
+            left: elyDirection.left.value,
+            right: elyDirection.right.value,
+            top: elyDirection.top.value,
+        };
+    }
+    /**
+     * Список
+     */
+    static list() {
+        return {
+            bottom: elyDirection.bottom,
+            left: elyDirection.left,
+            right: elyDirection.right,
+            top: elyDirection.top,
+        };
+    }
+}
+/**
+ * Наверх
+ */
+elyDirection.up = new elyDirection("top");
+/**
+ * Наверх
+ */
+elyDirection.down = new elyDirection("bottom");
+/**
+ * Наверх
+ */
+elyDirection.top = new elyDirection("top");
+/**
+ * Вниз
+ */
+elyDirection.bottom = new elyDirection("bottom");
+/**
+ * Налево
+ */
+elyDirection.left = new elyDirection("left");
+/**
+ * Направо
+ */
+elyDirection.right = new elyDirection("right");
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -7545,21 +8161,8 @@ var elyPanelView$1 = elyPanelView;
  + Файл: color.picker.ts                                                      +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/* tslint:disable */
 (function (win, doc, NS) {
     var instance = '__instance__', first = 'firstChild', delay = setTimeout;
-    function is_set(x) {
-        return typeof x !== "undefined";
-    }
-    function is_string(x) {
-        return typeof x === "string";
-    }
-    function is_object(x) {
-        return typeof x === "object";
-    }
-    function object_length(x) {
-        return Object.keys(x).length;
-    }
     function edge(a, b, c) {
         if (a < b)
             return b;
@@ -7570,81 +8173,19 @@ var elyPanelView$1 = elyPanelView;
     function num(i, j) {
         return parseInt(i, j || 10);
     }
-    function round(i) {
-        return Math.round(i);
-    }
-    // OK
-    // [h, s, v] ... 0 <= h, s, v <= 1
-    // @ts-ignore
     function HSV2RGB(a) {
-        var h = +a[0], s = +a[1], v = +a[2], r, g, b, i, f, p, q, t;
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
-        i = i || 0;
-        q = q || 0;
-        t = t || 0;
-        switch (i % 6) {
-            case 0:
-                r = v, g = t, b = p;
-                break;
-            case 1:
-                r = q, g = v, b = p;
-                break;
-            case 2:
-                r = p, g = v, b = t;
-                break;
-            case 3:
-                r = p, g = q, b = v;
-                break;
-            case 4:
-                r = t, g = p, b = v;
-                break;
-            case 5:
-                r = v, g = p, b = q;
-                break;
-        }
-        // @ts-ignore
-        return [round(r * 255), round(g * 255), round(b * 255)];
+        const rgb = elyColorUtils.hsv2rgb({ hue: +a[0], saturation: +a[1], value: +a[2] });
+        return [Math.round(rgb.red * 255), Math.round(rgb.green * 255), Math.round(rgb.blue * 255)];
     }
-    // OK
-    // @ts-ignore
     function HSV2HEX(a) {
         return RGB2HEX(HSV2RGB(a));
     }
-    // OK
-    // [r, g, b] ... 0 <= r, g, b <= 255
-    // @ts-ignore
     function RGB2HSV(a) {
-        var r = +a[0], g = +a[1], b = +a[2], max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min, h, s = (max === 0 ? 0 : d / max), v = max / 255;
-        switch (max) {
-            case min:
-                h = 0;
-                break;
-            case r:
-                h = (g - b) + d * (g < b ? 6 : 0);
-                h /= 6 * d;
-                break;
-            case g:
-                h = (b - r) + d * 2;
-                h /= 6 * d;
-                break;
-            case b:
-                h = (r - g) + d * 4;
-                h /= 6 * d;
-                break;
-        }
-        return [h, s, v];
+        const res = elyColorUtils.rgb2hsv({ red: +a[0], green: +a[1], blue: +a[2] });
+        return [res.hue, res.saturation, res.value];
     }
-    // OK
     function RGB2HEX(a) {
-        var s = +a[2] | (+a[1] << 8) | (+a[0] << 16);
-        // @ts-ignore
-        s = '000000' + s.toString(16);
-        // @ts-ignore
-        return s.slice(-6);
+        return elyColorUtils.rgb2hex({ red: +a[0], green: +a[1], blue: +a[2] });
     }
     // rrggbb or rgb //ok
     // @ts-ignore
@@ -7664,7 +8205,7 @@ var elyPanelView$1 = elyPanelView;
     }
     // convert range from `0` to `1` into `0` to `360` and `0` to `100` in color
     function _2HSV_pub(a) {
-        return [round(+a[0] * 360), round(+a[1] * 100), round(+a[2] * 100)];
+        return [Math.round(+a[0] * 360), Math.round(+a[1] * 100), Math.round(+a[2] * 100)];
     }
     // convert range from `0` to `255` in color into range from `0` to `1`
     function _2RGB_pri(a) {
@@ -7672,7 +8213,7 @@ var elyPanelView$1 = elyPanelView;
     }
     // *
     function parse(x) {
-        if (is_object(x))
+        if (typeof x === "object")
             return x;
         var rgb = /\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i.exec(x), hsv = /\s*hsv\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i.exec(x), hex = x[0] === '#' && x.match(/^#([\da-f]{3}|[\da-f]{6})$/i);
         if (hex) {
@@ -7749,9 +8290,9 @@ var elyPanelView$1 = elyPanelView;
             return new $$(source, events);
         }
         // store color picker instance to `CP.__instance__`
-        $$[instance][source.id || source.name || object_length($$[instance])] = $;
+        $$[instance][source.id || source.name || elyUtils.count($$[instance])] = $;
         // trigger color picker panel on click by default
-        if (!is_set(events) || events === true) {
+        if (!elyGuard.isSet(events) || events === true) {
             events = on_down;
         }
         // add event
@@ -7818,7 +8359,7 @@ var elyPanelView$1 = elyPanelView;
         }
         // get color data
         function get_data(a) {
-            return _ || (is_set(a) ? a : false);
+            return _ || (elyGuard.isSet(a) ? a : false);
         }
         // set color data
         function set_data(a) {
@@ -7826,26 +8367,26 @@ var elyPanelView$1 = elyPanelView;
         }
         // add hook
         function add(ev, fn, id) {
-            if (!is_set(ev))
+            if (!elyGuard.isSet(ev))
                 return hooks;
             // @ts-ignore
-            if (!is_set(fn))
+            if (!elyGuard.isSet(fn))
                 return hooks[ev];
             // @ts-ignore
-            if (!is_set(hooks[ev]))
+            if (!elyGuard.isSet(hooks[ev]))
                 hooks[ev] = {};
             // @ts-ignore
-            if (!is_set(id))
-                id = object_length(hooks[ev]);
+            if (!elyGuard.isSet(id))
+                id = elyUtils.count(hooks[ev]);
             // @ts-ignore
             return hooks[ev][id] = fn, $;
         }
         // remove hook
         function remove(ev, id) {
-            if (!is_set(ev))
+            if (!elyGuard.isSet(ev))
                 return hooks = {}, $;
             // @ts-ignore
-            if (!is_set(id))
+            if (!elyGuard.isSet(id))
                 return hooks[ev] = {}, $;
             // @ts-ignore
             return delete hooks[ev][id], $;
@@ -7853,9 +8394,9 @@ var elyPanelView$1 = elyPanelView;
         // trigger hook
         function trigger(ev, a, id) {
             // @ts-ignore
-            if (!is_set(hooks[ev]))
+            if (!elyGuard.isSet(hooks[ev]))
                 return $;
-            if (!is_set(id)) {
+            if (!elyGuard.isSet(id)) {
                 // @ts-ignore
                 for (var i in hooks[ev]) {
                     // @ts-ignore
@@ -7864,7 +8405,7 @@ var elyPanelView$1 = elyPanelView;
             }
             else {
                 // @ts-ignore
-                if (is_set(hooks[ev][id])) {
+                if (elyGuard.isSet(hooks[ev][id])) {
                     // @ts-ignore
                     hooks[ev][id].apply($, a);
                 }
@@ -8063,6 +8604,7 @@ var elyPanelView$1 = elyPanelView;
             }
             // @ts-ignore
         }
+        // @ts-ignore
         create(1);
         delay(function () {
             var a = [HSV2HEX(HSV), $];
@@ -8079,9 +8621,9 @@ var elyPanelView$1 = elyPanelView;
             ww = offset(win), to = offset(source);
             left = to.l + ww.l;
             top = to.t + ww.t + size(source).h; // drop!
-            if (is_object(o)) {
-                is_set(o[0]) && (left = o[0]);
-                is_set(o[1]) && (top = o[1]);
+            if (typeof o === "object") {
+                elyGuard.isSet(o[0]) && (left = o[0]);
+                elyGuard.isSet(o[1]) && (top = o[1]);
             }
             else {
                 var min_x = ww.l, min_y = ww.t, max_x = ww.l + w.w - P_W - screen_w, max_y = ww.t + w.h - P_H - screen_h;
@@ -8102,9 +8644,9 @@ var elyPanelView$1 = elyPanelView;
         // @ts-ignore
         $.set = function (a) {
             // @ts-ignore
-            if (!is_set(a))
+            if (a === undefined)
                 return get_data();
-            if (is_string(a)) {
+            if (typeof a === "string") {
                 a = $$.parse(a);
             }
             // @ts-ignore
@@ -8173,13 +8715,13 @@ var elyPanelView$1 = elyPanelView;
  *
  *
  */
-let elyColorPickerField = class elyColorPickerField extends elyField$1 {
+let elyColorPickerField = class elyColorPickerField extends elyFieldView {
     /**
      * Конструктор
      * @param options
      */
     constructor(options = {}) {
-        super({}, new elyInput(Object.assign({ class: "ef-input", tag: "input" })));
+        super({ accessory: new elyControl$1({ tag: "input", class: "ef-input" }) });
         /**
          * Элемент отображения цвета
          * @type {elyControl}
@@ -8190,59 +8732,68 @@ let elyColorPickerField = class elyColorPickerField extends elyField$1 {
          * @type {elyControl}
          */
         this.colorThumbnail = new elyControl$1();
+        this.actionIconView = new elyControl$1({ class: "ef-input-status ef-color-pict" });
+        const accessory = this.accessoryView.getDocument();
         // this.colorThumbnail.addClass("bg-primary");
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
-        this.actionIconView.removeClass("fa").addClass("ef-color-pict");
         this.colorThumbnail.getDocument().innerHTML = "&nbsp";
+        this.valueProperty.set(elyColor.black());
+        this.getDocument().append(this.actionIconView.getDocument());
+        this.actionIconView.addObserver("click", () => this.editableProperty.toggle());
         this.valueProperty.change(value => {
             this.picker.set(value.toString());
-            this.accessoryView.value(value.toString());
-            this.colorThumbnail.css({ "background-color": value.getDarker(0.2).toString() });
-            this.accessoryView.css({ color: value.getDarker(0.14).toString() });
+            accessory.value = (value.toString());
+            this.colorThumbnail.css({ "background-color": value.getDarkerColor(0.2).toString() });
+            this.accessoryView.css({ color: value.getDarkerColor(0.14).toString() });
         });
         this.editableProperty.change((value) => {
-            this.accessoryView.getDocument().disabled = !value;
-            if (value)
+            accessory.disabled = !value;
+            if (value) {
                 this.picker.create();
+                this.picker.enter();
+            }
             else
                 this.picker.destroy();
         });
+        accessory.oninput = () => {
+            this.picker.set(accessory.value);
+            const ec = new elyColor({ hex: accessory.value });
+            accessory.value = ec.toString();
+            this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
+            this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
+        };
         // @ts-ignore
         this.picker = new CP(this.accessoryView.getDocument());
         this.picker.on("exit", () => {
             if (this.editable()) {
-                const ec = new elyColor({ hex: this.accessoryView.value() });
+                const ec = new elyColor({ hex: accessory.value });
                 this.value(ec);
+                this.editable(false);
             }
         });
         this.picker.on("change", (color) => {
             if ("#" + color === this.value().toString())
                 return;
             const ec = new elyColor({ hex: color });
-            this.accessoryView.value(ec.toString());
-            this.colorThumbnail.css({ "background-color": ec.getDarker(0.2).toString() });
-            this.accessoryView.css({ color: ec.getDarker(0.14).toString() });
+            accessory.value = ec.toString();
+            this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
+            this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
         });
         this.placeholder("#______");
         this.editable(false);
-        this.applyProtocolOptions(options);
-        this.actionIconView.hidden(false);
+        this.value(options.value || elyColor.black());
     }
-    defaultValue() {
-        return new elyColor({ hex: "#000000" });
-    }
-    isEmpty() {
-        return this.accessoryView.isEmpty();
-    }
-    actionIconDidClick() {
-        super.actionIconDidClick();
-        if (!this.editable()) {
-            this.editable(true);
-        }
-        else {
-            this.editable(false);
-        }
+    /**
+     * Возвращает и устанавливает плейслхолдер для ввода
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    placeholder(value) {
+        if (value === undefined)
+            return this.accessoryView.getDocument().placeholder;
+        this.accessoryView.getDocument().placeholder = value;
+        return this;
     }
 };
 elyColorPickerField = __decorate([
@@ -8250,6 +8801,668 @@ elyColorPickerField = __decorate([
     designable("placeholder", elyDesignableFieldState.DENY)
 ], elyColorPickerField);
 var elyColorPickerField$1 = elyColorPickerField;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efProtocol.ts                                                        +
+ + Файл изменен: 08.01.2019 00:55:09                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+class efProtocol {
+}
+/**
+ * Возвращает true, если объект obj подчиняется протоколу protocol
+ * @param {*} obj
+ * @param protocol
+ */
+function hasProtocol(obj, protocol) {
+    for (const name of Object.getOwnPropertyNames(protocol.prototype)) {
+        if (name === "constructor")
+            continue;
+        if (obj[name] === undefined)
+            return false;
+    }
+    return true;
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efErrorDisplayProtocolcol.ts                                         +
+ + Файл изменен: 08.01.2019 00:50:08                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Протокол объекта, который может быть помечен, как "объект с ошибкой"
+ * @class efErrorDisplayProtocol
+ */
+class efErrorDisplayProtocol extends efProtocol {
+    /**
+     * Помечает объект как неисправный
+     * @param {boolean} flag
+     * @return {this}
+     */
+    error(flag) {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efValidatableProtocol.ts                                             +
+ + Файл изменен: 08.01.2019 00:36:49                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Протокол валидации данных
+ * @class {efValidatableProtocol}
+ */
+class efValidatableProtocol extends efProtocol {
+    /**
+     * Возвращает true, если данные валидны
+     * @return {boolean}
+     */
+    isValid() {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
+    /**
+     * Возвращает true, если данные пусты
+     * @return {boolean}
+     */
+    isEmpty() {
+        throw Error(`Method isValid is not implemented in class ${this}!`);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efValueProtocol.ts                                                   +
+ + Файл изменен: 07.01.2019 23:36:33                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Протокол элемента ввода
+ * @class efValueProtocol
+ * @template T
+ */
+class efValueProtocol extends efProtocol {
+    constructor() {
+        super(...arguments);
+        /**
+         * Свойство: значение поля ввода
+         * @type {elyObservableProperty<T>}
+         */
+        this.valueProperty = new elyObservableProperty();
+    }
+    /**
+     * Возвращает и устанавливает значение поля ввода
+     * @param {T|null} [value] - значение
+     * @returns {T|this|null}
+     */
+    value(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
+    }
+    /**
+     * Очищает значение
+     * @return {this}
+     */
+    clearValue() {
+        this.value(null);
+        return this;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyFormView.ts                                                       +
+ + Файл изменен: 06.01.2019 20:14:49                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Форма
+ * @class elyFormView
+ * @augments {elyGridView}
+ */
+class elyFormView extends elyView {
+    /**
+     * Конструктор
+     * @param {elyFlexGridViewOptions} props - параметры
+     */
+    constructor(props = {}) {
+        super({});
+        /**
+         * Элементы формы
+         * @type {elyObservableDictionary<elyView>}
+         */
+        this.accessories = new elyObservableDictionary();
+        /**
+         * Свойство: флаг проверки полей на пустоту
+         * @ignore
+         * @protected
+         */
+        this.__checkEmpty = true;
+        /**
+         * Свойство: флаг автоматического определения кнопки submit
+         * @ignore
+         * @protected
+         */
+        this.__detectSubmitButton = true;
+        /**
+         * Форма в процессе
+         * @type {boolean}
+         * @protected
+         */
+        this.__inProgress = false;
+        /**
+         * Свойство: флаг проверки валидации
+         * @ignore
+         * @protected
+         */
+        this.__checkValidation = true;
+        this.__gridView = new elyGridView(props);
+        this.__checkEmpty = props.checkEmpty === undefined ? true : props.checkEmpty;
+        this.__checkValidation = props.checkValidation === undefined ? true : props.checkValidation;
+        this.__detectSubmitButton = props.detectSubmitButton === undefined ? true : props.detectSubmitButton;
+        this.addClass("ef-form");
+        this.getDocument().append(this.__gridView.getDocument());
+    }
+    /**
+     * Добавляет элементы
+     * @param {*} items
+     */
+    add(items) {
+        elyUtils.forEach(items, (index, value) => {
+            this.accessories.add(index, value);
+            if (index === "submit" && value instanceof elyButton$1)
+                value.click(() => this.submit());
+        });
+        this.__gridView.add(...elyUtils.values(items));
+        return this;
+    }
+    /**
+     * Подтвержает форму
+     * @param callback
+     */
+    submit(callback) {
+        if (this.__inProgress)
+            return this;
+        this.__inProgress = true;
+        const values = {};
+        let error = null;
+        this.forEachAccessoryField((name, field) => {
+            let val = null;
+            if (hasProtocol(field, efValidatableProtocol)) {
+                if (this.checkEmpty() && field.isEmpty()) {
+                    error = { name, field, message: "empty" };
+                    if (hasProtocol(field, efErrorDisplayProtocol))
+                        field.error(true);
+                }
+                else if (this.checkValidation() && !field.isValid()) {
+                    error = { name, field, message: "invalid" };
+                    if (hasProtocol(field, efErrorDisplayProtocol))
+                        field.error(true);
+                }
+                else {
+                    val = field.value();
+                }
+            }
+            else {
+                val = field.value();
+            }
+            values[name] = val;
+        });
+        this.__inProgress = false;
+        this.notificate("submit", [error ? null : values, error]);
+        if (callback)
+            callback(error ? null : values, error);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: подтверждение формы
+     *
+     * Имя обсервера: submit
+     *
+     * @param {{function(values: *, error: {name: string, field: elyFieldProtocol<*>, message: string})}} o
+     */
+    addSubmitObserver(o) {
+        this.addObserver("submit", o);
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает флаг автоматического определения кнопки submit
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    detectSubmitButton(value) {
+        if (value === undefined)
+            return this.__detectSubmitButton;
+        this.__detectSubmitButton = value;
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает флаг проверки полей на пустоту
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    checkEmpty(value) {
+        if (value === undefined)
+            return this.__checkEmpty;
+        this.__checkEmpty = value;
+        return this;
+    }
+    /**
+     * Цикл по всем элементам формы
+     * @param {{function(name: string, view: elyView)}} callback
+     */
+    forEachAccessory(callback) {
+        this.accessories.forEach((key, value) => {
+            callback(key, value);
+        });
+    }
+    /**
+     * Цикл по всем полям формы
+     * @param {{function(name: string, field: efValueProtocol<*>)}} callback
+     */
+    forEachAccessoryField(callback) {
+        this.forEachAccessory((name, view) => {
+            if (hasProtocol(view, efValueProtocol)) {
+                callback(name, view);
+            }
+        });
+    }
+    /**
+     * Возвращает и устанавливает флаг проверки валидации
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    checkValidation(value) {
+        if (value === undefined)
+            return this.__checkValidation;
+        this.__checkValidation = value;
+        return this;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyDataPickerField.ts                                                +
+ + Файл изменен: 08.01.2019 02:54:40                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Поле: Выбор элемента
+ * @class elyDataPickerField
+ * @augments {elyField<*>}
+ *
+ */
+class elyDataPickerField extends elyFieldView {
+    /**
+     * Конструктор
+     * @param {elyDataPickerFieldOptions} props - параметры
+     */
+    constructor(props = {}) {
+        super({ accessory: new elyControl$1({ tag: "input", class: "ef-input" }) });
+        /**
+         * Элементы поля
+         * @type {elyObservableDictionary<*>}
+         * @readonly
+         */
+        this.items = new elyObservableDictionary();
+        /**
+         * Элемент отображения подсказок
+         */
+        this.tipsView = new elyControl$1({ class: "ef-tips-view" });
+        /**
+         * Найденные ключи
+         * @type {elyObservableArray<string>}
+         */
+        this.searchResultsKeys = new elyObservableArray();
+        /**
+         * Иконка
+         * @type {elyIconView}
+         */
+        this.actionIconView = new elyIconView$1({ class: "ef-input-status" });
+        /**
+         * Максимальное количество подсказок
+         * @protected
+         * @type {number}
+         */
+        this.__maxTipsCount = 5;
+        this.getDocument().append(this.actionIconView.getDocument());
+        const accessory = this.accessoryView.getDocument();
+        /**
+         * Максимальное кол-во подсказок
+         * @protected
+         */
+        this.__maxTipsCount = props.maxTipsCount || 5;
+        this.editableProperty.change(value => {
+            accessory.disabled = !value;
+            if (value) {
+                this.actionIconView.iconName("close");
+                accessory.value = "";
+                this.accessoryView.makeFirstResponder();
+                this.tipsView.hidden(false);
+                this.find(accessory.value);
+            }
+            else {
+                this.actionIconView.iconName("search");
+                this.tipsView.hidden(true);
+                if (this.searchResultsKeys.length() === 0) {
+                    if (this.value() !== null) {
+                        accessory.value = this.items.keyOf(this.value()) || "";
+                    }
+                    else {
+                        accessory.value = "";
+                    }
+                }
+            }
+        });
+        this.searchResultsKeys.change(() => {
+            const list = new elyListView();
+            let index = 0;
+            for (const value of this.searchResultsKeys.get()) {
+                const listItem = new elyTextView$1({ text: value });
+                listItem.getDocument().onclick = () => {
+                    this.valueProperty.set(this.items.item(value));
+                };
+                list.add(listItem);
+                index++;
+                if (index >= this.maxTipsCount())
+                    break;
+            }
+            this.tipsView.removeViewContent();
+            this.tipsView.addSubView(list);
+        });
+        this.valueProperty.change(value => {
+            accessory.value = this.items.keyOf(value) || "";
+            this.editable(false);
+        });
+        this.actionIconView.hidden(false);
+        this.editable(false);
+        if (props.items)
+            this.addItems(props.items);
+        accessory.oninput = (e) => {
+            this.find(accessory.value, e.inputType === "insertText");
+        };
+        this.getDocument().append(this.tipsView.getDocument());
+        this.actionIconView.addObserver("click", () => this.editableProperty.toggle());
+        if (elyGuard.isSet(props.placeholder))
+            accessory.placeholder = props.placeholder;
+        if (elyGuard.isSet(props.value))
+            this.value(props.value);
+    }
+    /**
+     * Выполняет поиск
+     * @param {string} str
+     * @param {boolean} [completion = false]
+     */
+    find(str, completion = false) {
+        this.searchResultsKeys.clear();
+        this.items.forEach(title => {
+            if (title.toLowerCase().indexOf(str.toLowerCase()) > -1)
+                this.searchResultsKeys.push(title);
+        });
+        if (this.searchResultsKeys.length() === 1 && completion) {
+            const item = this.items.item(this.searchResultsKeys.item(0));
+            if (item !== null)
+                this.valueProperty.set(item);
+        }
+    }
+    /**
+     * Добавляет значение
+     * @param {string} title
+     * @param {*} value
+     * @return {this}
+     */
+    addItem(title, value) {
+        this.items.add(title, value);
+        return this;
+    }
+    /**
+     * Лобавляет значения
+     * @param {* | string[]} items - значения
+     */
+    addItems(items) {
+        if (items instanceof Array) {
+            items.forEach((value, index) => {
+                this.addItem(value, index);
+            });
+        }
+        else {
+            elyUtils.forEach(items, (index, value) => this.addItem(index, value));
+        }
+        return this;
+    }
+    /**
+     * Возвращает true, если поле пустое
+     * @return {boolean}
+     */
+    isEmpty() {
+        return this.valueProperty.isNull();
+    }
+    /**
+     * Максимальное кол-во подсказок
+     * @param {number} [value]
+     * @return {this|number}
+     */
+    maxTipsCount(value) {
+        if (value === undefined)
+            return this.__maxTipsCount;
+        this.__maxTipsCount = value;
+        return this;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elySwitchField.ts                                                    +
+ + Файл изменен: 06.01.2019 00:25:54                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Поле: Переключатель
+ * @version 1.0
+ * @class elySwitchField
+ * @augments {elyField<boolean>}
+ */
+let elySwitchField = class elySwitchField extends elyFieldView {
+    /**
+     * Конструктор
+     * @param {elySwitchFieldOptions} props
+     */
+    constructor(props = {}) {
+        super({ accessory: new elyControl$1({ tag: "input", class: "ef-input" }) });
+        /**
+         * Отображение заголовка
+         * @readonly
+         * @type {elyTextView}
+         */
+        this.titleView = new elyTextView$1({ class: "title" });
+        /**
+         * Заголовок
+         * @readonly
+         * @type {elyObservableProperty<string>}
+         */
+        this.titleProperty = new elyObservableProperty();
+        /**
+         * Иконка переключателя
+         * @readonly
+         * @protected
+         * @type {elyControl}
+         */
+        this.switcherView = new elyControl$1({ class: "switcher" });
+        /**
+         * Элемент с переключателем
+         * @readonly
+         * @protected
+         * @type {elyControl}
+         */
+        this.switcherBox = new elyControl$1({ tag: "label", class: "ef-switch" });
+        const accessory = this.accessoryView.getDocument();
+        accessory.type = "checkbox";
+        accessory.onchange = () => this.value(accessory.checked);
+        this.editableProperty.change((newValue) => accessory.disabled = !newValue);
+        this.valueProperty.change((newValue) => accessory.checked = newValue);
+        this.titleProperty.change((newValue) => this.titleView.text(newValue));
+        this.addClass("ef-input-switch");
+        this.removeViewContent();
+        this.switcherBox.addSubView(this.accessoryView);
+        this.switcherBox.addSubView(this.switcherView);
+        this.getDocument().append(this.switcherBox.getDocument());
+        this.getDocument().append(this.titleView.getDocument());
+        this.editable(true);
+        if (props.title)
+            this.titleProperty.set(props.title);
+        if (props.value)
+            this.value(props.value);
+    }
+    /**
+     * Проверка на пустоту значения elySwitchField, которое всегда отрицательно.
+     * Иными словами, поле {@link elySwitchField} не может быть пустым!
+     * @return {boolean}
+     */
+    isEmpty() {
+        return false;
+    }
+    /**
+     * @ignore
+     * @param flag
+     */
+    error(flag) {
+        return this;
+    }
+    /**
+     * Устаналивает или возращает заголовок
+     * @param {string} [title]
+     * @return {this|string}
+     */
+    title(title) {
+        return elyObservableProperty.simplePropertyAccess(this, title, this.titleProperty);
+    }
+};
+elySwitchField = __decorate([
+    designable("value", elyDesignableFieldState.GETSET, "boolean"),
+    designable("title", elyDesignableFieldState.GETSET, "string"),
+    designable("placeholder", elyDesignableFieldState.DENY)
+], elySwitchField);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -8278,26 +9491,60 @@ var elyColorPickerField$1 = elyColorPickerField;
  * @interface elyViewOptions
  */
 /**
- * @interface IPosition
+ * @typedef {Object} IPosition
  * @property {number|string} [top]
  * @property {number|string} [right]
  * @property {number|string} [bottom]
  * @property {number|string} [left]
  */
 /**
- * @interface elyFlexGridViewOptions
- * @property {string?} title
- * @property {number[][]?} flex
- * @property {IPosition?} margin
+ * @typedef {Object} elyFlexGridViewOptions
+ * @property {number[][]} [flex]
+ * @property {IPosition} [margin]
  */
 /**
- * @interface elySwitchFieldOptions
- * @augments {elyViewOptions}
- * @property {string?} title
+ * @typedef {elyFlexGridViewOptions} elyFormViewOptions
+ * @property {boolean} [checkEmpty = true] - проверка на пустоту
+ * @property {boolean} [detectSubmitButton = true] - автоопределение кнопки submit
+ * @property {boolean} [checkValidation = true] - проверка валидации
+ */
+/**
+ * @typedef {Object} elyFieldViewOptions
+ * @property {string} [placeholder]
+ * @property {boolean} [editable]
+ * @property {string} [hint]
+ */
+/**
+ * @typedef {elyFieldViewOptions} elySwitchFieldOptions
+ * @property {string} [title]
+ * @property {boolean} [value]
+ */
+/**
+ * @typedef {elyFieldOptions} elyDataPickerFieldOptions
+ * @property {number} [maxTipsCount]
+ * @property {Object|string[]} [items]
+ * @property {*} [value]
+ */
+/**
+ * @typedef {elyFieldOptions} elyTextFieldOptions
+ * @property {elyFieldType} [fieldType]
+ * @property {boolean} [encrypted]
+ * @property {string} [fieldIcon]
+ * @property {string} [value]
+ */
+/**
+ *
+ * @param result
  */
 const elyOnReady = (result) => {
     elyFlatApplication.default.addReadyObserver(result);
 };
+/**
+ *
+ * @param name
+ * @param viewController
+ * @param canOverwrite
+ */
 const addController = (name, viewController, canOverwrite = true) => {
     elyScreenController.default.addControllerName(name, viewController, canOverwrite);
 };
@@ -8338,7 +9585,7 @@ window.elyflatobjects = {
     elyImageView: elyImageView$1,
     elyColorPickerField: elyColorPickerField$1,
     elyInput,
-    elyTextField: elyTextField$1,
+    elyTextField,
     elyTextAreaField,
     elyScreenController,
     elyViewController,
@@ -8350,14 +9597,13 @@ window.elyflatobjects = {
     elyStyle,
     elyFieldType,
     efSize,
-    efDirection,
-    efDirectionName,
+    elyAxis,
+    elyDirection,
     ef2DVector,
     ef2DVectorValues,
-    efOffset,
     efCanvas,
     efCanvasLayer,
 };
 
-export { getBodyView, elyOnReady, addController, developMode, elyStylesheet, elyFlatApplication, elyView, elyBodyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyColorPickerField$1 as elyColorPickerField, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyInput, elyTextField$1 as elyTextField, elyTextAreaField, elyScreenController, elyViewController, elySimplePageViewController, elyXLogger, elyUtils, elyFileWatcher, elySize, elyStyle, elyFieldType, efSize, efDirection, efDirectionName, ef2DVector, ef2DVectorValues, efOffset, efCanvas, efCanvasLayer };
+export { getBodyView, elyOnReady, addController, developMode, elyStylesheet, elyFlatApplication, elyView, elyBodyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyColorPickerField$1 as elyColorPickerField, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyFormView, elyInput, elyTextField, elySwitchField, elyDataPickerField, elyScreenController, elyViewController, elySimplePageViewController, elyXLogger, elyUtils, elyFileWatcher, elySize, elyStyle, elyFieldType, efSize, elyAxis, elyDirection, ef2DVector, ef2DVectorValues, efCanvas, efCanvasLayer };
 //# sourceMappingURL=ely.flat.js.map

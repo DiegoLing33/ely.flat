@@ -21,9 +21,7 @@
 import elyButton from "@controls/action/elyButton";
 import elyControl from "@controls/action/elyControl";
 import elyComboField from "@controls/fields/elyComboField";
-import elySwitchField from "@controls/fields/elySwitchField";
 import elyTextAreaField from "@controls/fields/elyTextAreaField";
-import elyTextField from "@controls/fields/elyTextField";
 import elyGridRowView from "@controls/flex/elyGridRowView";
 import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
@@ -41,6 +39,8 @@ import elyUIWSWorkspace from "@devMods/elyUIWorkshop.elymod/src/elyUIWSWorkspace
 import elyWSRegex from "@devMods/elyUIWorkshop.elymod/src/elyWSRegex";
 import elyFieldType from "@enums/elyFieldType";
 import elySize from "@enums/elySize";
+import {elySwitchField} from "@fields/elySwitchField";
+import {elyTextField} from "@fields/elyTextField";
 
 /**
  * Панеь настройки элемента
@@ -152,7 +152,7 @@ export default class elyWSViewPropsPanel extends elyPanelView {
                 });
             } else if (afItem.values === null && (afItem.type === "string" || afItem.type === "number")) {
                 field = new elyTextField({
-                    filedType: afItem.type === "string" ? elyFieldType.text : elyFieldType.number,
+                    fieldType: afItem.type === "string" ? elyFieldType.text : elyFieldType.number,
                     placeholder: afItem.name,
                 });
                 (field as elyTextField).addInputObserver((value) => {

@@ -21,11 +21,9 @@
 import "@devMods/elyColorPicker.elymod/color.picker";
 
 import elyControl from "@controls/action/elyControl";
-import elyInput from "@controls/action/elyInput";
-import elyField from "@controls/fields/elyField";
-import elyFieldOptions from "@controls/options/fields/elyFieldOptions";
 import elyColor from "@core/elyColor";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import {elyFieldView, elyFieldViewOptions} from "@fields/elyFieldView";
 
 /**
  * @class elyColorPickerField
@@ -44,7 +42,7 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
  */
 @designable("value", elyDesignableFieldState.DENY)
 @designable("placeholder", elyDesignableFieldState.DENY)
-export default class elyColorPickerField extends elyField<elyColor> {
+export default class elyColorPickerField extends elyFieldView<elyColor> {
 
     /**
      * Элемент выбора
@@ -64,71 +62,93 @@ export default class elyColorPickerField extends elyField<elyColor> {
      */
     public colorThumbnail: elyControl = new elyControl();
 
+    public readonly actionIconView: elyControl = new elyControl({class: "ef-input-status ef-color-pict"});
+
     /**
      * Конструктор
      * @param options
      */
-    public constructor(options: elyFieldOptions<elyColor> = {}) {
-        super({}, new elyInput({...{class: "ef-input", tag: "input"}}));
+    public constructor(options: elyFieldViewOptions<elyColor> = {}) {
+        super({accessory: new elyControl({tag: "input", class: "ef-input"})});
+        const accessory = this.accessoryView.getDocument() as HTMLInputElement;
 
         // this.colorThumbnail.addClass("bg-primary");
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
-        this.actionIconView.removeClass("fa").addClass("ef-color-pict");
-
         this.colorThumbnail.getDocument().innerHTML = "&nbsp";
+        this.valueProperty.set(elyColor.black());
+        this.getDocument().append(this.actionIconView.getDocument());
+
+        this.actionIconView.addObserver("click", () => this.editableProperty.toggle());
 
         this.valueProperty.change(value => {
             this.picker.set(value.toString());
-            this.accessoryView.value(value.toString());
+            accessory.value = (value.toString());
             this.colorThumbnail.css({"background-color": value.getDarkerColor(0.2).toString()});
             this.accessoryView.css({color: value.getDarkerColor(0.14).toString()});
         });
 
         this.editableProperty.change((value) => {
-            this.accessoryView.getDocument().disabled = !value;
-            if (value) this.picker.create();
-            else this.picker.destroy();
+            accessory.disabled = !value;
+            if (value) {
+                this.picker.create();
+                this.picker.enter();
+            } else this.picker.destroy();
         });
+
+        accessory.oninput = () => {
+            this.picker.set(accessory.value);
+            const ec = new elyColor({hex: accessory.value});
+            accessory.value = ec.toString();
+            this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
+            this.accessoryView.css({color: ec.getDarkerColor(0.14).toString()});
+        };
 
         // @ts-ignore
         this.picker = new CP(this.accessoryView.getDocument());
 
         this.picker.on("exit", () => {
             if (this.editable()) {
-                const ec = new elyColor({hex: this.accessoryView.value()});
+                const ec = new elyColor({hex: accessory.value});
                 this.value(ec);
+                this.editable(false);
             }
         });
 
         this.picker.on("change", (color: string) => {
-            if ("#" + color === this.value().toString()) return;
+            if ("#" + color === this.value()!.toString()) return;
             const ec = new elyColor({hex: color});
-            this.accessoryView.value(ec.toString());
+            accessory.value = ec.toString();
             this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
             this.accessoryView.css({color: ec.getDarkerColor(0.14).toString()});
         });
 
         this.placeholder("#______");
         this.editable(false);
-        this.applyProtocolOptions(options);
-        this.actionIconView.hidden(false);
+        this.value(options.value || elyColor.black());
     }
 
-    public defaultValue(): elyColor {
-        return new elyColor({hex: "#000000"});
-    }
+    /**
+     * Возвращает плейслхолдер для ввода
+     * @return {string}
+     */
+    public placeholder(): string;
 
-    public isEmpty(): boolean {
-        return this.accessoryView.isEmpty();
-    }
+    /**
+     * Устанавливает плейслхолдер для ввода
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public placeholder(value: string): elyColorPickerField;
 
-    protected actionIconDidClick() {
-        super.actionIconDidClick();
-        if (!this.editable()) {
-            this.editable(true);
-        } else {
-            this.editable(false);
-        }
+    /**
+     * Возвращает и устанавливает плейслхолдер для ввода
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public placeholder(value?: string): string | null | elyColorPickerField {
+        if (value === undefined) return (this.accessoryView.getDocument() as HTMLInputElement).placeholder;
+        (this.accessoryView.getDocument() as HTMLInputElement).placeholder = value;
+        return this;
     }
 }

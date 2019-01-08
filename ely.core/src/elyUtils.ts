@@ -50,13 +50,21 @@ export default class elyUtils {
     }
 
     /**
+     * Возвращает массив значений
+     * @param obj
+     */
+    public static values(obj: any): any[] {
+        const values: any[] = [];
+        elyUtils.forEach(obj, (index, value) => values.push(value));
+        return values;
+    }
+
+    /**
      * Возвращает количество элементов в объекте
      * @param obj
      */
     public static count(obj: object): number {
-        let c = 0;
-        for (const index in obj) c++;
-        return c;
+        return Object.keys(obj).length;
     }
 
     /**
