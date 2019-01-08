@@ -28,7 +28,6 @@ import efCanvas from "../ely.flat.cnv/src/efCanvas";
 import efCanvasLayer from "../ely.flat.cnv/src/efCanvasLayer";
 import ef2DVector from "../ely.flat.math/src/ef2DVector";
 import ef2DVectorValues from "../ely.flat.math/src/ef2DVectorValues";
-import efOffset from "../ely.flat.cnv/src/objs/efOffset";
 import efSize from "../ely.flat.cnv/src/objs/efSize";
 import elyScreenController from "../ely.controls.controllers/src/elyScreenController";
 import elySimplePageViewController from "../ely.controls.controllers/src/elySimplePageViewController";
@@ -38,7 +37,6 @@ import elyControl from "../ely.controls/src/action/elyControl";
 import elyInput from "../ely.controls/src/action/elyInput";
 import "../ely.controls/src/elyUIExt";
 import elyTextAreaField from "@controls/fields/elyTextAreaField";
-import elyTextField from "@controls/fields/elyTextField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyStaticGridView from "@controls/flex/elyStaticGridView";
 import elyLinkTextView from "@controls/text/elyLinkTextView";
@@ -56,6 +54,10 @@ import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
 import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
 import elyStylesheet from "@controls/elyStylesheet";
+import {elyFormView} from "@controls/view/elyFormView";
+import {elyTextField} from "@fields/elyTextField";
+import {elyDataPickerField} from "@fields/elyDataPickerField";
+import {elySwitchField} from "@fields/elySwitchField";
 
 
 /**
@@ -63,7 +65,7 @@ import elyStylesheet from "@controls/elyStylesheet";
  */
 
 /**
- * @interface IPosition
+ * @typedef {Object} IPosition
  * @property {number|string} [top]
  * @property {number|string} [right]
  * @property {number|string} [bottom]
@@ -71,23 +73,60 @@ import elyStylesheet from "@controls/elyStylesheet";
  */
 
 /**
- * @interface elyFlexGridViewOptions
- * @property {string?} title
- * @property {number[][]?} flex
- * @property {IPosition?} margin
+ * @typedef {Object} elyFlexGridViewOptions
+ * @property {number[][]} [flex]
+ * @property {IPosition} [margin]
  */
 
 /**
- * @interface elySwitchFieldOptions
- * @augments {elyViewOptions}
- * @property {string?} title
+ * @typedef {elyFlexGridViewOptions} elyFormViewOptions
+ * @property {boolean} [checkEmpty = true] - проверка на пустоту
+ * @property {boolean} [detectSubmitButton = true] - автоопределение кнопки submit
+ * @property {boolean} [checkValidation = true] - проверка валидации
  */
 
+/**
+ * @typedef {Object} elyFieldViewOptions
+ * @property {string} [placeholder]
+ * @property {boolean} [editable]
+ * @property {string} [hint]
+ */
 
+/**
+ * @typedef {elyFieldViewOptions} elySwitchFieldOptions
+ * @property {string} [title]
+ * @property {boolean} [value]
+ */
+
+/**
+ * @typedef {elyFieldOptions} elyDataPickerFieldOptions
+ * @property {number} [maxTipsCount]
+ * @property {Object|string[]} [items]
+ * @property {*} [value]
+ */
+
+/**
+ * @typedef {elyFieldOptions} elyTextFieldOptions
+ * @property {elyFieldType} [fieldType]
+ * @property {boolean} [encrypted]
+ * @property {string} [fieldIcon]
+ * @property {string} [value]
+ */
+
+/**
+ *
+ * @param result
+ */
 const elyOnReady = (result: (next: (result: boolean, reason?: string) => void) => void): void => {
     elyFlatApplication.default.addReadyObserver(result);
 };
 
+/**
+ *
+ * @param name
+ * @param viewController
+ * @param canOverwrite
+ */
 const addController = (name: string, viewController: elyViewController, canOverwrite: boolean = true): void => {
     elyScreenController.default.addControllerName(name, viewController, canOverwrite);
 };
@@ -156,12 +195,11 @@ window.elyflatobjects = {
     elyStyle,
     elyFieldType,
     efSize,
-    efDirection: elyAxis,
-    efDirectionName: elyDirection,
+    elyAxis,
+    elyDirection,
 
     ef2DVector,
     ef2DVectorValues,
-    efOffset,
     efCanvas,
     efCanvasLayer,
 };
@@ -188,10 +226,12 @@ export {
     elyStaticGridView,
     elyPanelView,
     elyImageView,
+    elyFormView,
 
     elyInput,
     elyTextField,
-    elyTextAreaField,
+    elySwitchField,
+    elyDataPickerField,
 
     elyScreenController,
     elyViewController,
@@ -210,7 +250,6 @@ export {
 
     ef2DVector,
     ef2DVectorValues,
-    efOffset,
     efCanvas,
     efCanvasLayer,
 };
