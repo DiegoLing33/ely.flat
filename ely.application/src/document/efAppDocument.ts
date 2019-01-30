@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,40 +15,23 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyHeaderView.ts                                                     +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppDocument.ts                                                     +
+ + Файл изменен: 30.01.2019 01:54:33                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyStylesheet from "@controls/elyStylesheet";
-import elyView from "@core/controls/elyView";
+import efAppDocumentHead from "@app/document/efAppDocumentHead";
 
 /**
- * Отображение заголовка
+ * Документ приложения
  */
-export default class elyHeaderView extends elyView {
+export default class efAppDocument {
 
     /**
      * Заголовок
      */
-    private readonly titleElement: HTMLElement;
+    public readonly head: efAppDocumentHead = new efAppDocumentHead();
 
-    /**
-     * Конструктор
-     */
-    public constructor() {
-        super({element: document.head});
-        this.titleElement = document.getElementsByTagName("title")[0];
-        this.getDocument().append(this.titleElement);
-        this.getDocument().append(elyStylesheet.global.getDocument());
-    }
-
-    /**
-     * устанавливает заголовок
-     * @param value
-     */
-    public title(value?: string): elyHeaderView | string {
-        if (value === undefined) return this.titleElement.innerText;
-        this.titleElement.innerText = value;
-        return this;
-    }
 }

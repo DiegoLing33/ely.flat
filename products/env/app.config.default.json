@@ -1,16 +1,18 @@
 {
   "app": {
-    "title": "my.App",
+    "title": "my.First.App",
     "author": null
   },
   "manifest": {
+    "allowStandaloneMode": true,
     "useMeta": true,
     "useApplicationIcon": true,
     "useViewPort": true,
     "useNavigationBar": true,
-    "useSideNavigationBar": true,
+    "useSideNavigationBar": false,
     "useContentController": true,
-    "useContentRouter": true
+    "useContentRouter": true,
+    "useIPhoneXStandaloneFix": true
   },
   "contentController": {
     "defaultContentId": "index",
@@ -33,9 +35,9 @@
   },
   "navigationBar": {
     "title": "my.App{ }",
+    "color": "#000000",
     "subtitle": null,
     "extendedStyle": false,
-    "color": null,
     "items": [
       {
         "text": "Home",
@@ -48,8 +50,7 @@
     "charset": "UTF-8",
     "iconPath": "resources/icon",
     "appleMobile": {
-      "statusBarStyle": "black-translucent",
-      "appCapable": true
+      "statusBarStyle": "black-translucent"
     },
     "viewport": {
       "fit": "cover",
