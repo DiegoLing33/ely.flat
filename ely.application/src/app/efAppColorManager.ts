@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplication from "@app/app/elyFlatApplication";
+import efApplication from "@app/app/efApplication";
 import elyColor from "@core/elyColor";
 import elyStylesheet from "@controls/elyStylesheet";
 
@@ -37,7 +37,7 @@ export default class efAppColorManager {
      * @protected
      * @ignore
      */
-    protected __app: elyFlatApplication;
+    protected __app: efApplication;
 
     /**
      * Цвет приложения
@@ -57,7 +57,7 @@ export default class efAppColorManager {
      * Конструктор
      * @param props
      */
-    public constructor(props: { app: elyFlatApplication }) {
+    public constructor(props: { app: efApplication }) {
         this.__app = props.app;
     }
 

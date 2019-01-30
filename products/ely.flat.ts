@@ -44,7 +44,6 @@ import {elyFormView} from "@controls/view/elyFormView";
 import {elyTextField} from "@fields/elyTextField";
 import {elyDataPickerField} from "@fields/elyDataPickerField";
 import {elySwitchField} from "@fields/elySwitchField";
-import elyFlatApplication from "@app/app/elyFlatApplication";
 import elyScreenController from "@controllers/elyScreenController";
 import elyViewController from "@controllers/elyViewController";
 import elyFileWatcher from "@app/app/elyFileWatcher";
@@ -79,6 +78,7 @@ import elySimpleJSONParser from "@core/elySimpleJSONParser";
 import elyPostRequest from "@core/web/request/elyPostRequest";
 import elyGetRequest from "@core/web/request/elyGetRequest";
 import elyURL from "@core/web/url/elyURL";
+import efApplication from "../ely.application/src/app/efApplication";
 
 
 /**
@@ -139,7 +139,7 @@ import elyURL from "@core/web/url/elyURL";
  * @param result
  */
 const elyOnReady = (result: (next: (result: boolean, reason?: string) => void) => void): void => {
-    elyFlatApplication.default.addReadyObserver(result);
+    efApplication.default.addReadyObserver(result);
 };
 
 /**
@@ -155,8 +155,8 @@ const addController = (name: string, viewController: elyViewController, canOverw
 /**
  * Возвращает приложение
  */
-const app = (): elyFlatApplication => {
-    return elyFlatApplication.default;
+const app = (): efApplication => {
+    return efApplication.default;
 };
 
 const developMode = (bool: boolean) => {
@@ -174,7 +174,7 @@ const developMode = (bool: boolean) => {
 
 window.onload = () => {
     elyXLogger.default.clear = true;
-    elyFlatApplication.loadApplication(() => {
+    efApplication.loadApplication(() => {
         //
     });
 };
@@ -226,7 +226,7 @@ export {
     developMode,
 
     elyStylesheet,
-    elyFlatApplication,
+    efApplication,
 
     elyTime,
     elyDeviceDetector,

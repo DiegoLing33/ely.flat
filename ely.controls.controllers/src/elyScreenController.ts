@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplication from "@app/app/elyFlatApplication";
+import efApplication from "@app/app/efApplication";
 import elySimplePageViewController from "@controllers/elySimplePageViewController";
 import elyViewController from "@controllers/elyViewController";
 import elyControl from "@controls/action/elyControl";
@@ -107,7 +107,7 @@ export default class elyScreenController extends elyObservable {
                 controller.viewWillAppear(this);
                 this.view.removeViewContent();
                 this.view.addSubView(controller.view);
-                this.view.addSubView(elyFlatApplication.default.footerView);
+                this.view.addSubView(efApplication.default.footerView);
                 this.view.fadeIn(() => {
                     controller.viewDidAppear();
                     if (completion) completion();

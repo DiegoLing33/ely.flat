@@ -14,7 +14,7 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFlatApplication.ts                                                +
+ + Файл: efApplication.ts                                           +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
@@ -74,12 +74,12 @@ type elyApplicationNextCompletion = (result: boolean, reason?: string) => void;
 /**
  * Приложение
  */
-export default class elyFlatApplication extends elyObservable {
+export default class efApplication extends elyObservable {
 
     /**
      * Паттерн синглтон
      */
-    public static default: elyFlatApplication = new elyFlatApplication();
+    public static default: efApplication = new efApplication();
 
     /**
      * Возвращает стандартный объект приложения
@@ -94,7 +94,7 @@ export default class elyFlatApplication extends elyObservable {
             else elyXLogger.default.log("Файл конфигурации успешно загружен.");
 
             // Распознание текущего устройства
-            elyDeviceDetector.default.addDetectedObserver(() => elyFlatApplication.default.init(cfg));
+            elyDeviceDetector.default.addDetectedObserver(() => efApplication.default.init(cfg));
             elyDeviceDetector.default.detect();
         });
         efAppConfig.default.load({file: efAppConfig.appConfigPath});
@@ -195,7 +195,7 @@ export default class elyFlatApplication extends elyObservable {
      * Добавляет слушатель окончания загрузки приложения
      * @param observer
      */
-    public addReadyObserver(observer: elyApplicationReadyObserver): elyFlatApplication {
+    public addReadyObserver(observer: elyApplicationReadyObserver): efApplication {
         this.readySignalsShouldBeReceived++;
         this.addObserver("ready", observer);
         return this;
@@ -362,14 +362,14 @@ export default class elyFlatApplication extends elyObservable {
                     elyDeviceDetector.default.getScreenSize().height() + "px";
                 elyNotificationView.defaults.marginFromScreenEdge = 40;
                 if (config.manifest.useNavigationBar)
-                    elyFlatApplication.default.navigationView.css({"padding-top": "40px"});
+                    efApplication.default.navigationView.css({"padding-top": "40px"});
             }
         }
 
     }
 }
 
-function __applyElyOneActions(app: elyFlatApplication) {
+function __applyElyOneActions(app: efApplication) {
     elyOneActionEval.default.actionsRules.content = (arg) => {
         switch (arg) {
             case "back":

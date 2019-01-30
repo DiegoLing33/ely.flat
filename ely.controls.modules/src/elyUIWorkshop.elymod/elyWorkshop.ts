@@ -19,7 +19,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatApplicationPreloader from "@app/app/content/elyFlatApplicationPreloader";
-import elyFlatApplication from "@app/app/elyFlatApplication";
+import efApplication from "@app/app/efApplication";
 import elyGridRowView from "@controls/flex/elyGridRowView";
 import elyGridView from "@controls/flex/elyGridView";
 import elyNotificationView from "@controls/notification/elyNotificationView";
@@ -147,7 +147,7 @@ export default class elyWorkshop {
         // tabs
         //
 
-        elyWorkshop.tabBar.getStyle().marginTop = elyFlatApplication.default.navigationView.height() + "px";
+        elyWorkshop.tabBar.getStyle().marginTop = efApplication.default.navigationView.height() + "px";
         elyWorkshop.tabBar.add("props", {text: "Свойства", iconName: "cogs", content: elyWSViewPropsPanel.main});
         elyWorkshop.tabBar.add("overview", {
             content: elyUIWorkshopElementsPanel.main,

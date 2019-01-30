@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatApplication from "@app/app/elyFlatApplication";
+import efApplication from "@app/app/efApplication";
 import elyControl from "@controls/action/elyControl";
 import elyTextView from "@controls/text/elyTextView";
 import elyView from "@core/controls/elyView";
@@ -177,7 +177,7 @@ export default class elyNotificationView extends elyControl {
 
         this._isNotified = true;
 
-        elyFlatApplication.default.applicationDocument.body.addSubView(this);
+        efApplication.default.applicationDocument.body.addSubView(this);
 
         this.show();
         this.notificationHeight = this.offSize().height;
