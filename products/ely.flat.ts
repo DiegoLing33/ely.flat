@@ -22,19 +22,6 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFileWatcher from "../ely.application/src/app/elyFileWatcher";
-import elyFlatApplication from "../ely.application/src/app/elyFlatApplication";
-import efCanvas from "../ely.flat.cnv/src/efCanvas";
-import efCanvasLayer from "../ely.flat.cnv/src/efCanvasLayer";
-import ef2DVector from "../ely.flat.math/src/ef2DVector";
-import ef2DVectorValues from "../ely.flat.math/src/ef2DVectorValues";
-import efSize from "../ely.flat.cnv/src/objs/efSize";
-import elyScreenController from "../ely.controls.controllers/src/elyScreenController";
-import elySimplePageViewController from "../ely.controls.controllers/src/elySimplePageViewController";
-import elyViewController from "../ely.controls.controllers/src/elyViewController";
-import elyButton from "../ely.controls/src/action/elyButton";
-import elyControl from "../ely.controls/src/action/elyControl";
-import elyInput from "../ely.controls/src/action/elyInput";
 import "../ely.controls/src/elyUIExt";
 import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyGridView from "@controls/flex/elyGridView";
@@ -58,6 +45,41 @@ import {elyFormView} from "@controls/view/elyFormView";
 import {elyTextField} from "@fields/elyTextField";
 import {elyDataPickerField} from "@fields/elyDataPickerField";
 import {elySwitchField} from "@fields/elySwitchField";
+import elyFlatApplication from "@app/app/elyFlatApplication";
+import elyScreenController from "@controllers/elyScreenController";
+import elyViewController from "@controllers/elyViewController";
+import elyFileWatcher from "@app/app/elyFileWatcher";
+import elyControl from "@controls/action/elyControl";
+import elyButton from "@controls/action/elyButton";
+import elyInput from "@controls/action/elyInput";
+import elySimplePageViewController from "@controllers/elySimplePageViewController";
+import efSize from "@cnv/objs/efSize";
+import ef2DVector from "@math/ef2DVector";
+import ef2DVectorValues from "@math/ef2DVectorValues";
+import efCanvasLayer from "@cnv/efCanvasLayer";
+import efCanvas from "@cnv/efCanvas";
+import elyGridViewController from "@controllers/elyGridViewController";
+import elyProgressView from "@controls/action/elyProgressView";
+import elyDataGridView from "@controls/data/elyDataGridView";
+import elyNotificationView from "@controls/notification/elyNotificationView";
+import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
+import elyIconView from "@controls/text/elyIconView";
+import elyTextViewEditable from "@controls/text/elyTextViewEditable";
+import elyListView from "@controls/view/elyListView";
+import elyModalView from "@controls/view/elyModalView";
+import elyScrollView from "@controls/view/elyScrollView";
+import elyTableView from "@controls/view/elyTableView";
+import elyDeviceDetector from "@core/elyDeviceDetector";
+import elyTime from "@core/elyTime";
+import elyColor from "@core/elyColor";
+import elyGuard from "@core/elyGuard";
+import elyTimer from "@core/elyTimer";
+import elyCookie from "@core/elyCookie";
+import {elyColorUtils} from "@core/elyColorUtils";
+import elySimpleJSONParser from "@core/elySimpleJSONParser";
+import elyPostRequest from "@core/web/request/elyPostRequest";
+import elyGetRequest from "@core/web/request/elyGetRequest";
+import elyURL from "@core/web/url/elyURL";
 
 
 /**
@@ -168,42 +190,37 @@ window.elyflatobjects = {
     elyView,
 
     elyBodyView,
-    elyButton,
     elyControl,
+    elyButton,
 
+    elyIconView,
+    elyTextViewEditable,
+
+    elyProgressView,
     elyLinkTextView,
     elyTextView,
     elyGridView,
     elyStaticGridView,
     elyPanelView,
     elyImageView,
-    elyColorPickerField,
+    elyFormView,
+    elyDataGridView,
+    elyNotificationView,
+    elyProgressNotificationView,
+
+    elyListView,
+    elyModalView,
+    elyScrollView,
+    elyTableView,
 
     elyInput,
     elyTextField,
-    elyTextAreaField,
-
-    elyScreenController,
-    elyViewController,
-    elySimplePageViewController,
-
-    elyXLogger,
-    elyUtils,
-    elyFileWatcher,
-
-    elySize,
-    elyStyle,
-    elyFieldType,
-    efSize,
-    elyAxis,
-    elyDirection,
-
-    ef2DVector,
-    ef2DVectorValues,
-    efCanvas,
-    efCanvasLayer,
+    elySwitchField,
+    elyDataPickerField,
+    elyColorPickerField,
 };
 
+// @ts-ignore
 export {
     getBodyView,
     elyOnReady,
@@ -213,13 +230,33 @@ export {
     elyStylesheet,
     elyFlatApplication,
 
+    elyTime,
+    elyDeviceDetector,
+    elyColor,
+    elyGuard,
+    elyTimer,
+    elyCookie,
+
+    elyXLogger,
+    elySimpleJSONParser,
+    elyUtils,
+    elyColorUtils,
+    elyFileWatcher,
+
+    elyURL,
+    elyGetRequest,
+    elyPostRequest,
+
     elyView,
 
     elyBodyView,
     elyControl,
     elyButton,
-    elyColorPickerField,
 
+    elyIconView,
+    elyTextViewEditable,
+
+    elyProgressView,
     elyLinkTextView,
     elyTextView,
     elyGridView,
@@ -227,19 +264,26 @@ export {
     elyPanelView,
     elyImageView,
     elyFormView,
+    elyDataGridView,
+    elyNotificationView,
+    elyProgressNotificationView,
+
+    elyListView,
+    elyModalView,
+    elyScrollView,
+    elyTableView,
 
     elyInput,
     elyTextField,
     elySwitchField,
     elyDataPickerField,
+    elyColorPickerField,
 
     elyScreenController,
     elyViewController,
     elySimplePageViewController,
+    elyGridViewController,
 
-    elyXLogger,
-    elyUtils,
-    elyFileWatcher,
 
     elySize,
     elyStyle,
