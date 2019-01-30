@@ -28,14 +28,14 @@ import efAppConfig from "@app/config/efAppConfig";
 import efAppDocument from "@app/document/efAppDocument";
 import elyScreenController from "@controllers/elyScreenController";
 import elyControl from "@controls/action/elyControl";
+import elyStylesheet from "@controls/elyStylesheet";
+import elyNotificationView from "@controls/notification/elyNotificationView";
 import elyIconView from "@controls/text/elyIconView";
+import elyDeviceDetector from "@core/elyDeviceDetector";
 import elyLogger from "@core/elyLogger";
 import elyOneActionEval from "@core/elyOneActionEval";
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
-import elyDeviceDetector from "@core/elyDeviceDetector";
-import elyStylesheet from "@controls/elyStylesheet";
-import elyNotificationView from "@controls/notification/elyNotificationView";
 
 /**
  * Наблюдатель за завершением загрузки приложения
@@ -106,11 +106,6 @@ export default class elyFlatApplication extends elyObservable {
     public readonly applicationColorManager: efAppColorManager;
 
     /**
-     * Тело страницы
-     */
-    public readonly bodyView: elyControl;
-
-    /**
      * Строитель макета
      */
     public readonly wrapperView: elyControl;
@@ -163,7 +158,6 @@ export default class elyFlatApplication extends elyObservable {
         this.applicationColorManager = new efAppColorManager({app: this});
         this.readySignalsShouldBeReceived = 0;
 
-        this.bodyView = new elyControl({element: document.body});
         this.containerView = new elyControl({class: "ef-cntr"});
         this.wrapperView = new elyControl({class: "ef-wrp"});
         this.navigationView = new elyNavigationView();
@@ -171,7 +165,7 @@ export default class elyFlatApplication extends elyObservable {
         this.sideNavigationView = new elyFlatSideNavigationView();
         this.preloader = elyFlatApplicationPreloader.default;
 
-        this.bodyView.addSubView(this.wrapperView);
+        this.applicationDocument.body.addSubView(this.wrapperView);
         this.containerView.css({margin: "0 auto"});
         this.containerView.css({width: "100%"});
         this.wrapperView.addSubView(this.containerView);
@@ -182,7 +176,7 @@ export default class elyFlatApplication extends elyObservable {
             if (this.config!.isSideNavigationBarUsed()) this.sideNavigationView.dismiss();
         });
 
-        this.bodyView.getDocument().onmousemove = (e: MouseEvent) => {
+        this.applicationDocument.body.getDocument().onmousemove = (e: MouseEvent) => {
             if (e.pageX <= 20) {
                 this.sideNavigationView.present();
             }
@@ -268,7 +262,7 @@ export default class elyFlatApplication extends elyObservable {
         //  Navigation config
         //
         if (config.isNavigationBarUsed()) {
-            this.bodyView.addSubView(this.navigationView);
+            this.applicationDocument.body.addSubView(this.navigationView);
             this.navigationView.titleView.text(config.navigationBar.title);
             if (config.manifest.useContentController)
                 this.navigationView.titleView.addObserver("click", () => {
@@ -364,7 +358,8 @@ export default class elyFlatApplication extends elyObservable {
                 elyStylesheet.global.addClass("ef-sidenav-toggle", {paddingTop: "30px"});
                 elyStylesheet.global.addClass("ef-wrp", {paddingTop: "40px"});
                 elyStylesheet.global.addClass("ef-sidenav-title", {paddingTop: "60px"});
-                this.bodyView.getStyle().minHeight = elyDeviceDetector.default.getScreenSize().height() + "px";
+                this.applicationDocument.body.getStyle().minHeight =
+                    elyDeviceDetector.default.getScreenSize().height() + "px";
                 elyNotificationView.defaults.marginFromScreenEdge = 40;
                 if (config.manifest.useNavigationBar)
                     elyFlatApplication.default.navigationView.css({"padding-top": "40px"});

@@ -28,7 +28,6 @@ import elyGridView from "@controls/flex/elyGridView";
 import elyStaticGridView from "@controls/flex/elyStaticGridView";
 import elyLinkTextView from "@controls/text/elyLinkTextView";
 import elyTextView from "@controls/text/elyTextView";
-import elyBodyView from "@controls/view/elyBodyView";
 import elyImageView from "@controls/view/elyImageView";
 import elyPanelView from "@controls/view/elyPanelView";
 import elyView from "@core/controls/elyView";
@@ -154,10 +153,10 @@ const addController = (name: string, viewController: elyViewController, canOverw
 };
 
 /**
- * Возвращает тело приложения
+ * Возвращает приложение
  */
-const getBodyView = (): elyBodyView => {
-    return elyBodyView.default;
+const app = (): elyFlatApplication => {
+    return elyFlatApplication.default;
 };
 
 const developMode = (bool: boolean) => {
@@ -189,7 +188,6 @@ declare global {
 window.elyflatobjects = {
     elyView,
 
-    elyBodyView,
     elyControl,
     elyButton,
 
@@ -222,7 +220,7 @@ window.elyflatobjects = {
 
 // @ts-ignore
 export {
-    getBodyView,
+    app,
     elyOnReady,
     addController,
     developMode,
@@ -249,7 +247,6 @@ export {
 
     elyView,
 
-    elyBodyView,
     elyControl,
     elyButton,
 

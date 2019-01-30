@@ -3907,25 +3907,6 @@ class elyGridView extends elyView {
     }
 }
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyBodyView.ts                                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /*
  *
  *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3945,28 +3926,297 @@ class elyGridView extends elyView {
  * Использование, изменение, копирование, распространение, обмен/продажа
  * могут выполняться исключительно в согласии с условиями файла COPYING.
  *
- * Файл: elyBodyView.ts
- * Файл создан: 19.11.2018 20:52:55
+ * Файл: elyXLogger* Файл создан: 04.12.2018 07:03:21
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
  *
  */
 /**
- * Тело документа
+ * elyXLogger - логгер уровня X
  */
-class elyBodyView extends elyControl$1 {
+class elyXLogger {
     /**
      * Конструктор
-     * @ignore
+     * @param props
      */
-    constructor() {
-        super({ element: document.body });
+    constructor(props = {}) {
+        /**
+         * Запись логов в файл
+         */
+        this.writeLogs = false;
+        /**
+         * Главный префикс
+         */
+        this.mainPrefix = "";
+        this.mainPrefix = props.mainPrefix || "ely";
+        this.writeLogs = props.writeLogs || false;
+        this.clear = props.clear || false;
+    }
+    /**
+     * Формирует строку `[ OK ]` или `[ NO ]` в зависимости от условия
+     * @param {boolean} condition
+     * @return {string}
+     */
+    static getOkNoString(condition) {
+        if (condition) {
+            return "[ OK ]";
+        }
+        else {
+            return "[ NO ]";
+        }
+    }
+    /**
+     * Filters the logger message
+     *
+     * @param {string} msg - the message
+     * @param {boolean} [clearfix = false] - if true: color tags will remove
+     *                                       else it will be evaluated
+     *
+     * @return {string} - evaluated of cleared message
+     * @private
+     */
+    static __loggerFilter(msg, clearfix = false) {
+        msg = msg.replace(/&rst/g, clearfix ? "" : elyXLogger.styles.reset);
+        msg = msg.replace(/&red/g, clearfix ? "" : elyXLogger.styles.fgRed);
+        msg = msg.replace(/&grn/g, clearfix ? "" : elyXLogger.styles.fgGreen);
+        msg = msg.replace(/&cyn/g, clearfix ? "" : elyXLogger.styles.fgCyan);
+        msg = msg.replace(/&gre/g, clearfix ? "" : elyXLogger.styles.fgGrey);
+        msg = msg.replace(/&blu/g, clearfix ? "" : elyXLogger.styles.fgBlue);
+        msg = msg.replace(/&ywl/g, clearfix ? "" : elyXLogger.styles.fgYellow);
+        msg = msg.replace(/&mgn/g, clearfix ? "" : elyXLogger.styles.fgMagenta);
+        msg = msg.replace(/&uns/g, clearfix ? "" : elyXLogger.styles.underscore);
+        return msg;
+    }
+    /**
+     * Отображает сообщение в консоль
+     * @param {String} msg
+     */
+    log(msg) {
+        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.LOG)
+            this._sendToConsole(msg, ["Log"]);
+    }
+    /**
+     * Отображает сообщение в консоль от имени модуля module
+     *
+     * @param {String} module - модуль
+     * @param {String} msg - сообщение
+     */
+    mod(module, msg) {
+        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.LOG)
+            this._sendToConsole(msg, ["Module", [elyXLogger.styles.fgMagenta, module]]);
+    }
+    /**
+     * Отображает сообщение об ошибке
+     * @param {String} msg
+     */
+    error(msg) {
+        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.DEBUG)
+            this._sendToConsole(msg, [[elyXLogger.styles.fgRed, "Error"]]);
+    }
+    /**
+     * Отображает предупреждение
+     * @param {String} msg
+     */
+    warning(msg) {
+        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.DEBUG)
+            this._sendToConsole(msg, [[elyXLogger.styles.fgMagenta, "Warning"]]);
+    }
+    /**
+     * Выводит LOG информацию
+     *
+     * @param {string} message  - the message
+     * @param {Array} prefixes - the array with the prefixes
+     *
+     * "prefixes" could be like:
+     *
+     *  1. [ "Log" ]                                - Simple
+     *  2. [ "Module", "Test" ]                     - Tree
+     *  3. [ "Module", [ "\x1b[32m", "Test" ] ]     - Tree with the color
+     *
+     *  @private
+     */
+    _sendToConsole(message, prefixes) {
+        if (this.mainPrefix !== "") {
+            const _temp = [[elyXLogger.styles.fgCyan, this.mainPrefix]];
+            for (const _prefix of prefixes)
+                _temp.push(_prefix);
+            prefixes = _temp;
+        }
+        const dateString = new Date().toISOString().replace(/T/, " "). // replace T with a space
+            replace(/\..+/, "");
+        let _prefixToDisplay = "";
+        let _clearPrefix = "";
+        for (let _prefix of prefixes) {
+            let _color = this.clear ? "" : elyXLogger.styles.fgGreen;
+            if (_prefix instanceof Array) {
+                _color = _prefix[0];
+                _prefix = _prefix[1];
+            }
+            _prefixToDisplay += "[" + (!this.clear ? _color : "") + _prefix +
+                (!this.clear ? elyXLogger.styles.reset : "") + "]";
+            _clearPrefix += "[" + _prefix + "]";
+        }
+        const str = "[" + dateString + "]" + _clearPrefix + ": " + elyXLogger.__loggerFilter(message, true);
+        const strToDisplay = "["
+            + (!this.clear ? elyXLogger.styles.fgGrey : "")
+            + dateString
+            + (!this.clear ? elyXLogger.styles.reset : "")
+            + "]"
+            + _prefixToDisplay
+            + (!this.clear ? elyXLogger.styles.reset : "")
+            + ": " + elyXLogger.__loggerFilter(message) + (this.clear ? "" : elyXLogger.styles.reset);
+        this._saveLogString(str);
+        if (this.clear)
+            console.log(elyXLogger.__loggerFilter(strToDisplay, true));
+        else
+            console.log(strToDisplay);
+    }
+    /**
+     * Записывает данные в файл
+     *
+     * @param {string} str
+     * @private
+     */
+    _saveLogString(str) {
+        // if (this.writeLogs)
+        //     require("fs").appendFile("./logs/logger0.log", str + "\n", () => { /* Nothing is done. */
+        //     });
     }
 }
 /**
- * Основной объект тела документа
+ * Стандартный логгер
  */
-elyBodyView.default = new elyBodyView();
+elyXLogger.default = new elyXLogger({ mainPrefix: "Default" });
+/**
+ * Уровни логирования
+ */
+elyXLogger.loggerLevels = {
+    DEBUG: 2,
+    LOG: 1,
+    NONE: 0,
+};
+/**
+ * Текущий уровень логирования
+ */
+elyXLogger.loggerLevel = elyXLogger.loggerLevels.DEBUG;
+/**
+ * Стили
+ */
+elyXLogger.styles = {
+    /**
+     * Сбрасывает любой примененный эффект
+     * @type {string}
+     */
+    reset: "\x1b[0m",
+    /**
+     * Делает цвет ярче
+     * @type {string}
+     */
+    bright: "\x1b[1m",
+    dim: "\x1b[2m",
+    /**
+     * Подчернутый текст
+     * @type {string}
+     */
+    underscore: "\x1b[4m",
+    /**
+     * Мигающий текст
+     * @type {string}
+     */
+    blink: "\x1b[5m",
+    /**
+     * Скрытый текст
+     */
+    hidden: "\x1b[8m",
+    /**
+     * Развернутый текст
+     */
+    reverse: "\x1b[7m",
+    /**
+     * Font color: Black
+     * @type {string}
+     */
+    fgBlack: "\x1b[30m",
+    /**
+     * Font color: Red
+     * @type {string}
+     */
+    fgRed: "\x1b[31m",
+    /**
+     * Font color: Green
+     * @type {string}
+     */
+    fgGreen: "\x1b[32m",
+    /**
+     * Font color: Yellow
+     * @type {string}
+     */
+    fgYellow: "\x1b[33m",
+    /**
+     * Font color: Blue
+     * @type {string}
+     */
+    fgBlue: "\x1b[34m",
+    /**
+     * Font color: Magenta
+     * @type {string}
+     */
+    fgMagenta: "\x1b[35m",
+    /**
+     * Font color: Cyan
+     * @type {string}
+     */
+    fgCyan: "\x1b[36m",
+    /**
+     * Font color: White
+     * @type {string}
+     */
+    fgWhite: "\x1b[37m",
+    /**
+     * Font color: Grey
+     * @type {string}
+     */
+    fgGrey: "\x1b[37m",
+    /**
+     * Background color: Black
+     * @type {string}
+     */
+    bgBlack: "\x1b[40m",
+    /**
+     * Background color: Red
+     * @type {string}
+     */
+    bgRed: "\x1b[41m",
+    /**
+     * Background color: Green
+     * @type {string}
+     */
+    bgGreen: "\x1b[42m",
+    /**
+     * Background color: Yellow
+     * @type {string}
+     */
+    bgYellow: "\x1b[43m",
+    /**
+     * Background color: Blue
+     * @type {string}
+     */
+    bgBlue: "\x1b[44m",
+    /**
+     * Background color: Magenta
+     * @type {string}
+     */
+    bgMagenta: "\x1b[45m",
+    /**
+     * Background color: Cyan
+     * @type {string}
+     */
+    bgCyan: "\x1b[46m",
+    /**
+     * Background color: White
+     * @type {string}
+     */
+    bgWhite: "\x1b[47m",
+};
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -3984,235 +4234,156 @@ elyBodyView.default = new elyBodyView();
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyNotificationView.ts                                               +
+ + Файл: elyFlatApplicationPreloader.ts                                       +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+class elyFlatApplicationPreloader extends elyView {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super({ selector: ".eld" });
+        this.iconLabel = new elyTextView$1({ selector: ".efm" });
+        const selector = document.querySelector(".elm");
+        if (selector) {
+            selector.innerHTML = "";
+            this.messageView = new elyTextView$1({ selector: ".elm" });
+            this.messageView.text("Пожалуйста, подождите...");
+        }
+        else {
+            this.messageView = new elyTextView$1({});
+            elyXLogger.default.warning("Ошибка обработки экрана загрузки...");
+        }
+    }
+    /**
+     * Отображает сообщение
+     * @param text
+     */
+    showScreen(text) {
+        this.messageView.text(text);
+        this.hidden(false);
+    }
+    /**
+     * Скрывает сообщение
+     */
+    hideScreen() {
+        this.hidden(true);
+    }
+}
 /**
- * Оповещения
- *
- * elyNotification (TypeScript)
- * version 0.1
+ * Стандартный загрузчик
  */
-class elyNotificationView extends elyControl$1 {
+elyFlatApplicationPreloader.default = new elyFlatApplicationPreloader();
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppColorManager.ts                                                 +
+ + Файл изменен: 30.01.2019 01:44:27                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Менеджер цветов приложения
+ * @class efAppColorManager
+ */
+class efAppColorManager {
     /**
      * Конструктор
      * @param props
      */
-    constructor(props = elyNotificationView.defaults) {
-        super(props);
-        this.notificationHeight = 0;
+    constructor(props) {
         /**
-         * Флаг нотифицирования
+         * Цвет приложения
+         * @protected
+         * @ignore
          */
-        this._isNotified = false;
-        this._isClosable = true;
-        this.options = elyNotificationView.defaults;
-        for (const index in props)
-            this.options[index] = props[index];
-        const scsize = window.outerWidth;
-        if (this.options.width > scsize)
-            this.options.width = scsize - 20;
-        const absoluteWidth = (this.options.width) - 37;
-        // this.identifier("notification_" + Math.floor(Math.random() * (999999 - 1000 + 1) + 1000));
-        this.addClass("ely-notification-panel");
-        this.css({ "background-color": this.options.backgroundColor, "width": this.options.width });
-        const obj = {};
-        obj[this.getDisplayPositions()[0]] = 10 + "px";
-        obj[this.getDisplayPositions()[1]] = 10 + "px";
-        this.css(obj);
-        //
-        //  Close button
-        //
-        this.closeButton = new elyControl$1({ tag: "b", class: "ely-notification-close-button" });
-        this.closeButton.css({ color: this.options.titleColor });
-        this.closeButton.getDocument().innerHTML = "&times;";
-        //
-        //  Title
-        //
-        this.titleView = new elyControl$1({ class: "ely-notification-title-label" });
-        this.titleView.css({ width: absoluteWidth + "px", color: this.options.titleColor });
-        this.titleView.getDocument().innerHTML = this.options.title || "";
-        //
-        //  Message
-        //
-        this.messageView = new elyControl$1({ class: "ely-notification-message-label" });
-        this.messageView.css({ width: absoluteWidth + "px", color: this.options.messageColor });
-        this.messageView.getDocument().innerHTML = this.options.message || "";
-        this.contentView = new elyControl$1({ class: "ely-notification-content" });
-        this.contentView.css({
-            "border-top": "1px solid " + this.options.sepColor,
-            "color": this.options.contentColor,
-            "width": this.options.width + "px",
+        this.__appColor = elyColor.black();
+        /**
+         * Цвет навигации
+         * @protected
+         * @ignore
+         */
+        this.__navigationBarColor = elyColor.black();
+        this.__app = props.app;
+    }
+    /**
+     * Изменяет цветовую гамму приложения
+     * @param color
+     */
+    applyApplicationColor(color) {
+        const darker = color.getDarkerColor(0.1);
+        const lighter = color.getLighterColor(0.18);
+        elyStylesheet.global.addClass("bg-primary", {
+            backgroundColor: color.toString(),
+            color: color.isDarker() ? "white" : "black",
         });
-        if (this.options.content)
-            this.contentView.addSubView(new elyTextView$1({ text: this.options.content }));
-        this.hide();
-        this.closable(this.options.closable);
-    }
-    /**
-     * Закрывает все уведомения, кроме последнего
-     */
-    static closeAllNotificationsToLast() {
-        if (elyNotificationView.defaults.notificationsData.length > 0) {
-            for (let i = 0; i < elyNotificationView.defaults.notificationsData.length - 1; i++)
-                elyNotificationView.defaults.notificationsData[i].dismiss();
-        }
-    }
-    /**
-     * Возвращает позиции оповещения
-     */
-    getDisplayPositions() {
-        return this.options.displayPosition.split("/");
-    }
-    /**
-     * Оторбражает оповещение
-     */
-    present() {
-        if (this._isNotified)
-            return this;
-        //
-        // Set-up
-        //
-        if (this.closable())
-            this.addSubView(this.closeButton);
-        if (this.options.title || this.titleView.getDocument().innerHTML !== "")
-            this.addSubView(this.titleView);
-        this.addSubView(this.messageView);
-        if (this.options.content || this.contentView.getDocument().innerHTML !== "")
-            this.addSubView(this.contentView);
-        this._isNotified = true;
-        elyBodyView.default.addSubView(this);
-        this.show();
-        this.notificationHeight = this.offSize().height;
-        this.hide();
-        const notifications = elyNotificationView.defaults.notificationsData;
-        const margin = elyNotificationView.defaults.notificationsMargin + this.notificationHeight;
-        const displayPositions = this.getDisplayPositions();
-        switch (displayPositions[0]) {
-            case "bottom":
-                this.css({ bottom: "+=" + (this.options.marginFromScreenEdge || 0) + "px" });
-                break;
-            default:
-                this.css({ top: "+=" + (this.options.marginFromScreenEdge || 0) + "px" });
-                break;
-        }
-        this.notificate("show");
-        if (notifications.length > 0) { // In case if notifications are on the screen
-            switch (displayPositions[0]) { // Moves all notifications in true direction
-                case "bottom":
-                    for (const item of notifications)
-                        item.css({ bottom: "+=" + margin + "px" });
-                    break;
-                default:
-                    for (const item of notifications)
-                        item.css({ top: "+=" + margin + "px" });
-                    break;
-            }
-        }
-        notifications.push(this); // Adds notification to list
-        // In case if notifications is too much, clear all to last
-        if (notifications.length > elyNotificationView.defaults.limit)
-            elyNotificationView.closeAllNotificationsToLast();
-        // Fading and moving the notification
-        if (notifications.length > 0)
-            setTimeout(() => {
-                this.fadeIn();
-            }, this.options.moveTime);
-        else
-            this.fadeIn();
-        this.closeButton.addObserver("click", () => {
-            this.dismiss();
+        elyStylesheet.global.addClass("brd-primary", {
+            borderColor: color.toString(),
         });
-        if (this.isNotified() && this.closable())
-            setTimeout(() => {
-                this.dismiss();
-            }, this.options.fadeTime + this.options.delay);
-        return this;
+        elyStylesheet.global.addClass("text-primary", {
+            color: color.toString(),
+        });
+        elyStylesheet.global.addClass("bg-info", {
+            backgroundColor: lighter.toString(),
+            color: lighter.isDarker() ? "white" : "black",
+        });
+        elyStylesheet.global.addClass("brd-info", {
+            borderColor: lighter.toString(),
+        });
+        elyStylesheet.global.addClass("text-info", {
+            color: lighter.toString(),
+        });
+        elyStylesheet.global.add("::-webkit-scrollbar-track", {
+            borderColor: "#c2c2c2",
+        });
+        elyStylesheet.global.add("::-webkit-scrollbar", {
+            borderColor: "#c2c2c2",
+            width: "5px",
+        });
+        elyStylesheet.global.add("::-webkit-scrollbar-thumb", {
+            backgroundColor: darker.toString(),
+        });
+        this.__appColor = color;
     }
     /**
-     * Удаляет оповещение с экрана
-     *
-     * @param force - принудительное удаление объкта с экранаx
+     * Изменяет цвет панели нацигации
+     * @param color
      */
-    dismiss(force = false) {
-        if (this.closable() || force) {
-            this.notificate("close");
-            this._isNotified = false;
-            this.fadeOut();
-            const noties = elyNotificationView.defaults.notificationsData;
-            setTimeout(() => {
-                if (noties.length > 0)
-                    if (this.options.displayPosition.split("/")[0] === "top")
-                        for (let j = noties.indexOf(this); j >= 0; j--)
-                            noties[j].css({
-                                top: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
-                            });
-                    else
-                        for (let j = noties.indexOf(this); j >= 0; j--)
-                            noties[j].css({
-                                bottom: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
-                            });
-                const cache = [];
-                for (const item of noties)
-                    if (item !== this)
-                        cache.push(item);
-                elyNotificationView.defaults.notificationsData = cache;
-                try {
-                    this.getDocument().parentNode.removeChild(this.getDocument());
-                }
-                catch (e) {
-                    // Nothing is done
-                }
-            }, this.options.fadeTime);
-        }
+    applyNavigationBarColor(color) {
+        this.__app.navigationView.navigationBarColor(color);
+        this.__navigationBarColor = color;
     }
     /**
-     * Состояние закрывающегося оповещения
-     * @param value
+     * Возвращает текущий цвет приложения
+     * @return {elyColor}
      */
-    closable(value) {
-        if (value === undefined) {
-            return this._isClosable;
-        }
-        this._isClosable = value;
-        return this;
+    getApplicationColor() {
+        return this.__appColor;
     }
     /**
-     * Возвращает состояние оповещения
+     * Возвращает текущий цвет панели навигации
+     * @return {elyColor}
      */
-    isNotified() {
-        return this._isNotified;
-    }
-    hide() {
-        this.hidden(true);
-    }
-    show() {
-        this.hidden(false);
+    getNavigatonBarColor() {
+        return this.__navigationBarColor;
     }
 }
-/**
- * Стандартные параметры
- */
-elyNotificationView.defaults = {
-    animateDuration: 60000,
-    animateSpeed: 700,
-    animation: false,
-    backgroundColor: "#FFFFFF",
-    closable: true,
-    contentColor: "#595959",
-    delay: 5000,
-    displayPosition: "top/right",
-    fadeTime: 500,
-    limit: 15,
-    marginFromScreenEdge: 0,
-    messageColor: "#595959",
-    moveTime: 500,
-    notificationsData: [],
-    notificationsMargin: 10,
-    sepColor: "#EEEEEE",
-    titleColor: "#595959",
-    width: 400,
-};
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -4627,6 +4798,2079 @@ class elyListView extends elyRebuildableViewProtocol {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
+ + Файл: elyFlatSideNavigationView.ts                                         +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Боковая панель навигации
+ */
+class elyFlatSideNavigationView extends elyView {
+    constructor(options = {}) {
+        super(options);
+        this.addClass("ef-sidenav");
+        this.widthProperty = new elyObservableProperty(350);
+        this.widthProperty.change(value => {
+            this.width(value + "px");
+        });
+        this.listView = new elyListView();
+        this.titleView = new elyControl$1({ class: "ef-sidenav-title" });
+        // this.hidden(true);
+        this.dismiss();
+        const closeIcon = new elyIconView$1({ iconName: "close" });
+        this.titleView.getDocument().append(closeIcon.getDocument());
+        this.getDocument().append(this.titleView.getDocument());
+        this.getDocument().append(this.listView.getDocument());
+        this.titleView.addObserver("click", () => {
+            this.dismiss();
+        });
+        this.resize((view, maxWidth) => {
+            if (maxWidth > 1600) {
+                this.widthProperty.set(350);
+            }
+            else {
+                this.widthProperty.set(260);
+            }
+            this.dismiss();
+        });
+    }
+    /**
+     * Отображает навигацию
+     */
+    present() {
+        // this.hidden(false);
+        this.css({ left: `0px` });
+    }
+    /**
+     * Скрывает навигацию
+     */
+    dismiss() {
+        this.css({ left: `-${this.widthProperty.get()}px` });
+    }
+    /**
+     * Переключает отображение навигации
+     */
+    toggle() {
+        if (parseInt((this.getStyle().left || "0").replace("px", ""), 10) < 0) {
+            this.present();
+        }
+        else {
+            this.dismiss();
+        }
+    }
+    /**
+     * Применяет события мыши
+     */
+    applyMouseEvents() {
+        elyXLogger.default.log("События мыши активированы для боковой панели");
+        this.getDocument().onmouseleave = () => {
+            this.dismiss();
+        };
+    }
+    /**
+     * Добавляет панель навигации в приложение
+     */
+    apply() {
+        document.body.append(this.getDocument());
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyFooterView.ts                                                     +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Подвал приложения
+ */
+class elyFooterView extends elyControl$1 {
+    /**s
+     * Констуктор
+     */
+    constructor() {
+        super({ class: "ef-footer" });
+        this.titleView = new elyTextView$1({ class: "title" });
+        this.subtitleView = new elyTextView$1({ class: "sub-title" });
+        this.addSubView(this.titleView);
+        this.addSubView(this.subtitleView);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyLinkTextView.ts                                                   +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения: Текст ссылкой
+ * @version 1.0
+ * @class elyLinkTextView
+ */
+let elyLinkTextView = class elyLinkTextView extends elyTextView$1 {
+    /**
+     * Конструктор
+     * @param {elyTextViewOptions|url:String} options
+     */
+    constructor(options = {}) {
+        super(Object.assign({ tag: "a" }, options));
+        this.urlProperty = new elyObservableProperty();
+        this.urlProperty.change((newValue) => this.attribute("href", newValue));
+        if (options.url)
+            this.url(options.url);
+        else
+            this.url("#");
+    }
+    /**
+     * Устанавливает или возвращает URL
+     * @param value
+     */
+    url(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.urlProperty);
+    }
+};
+elyLinkTextView = __decorate([
+    designable("url", elyDesignableFieldState.GETSET, "string"),
+    designable("text", elyDesignableFieldState.GETSET)
+], elyLinkTextView);
+var elyLinkTextView$1 = elyLinkTextView;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyImageView.ts                                                      +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения: Изображение
+ * @version 1.0
+ *
+ * Events:
+ * - loaded: Изображение загружено
+ */
+let elyImageView = class elyImageView extends elyView {
+    /**
+     * Конструтор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(Object.assign({ tag: "img" }, options));
+        this.urlProperty = new elyObservableProperty(null);
+        this.getDocument().onload = (e) => this.notificate("loaded", [e]);
+        this.urlProperty.change((newValue) => this.getDocument().src = newValue);
+        if (options.url)
+            this.url(options.url);
+    }
+    /**
+     * Устанавливает или возвращает ссылку на изображение
+     * @param str
+     */
+    url(str) {
+        return elyObservableProperty.simplePropertyAccess(this, str, this.urlProperty);
+    }
+    /**
+     * Возвращает корневой элемент
+     */
+    getDocument() {
+        return this.__view;
+    }
+};
+elyImageView = __decorate([
+    designable("url", elyDesignableFieldState.GETSET, "string")
+], elyImageView);
+var elyImageView$1 = elyImageView;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyNavigationView.ts                                                 +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент верхней навигации
+ */
+class elyNavigationView extends elyControl$1 {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(options);
+        this.itemsView = new elyListView();
+        this.titleView = new elyLinkTextView$1({ text: "ely.Flat", url: "#", class: "title" });
+        this.imageView = new elyImageView$1();
+        this.navigationBarColorProperty = new elyObservableProperty();
+        this.addSubView(this.imageView);
+        this.addSubView(this.titleView);
+        this.addSubView(this.itemsView);
+        this.addClass("ely-navigation-view");
+        this.imageView.hidden(true);
+        this.navigationBarColorProperty.change((newValue) => {
+            const backgroundColor = newValue.toString();
+            let borderColor = newValue.getLighterColor(0.3).toString();
+            if (!newValue.isDarker()) {
+                this.addClass("light");
+                borderColor = newValue.getDarkerColor(0.05).toString();
+            }
+            else
+                this.removeClass("light");
+            this.css({ "background-color": backgroundColor, "border-bottom": "4px solid " + borderColor });
+        });
+    }
+    /**
+     * Устанавливает или возвращает цвет бара
+     * @param color
+     */
+    navigationBarColor(color) {
+        if (color && typeof color === "string")
+            color = new elyColor({ hex: color });
+        return elyObservableProperty.simplePropertyAccess(this, color, this.navigationBarColorProperty);
+    }
+    /**
+     * Устанавливает изображение
+     * @param image
+     */
+    navigationBarImage(image) {
+        this.imageView.hidden(false);
+        this.imageView.url(image);
+        this.imageView.height(34);
+        this.imageView.css({ "margin-top": "-12px" });
+        return this;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyLogger.ts                                                         +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+// import figlet from "figlet";
+/**
+ * Logger
+ * @deprecated
+ */
+class elyLogger {
+    /**
+     * Логирование отладки
+     * @param message
+     */
+    static debug(message) {
+        if (elyLogger.logLevel >= elyLogger.logLevels.debug)
+            if (console)
+                console.log("[{ " + "Debug" + " }]: " + message.toString());
+    }
+    /**
+     * Логирование предупрждений
+     * @param message
+     */
+    static warning(message) {
+        if (elyLogger.logLevel >= elyLogger.logLevels.warning)
+            if (console)
+                console.trace("@- [{ " + "Warning" + " }]: " + message.toString());
+    }
+    /**
+     * Логирование ошибок
+     * @param message
+     */
+    static error(message) {
+        if (elyLogger.logLevel >= elyLogger.logLevels.error)
+            if (console)
+                console.trace("!- [{ " + "ERROR" + " }]: " +
+                    message.toString());
+    }
+    /**
+     * Логирование отладки -- вывод объекта
+     * @param obj
+     */
+    static debugObject(obj) {
+        if (elyLogger.logLevel >= elyLogger.logLevels.debug)
+            if (console)
+                console.log(obj);
+    }
+    /**
+     * Выводит сообщение
+     * @param message
+     */
+    static print(message) {
+        if (console)
+            console.log("[{ " + "Log" + " }]: " + message.toString());
+    }
+    /**
+     * Выводит текстовое лого желтого цвета
+     * @param text
+     * @deprecated
+     */
+    static logoTextYellow(text) {
+        console.log(
+        // figlet.textSync(text, {horizontalLayout: "full"}),
+        );
+    }
+    /**
+     * Выводит текстовое лого цианового цвета
+     * @param text
+     * @deprecated
+     */
+    static logoTextCyan(text) {
+        console.log(
+        // figlet.textSync(text, {horizontalLayout: "full"}),
+        );
+    }
+    /**
+     * Очищает консоль
+     */
+    static clear() {
+        console.clear();
+    }
+}
+/**
+ * Уровни логирования
+ */
+elyLogger.logLevels = {
+    debug: 10,
+    error: 3,
+    no: 0,
+    warning: 2,
+};
+/**
+ * Уровень логирования
+ */
+elyLogger.logLevel = elyLogger.logLevels.debug;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyURL.ts                                                            +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Класс ely.URL
+ *
+ * Класс, содержащий набор методов для работы с URL
+ */
+class elyURL {
+    /**
+     * Конструктор
+     *
+     * @param {string} url - URL строка
+     * @param {*} props - опции
+     */
+    constructor(url, props = []) {
+        /**
+         * Ответ обрабатывается как JSON
+         */
+        this.jsonResponse = true;
+        this.absoluteString = url;
+    }
+    /**
+     * Возвращает текущий URL
+     */
+    static current() {
+        return new elyURL(window.location.href);
+    }
+    /**
+     * Возвращает очищенный URL
+     */
+    getClearURL() {
+        return new RegExp("(http[s]?:\\/\\/.+)\\/").exec(this.absoluteString)[1];
+    }
+    /**
+     * Возвращает очищенный URL от GET запроса
+     */
+    getClearOfRequestURL() {
+        return new RegExp("(http[s]?:\\/\\/.+)\\?").exec(this.absoluteString)[1];
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyGetRequest.ts                                                     +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Выполняет GET запрос
+ */
+class elyGetRequest extends elyObservable {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options) {
+        super();
+        /**
+         * Парсинг запроса
+         */
+        this.useJson = true;
+        if (typeof options === "string")
+            options = { url: options };
+        if (typeof options.url === "string")
+            options.url = new elyURL(options.url);
+        this.url = options.url;
+        this.xhr = new XMLHttpRequest();
+        this.applyListeners(this.xhr);
+    }
+    /**
+     * Отправляет запрос
+     * @param data
+     * @param callback
+     */
+    send(data, callback) {
+        const params = typeof data === "string" ? data : Object.keys(data).map(k => encodeURIComponent(k) + "="
+            + encodeURIComponent(data[k])).join("&");
+        this.xhr.open("GET", this.url.absoluteString + "?" + params);
+        this.xhr.onreadystatechange = () => {
+            if (this.xhr.readyState === XMLHttpRequest.DONE) {
+                let resp = this.xhr.response;
+                try {
+                    if (this.useJson)
+                        resp = JSON.parse(resp);
+                }
+                catch (e) {
+                    elyLogger.warning("Ошибка возникла при обработке JSON в elyGetRequest! " + this.url.absoluteString);
+                    elyLogger.debugObject(this);
+                    resp = null;
+                }
+                if (callback)
+                    callback(resp, this.xhr.status);
+            }
+        };
+        this.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        this.xhr.send();
+    }
+    /**
+     * Добавляет слушатель изменения прогресса
+     * @param observer
+     */
+    addProgressChangedObserver(observer) {
+        this.addObserver("progressChanged", observer);
+        return this;
+    }
+    /**
+     * Добавляет слушатель ошибки
+     * @param observer
+     */
+    addErrorObserver(observer) {
+        this.addObserver("error", observer);
+        return this;
+    }
+    /**
+     * Добавляет слушатель прерывания запроса
+     * @param observer
+     */
+    addAbortObserver(observer) {
+        this.addObserver("abort", observer);
+        return this;
+    }
+    /**
+     * Добавляет слушатели
+     * @ignore
+     */
+    applyListeners(xhr) {
+        xhr.onerror = ev => this.notificate("error", [ev]);
+        xhr.onprogress = ev => this.notificate("progressChanged", [ev.loaded, ev.total]);
+        xhr.onabort = () => this.notificate("abort", []);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppConfig.ts                                                       +
+ + Файл изменен: 30.01.2019 00:57:41                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Конфигурация приложения
+ * @class efAppConfig
+ * @augments {elyObservable}
+ * @augments {efAppConfigInterface}
+ */
+class efAppConfig extends elyObservable {
+    constructor() {
+        super();
+        /**
+         * Секция: приложение
+         * {@link efConfigSection_app}
+         */
+        this.app = {
+            author: null,
+            title: "my.App",
+        };
+        /**
+         * Секция: манифест
+         * {@link efConfigSection_manifest}
+         */
+        this.manifest = {
+            allowStandaloneMode: true,
+            useApplicationIcon: true,
+            useContentController: true,
+            useContentRouter: true,
+            useDevelopMode: false,
+            useIPhoneXStandaloneFix: true,
+            useMeta: true,
+            useNavigationBar: true,
+            useSideNavigationBar: false,
+            useViewPort: true,
+        };
+        /**
+         * Секция: контроллер контента
+         * {@link efConfigSection_contentController}
+         */
+        this.contentController = {
+            defaultContentId: "index",
+            errorContentId: "error",
+        };
+        /**
+         * Секция: панель навигации
+         * {@link efConfigSection_navigationBar}
+         */
+        this.navigationBar = {
+            color: null,
+            extendedStyle: false,
+            imageUrl: null,
+            items: [],
+            subtitle: null,
+            title: "my.App{ }",
+        };
+        /**
+         * Секция: боковая панель навигации
+         * {@link efConfigSection_sideNavigationBar}
+         */
+        this.sideNavigationBar = {
+            allowMouseEvents: true,
+            items: [],
+        };
+        /**
+         * Секция: шаблон
+         * {@link efConfigSection_template}
+         */
+        this.template = {
+            color: "#194d6d",
+            footer: {
+                subtitle: "My application",
+                title: "Works with *ely.Flat* Application Engine",
+            },
+            maxContainerWidth: 700,
+        };
+        /**
+         * Секция: мета данные
+         * {@link efConfigSection_meta}
+         */
+        this.meta = {
+            appleMobile: {
+                statusBarStyle: "black-translucent",
+            },
+            charset: "UTF-8",
+            iconPath: "resources/icon",
+            viewport: {
+                fit: "cover",
+                initialScale: 1.0,
+                maximumScale: 1.0,
+                userScale: "no",
+                width: "device-width",
+            },
+        };
+    }
+    /**
+     * Загружает конфигурацию
+     * @param props
+     */
+    load(props) {
+        new elyGetRequest({ url: props.file }).send({}, (response, status) => {
+            if (response) {
+                elyUtils.mergeDeep(this, response);
+                this.notificate("loaded", [true, this]);
+            }
+            else {
+                this.notificate("loaded", [false, this]);
+            }
+        });
+    }
+    /**
+     * Добавляет наблюдатель: загрузка конфигурации завершена
+     *
+     * Имя обсервера: loaded
+     *
+     * @param {function(result: boolean, cfg: efAppConfig)} o - наблюдатель
+     */
+    addLoadedObserver(o) {
+        this.addObserver("loaded", o);
+        return this;
+    }
+    /**
+     * Возвращает заголовок приложения
+     * @return {string}
+     */
+    getAppTitle() {
+        return this.app.title;
+    }
+    /**
+     * Возвращает строку цвета приложения
+     * @return {string}
+     */
+    getAppColorString() {
+        return this.template.color;
+    }
+    /**
+     * Возвращает цвет панели навигации
+     * @return {string}
+     */
+    getNavigationBarColorString() {
+        return this.navigationBar.color || this.template.color;
+    }
+    /**
+     * Возвращает цвет панели навигации
+     */
+    getNavigationBarColor() {
+        return new elyColor({ hex: this.getNavigationBarColorString() });
+    }
+    /**
+     * Возвращает основной цвет приложения
+     * @return {elyColor}
+     */
+    getAppColor() {
+        return new elyColor({ hex: this.getAppColorString() });
+    }
+    /**
+     * Возвращает true, если используется панель навигации
+     */
+    isNavigationBarUsed() {
+        return this.manifest.useNavigationBar;
+    }
+    /**
+     * Возвращает true, если используется боковая панель навигации
+     */
+    isSideNavigationBarUsed() {
+        return this.manifest.useSideNavigationBar;
+    }
+}
+/**
+ * Путь до файла конфигурации
+ * @type {string}
+ */
+efAppConfig.appConfigPath = "app.config.json";
+/**
+ * Стандратная конфигурация
+ * @type {efAppConfig}
+ */
+efAppConfig.default = new efAppConfig();
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppDocumentBody.ts                                                 +
+ + Файл изменен: 30.01.2019 01:55:32                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Документ: Тело
+ * @class efAppDocumentHead
+ * @augments {elyView}
+ */
+class efAppDocumentBody extends elyControl$1 {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super({ element: document.body });
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppDocumentHead.ts                                                 +
+ + Файл изменен: 30.01.2019 01:54:59                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Документ: Заголовок
+ * @class efAppDocumentHead
+ * @augments {elyView}
+ */
+class efAppDocumentHead extends elyView {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super({ element: document.head });
+        /**
+         * Мета значения
+         * @ignore
+         * @protected
+         */
+        this.__metaValues = [];
+        this.__titleElement = document.getElementsByTagName("title")[0];
+        this.getDocument().append(this.__titleElement);
+        this.getDocument().append(elyStylesheet.global.getDocument());
+    }
+    /**
+     * Возвращает и устанавливает заголовок
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    title(value) {
+        if (value === undefined)
+            return this.__titleElement.innerText;
+        this.__titleElement.innerText = value;
+        document.title = value;
+        return this;
+    }
+    /**
+     * Возвращает мета значения
+     * @return {*}
+     */
+    getMetaValues() {
+        return this.__metaValues;
+    }
+    /**
+     * Добавляет мета значение
+     * @param {{ name: string, content: string }} props
+     */
+    addMetaValue(props) {
+        const metaElement = document.createElement("meta");
+        metaElement.content = props.content;
+        metaElement.name = props.name;
+        this.getDocument().append(metaElement);
+    }
+    /**
+     * Добавляет viewport
+     * @param {{fit?: string, initialScale?: number, maximumScale?: number,
+     * userScalable?: string, width?: string}} props
+     */
+    addViewPort(props) {
+        const a = [];
+        if (props.fit)
+            a.push(`viewport-fit=${props.fit}`);
+        if (props.width)
+            a.push(`width=${props.width}`);
+        if (props.initialScale)
+            a.push(`initial-scale=${props.initialScale}`);
+        if (props.maximumScale)
+            a.push(`maximum-scale=${props.maximumScale}`);
+        if (props.userScalable)
+            a.push(`user-scalable=${props.userScalable}`);
+        this.addMetaValue({ name: "viewport", content: a.join(", ") });
+    }
+    /**
+     * Устанавливает кодировку
+     * @param {string} charset
+     */
+    setCharset(charset) {
+        const metaElement = document.createElement("meta");
+        metaElement.setAttribute("charset", charset);
+        this.getDocument().append(metaElement);
+    }
+    /**
+     * Добавляет ссылку
+     * @param {{ rel: string, href: string}|*} props
+     */
+    addLink(props) {
+        const lnk = document.createElement("link");
+        for (const key in props)
+            if (props.hasOwnProperty(key))
+                lnk.setAttribute(key, props[key]);
+        this.getDocument().append(lnk);
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efAppDocument.ts                                                     +
+ + Файл изменен: 30.01.2019 01:54:33                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Документ приложения
+ * @class efAppDocument
+ */
+class efAppDocument {
+    constructor() {
+        /**
+         * Заголовок
+         */
+        this.head = new efAppDocumentHead();
+        /**
+         * Тело документа
+         */
+        this.body = new efAppDocumentBody();
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: elyViewController.ts                                                 +
+ + Файл изменен: 30.11.2018 00:25:05                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер элемента отображения
+ * @class elyViewController
+ * @augments elyObservable
+ */
+class elyViewController extends elyObservable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Элемент отображения
+         * @type {elyControl}
+         */
+        this.view = elyControl$1.empty();
+    }
+    /**
+     * Делегат окончания инициилизации объекта
+     * @param screen - экран
+     */
+    viewWillAppear(screen) {
+        // Nothing is done
+    }
+    /**
+     * Делегат окончания загрузки элемента
+     */
+    viewDidLoad() {
+        // Nothing is done
+    }
+    /**
+     * Делегат окончания отображения элемента
+     */
+    viewDidAppear() {
+        // Nothing is done
+    }
+}
+/**
+ * Текущий контроллер
+ * @ignore
+ */
+elyViewController.__thisControllers = [];
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: elyGridViewController.ts                                             +
+ + Файл изменен: 30.11.2018 01:48:16                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер с сеткой в основании
+ * @class elyGridViewController
+ * @augments {elyViewController}
+ */
+class elyGridViewController extends elyViewController {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Элемент отображения
+         * @type {elyGridView|elyView}
+         */
+        this.view = new elyGridView();
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: elySimplePageViewController.ts                                       +
+ + Файл изменен: 30.11.2018 01:52:55                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер с шаблоном макета приложения
+ * @class elySimplePageViewController
+ * @augments {elyGridViewController}
+ */
+class elySimplePageViewController extends elyGridViewController {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Основной заголовок
+         * @type {elyTextView}
+         */
+        this.titleView = new elyTextView$1({ class: "ef-title" });
+        /**
+         * Описание страницы
+         * @type {elyTextView}
+         */
+        this.descriptionView = new elyTextView$1({ class: "ef-description" });
+        this.view.addClass("ef-simple-content");
+        const headerView = new elyControl$1({ class: "ef-content-head" });
+        this.titleView.textSize(elySize.large).textWeight(elyWeight.normal).textCenter(true);
+        this.descriptionView.textSize(elySize.middle).textCenter(true);
+        headerView.addSubView(this.titleView);
+        headerView.addSubView(this.descriptionView);
+        this.view.add(headerView);
+    }
+    /**
+     * Устанавливает или возвращает заголовок
+     * @param {string} [value]
+     * @return {this|string}
+     */
+    title(value) {
+        if (value === undefined)
+            return this.titleView.text();
+        this.titleView.text(value);
+        return this;
+    }
+    /**
+     * Устанавливает или возвращает описание контента
+     * @param {string} [value]
+     * @return {this|string}
+     */
+    description(value) {
+        if (value === undefined)
+            return this.descriptionView.text();
+        this.descriptionView.text(value);
+        return this;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: elyScreenController.ts                                               +
+ + Файл изменен: 30.11.2018 00:19:28                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+class __elyScreenIndexViewController extends elySimplePageViewController {
+    /**
+     * После загрущки
+     *
+     * + В данном методе рекомендуется выполнять отрисовку, а также программную логику
+     *   контроллера элемента отображения.
+     */
+    viewDidLoad() {
+        super.viewDidLoad();
+        this.title("ely.Flat *{* Application *}*");
+        this.description("Приложение разработано на основе ely.flat framework");
+    }
+}
+/**
+ * Контроллер экрана
+ * @class elyScreenController
+ * @augments elyObservable
+ */
+class elyScreenController extends elyObservable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Контроллер
+         */
+        this.controller = new elyObservableProperty();
+        /**
+         * Элемент отображения
+         */
+        this.view = new elyControl$1({ class: "ef-screen" });
+        /**
+         * Элементы контента
+         */
+        this.items = {};
+        this.present(new __elyScreenIndexViewController());
+        this.elyScreenControllerDidInit();
+    }
+    /**
+     * Делегат завершения инициилизации контроллера
+     */
+    elyScreenControllerDidInit() {
+        this.notificate("didInit");
+    }
+    /**
+     * Отображает элемент
+     * @param controller
+     * @param completion
+     */
+    present(controller, completion) {
+        if (typeof controller === "string") {
+            if (this.items.hasOwnProperty(controller))
+                this.present(this.items[controller].controller, completion);
+        }
+        else {
+            this.view.fadeOut(() => {
+                this.controller.set(controller);
+                if (elyViewController.__thisControllers.indexOf(controller.constructor.name) === -1) {
+                    elyViewController.__thisControllers.push(controller.constructor.name);
+                    controller.viewDidLoad();
+                }
+                controller.viewWillAppear(this);
+                this.view.removeViewContent();
+                this.view.addSubView(controller.view);
+                this.view.addSubView(elyFlatApplication.default.footerView);
+                this.view.fadeIn(() => {
+                    controller.viewDidAppear();
+                    if (completion)
+                        completion();
+                });
+            });
+        }
+    }
+    /**
+     * Добавляет контроллер в навигацию
+     * @param name
+     * @param controller
+     * @param canOverwrite
+     */
+    addControllerName(name, controller, canOverwrite = false) {
+        if (this.items.hasOwnProperty(name)) {
+            if (!this.items[name].canOverwrite)
+                return;
+            this.items[name].controller = controller;
+            this.items[name].canOverwrite = canOverwrite;
+        }
+        this.items[name] = { controller, canOverwrite };
+    }
+}
+/**
+ * Стандартный контроллер экрана
+ */
+elyScreenController.default = new elyScreenController();
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efSize.ts                                                            +
+ + Файл изменен: 28.12.2018 01:18:31                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Прослушиываемый размер
+ */
+class efSize extends elyObservable {
+    /**
+     * Конструктор
+     * @param {{width: number, height: number}} props
+     */
+    constructor(props = { width: 0, height: 0 }) {
+        super();
+        /**
+         * Свойство: ширина
+         */
+        this.widthProperty = new elyObservableProperty(0);
+        /**
+         * Свойство: высота
+         */
+        this.heightProperty = new elyObservableProperty(0);
+        if (props.d !== undefined) {
+            this.width(props.d || 0);
+            this.height(props.d || 0);
+        }
+        else {
+            this.width(props.width || 0);
+            this.height(props.height || 0);
+        }
+        this.widthProperty.change(value => this.notificate("changed", ["width", value, this.height()]));
+        this.heightProperty.change(value => this.notificate("changed", ["height", this.width(), value]));
+    }
+    /**
+     * Возвращает нулевой размер
+     * @return {efSize}
+     */
+    static zero() {
+        return new efSize({ width: 0, height: 0 });
+    }
+    /**
+     * Возвращает и устанавливает ширина
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    width(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.widthProperty);
+    }
+    /**
+     * Возвращает и устанавливает высота
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    height(value) {
+        return elyObservableProperty.simplePropertyAccess(this, value, this.heightProperty);
+    }
+    /**
+     * Изменяет размер
+     *
+     * @param {number} sW   - ширина или общее значение
+     * @param {number} [sH] - высота
+     * @return {this}
+     */
+    scale(sW, sH) {
+        if (sH === undefined) {
+            this.width(this.width() * sW);
+            this.height(this.height() * sW);
+        }
+        else {
+            this.width(this.width() * sW);
+            this.height(this.height() * (sH || 0));
+        }
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: изменение размера
+     *
+     * Имя обсервера: changed
+     *
+     * @param o - наблюдатель
+     */
+    addChangeObserver(o) {
+        this.addObserver("changed", o);
+        return this;
+    }
+    /**
+     * Преобразует объект в строку
+     * @return {string}
+     */
+    toString() {
+        return `efSize{w: ${this.width()}, h: ${this.height()}}`;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyDeviceDetector.ts                                                 +
+ + Файл изменен: 31.01.2019 00:49:47                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Детектор устройств и системы
+ */
+class elyDeviceDetector extends elyObservable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Данные
+         * @ignore
+         * @protected
+         */
+        this.__data = {
+            browser: null,
+            os: null,
+        };
+    }
+    /**
+     * Добавляет наблюдатель: распознавание закончено
+     *
+     * Имя обсервера: detected
+     *
+     * @param o - наблюдатель
+     */
+    addDetectedObserver(o) {
+        this.addObserver("detected", o);
+        return this;
+    }
+    /**
+     * Выполняет детектинг
+     */
+    detect() {
+        for (const os of elyDeviceDetector.__osNames)
+            if (navigator.userAgent.indexOf(os.value) > -1) {
+                this.__data.os = os.name;
+                break;
+            }
+        for (const browser of elyDeviceDetector.__browsers)
+            if (navigator.userAgent.indexOf(browser.value) > -1) {
+                this.__data.browser = browser.name;
+                break;
+            }
+        this.notificate("detected");
+    }
+    /**
+     * Возвращает имя системы
+     * @return {string}
+     */
+    getOSName() {
+        return this.__data.os || "Undetected";
+    }
+    /**
+     * Возвращает имя браузера
+     * @return {string}
+     */
+    getBrowserName() {
+        return this.__data.browser || "Undefined";
+    }
+    /**
+     * Возвращает true, если приложение запущено отдельным приложением**
+     * @return {boolean}
+     */
+    isStandalone() {
+        // @ts-ignore
+        return window.navigator.standalone || false;
+    }
+    /**
+     * Возвращает true, если система iOS
+     * @return {boolean}
+     */
+    isIOS() {
+        return /iPad|iPhone|iPod/.test(this.__data.os);
+    }
+    /**
+     * Возвращает соотнощение сторон
+     * @return {number}
+     */
+    getRatio() {
+        return window.devicePixelRatio || 1;
+    }
+    /**
+     * Возвращает реальный размер жкрана
+     * @return {efSize}
+     */
+    getScreenSize() {
+        return new efSize({
+            height: window.screen.height * this.getRatio(),
+            width: window.screen.width * this.getRatio(),
+        });
+    }
+    /**
+     * Возвращает true, если устройство - iPhone X
+     * @return {boolean}
+     */
+    isIPhoneX() {
+        const size = this.getScreenSize();
+        return this.isIOS() && size.width() === 1125 && size.height() === 2436;
+    }
+}
+/**
+ * Стандартный детектор
+ */
+elyDeviceDetector.default = new elyDeviceDetector();
+/**
+ * Имена операционных систем
+ * @protected
+ * @ignore
+ */
+elyDeviceDetector.__osNames = [
+    { name: "Windows Phone", value: "Windows Phone", version: "OS" },
+    { name: "Windows", value: "Win", version: "NT" },
+    { name: "iPhone", value: "iPhone", version: "OS" },
+    { name: "iPad", value: "iPad", version: "OS" },
+    { name: "iPod", value: "iPod", version: "OS" },
+    { name: "Kindle", value: "Silk", version: "Silk" },
+    { name: "Android", value: "Android", version: "Android" },
+    { name: "PlayBook", value: "PlayBook", version: "OS" },
+    { name: "BlackBerry", value: "BlackBerry", version: "/" },
+    { name: "MacOS", value: "Mac", version: "OS X" },
+    { name: "Linux", value: "Linux", version: "rv" },
+    { name: "Palm", value: "Palm", version: "PalmOS" },
+];
+/**
+ * Браузеры
+ * @protected
+ * @ignore
+ */
+elyDeviceDetector.__browsers = [
+    { name: "Chrome", value: "Chrome", version: "Chrome" },
+    { name: "Firefox", value: "Firefox", version: "Firefox" },
+    { name: "Safari", value: "Safari", version: "Version" },
+    { name: "Internet Explorer", value: "MSIE", version: "MSIE" },
+    { name: "Opera", value: "Opera", version: "Opera" },
+    { name: "BlackBerry", value: "CLDC", version: "CLDC" },
+    { name: "Mozilla", value: "Mozilla", version: "Mozilla" },
+];
+/**
+ * Заголовки
+ * @protected
+ * @ignore
+ */
+elyDeviceDetector.__headers = [
+    navigator.platform,
+    navigator.userAgent,
+    navigator.appVersion,
+    navigator.vendor,
+];
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyFlatApplication.ts                                                +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Приложение
+ */
+class elyFlatApplication extends elyObservable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Документ
+         */
+        this.applicationDocument = new efAppDocument();
+        this.applicationColorManager = new efAppColorManager({ app: this });
+        this.readySignalsShouldBeReceived = 0;
+        this.containerView = new elyControl$1({ class: "ef-cntr" });
+        this.wrapperView = new elyControl$1({ class: "ef-wrp" });
+        this.navigationView = new elyNavigationView();
+        this.footerView = new elyFooterView();
+        this.sideNavigationView = new elyFlatSideNavigationView();
+        this.preloader = elyFlatApplicationPreloader.default;
+        this.applicationDocument.body.addSubView(this.wrapperView);
+        this.containerView.css({ margin: "0 auto" });
+        this.containerView.css({ width: "100%" });
+        this.wrapperView.addSubView(this.containerView);
+        this.containerView.addSubView(elyScreenController.default.view);
+        this.wrapperView.addObserver("click", () => {
+            if (this.config.isSideNavigationBarUsed())
+                this.sideNavigationView.dismiss();
+        });
+        this.applicationDocument.body.getDocument().onmousemove = (e) => {
+            if (e.pageX <= 20) {
+                this.sideNavigationView.present();
+            }
+        };
+    }
+    /**
+     * Возвращает стандартный объект приложения
+     * @param closure
+     */
+    static loadApplication(closure) {
+        elyXLogger.default.log("Загрузка приложения...");
+        efAppConfig.default.addLoadedObserver((result, cfg) => {
+            console.log(cfg);
+            if (!result)
+                elyXLogger.default.error("Файл конфигурации не найден. " +
+                    "Будет использована стандратная конфигурация.");
+            else
+                elyXLogger.default.log("Файл конфигурации успешно загружен.");
+            // Распознание текущего устройства
+            elyDeviceDetector.default.addDetectedObserver(() => elyFlatApplication.default.init(cfg));
+            elyDeviceDetector.default.detect();
+        });
+        efAppConfig.default.load({ file: efAppConfig.appConfigPath });
+    }
+    /**
+     * Возвращает конфигурацию приложения
+     */
+    getConfig() {
+        return this.config;
+    }
+    /**
+     * Добавляет слушатель окончания загрузки приложения
+     * @param observer
+     */
+    addReadyObserver(observer) {
+        this.readySignalsShouldBeReceived++;
+        this.addObserver("ready", observer);
+        return this;
+    }
+    /**
+     * Инициилизирует приложение
+     * @param {efAppConfig} config
+     */
+    init(config) {
+        this.config = config;
+        this.applyConfiguration(config);
+        this.notificate("ready", [(flag, message) => {
+                elyLogger.debug(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
+                elyLogger.debug(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
+                if (!flag) {
+                    this.preloader.iconLabel
+                        .removeClass("fa-refresh")
+                        .addClass("fa-times")
+                        .removeClass("fa-spin");
+                    this.preloader.messageView.text(message || "Загрузка была остановлена...");
+                    throw Error("Остановка приложения...");
+                    return;
+                }
+                this.readySignalsShouldBeReceived--;
+                elyLogger.debug("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
+                if (this.readySignalsShouldBeReceived === 0) {
+                    if (this.config.manifest.useContentController) {
+                        __applyElyOneActions(this);
+                    }
+                    elyScreenController.default.present("index");
+                    this.preloader.hidden(true);
+                }
+            }]);
+    }
+    /**
+     * Применяет конфигурацию
+     * @param config
+     */
+    applyConfiguration(config) {
+        elyXLogger.default.log("~~~> Применение конфигурации");
+        //
+        // App
+        //
+        this.applicationDocument.head.title(config.getAppTitle());
+        //
+        // Manifest
+        //
+        //
+        //  Template
+        //
+        this.containerView.getStyle().maxWidth = typeof config.template.maxContainerWidth === "number" ?
+            config.template.maxContainerWidth + "px" : config.template.maxContainerWidth;
+        this.applicationColorManager.applyApplicationColor(config.getAppColor());
+        this.footerView.titleView.text(config.template.footer.title);
+        this.footerView.subtitleView.text(config.template.footer.subtitle);
+        //
+        //  Navigation config
+        //
+        if (config.isNavigationBarUsed()) {
+            this.applicationDocument.body.addSubView(this.navigationView);
+            this.navigationView.titleView.text(config.navigationBar.title);
+            if (config.manifest.useContentController)
+                this.navigationView.titleView.addObserver("click", () => {
+                    elyScreenController.default.present(config.contentController.defaultContentId);
+                });
+            config.navigationBar.items.forEach(value => {
+                value.item = value.item || "elyLinkTextView";
+                this.navigationView.itemsView.add(elyControl$1.fromObject(value));
+            });
+            if (config.navigationBar.imageUrl) {
+                this.navigationView.navigationBarImage(config.navigationBar.imageUrl);
+                if (config.manifest.useContentController)
+                    this.navigationView.imageView.addObserver("click", () => {
+                        elyScreenController.default.present(config.contentController.defaultContentId);
+                    });
+            }
+            this.applicationColorManager.applyNavigationBarColor(config.getNavigationBarColor());
+        }
+        //
+        //  Side Navigation config
+        //
+        if (config.isSideNavigationBarUsed()) {
+            if (config.isNavigationBarUsed()) {
+                const showButton = new elyControl$1({
+                    class: "ef-sidenav-toggle",
+                    subviews: [new elyIconView$1({ iconName: "bars" })],
+                });
+                showButton.addObserver("click", () => {
+                    this.sideNavigationView.toggle();
+                });
+                this.navigationView.addSubView(showButton);
+            }
+            this.sideNavigationView.apply();
+            if (config.sideNavigationBar.allowMouseEvents)
+                this.sideNavigationView.applyMouseEvents();
+            config.sideNavigationBar.items.forEach(value => {
+                value.item = value.item || "elyLinkTextView";
+                this.sideNavigationView.listView.add(elyControl$1.fromObject(value));
+            });
+        }
+        //
+        // Meta
+        //
+        if (config.manifest.useMeta) {
+            this.applicationDocument.head.setCharset(config.meta.charset);
+            this.applicationDocument.head.addMetaValue({ name: "apple-mobile-web-app-title", content: config.app.title });
+            this.applicationDocument.head.addMetaValue({
+                content: config.meta.appleMobile.statusBarStyle,
+                name: "apple-mobile-web-app-status-bar-style",
+            });
+            this.applicationDocument.head.addMetaValue({
+                content: config.manifest.allowStandaloneMode ? "yes" : "no",
+                name: "apple-mobile-web-app-capable",
+            });
+            this.applicationDocument.head.addMetaValue({
+                content: config.getNavigationBarColorString(),
+                name: "theme-color",
+            });
+        }
+        if (config.manifest.useViewPort)
+            this.applicationDocument.head.addViewPort(config.meta.viewport);
+        if (config.manifest.useApplicationIcon) {
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/apple-touch-icon.png",
+                rel: "apple-touch-icon",
+                sizes: "180x180",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon-32x32.png",
+                rel: "icon",
+                sizes: "32x32",
+                type: "image/png",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon-16x16.png",
+                rel: "icon",
+                sizes: "16x16",
+                type: "image/png",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon.ico",
+                rel: "shortcut icon",
+            });
+            this.applicationDocument.head.addLink({
+                color: config.getNavigationBarColorString(),
+                href: config.meta.iconPath + "/safari-pinned-tab.svg",
+                rel: "mask-icon",
+            });
+        }
+        if (config.manifest.allowStandaloneMode && config.manifest.useIPhoneXStandaloneFix) {
+            if (elyDeviceDetector.default.isIPhoneX() && elyDeviceDetector.default.isStandalone()) {
+                elyStylesheet.global.addClass("ef-sidenav-toggle", { paddingTop: "30px" });
+                elyStylesheet.global.addClass("ef-wrp", { paddingTop: "40px" });
+                elyStylesheet.global.addClass("ef-sidenav-title", { paddingTop: "60px" });
+                this.applicationDocument.body.getStyle().minHeight =
+                    elyDeviceDetector.default.getScreenSize().height() + "px";
+                elyNotificationView.defaults.marginFromScreenEdge = 40;
+                if (config.manifest.useNavigationBar)
+                    elyFlatApplication.default.navigationView.css({ "padding-top": "40px" });
+            }
+        }
+    }
+}
+/**
+ * Паттерн синглтон
+ */
+elyFlatApplication.default = new elyFlatApplication();
+function __applyElyOneActions(app) {
+    elyOneActionEval.default.actionsRules.content = (arg) => {
+        switch (arg) {
+            case "back":
+                // cc.back();
+                break;
+            case "*index":
+                elyScreenController.default.present("index");
+                break;
+            default:
+                elyScreenController.default.present(arg);
+        }
+    };
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyNotificationView.ts                                               +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Оповещения
+ *
+ * elyNotification (TypeScript)
+ * version 0.1
+ */
+class elyNotificationView extends elyControl$1 {
+    /**
+     * Конструктор
+     * @param props
+     */
+    constructor(props = elyNotificationView.defaults) {
+        super(props);
+        this.notificationHeight = 0;
+        /**
+         * Флаг нотифицирования
+         */
+        this._isNotified = false;
+        this._isClosable = true;
+        this.options = elyNotificationView.defaults;
+        for (const index in props)
+            this.options[index] = props[index];
+        const scsize = window.outerWidth;
+        if (this.options.width > scsize)
+            this.options.width = scsize - 20;
+        const absoluteWidth = (this.options.width) - 37;
+        // this.identifier("notification_" + Math.floor(Math.random() * (999999 - 1000 + 1) + 1000));
+        this.addClass("ely-notification-panel");
+        this.css({ "background-color": this.options.backgroundColor, "width": this.options.width });
+        const obj = {};
+        obj[this.getDisplayPositions()[0]] = 10 + "px";
+        obj[this.getDisplayPositions()[1]] = 10 + "px";
+        this.css(obj);
+        //
+        //  Close button
+        //
+        this.closeButton = new elyControl$1({ tag: "b", class: "ely-notification-close-button" });
+        this.closeButton.css({ color: this.options.titleColor });
+        this.closeButton.getDocument().innerHTML = "&times;";
+        //
+        //  Title
+        //
+        this.titleView = new elyControl$1({ class: "ely-notification-title-label" });
+        this.titleView.css({ width: absoluteWidth + "px", color: this.options.titleColor });
+        this.titleView.getDocument().innerHTML = this.options.title || "";
+        //
+        //  Message
+        //
+        this.messageView = new elyControl$1({ class: "ely-notification-message-label" });
+        this.messageView.css({ width: absoluteWidth + "px", color: this.options.messageColor });
+        this.messageView.getDocument().innerHTML = this.options.message || "";
+        this.contentView = new elyControl$1({ class: "ely-notification-content" });
+        this.contentView.css({
+            "border-top": "1px solid " + this.options.sepColor,
+            "color": this.options.contentColor,
+            "width": this.options.width + "px",
+        });
+        if (this.options.content)
+            this.contentView.addSubView(new elyTextView$1({ text: this.options.content }));
+        this.hide();
+        this.closable(this.options.closable);
+    }
+    /**
+     * Закрывает все уведомения, кроме последнего
+     */
+    static closeAllNotificationsToLast() {
+        if (elyNotificationView.defaults.notificationsData.length > 0) {
+            for (let i = 0; i < elyNotificationView.defaults.notificationsData.length - 1; i++)
+                elyNotificationView.defaults.notificationsData[i].dismiss();
+        }
+    }
+    /**
+     * Возвращает позиции оповещения
+     */
+    getDisplayPositions() {
+        return this.options.displayPosition.split("/");
+    }
+    /**
+     * Оторбражает оповещение
+     */
+    present() {
+        if (this._isNotified)
+            return this;
+        //
+        // Set-up
+        //
+        if (this.closable())
+            this.addSubView(this.closeButton);
+        if (this.options.title || this.titleView.getDocument().innerHTML !== "")
+            this.addSubView(this.titleView);
+        this.addSubView(this.messageView);
+        if (this.options.content || this.contentView.getDocument().innerHTML !== "")
+            this.addSubView(this.contentView);
+        this._isNotified = true;
+        elyFlatApplication.default.applicationDocument.body.addSubView(this);
+        this.show();
+        this.notificationHeight = this.offSize().height;
+        this.hide();
+        const notifications = elyNotificationView.defaults.notificationsData;
+        const margin = elyNotificationView.defaults.notificationsMargin + this.notificationHeight;
+        const displayPositions = this.getDisplayPositions();
+        switch (displayPositions[0]) {
+            case "bottom":
+                this.css({ bottom: "+=" + (this.options.marginFromScreenEdge || 0) + "px" });
+                break;
+            default:
+                this.css({ top: "+=" + (this.options.marginFromScreenEdge || 0) + "px" });
+                break;
+        }
+        this.notificate("show");
+        if (notifications.length > 0) { // In case if notifications are on the screen
+            switch (displayPositions[0]) { // Moves all notifications in true direction
+                case "bottom":
+                    for (const item of notifications)
+                        item.css({ bottom: "+=" + margin + "px" });
+                    break;
+                default:
+                    for (const item of notifications)
+                        item.css({ top: "+=" + margin + "px" });
+                    break;
+            }
+        }
+        notifications.push(this); // Adds notification to list
+        // In case if notifications is too much, clear all to last
+        if (notifications.length > elyNotificationView.defaults.limit)
+            elyNotificationView.closeAllNotificationsToLast();
+        // Fading and moving the notification
+        if (notifications.length > 0)
+            setTimeout(() => {
+                this.fadeIn();
+            }, this.options.moveTime);
+        else
+            this.fadeIn();
+        this.closeButton.addObserver("click", () => {
+            this.dismiss();
+        });
+        if (this.isNotified() && this.closable())
+            setTimeout(() => {
+                this.dismiss();
+            }, this.options.fadeTime + this.options.delay);
+        return this;
+    }
+    /**
+     * Удаляет оповещение с экрана
+     *
+     * @param force - принудительное удаление объкта с экранаx
+     */
+    dismiss(force = false) {
+        if (this.closable() || force) {
+            this.notificate("close");
+            this._isNotified = false;
+            this.fadeOut();
+            const noties = elyNotificationView.defaults.notificationsData;
+            setTimeout(() => {
+                if (noties.length > 0)
+                    if (this.options.displayPosition.split("/")[0] === "top")
+                        for (let j = noties.indexOf(this); j >= 0; j--)
+                            noties[j].css({
+                                top: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
+                            });
+                    else
+                        for (let j = noties.indexOf(this); j >= 0; j--)
+                            noties[j].css({
+                                bottom: "-=" + (this.notificationHeight + this.options.notificationsMargin) + "px",
+                            });
+                const cache = [];
+                for (const item of noties)
+                    if (item !== this)
+                        cache.push(item);
+                elyNotificationView.defaults.notificationsData = cache;
+                try {
+                    this.getDocument().parentNode.removeChild(this.getDocument());
+                }
+                catch (e) {
+                    // Nothing is done
+                }
+            }, this.options.fadeTime);
+        }
+    }
+    /**
+     * Состояние закрывающегося оповещения
+     * @param value
+     */
+    closable(value) {
+        if (value === undefined) {
+            return this._isClosable;
+        }
+        this._isClosable = value;
+        return this;
+    }
+    /**
+     * Возвращает состояние оповещения
+     */
+    isNotified() {
+        return this._isNotified;
+    }
+    hide() {
+        this.hidden(true);
+    }
+    show() {
+        this.hidden(false);
+    }
+}
+/**
+ * Стандартные параметры
+ */
+elyNotificationView.defaults = {
+    animateDuration: 60000,
+    animateSpeed: 700,
+    animation: false,
+    backgroundColor: "#FFFFFF",
+    closable: true,
+    contentColor: "#595959",
+    delay: 5000,
+    displayPosition: "top/right",
+    fadeTime: 500,
+    limit: 15,
+    marginFromScreenEdge: 0,
+    messageColor: "#595959",
+    moveTime: 500,
+    notificationsData: [],
+    notificationsMargin: 10,
+    sepColor: "#EEEEEE",
+    titleColor: "#595959",
+    width: 400,
+};
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
  + Файл: elyUIExt.ts                                                          +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -4910,116 +7154,6 @@ var elyStaticGridView$1 = elyStaticGridView;
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyLinkTextView.ts                                                   +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения: Текст ссылкой
- * @version 1.0
- * @class elyLinkTextView
- */
-let elyLinkTextView = class elyLinkTextView extends elyTextView$1 {
-    /**
-     * Конструктор
-     * @param {elyTextViewOptions|url:String} options
-     */
-    constructor(options = {}) {
-        super(Object.assign({ tag: "a" }, options));
-        this.urlProperty = new elyObservableProperty();
-        this.urlProperty.change((newValue) => this.attribute("href", newValue));
-        if (options.url)
-            this.url(options.url);
-        else
-            this.url("#");
-    }
-    /**
-     * Устанавливает или возвращает URL
-     * @param value
-     */
-    url(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.urlProperty);
-    }
-};
-elyLinkTextView = __decorate([
-    designable("url", elyDesignableFieldState.GETSET, "string"),
-    designable("text", elyDesignableFieldState.GETSET)
-], elyLinkTextView);
-var elyLinkTextView$1 = elyLinkTextView;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyImageView.ts                                                      +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения: Изображение
- * @version 1.0
- *
- * Events:
- * - loaded: Изображение загружено
- */
-let elyImageView = class elyImageView extends elyView {
-    /**
-     * Конструтор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(Object.assign({ tag: "img" }, options));
-        this.urlProperty = new elyObservableProperty(null);
-        this.getDocument().onload = (e) => this.notificate("loaded", [e]);
-        this.urlProperty.change((newValue) => this.getDocument().src = newValue);
-        if (options.url)
-            this.url(options.url);
-    }
-    /**
-     * Устанавливает или возвращает ссылку на изображение
-     * @param str
-     */
-    url(str) {
-        return elyObservableProperty.simplePropertyAccess(this, str, this.urlProperty);
-    }
-    /**
-     * Возвращает корневой элемент
-     */
-    getDocument() {
-        return this.__view;
-    }
-};
-elyImageView = __decorate([
-    designable("url", elyDesignableFieldState.GETSET, "string")
-], elyImageView);
-var elyImageView$1 = elyImageView;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
  + Файл: elyPanelView.ts                                                      +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5082,317 +7216,6 @@ elyPanelView = __decorate([
     designable("descriptionView", elyDesignableFieldState.VIEW)
 ], elyPanelView);
 var elyPanelView$1 = elyPanelView;
-
-/*
- *
- *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *   ,--. o                   |    o
- *   |   |.,---.,---.,---.    |    .,---.,---.
- *   |   |||---'|   ||   |    |    ||   ||   |
- *   `--' ``---'`---|`---'    `---'``   '`---|
- *              `---'                    `---'
- *
- * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
- * Mail: <diegoling33@gmail.com>
- *
- * Это программное обеспечение имеет лицензию, как это сказано в файле
- * COPYING, который Вы должны были получить в рамках распространения ПО.
- *
- * Использование, изменение, копирование, распространение, обмен/продажа
- * могут выполняться исключительно в согласии с условиями файла COPYING.
- *
- * Файл: elyXLogger* Файл создан: 04.12.2018 07:03:21
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- */
-/**
- * elyXLogger - логгер уровня X
- */
-class elyXLogger {
-    /**
-     * Конструктор
-     * @param props
-     */
-    constructor(props = {}) {
-        /**
-         * Запись логов в файл
-         */
-        this.writeLogs = false;
-        /**
-         * Главный префикс
-         */
-        this.mainPrefix = "";
-        this.mainPrefix = props.mainPrefix || "ely";
-        this.writeLogs = props.writeLogs || false;
-        this.clear = props.clear || false;
-    }
-    /**
-     * Формирует строку `[ OK ]` или `[ NO ]` в зависимости от условия
-     * @param {boolean} condition
-     * @return {string}
-     */
-    static getOkNoString(condition) {
-        if (condition) {
-            return "[ OK ]";
-        }
-        else {
-            return "[ NO ]";
-        }
-    }
-    /**
-     * Filters the logger message
-     *
-     * @param {string} msg - the message
-     * @param {boolean} [clearfix = false] - if true: color tags will remove
-     *                                       else it will be evaluated
-     *
-     * @return {string} - evaluated of cleared message
-     * @private
-     */
-    static __loggerFilter(msg, clearfix = false) {
-        msg = msg.replace(/&rst/g, clearfix ? "" : elyXLogger.styles.reset);
-        msg = msg.replace(/&red/g, clearfix ? "" : elyXLogger.styles.fgRed);
-        msg = msg.replace(/&grn/g, clearfix ? "" : elyXLogger.styles.fgGreen);
-        msg = msg.replace(/&cyn/g, clearfix ? "" : elyXLogger.styles.fgCyan);
-        msg = msg.replace(/&gre/g, clearfix ? "" : elyXLogger.styles.fgGrey);
-        msg = msg.replace(/&blu/g, clearfix ? "" : elyXLogger.styles.fgBlue);
-        msg = msg.replace(/&ywl/g, clearfix ? "" : elyXLogger.styles.fgYellow);
-        msg = msg.replace(/&mgn/g, clearfix ? "" : elyXLogger.styles.fgMagenta);
-        msg = msg.replace(/&uns/g, clearfix ? "" : elyXLogger.styles.underscore);
-        return msg;
-    }
-    /**
-     * Отображает сообщение в консоль
-     * @param {String} msg
-     */
-    log(msg) {
-        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.LOG)
-            this._sendToConsole(msg, ["Log"]);
-    }
-    /**
-     * Отображает сообщение в консоль от имени модуля module
-     *
-     * @param {String} module - модуль
-     * @param {String} msg - сообщение
-     */
-    mod(module, msg) {
-        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.LOG)
-            this._sendToConsole(msg, ["Module", [elyXLogger.styles.fgMagenta, module]]);
-    }
-    /**
-     * Отображает сообщение об ошибке
-     * @param {String} msg
-     */
-    error(msg) {
-        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.DEBUG)
-            this._sendToConsole(msg, [[elyXLogger.styles.fgRed, "Error"]]);
-    }
-    /**
-     * Отображает предупреждение
-     * @param {String} msg
-     */
-    warning(msg) {
-        if (elyXLogger.loggerLevel >= elyXLogger.loggerLevels.DEBUG)
-            this._sendToConsole(msg, [[elyXLogger.styles.fgMagenta, "Warning"]]);
-    }
-    /**
-     * Выводит LOG информацию
-     *
-     * @param {string} message  - the message
-     * @param {Array} prefixes - the array with the prefixes
-     *
-     * "prefixes" could be like:
-     *
-     *  1. [ "Log" ]                                - Simple
-     *  2. [ "Module", "Test" ]                     - Tree
-     *  3. [ "Module", [ "\x1b[32m", "Test" ] ]     - Tree with the color
-     *
-     *  @private
-     */
-    _sendToConsole(message, prefixes) {
-        if (this.mainPrefix !== "") {
-            const _temp = [[elyXLogger.styles.fgCyan, this.mainPrefix]];
-            for (const _prefix of prefixes)
-                _temp.push(_prefix);
-            prefixes = _temp;
-        }
-        const dateString = new Date().toISOString().replace(/T/, " "). // replace T with a space
-            replace(/\..+/, "");
-        let _prefixToDisplay = "";
-        let _clearPrefix = "";
-        for (let _prefix of prefixes) {
-            let _color = this.clear ? "" : elyXLogger.styles.fgGreen;
-            if (_prefix instanceof Array) {
-                _color = _prefix[0];
-                _prefix = _prefix[1];
-            }
-            _prefixToDisplay += "[" + (!this.clear ? _color : "") + _prefix +
-                (!this.clear ? elyXLogger.styles.reset : "") + "]";
-            _clearPrefix += "[" + _prefix + "]";
-        }
-        const str = "[" + dateString + "]" + _clearPrefix + ": " + elyXLogger.__loggerFilter(message, true);
-        const strToDisplay = "["
-            + (!this.clear ? elyXLogger.styles.fgGrey : "")
-            + dateString
-            + (!this.clear ? elyXLogger.styles.reset : "")
-            + "]"
-            + _prefixToDisplay
-            + (!this.clear ? elyXLogger.styles.reset : "")
-            + ": " + elyXLogger.__loggerFilter(message) + (this.clear ? "" : elyXLogger.styles.reset);
-        this._saveLogString(str);
-        if (this.clear)
-            console.log(elyXLogger.__loggerFilter(strToDisplay, true));
-        else
-            console.log(strToDisplay);
-    }
-    /**
-     * Записывает данные в файл
-     *
-     * @param {string} str
-     * @private
-     */
-    _saveLogString(str) {
-        // if (this.writeLogs)
-        //     require("fs").appendFile("./logs/logger0.log", str + "\n", () => { /* Nothing is done. */
-        //     });
-    }
-}
-/**
- * Стандартный логгер
- */
-elyXLogger.default = new elyXLogger({ mainPrefix: "Default" });
-/**
- * Уровни логирования
- */
-elyXLogger.loggerLevels = {
-    DEBUG: 2,
-    LOG: 1,
-    NONE: 0,
-};
-/**
- * Текущий уровень логирования
- */
-elyXLogger.loggerLevel = elyXLogger.loggerLevels.DEBUG;
-/**
- * Стили
- */
-elyXLogger.styles = {
-    /**
-     * Сбрасывает любой примененный эффект
-     * @type {string}
-     */
-    reset: "\x1b[0m",
-    /**
-     * Делает цвет ярче
-     * @type {string}
-     */
-    bright: "\x1b[1m",
-    dim: "\x1b[2m",
-    /**
-     * Подчернутый текст
-     * @type {string}
-     */
-    underscore: "\x1b[4m",
-    /**
-     * Мигающий текст
-     * @type {string}
-     */
-    blink: "\x1b[5m",
-    /**
-     * Скрытый текст
-     */
-    hidden: "\x1b[8m",
-    /**
-     * Развернутый текст
-     */
-    reverse: "\x1b[7m",
-    /**
-     * Font color: Black
-     * @type {string}
-     */
-    fgBlack: "\x1b[30m",
-    /**
-     * Font color: Red
-     * @type {string}
-     */
-    fgRed: "\x1b[31m",
-    /**
-     * Font color: Green
-     * @type {string}
-     */
-    fgGreen: "\x1b[32m",
-    /**
-     * Font color: Yellow
-     * @type {string}
-     */
-    fgYellow: "\x1b[33m",
-    /**
-     * Font color: Blue
-     * @type {string}
-     */
-    fgBlue: "\x1b[34m",
-    /**
-     * Font color: Magenta
-     * @type {string}
-     */
-    fgMagenta: "\x1b[35m",
-    /**
-     * Font color: Cyan
-     * @type {string}
-     */
-    fgCyan: "\x1b[36m",
-    /**
-     * Font color: White
-     * @type {string}
-     */
-    fgWhite: "\x1b[37m",
-    /**
-     * Font color: Grey
-     * @type {string}
-     */
-    fgGrey: "\x1b[37m",
-    /**
-     * Background color: Black
-     * @type {string}
-     */
-    bgBlack: "\x1b[40m",
-    /**
-     * Background color: Red
-     * @type {string}
-     */
-    bgRed: "\x1b[41m",
-    /**
-     * Background color: Green
-     * @type {string}
-     */
-    bgGreen: "\x1b[42m",
-    /**
-     * Background color: Yellow
-     * @type {string}
-     */
-    bgYellow: "\x1b[43m",
-    /**
-     * Background color: Blue
-     * @type {string}
-     */
-    bgBlue: "\x1b[44m",
-    /**
-     * Background color: Magenta
-     * @type {string}
-     */
-    bgMagenta: "\x1b[45m",
-    /**
-     * Background color: Cyan
-     * @type {string}
-     */
-    bgCyan: "\x1b[46m",
-    /**
-     * Background color: White
-     * @type {string}
-     */
-    bgWhite: "\x1b[47m",
-};
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -6841,1846 +8664,6 @@ elySwitchField = __decorate([
     designable("title", elyDesignableFieldState.GETSET, "string"),
     designable("placeholder", elyDesignableFieldState.DENY)
 ], elySwitchField);
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyFlatApplicationPreloader.ts                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-class elyFlatApplicationPreloader extends elyView {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super({ selector: ".eld" });
-        this.iconLabel = new elyTextView$1({ selector: ".efm" });
-        const selector = document.querySelector(".elm");
-        if (selector) {
-            selector.innerHTML = "";
-            this.messageView = new elyTextView$1({ selector: ".elm" });
-            this.messageView.text("Пожалуйста, подождите...");
-        }
-        else {
-            this.messageView = new elyTextView$1({});
-            elyXLogger.default.warning("Ошибка обработки экрана загрузки...");
-        }
-    }
-    /**
-     * Отображает сообщение
-     * @param text
-     */
-    showScreen(text) {
-        this.messageView.text(text);
-        this.hidden(false);
-    }
-    /**
-     * Скрывает сообщение
-     */
-    hideScreen() {
-        this.hidden(true);
-    }
-}
-/**
- * Стандартный загрузчик
- */
-elyFlatApplicationPreloader.default = new elyFlatApplicationPreloader();
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efAppColorManager.ts                                                 +
- + Файл изменен: 30.01.2019 01:44:27                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Менеджер цветов приложения
- * @class efAppColorManager
- */
-class efAppColorManager {
-    /**
-     * Конструктор
-     * @param props
-     */
-    constructor(props) {
-        /**
-         * Цвет приложения
-         * @protected
-         * @ignore
-         */
-        this.__appColor = elyColor.black();
-        /**
-         * Цвет навигации
-         * @protected
-         * @ignore
-         */
-        this.__navigationBarColor = elyColor.black();
-        this.__app = props.app;
-    }
-    /**
-     * Изменяет цветовую гамму приложения
-     * @param color
-     */
-    applyApplicationColor(color) {
-        const darker = color.getDarkerColor(0.1);
-        const lighter = color.getLighterColor(0.18);
-        elyStylesheet.global.addClass("bg-primary", {
-            backgroundColor: color.toString(),
-            color: color.isDarker() ? "white" : "black",
-        });
-        elyStylesheet.global.addClass("brd-primary", {
-            borderColor: color.toString(),
-        });
-        elyStylesheet.global.addClass("text-primary", {
-            color: color.toString(),
-        });
-        elyStylesheet.global.addClass("bg-info", {
-            backgroundColor: lighter.toString(),
-            color: lighter.isDarker() ? "white" : "black",
-        });
-        elyStylesheet.global.addClass("brd-info", {
-            borderColor: lighter.toString(),
-        });
-        elyStylesheet.global.addClass("text-info", {
-            color: lighter.toString(),
-        });
-        elyStylesheet.global.add("::-webkit-scrollbar-track", {
-            borderColor: "#c2c2c2",
-        });
-        elyStylesheet.global.add("::-webkit-scrollbar", {
-            borderColor: "#c2c2c2",
-            width: "5px",
-        });
-        elyStylesheet.global.add("::-webkit-scrollbar-thumb", {
-            backgroundColor: darker.toString(),
-        });
-        this.__appColor = color;
-    }
-    /**
-     * Изменяет цвет панели нацигации
-     * @param color
-     */
-    applyNavigationBarColor(color) {
-        this.__app.navigationView.navigationBarColor(color);
-        this.__navigationBarColor = color;
-    }
-    /**
-     * Возвращает текущий цвет приложения
-     * @return {elyColor}
-     */
-    getApplicationColor() {
-        return this.__appColor;
-    }
-    /**
-     * Возвращает текущий цвет панели навигации
-     * @return {elyColor}
-     */
-    getNavigatonBarColor() {
-        return this.__navigationBarColor;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyFlatSideNavigationView.ts                                         +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Боковая панель навигации
- */
-class elyFlatSideNavigationView extends elyView {
-    constructor(options = {}) {
-        super(options);
-        this.addClass("ef-sidenav");
-        this.widthProperty = new elyObservableProperty(350);
-        this.widthProperty.change(value => {
-            this.width(value + "px");
-        });
-        this.listView = new elyListView();
-        this.titleView = new elyControl$1({ class: "ef-sidenav-title" });
-        // this.hidden(true);
-        this.dismiss();
-        const closeIcon = new elyIconView$1({ iconName: "close" });
-        this.titleView.getDocument().append(closeIcon.getDocument());
-        this.getDocument().append(this.titleView.getDocument());
-        this.getDocument().append(this.listView.getDocument());
-        this.titleView.addObserver("click", () => {
-            this.dismiss();
-        });
-        this.resize((view, maxWidth) => {
-            if (maxWidth > 1600) {
-                this.widthProperty.set(350);
-            }
-            else {
-                this.widthProperty.set(260);
-            }
-            this.dismiss();
-        });
-    }
-    /**
-     * Отображает навигацию
-     */
-    present() {
-        // this.hidden(false);
-        this.css({ left: `0px` });
-    }
-    /**
-     * Скрывает навигацию
-     */
-    dismiss() {
-        this.css({ left: `-${this.widthProperty.get()}px` });
-    }
-    /**
-     * Переключает отображение навигации
-     */
-    toggle() {
-        if (parseInt((this.getStyle().left || "0").replace("px", ""), 10) < 0) {
-            this.present();
-        }
-        else {
-            this.dismiss();
-        }
-    }
-    /**
-     * Применяет события мыши
-     */
-    applyMouseEvents() {
-        elyXLogger.default.log("События мыши активированы для боковой панели");
-        this.getDocument().onmouseleave = () => {
-            this.dismiss();
-        };
-    }
-    /**
-     * Добавляет панель навигации в приложение
-     */
-    apply() {
-        document.body.append(this.getDocument());
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyFooterView.ts                                                     +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Подвал приложения
- */
-class elyFooterView extends elyControl$1 {
-    /**s
-     * Констуктор
-     */
-    constructor() {
-        super({ class: "ef-footer" });
-        this.titleView = new elyTextView$1({ class: "title" });
-        this.subtitleView = new elyTextView$1({ class: "sub-title" });
-        this.addSubView(this.titleView);
-        this.addSubView(this.subtitleView);
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyNavigationView.ts                                                 +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент верхней навигации
- */
-class elyNavigationView extends elyControl$1 {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(options);
-        this.itemsView = new elyListView();
-        this.titleView = new elyLinkTextView$1({ text: "ely.Flat", url: "#", class: "title" });
-        this.imageView = new elyImageView$1();
-        this.navigationBarColorProperty = new elyObservableProperty();
-        this.addSubView(this.imageView);
-        this.addSubView(this.titleView);
-        this.addSubView(this.itemsView);
-        this.addClass("ely-navigation-view");
-        this.imageView.hidden(true);
-        this.navigationBarColorProperty.change((newValue) => {
-            const backgroundColor = newValue.toString();
-            let borderColor = newValue.getLighterColor(0.3).toString();
-            if (!newValue.isDarker()) {
-                this.addClass("light");
-                borderColor = newValue.getDarkerColor(0.05).toString();
-            }
-            else
-                this.removeClass("light");
-            this.css({ "background-color": backgroundColor, "border-bottom": "4px solid " + borderColor });
-        });
-    }
-    /**
-     * Устанавливает или возвращает цвет бара
-     * @param color
-     */
-    navigationBarColor(color) {
-        if (color && typeof color === "string")
-            color = new elyColor({ hex: color });
-        return elyObservableProperty.simplePropertyAccess(this, color, this.navigationBarColorProperty);
-    }
-    /**
-     * Устанавливает изображение
-     * @param image
-     */
-    navigationBarImage(image) {
-        this.imageView.hidden(false);
-        this.imageView.url(image);
-        this.imageView.height(34);
-        this.imageView.css({ "margin-top": "-12px" });
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyLogger.ts                                                         +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-// import figlet from "figlet";
-/**
- * Logger
- * @deprecated
- */
-class elyLogger {
-    /**
-     * Логирование отладки
-     * @param message
-     */
-    static debug(message) {
-        if (elyLogger.logLevel >= elyLogger.logLevels.debug)
-            if (console)
-                console.log("[{ " + "Debug" + " }]: " + message.toString());
-    }
-    /**
-     * Логирование предупрждений
-     * @param message
-     */
-    static warning(message) {
-        if (elyLogger.logLevel >= elyLogger.logLevels.warning)
-            if (console)
-                console.trace("@- [{ " + "Warning" + " }]: " + message.toString());
-    }
-    /**
-     * Логирование ошибок
-     * @param message
-     */
-    static error(message) {
-        if (elyLogger.logLevel >= elyLogger.logLevels.error)
-            if (console)
-                console.trace("!- [{ " + "ERROR" + " }]: " +
-                    message.toString());
-    }
-    /**
-     * Логирование отладки -- вывод объекта
-     * @param obj
-     */
-    static debugObject(obj) {
-        if (elyLogger.logLevel >= elyLogger.logLevels.debug)
-            if (console)
-                console.log(obj);
-    }
-    /**
-     * Выводит сообщение
-     * @param message
-     */
-    static print(message) {
-        if (console)
-            console.log("[{ " + "Log" + " }]: " + message.toString());
-    }
-    /**
-     * Выводит текстовое лого желтого цвета
-     * @param text
-     * @deprecated
-     */
-    static logoTextYellow(text) {
-        console.log(
-        // figlet.textSync(text, {horizontalLayout: "full"}),
-        );
-    }
-    /**
-     * Выводит текстовое лого цианового цвета
-     * @param text
-     * @deprecated
-     */
-    static logoTextCyan(text) {
-        console.log(
-        // figlet.textSync(text, {horizontalLayout: "full"}),
-        );
-    }
-    /**
-     * Очищает консоль
-     */
-    static clear() {
-        console.clear();
-    }
-}
-/**
- * Уровни логирования
- */
-elyLogger.logLevels = {
-    debug: 10,
-    error: 3,
-    no: 0,
-    warning: 2,
-};
-/**
- * Уровень логирования
- */
-elyLogger.logLevel = elyLogger.logLevels.debug;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyURL.ts                                                            +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Класс ely.URL
- *
- * Класс, содержащий набор методов для работы с URL
- */
-class elyURL {
-    /**
-     * Конструктор
-     *
-     * @param {string} url - URL строка
-     * @param {*} props - опции
-     */
-    constructor(url, props = []) {
-        /**
-         * Ответ обрабатывается как JSON
-         */
-        this.jsonResponse = true;
-        this.absoluteString = url;
-    }
-    /**
-     * Возвращает текущий URL
-     */
-    static current() {
-        return new elyURL(window.location.href);
-    }
-    /**
-     * Возвращает очищенный URL
-     */
-    getClearURL() {
-        return new RegExp("(http[s]?:\\/\\/.+)\\/").exec(this.absoluteString)[1];
-    }
-    /**
-     * Возвращает очищенный URL от GET запроса
-     */
-    getClearOfRequestURL() {
-        return new RegExp("(http[s]?:\\/\\/.+)\\?").exec(this.absoluteString)[1];
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyGetRequest.ts                                                     +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Выполняет GET запрос
- */
-class elyGetRequest extends elyObservable {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options) {
-        super();
-        /**
-         * Парсинг запроса
-         */
-        this.useJson = true;
-        if (typeof options === "string")
-            options = { url: options };
-        if (typeof options.url === "string")
-            options.url = new elyURL(options.url);
-        this.url = options.url;
-        this.xhr = new XMLHttpRequest();
-        this.applyListeners(this.xhr);
-    }
-    /**
-     * Отправляет запрос
-     * @param data
-     * @param callback
-     */
-    send(data, callback) {
-        const params = typeof data === "string" ? data : Object.keys(data).map(k => encodeURIComponent(k) + "="
-            + encodeURIComponent(data[k])).join("&");
-        this.xhr.open("GET", this.url.absoluteString + "?" + params);
-        this.xhr.onreadystatechange = () => {
-            if (this.xhr.readyState === XMLHttpRequest.DONE) {
-                let resp = this.xhr.response;
-                try {
-                    if (this.useJson)
-                        resp = JSON.parse(resp);
-                }
-                catch (e) {
-                    elyLogger.warning("Ошибка возникла при обработке JSON в elyGetRequest! " + this.url.absoluteString);
-                    elyLogger.debugObject(this);
-                    resp = null;
-                }
-                if (callback)
-                    callback(resp, this.xhr.status);
-            }
-        };
-        this.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        this.xhr.send();
-    }
-    /**
-     * Добавляет слушатель изменения прогресса
-     * @param observer
-     */
-    addProgressChangedObserver(observer) {
-        this.addObserver("progressChanged", observer);
-        return this;
-    }
-    /**
-     * Добавляет слушатель ошибки
-     * @param observer
-     */
-    addErrorObserver(observer) {
-        this.addObserver("error", observer);
-        return this;
-    }
-    /**
-     * Добавляет слушатель прерывания запроса
-     * @param observer
-     */
-    addAbortObserver(observer) {
-        this.addObserver("abort", observer);
-        return this;
-    }
-    /**
-     * Добавляет слушатели
-     * @ignore
-     */
-    applyListeners(xhr) {
-        xhr.onerror = ev => this.notificate("error", [ev]);
-        xhr.onprogress = ev => this.notificate("progressChanged", [ev.loaded, ev.total]);
-        xhr.onabort = () => this.notificate("abort", []);
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efAppConfig.ts                                                       +
- + Файл изменен: 30.01.2019 00:57:41                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Конфигурация приложения
- * @class efAppConfig
- * @augments {elyObservable}
- * @augments {efAppConfigInterface}
- */
-class efAppConfig extends elyObservable {
-    constructor() {
-        super();
-        /**
-         * Секция: приложение
-         * {@link efConfigSection_app}
-         */
-        this.app = {
-            author: null,
-            title: "my.App",
-        };
-        /**
-         * Секция: манифест
-         * {@link efConfigSection_manifest}
-         */
-        this.manifest = {
-            allowStandaloneMode: true,
-            useApplicationIcon: true,
-            useContentController: true,
-            useContentRouter: true,
-            useDevelopMode: false,
-            useIPhoneXStandaloneFix: true,
-            useMeta: true,
-            useNavigationBar: true,
-            useSideNavigationBar: false,
-            useViewPort: true,
-        };
-        /**
-         * Секция: контроллер контента
-         * {@link efConfigSection_contentController}
-         */
-        this.contentController = {
-            defaultContentId: "index",
-            errorContentId: "error",
-        };
-        /**
-         * Секция: панель навигации
-         * {@link efConfigSection_navigationBar}
-         */
-        this.navigationBar = {
-            color: null,
-            extendedStyle: false,
-            imageUrl: null,
-            items: [],
-            subtitle: null,
-            title: "my.App{ }",
-        };
-        /**
-         * Секция: боковая панель навигации
-         * {@link efConfigSection_sideNavigationBar}
-         */
-        this.sideNavigationBar = {
-            allowMouseEvents: true,
-            items: [],
-        };
-        /**
-         * Секция: шаблон
-         * {@link efConfigSection_template}
-         */
-        this.template = {
-            color: "#194d6d",
-            footer: {
-                subtitle: "My application",
-                title: "Works with *ely.Flat* Application Engine",
-            },
-            maxContainerWidth: 700,
-        };
-        /**
-         * Секция: мета данные
-         * {@link efConfigSection_meta}
-         */
-        this.meta = {
-            appleMobile: {
-                statusBarStyle: "black-translucent",
-            },
-            charset: "UTF-8",
-            iconPath: "resources/icon",
-            viewport: {
-                fit: "cover",
-                initialScale: 1.0,
-                maximumScale: 1.0,
-                userScale: "no",
-                width: "device-width",
-            },
-        };
-    }
-    /**
-     * Загружает конфигурацию
-     * @param props
-     */
-    load(props) {
-        new elyGetRequest({ url: props.file }).send({}, (response, status) => {
-            if (response) {
-                elyUtils.mergeDeep(this, response);
-                this.notificate("loaded", [true, this]);
-            }
-            else {
-                this.notificate("loaded", [false, this]);
-            }
-        });
-    }
-    /**
-     * Добавляет наблюдатель: загрузка конфигурации завершена
-     *
-     * Имя обсервера: loaded
-     *
-     * @param {function(result: boolean, cfg: efAppConfig)} o - наблюдатель
-     */
-    addLoadedObserver(o) {
-        this.addObserver("loaded", o);
-        return this;
-    }
-    /**
-     * Возвращает заголовок приложения
-     * @return {string}
-     */
-    getAppTitle() {
-        return this.app.title;
-    }
-    /**
-     * Возвращает строку цвета приложения
-     * @return {string}
-     */
-    getAppColorString() {
-        return this.template.color;
-    }
-    /**
-     * Возвращает цвет панели навигации
-     * @return {string}
-     */
-    getNavigationBarColorString() {
-        return this.navigationBar.color || this.template.color;
-    }
-    /**
-     * Возвращает цвет панели навигации
-     */
-    getNavigationBarColor() {
-        return new elyColor({ hex: this.getNavigationBarColorString() });
-    }
-    /**
-     * Возвращает основной цвет приложения
-     * @return {elyColor}
-     */
-    getAppColor() {
-        return new elyColor({ hex: this.getAppColorString() });
-    }
-    /**
-     * Возвращает true, если используется панель навигации
-     */
-    isNavigationBarUsed() {
-        return this.manifest.useNavigationBar;
-    }
-    /**
-     * Возвращает true, если используется боковая панель навигации
-     */
-    isSideNavigationBarUsed() {
-        return this.manifest.useSideNavigationBar;
-    }
-}
-/**
- * Путь до файла конфигурации
- * @type {string}
- */
-efAppConfig.appConfigPath = "app.config.json";
-/**
- * Стандратная конфигурация
- * @type {efAppConfig}
- */
-efAppConfig.default = new efAppConfig();
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efAppDocumentHead.ts                                                 +
- + Файл изменен: 30.01.2019 01:54:59                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Документ: Заголовок
- */
-class efAppDocumentHead extends elyView {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super({ element: document.head });
-        /**
-         * Мета значения
-         * @ignore
-         * @protected
-         */
-        this.__metaValues = [];
-        this.__titleElement = document.getElementsByTagName("title")[0];
-        this.getDocument().append(this.__titleElement);
-        this.getDocument().append(elyStylesheet.global.getDocument());
-    }
-    /**
-     * Возвращает и устанавливает заголовок
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    title(value) {
-        if (value === undefined)
-            return this.__titleElement.innerText;
-        this.__titleElement.innerText = value;
-        document.title = value;
-        return this;
-    }
-    /**
-     * Возвращает мета значения
-     * @return {*}
-     */
-    getMetaValues() {
-        return this.__metaValues;
-    }
-    /**
-     * Добавляет мета значение
-     * @param {{ name: string, content: string }} props
-     */
-    addMetaValue(props) {
-        const metaElement = document.createElement("meta");
-        metaElement.content = props.content;
-        metaElement.name = props.name;
-        this.getDocument().append(metaElement);
-    }
-    /**
-     * Добавляет viewport
-     * @param {{fit?: string, initialScale?: number, maximumScale?: number,
-     * userScalable?: string, width?: string}} props
-     */
-    addViewPort(props) {
-        const a = [];
-        if (props.fit)
-            a.push(`viewport-fit=${props.fit}`);
-        if (props.width)
-            a.push(`width=${props.width}`);
-        if (props.initialScale)
-            a.push(`initial-scale=${props.initialScale}`);
-        if (props.maximumScale)
-            a.push(`maximum-scale=${props.maximumScale}`);
-        if (props.userScalable)
-            a.push(`user-scalable=${props.userScalable}`);
-        this.addMetaValue({ name: "viewport", content: a.join(", ") });
-    }
-    /**
-     * Устанавливает кодировку
-     * @param {string} charset
-     */
-    setCharset(charset) {
-        const metaElement = document.createElement("meta");
-        metaElement.setAttribute("charset", charset);
-        this.getDocument().append(metaElement);
-    }
-    /**
-     * Добавляет ссылку
-     * @param {{ rel: string, href: string}|*} props
-     */
-    addLink(props) {
-        const lnk = document.createElement("link");
-        for (const key in props)
-            if (props.hasOwnProperty(key))
-                lnk.setAttribute(key, props[key]);
-        this.getDocument().append(lnk);
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efAppDocument.ts                                                     +
- + Файл изменен: 30.01.2019 01:54:33                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Документ приложения
- */
-class efAppDocument {
-    constructor() {
-        /**
-         * Заголовок
-         */
-        this.head = new efAppDocumentHead();
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: elyViewController.ts                                                 +
- + Файл изменен: 30.11.2018 00:25:05                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер элемента отображения
- * @class elyViewController
- * @augments elyObservable
- */
-class elyViewController extends elyObservable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Элемент отображения
-         * @type {elyControl}
-         */
-        this.view = elyControl$1.empty();
-    }
-    /**
-     * Делегат окончания инициилизации объекта
-     * @param screen - экран
-     */
-    viewWillAppear(screen) {
-        // Nothing is done
-    }
-    /**
-     * Делегат окончания загрузки элемента
-     */
-    viewDidLoad() {
-        // Nothing is done
-    }
-    /**
-     * Делегат окончания отображения элемента
-     */
-    viewDidAppear() {
-        // Nothing is done
-    }
-}
-/**
- * Текущий контроллер
- * @ignore
- */
-elyViewController.__thisControllers = [];
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: elyGridViewController.ts                                             +
- + Файл изменен: 30.11.2018 01:48:16                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер с сеткой в основании
- * @class elyGridViewController
- * @augments {elyViewController}
- */
-class elyGridViewController extends elyViewController {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Элемент отображения
-         * @type {elyGridView|elyView}
-         */
-        this.view = new elyGridView();
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: elySimplePageViewController.ts                                       +
- + Файл изменен: 30.11.2018 01:52:55                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер с шаблоном макета приложения
- * @class elySimplePageViewController
- * @augments {elyGridViewController}
- */
-class elySimplePageViewController extends elyGridViewController {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Основной заголовок
-         * @type {elyTextView}
-         */
-        this.titleView = new elyTextView$1({ class: "ef-title" });
-        /**
-         * Описание страницы
-         * @type {elyTextView}
-         */
-        this.descriptionView = new elyTextView$1({ class: "ef-description" });
-        this.view.addClass("ef-simple-content");
-        const headerView = new elyControl$1({ class: "ef-content-head" });
-        this.titleView.textSize(elySize.large).textWeight(elyWeight.normal).textCenter(true);
-        this.descriptionView.textSize(elySize.middle).textCenter(true);
-        headerView.addSubView(this.titleView);
-        headerView.addSubView(this.descriptionView);
-        this.view.add(headerView);
-    }
-    /**
-     * Устанавливает или возвращает заголовок
-     * @param {string} [value]
-     * @return {this|string}
-     */
-    title(value) {
-        if (value === undefined)
-            return this.titleView.text();
-        this.titleView.text(value);
-        return this;
-    }
-    /**
-     * Устанавливает или возвращает описание контента
-     * @param {string} [value]
-     * @return {this|string}
-     */
-    description(value) {
-        if (value === undefined)
-            return this.descriptionView.text();
-        this.descriptionView.text(value);
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: elyScreenController.ts                                               +
- + Файл изменен: 30.11.2018 00:19:28                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-class __elyScreenIndexViewController extends elySimplePageViewController {
-    /**
-     * После загрущки
-     *
-     * + В данном методе рекомендуется выполнять отрисовку, а также программную логику
-     *   контроллера элемента отображения.
-     */
-    viewDidLoad() {
-        super.viewDidLoad();
-        this.title("ely.Flat *{* Application *}*");
-        this.description("Приложение разработано на основе ely.flat framework");
-    }
-}
-/**
- * Контроллер экрана
- * @class elyScreenController
- * @augments elyObservable
- */
-class elyScreenController extends elyObservable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Контроллер
-         */
-        this.controller = new elyObservableProperty();
-        /**
-         * Элемент отображения
-         */
-        this.view = new elyControl$1({ class: "ef-screen" });
-        /**
-         * Элементы контента
-         */
-        this.items = {};
-        this.present(new __elyScreenIndexViewController());
-        this.elyScreenControllerDidInit();
-    }
-    /**
-     * Делегат завершения инициилизации контроллера
-     */
-    elyScreenControllerDidInit() {
-        this.notificate("didInit");
-    }
-    /**
-     * Отображает элемент
-     * @param controller
-     * @param completion
-     */
-    present(controller, completion) {
-        if (typeof controller === "string") {
-            if (this.items.hasOwnProperty(controller))
-                this.present(this.items[controller].controller, completion);
-        }
-        else {
-            this.view.fadeOut(() => {
-                this.controller.set(controller);
-                if (elyViewController.__thisControllers.indexOf(controller.constructor.name) === -1) {
-                    elyViewController.__thisControllers.push(controller.constructor.name);
-                    controller.viewDidLoad();
-                }
-                controller.viewWillAppear(this);
-                this.view.removeViewContent();
-                this.view.addSubView(controller.view);
-                this.view.addSubView(elyFlatApplication.default.footerView);
-                this.view.fadeIn(() => {
-                    controller.viewDidAppear();
-                    if (completion)
-                        completion();
-                });
-            });
-        }
-    }
-    /**
-     * Добавляет контроллер в навигацию
-     * @param name
-     * @param controller
-     * @param canOverwrite
-     */
-    addControllerName(name, controller, canOverwrite = false) {
-        if (this.items.hasOwnProperty(name)) {
-            if (!this.items[name].canOverwrite)
-                return;
-            this.items[name].controller = controller;
-            this.items[name].canOverwrite = canOverwrite;
-        }
-        this.items[name] = { controller, canOverwrite };
-    }
-}
-/**
- * Стандартный контроллер экрана
- */
-elyScreenController.default = new elyScreenController();
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efSize.ts                                                            +
- + Файл изменен: 28.12.2018 01:18:31                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Прослушиываемый размер
- */
-class efSize extends elyObservable {
-    /**
-     * Конструктор
-     * @param {{width: number, height: number}} props
-     */
-    constructor(props = { width: 0, height: 0 }) {
-        super();
-        /**
-         * Свойство: ширина
-         */
-        this.widthProperty = new elyObservableProperty(0);
-        /**
-         * Свойство: высота
-         */
-        this.heightProperty = new elyObservableProperty(0);
-        if (props.d !== undefined) {
-            this.width(props.d || 0);
-            this.height(props.d || 0);
-        }
-        else {
-            this.width(props.width || 0);
-            this.height(props.height || 0);
-        }
-        this.widthProperty.change(value => this.notificate("changed", ["width", value, this.height()]));
-        this.heightProperty.change(value => this.notificate("changed", ["height", this.width(), value]));
-    }
-    /**
-     * Возвращает нулевой размер
-     * @return {efSize}
-     */
-    static zero() {
-        return new efSize({ width: 0, height: 0 });
-    }
-    /**
-     * Возвращает и устанавливает ширина
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    width(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.widthProperty);
-    }
-    /**
-     * Возвращает и устанавливает высота
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    height(value) {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.heightProperty);
-    }
-    /**
-     * Изменяет размер
-     *
-     * @param {number} sW   - ширина или общее значение
-     * @param {number} [sH] - высота
-     * @return {this}
-     */
-    scale(sW, sH) {
-        if (sH === undefined) {
-            this.width(this.width() * sW);
-            this.height(this.height() * sW);
-        }
-        else {
-            this.width(this.width() * sW);
-            this.height(this.height() * (sH || 0));
-        }
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: изменение размера
-     *
-     * Имя обсервера: changed
-     *
-     * @param o - наблюдатель
-     */
-    addChangeObserver(o) {
-        this.addObserver("changed", o);
-        return this;
-    }
-    /**
-     * Преобразует объект в строку
-     * @return {string}
-     */
-    toString() {
-        return `efSize{w: ${this.width()}, h: ${this.height()}}`;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: elyDeviceDetector.ts                                                 +
- + Файл изменен: 31.01.2019 00:49:47                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Детектор устройств и системы
- */
-class elyDeviceDetector extends elyObservable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Данные
-         * @ignore
-         * @protected
-         */
-        this.__data = {
-            browser: null,
-            os: null,
-        };
-    }
-    /**
-     * Добавляет наблюдатель: распознавание закончено
-     *
-     * Имя обсервера: detected
-     *
-     * @param o - наблюдатель
-     */
-    addDetectedObserver(o) {
-        this.addObserver("detected", o);
-        return this;
-    }
-    /**
-     * Выполняет детектинг
-     */
-    detect() {
-        for (const os of elyDeviceDetector.__osNames)
-            if (navigator.userAgent.indexOf(os.value) > -1) {
-                this.__data.os = os.name;
-                break;
-            }
-        for (const browser of elyDeviceDetector.__browsers)
-            if (navigator.userAgent.indexOf(browser.value) > -1) {
-                this.__data.browser = browser.name;
-                break;
-            }
-        this.notificate("detected");
-    }
-    /**
-     * Возвращает имя системы
-     * @return {string}
-     */
-    getOSName() {
-        return this.__data.os || "Undetected";
-    }
-    /**
-     * Возвращает имя браузера
-     * @return {string}
-     */
-    getBrowserName() {
-        return this.__data.browser || "Undefined";
-    }
-    /**
-     * Возвращает true, если приложение запущено отдельным приложением**
-     * @return {boolean}
-     */
-    isStandalone() {
-        // @ts-ignore
-        return window.navigator.standalone || false;
-    }
-    /**
-     * Возвращает true, если система iOS
-     * @return {boolean}
-     */
-    isIOS() {
-        return /iPad|iPhone|iPod/.test(this.__data.os);
-    }
-    /**
-     * Возвращает соотнощение сторон
-     * @return {number}
-     */
-    getRatio() {
-        return window.devicePixelRatio || 1;
-    }
-    /**
-     * Возвращает реальный размер жкрана
-     * @return {efSize}
-     */
-    getScreenSize() {
-        return new efSize({
-            height: window.screen.height * this.getRatio(),
-            width: window.screen.width * this.getRatio(),
-        });
-    }
-    /**
-     * Возвращает true, если устройство - iPhone X
-     * @return {boolean}
-     */
-    isIPhoneX() {
-        const size = this.getScreenSize();
-        return this.isIOS() && size.width() === 1125 && size.height() === 2436;
-    }
-}
-/**
- * Стандартный детектор
- */
-elyDeviceDetector.default = new elyDeviceDetector();
-/**
- * Имена операционных систем
- * @protected
- * @ignore
- */
-elyDeviceDetector.__osNames = [
-    { name: "Windows Phone", value: "Windows Phone", version: "OS" },
-    { name: "Windows", value: "Win", version: "NT" },
-    { name: "iPhone", value: "iPhone", version: "OS" },
-    { name: "iPad", value: "iPad", version: "OS" },
-    { name: "iPod", value: "iPod", version: "OS" },
-    { name: "Kindle", value: "Silk", version: "Silk" },
-    { name: "Android", value: "Android", version: "Android" },
-    { name: "PlayBook", value: "PlayBook", version: "OS" },
-    { name: "BlackBerry", value: "BlackBerry", version: "/" },
-    { name: "MacOS", value: "Mac", version: "OS X" },
-    { name: "Linux", value: "Linux", version: "rv" },
-    { name: "Palm", value: "Palm", version: "PalmOS" },
-];
-/**
- * Браузеры
- * @protected
- * @ignore
- */
-elyDeviceDetector.__browsers = [
-    { name: "Chrome", value: "Chrome", version: "Chrome" },
-    { name: "Firefox", value: "Firefox", version: "Firefox" },
-    { name: "Safari", value: "Safari", version: "Version" },
-    { name: "Internet Explorer", value: "MSIE", version: "MSIE" },
-    { name: "Opera", value: "Opera", version: "Opera" },
-    { name: "BlackBerry", value: "CLDC", version: "CLDC" },
-    { name: "Mozilla", value: "Mozilla", version: "Mozilla" },
-];
-/**
- * Заголовки
- * @protected
- * @ignore
- */
-elyDeviceDetector.__headers = [
-    navigator.platform,
-    navigator.userAgent,
-    navigator.appVersion,
-    navigator.vendor,
-];
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyFlatApplication.ts                                                +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Приложение
- */
-class elyFlatApplication extends elyObservable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Документ
-         */
-        this.applicationDocument = new efAppDocument();
-        this.applicationColorManager = new efAppColorManager({ app: this });
-        this.readySignalsShouldBeReceived = 0;
-        this.bodyView = new elyControl$1({ element: document.body });
-        this.containerView = new elyControl$1({ class: "ef-cntr" });
-        this.wrapperView = new elyControl$1({ class: "ef-wrp" });
-        this.navigationView = new elyNavigationView();
-        this.footerView = new elyFooterView();
-        this.sideNavigationView = new elyFlatSideNavigationView();
-        this.preloader = elyFlatApplicationPreloader.default;
-        this.bodyView.addSubView(this.wrapperView);
-        this.containerView.css({ margin: "0 auto" });
-        this.containerView.css({ width: "100%" });
-        this.wrapperView.addSubView(this.containerView);
-        this.containerView.addSubView(elyScreenController.default.view);
-        this.wrapperView.addObserver("click", () => {
-            if (this.config.isSideNavigationBarUsed())
-                this.sideNavigationView.dismiss();
-        });
-        this.bodyView.getDocument().onmousemove = (e) => {
-            if (e.pageX <= 20) {
-                this.sideNavigationView.present();
-            }
-        };
-    }
-    /**
-     * Возвращает стандартный объект приложения
-     * @param closure
-     */
-    static loadApplication(closure) {
-        elyXLogger.default.log("Загрузка приложения...");
-        efAppConfig.default.addLoadedObserver((result, cfg) => {
-            console.log(cfg);
-            if (!result)
-                elyXLogger.default.error("Файл конфигурации не найден. " +
-                    "Будет использована стандратная конфигурация.");
-            else
-                elyXLogger.default.log("Файл конфигурации успешно загружен.");
-            // Распознание текущего устройства
-            elyDeviceDetector.default.addDetectedObserver(() => elyFlatApplication.default.init(cfg));
-            elyDeviceDetector.default.detect();
-        });
-        efAppConfig.default.load({ file: efAppConfig.appConfigPath });
-    }
-    /**
-     * Возвращает конфигурацию приложения
-     */
-    getConfig() {
-        return this.config;
-    }
-    /**
-     * Добавляет слушатель окончания загрузки приложения
-     * @param observer
-     */
-    addReadyObserver(observer) {
-        this.readySignalsShouldBeReceived++;
-        this.addObserver("ready", observer);
-        return this;
-    }
-    /**
-     * Инициилизирует приложение
-     * @param {efAppConfig} config
-     */
-    init(config) {
-        this.config = config;
-        this.applyConfiguration(config);
-        this.notificate("ready", [(flag, message) => {
-                elyLogger.debug(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
-                elyLogger.debug(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
-                if (!flag) {
-                    this.preloader.iconLabel
-                        .removeClass("fa-refresh")
-                        .addClass("fa-times")
-                        .removeClass("fa-spin");
-                    this.preloader.messageView.text(message || "Загрузка была остановлена...");
-                    throw Error("Остановка приложения...");
-                    return;
-                }
-                this.readySignalsShouldBeReceived--;
-                elyLogger.debug("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
-                if (this.readySignalsShouldBeReceived === 0) {
-                    if (this.config.manifest.useContentController) {
-                        __applyElyOneActions(this);
-                    }
-                    elyScreenController.default.present("index");
-                    this.preloader.hidden(true);
-                }
-            }]);
-    }
-    /**
-     * Применяет конфигурацию
-     * @param config
-     */
-    applyConfiguration(config) {
-        elyXLogger.default.log("~~~> Применение конфигурации");
-        //
-        // App
-        //
-        this.applicationDocument.head.title(config.getAppTitle());
-        //
-        // Manifest
-        //
-        //
-        //  Template
-        //
-        this.containerView.getStyle().maxWidth = typeof config.template.maxContainerWidth === "number" ?
-            config.template.maxContainerWidth + "px" : config.template.maxContainerWidth;
-        this.applicationColorManager.applyApplicationColor(config.getAppColor());
-        this.footerView.titleView.text(config.template.footer.title);
-        this.footerView.subtitleView.text(config.template.footer.subtitle);
-        //
-        //  Navigation config
-        //
-        if (config.isNavigationBarUsed()) {
-            this.bodyView.addSubView(this.navigationView);
-            this.navigationView.titleView.text(config.navigationBar.title);
-            if (config.manifest.useContentController)
-                this.navigationView.titleView.addObserver("click", () => {
-                    elyScreenController.default.present(config.contentController.defaultContentId);
-                });
-            config.navigationBar.items.forEach(value => {
-                value.item = value.item || "elyLinkTextView";
-                this.navigationView.itemsView.add(elyControl$1.fromObject(value));
-            });
-            if (config.navigationBar.imageUrl) {
-                this.navigationView.navigationBarImage(config.navigationBar.imageUrl);
-                if (config.manifest.useContentController)
-                    this.navigationView.imageView.addObserver("click", () => {
-                        elyScreenController.default.present(config.contentController.defaultContentId);
-                    });
-            }
-            this.applicationColorManager.applyNavigationBarColor(config.getNavigationBarColor());
-        }
-        //
-        //  Side Navigation config
-        //
-        if (config.isSideNavigationBarUsed()) {
-            if (config.isNavigationBarUsed()) {
-                const showButton = new elyControl$1({
-                    class: "ef-sidenav-toggle",
-                    subviews: [new elyIconView$1({ iconName: "bars" })],
-                });
-                showButton.addObserver("click", () => {
-                    this.sideNavigationView.toggle();
-                });
-                this.navigationView.addSubView(showButton);
-            }
-            this.sideNavigationView.apply();
-            if (config.sideNavigationBar.allowMouseEvents)
-                this.sideNavigationView.applyMouseEvents();
-            config.sideNavigationBar.items.forEach(value => {
-                value.item = value.item || "elyLinkTextView";
-                this.sideNavigationView.listView.add(elyControl$1.fromObject(value));
-            });
-        }
-        //
-        // Meta
-        //
-        if (config.manifest.useMeta) {
-            this.applicationDocument.head.setCharset(config.meta.charset);
-            this.applicationDocument.head.addMetaValue({ name: "apple-mobile-web-app-title", content: config.app.title });
-            this.applicationDocument.head.addMetaValue({
-                content: config.meta.appleMobile.statusBarStyle,
-                name: "apple-mobile-web-app-status-bar-style",
-            });
-            this.applicationDocument.head.addMetaValue({
-                content: config.manifest.allowStandaloneMode ? "yes" : "no",
-                name: "apple-mobile-web-app-capable",
-            });
-            this.applicationDocument.head.addMetaValue({
-                content: config.getNavigationBarColorString(),
-                name: "theme-color",
-            });
-        }
-        if (config.manifest.useViewPort)
-            this.applicationDocument.head.addViewPort(config.meta.viewport);
-        if (config.manifest.useApplicationIcon) {
-            this.applicationDocument.head.addLink({
-                href: config.meta.iconPath + "/apple-touch-icon.png",
-                rel: "apple-touch-icon",
-                sizes: "180x180",
-            });
-            this.applicationDocument.head.addLink({
-                href: config.meta.iconPath + "/favicon-32x32.png",
-                rel: "icon",
-                sizes: "32x32",
-                type: "image/png",
-            });
-            this.applicationDocument.head.addLink({
-                href: config.meta.iconPath + "/favicon-16x16.png",
-                rel: "icon",
-                sizes: "16x16",
-                type: "image/png",
-            });
-            this.applicationDocument.head.addLink({
-                href: config.meta.iconPath + "/favicon.ico",
-                rel: "shortcut icon",
-            });
-            this.applicationDocument.head.addLink({
-                color: config.getNavigationBarColorString(),
-                href: config.meta.iconPath + "/safari-pinned-tab.svg",
-                rel: "mask-icon",
-            });
-        }
-        if (config.manifest.allowStandaloneMode && config.manifest.useIPhoneXStandaloneFix) {
-            if (elyDeviceDetector.default.isIPhoneX() && elyDeviceDetector.default.isStandalone()) {
-                elyStylesheet.global.addClass("ef-sidenav-toggle", { paddingTop: "30px" });
-                elyStylesheet.global.addClass("ef-wrp", { paddingTop: "40px" });
-                elyStylesheet.global.addClass("ef-sidenav-title", { paddingTop: "60px" });
-                this.bodyView.getStyle().minHeight = elyDeviceDetector.default.getScreenSize().height() + "px";
-                elyNotificationView.defaults.marginFromScreenEdge = 40;
-                if (config.manifest.useNavigationBar)
-                    elyFlatApplication.default.navigationView.css({ "padding-top": "40px" });
-            }
-        }
-    }
-}
-/**
- * Паттерн синглтон
- */
-elyFlatApplication.default = new elyFlatApplication();
-function __applyElyOneActions(app) {
-    elyOneActionEval.default.actionsRules.content = (arg) => {
-        switch (arg) {
-            case "back":
-                // cc.back();
-                break;
-            case "*index":
-                elyScreenController.default.present("index");
-                break;
-            default:
-                elyScreenController.default.present(arg);
-        }
-    };
-}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -10359,7 +10342,7 @@ let elyModalView = elyModalView_1 = class elyModalView extends elyView {
     static next() {
         if (elyModalView_1.queue.length > 0 && elyModalView_1.currentModal === null) {
             elyModalView_1.currentModal = elyModalView_1.queue.pop();
-            elyBodyView.default.addSubView(elyModalView_1.currentModal);
+            elyFlatApplication.default.applicationDocument.body.addSubView(elyModalView_1.currentModal);
             elyModalView_1.currentModal.fadeIn();
         }
     }
@@ -10389,7 +10372,7 @@ let elyModalView = elyModalView_1 = class elyModalView extends elyView {
         if (this.modalClosable() || force) {
             this.notificate("dismiss", [this]);
             this.fadeOut(() => {
-                elyBodyView.default.removeSubView(this);
+                elyFlatApplication.default.applicationDocument.body.removeSubView(this);
                 elyModalView_1.currentModal = null;
                 elyModalView_1.next();
             });
@@ -11190,10 +11173,10 @@ const addController = (name, viewController, canOverwrite = true) => {
     elyScreenController.default.addControllerName(name, viewController, canOverwrite);
 };
 /**
- * Возвращает тело приложения
+ * Возвращает приложение
  */
-const getBodyView = () => {
-    return elyBodyView.default;
+const app = () => {
+    return elyFlatApplication.default;
 };
 const developMode = (bool) => {
     if (bool) {
@@ -11215,7 +11198,6 @@ window.onload = () => {
 };
 window.elyflatobjects = {
     elyView,
-    elyBodyView,
     elyControl: elyControl$1,
     elyButton: elyButton$1,
     elyIconView: elyIconView$1,
@@ -11242,5 +11224,5 @@ window.elyflatobjects = {
     elyColorPickerField: elyColorPickerField$1,
 };
 
-export { getBodyView, elyOnReady, addController, developMode, elyStylesheet, elyFlatApplication, elyTime, elyDeviceDetector, elyColor, elyGuard, elyTimer, elyCookie, elyXLogger, elySimpleJSONParser, elyUtils, elyColorUtils, elyFileWatcher, elyURL, elyGetRequest, elyPostRequest, elyView, elyBodyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyIconView$1 as elyIconView, elyTextViewEditable, elyProgressView$1 as elyProgressView, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyFormView, elyDataGridView$1 as elyDataGridView, elyNotificationView, elyProgressNotificationView, elyListView, elyModalView$1 as elyModalView, elyScrollView, elyTableView, elyInput, elyTextField, elySwitchField, elyDataPickerField, elyColorPickerField$1 as elyColorPickerField, elyScreenController, elyViewController, elySimplePageViewController, elyGridViewController, elySize, elyStyle, elyFieldType, efSize, elyAxis, elyDirection, ef2DVector, ef2DVectorValues, efCanvas, efCanvasLayer };
+export { app, elyOnReady, addController, developMode, elyStylesheet, elyFlatApplication, elyTime, elyDeviceDetector, elyColor, elyGuard, elyTimer, elyCookie, elyXLogger, elySimpleJSONParser, elyUtils, elyColorUtils, elyFileWatcher, elyURL, elyGetRequest, elyPostRequest, elyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyIconView$1 as elyIconView, elyTextViewEditable, elyProgressView$1 as elyProgressView, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyFormView, elyDataGridView$1 as elyDataGridView, elyNotificationView, elyProgressNotificationView, elyListView, elyModalView$1 as elyModalView, elyScrollView, elyTableView, elyInput, elyTextField, elySwitchField, elyDataPickerField, elyColorPickerField$1 as elyColorPickerField, elyScreenController, elyViewController, elySimplePageViewController, elyGridViewController, elySize, elyStyle, elyFieldType, efSize, elyAxis, elyDirection, ef2DVector, ef2DVectorValues, efCanvas, efCanvasLayer };
 //# sourceMappingURL=ely.flat.js.map

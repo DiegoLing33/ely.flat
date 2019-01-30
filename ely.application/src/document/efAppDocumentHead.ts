@@ -27,6 +27,8 @@ import elyView from "@core/controls/elyView";
 
 /**
  * Документ: Заголовок
+ * @class efAppDocumentHead
+ * @augments {elyView}
  */
 export default class efAppDocumentHead extends elyView {
 

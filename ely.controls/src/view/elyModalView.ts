@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import elyFlatApplication from "@app/app/elyFlatApplication";
 import elyControl from "@controls/action/elyControl";
 import elyIconView from "@controls/text/elyIconView";
 import elyTextView from "@controls/text/elyTextView";
-import elyBodyView from "@controls/view/elyBodyView";
 import elyView from "@core/controls/elyView";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
 import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
@@ -60,7 +60,7 @@ export default class elyModalView extends elyView {
     protected static next(): void {
         if (elyModalView.queue.length > 0 && elyModalView.currentModal === null) {
             elyModalView.currentModal = elyModalView.queue.pop()!;
-            elyBodyView.default.addSubView(elyModalView.currentModal);
+            elyFlatApplication.default.applicationDocument.body.addSubView(elyModalView.currentModal);
             elyModalView.currentModal.fadeIn();
         }
     }
@@ -201,7 +201,7 @@ export default class elyModalView extends elyView {
         if (this.modalClosable() || force) {
             this.notificate("dismiss", [this]);
             this.fadeOut(() => {
-                elyBodyView.default.removeSubView(this);
+                elyFlatApplication.default.applicationDocument.body.removeSubView(this);
                 elyModalView.currentModal = null;
                 elyModalView.next();
             });

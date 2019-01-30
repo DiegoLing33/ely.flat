@@ -22,10 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import efAppDocumentBody from "@app/document/efAppDocumentBody";
 import efAppDocumentHead from "@app/document/efAppDocumentHead";
 
 /**
  * Документ приложения
+ * @class efAppDocument
  */
 export default class efAppDocument {
 
@@ -34,4 +36,8 @@ export default class efAppDocument {
      */
     public readonly head: efAppDocumentHead = new efAppDocumentHead();
 
+    /**
+     * Тело документа
+     */
+    public readonly body: efAppDocumentBody = new efAppDocumentBody();
 }

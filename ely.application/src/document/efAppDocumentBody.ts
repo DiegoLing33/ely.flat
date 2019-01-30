@@ -22,6 +22,20 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-export default class efAppDocumentBody {
+import elyControl from "@controls/action/elyControl";
+
+/**
+ * Документ: Тело
+ * @class efAppDocumentHead
+ * @augments {elyView}
+ */
+export default class efAppDocumentBody extends elyControl {
+
+    /**
+     * Конструктор
+     */
+    public constructor() {
+        super({element: document.body});
+    }
 
 }
