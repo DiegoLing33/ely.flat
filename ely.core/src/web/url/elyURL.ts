@@ -18,9 +18,6 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyLogger from "@core/elyLogger";
-import elyURLDelegate from "@core/web/url/elyURLDelegate";
-
 /**
  * Класс ely.URL
  *
@@ -46,11 +43,6 @@ export default class elyURL {
     public jsonResponse: boolean = true;
 
     /**
-     * Делегат класса
-     */
-    public delegate: elyURLDelegate;
-
-    /**
      * Конструктор
      *
      * @param {string} url - URL строка
@@ -58,7 +50,6 @@ export default class elyURL {
      */
     public constructor(url: string, props: any = []) {
         this.absoluteString = url;
-        this.delegate = new elyURLDelegate();
     }
 
     /**
@@ -73,58 +64,6 @@ export default class elyURL {
      */
     public getClearOfRequestURL(): string {
         return new RegExp("(http[s]?:\\/\\/.+)\\?").exec(this.absoluteString)![1]!;
-    }
-
-    /**
-     * Отправляет запрос на URL
-     *
-     * @param object - объект с данными запроса
-     * @param callback - обработчик результатов запроса
-     *
-     * Метод работает асинхронно!
-     * @async
-     * @deprecated
-     */
-    public request(object: any, callback?: (response: any, status: any) => void): elyURL {
-        const xhr = new XMLHttpRequest();
-        let fmd = object;
-        if (!(object instanceof FormData)) {
-            fmd = new FormData();
-            for (const index in object)
-                if (object.hasOwnProperty(index))
-                    fmd.append(index, object[index]);
-        }
-
-        xhr.onprogress = ((ev) => {
-            this.delegate.elyURLProgressChanged(this, ev.loaded, ev.total);
-        });
-        xhr.onerror = ((ev) => {
-            this.delegate.elyURLRequestDidLose(this, ev);
-        });
-        xhr.onabort = (() => {
-            this.delegate.elyURLDidCanseled(this);
-        });
-
-        xhr.onload = () => {
-            if (callback) {
-                let resp = xhr.response;
-                try {
-                    if (this.jsonResponse)
-                        resp = JSON.parse(resp);
-                } catch (e) {
-                    elyLogger.warning("Ошибка возникла при обработке JSON в elyURL!");
-                    resp = null;
-                }
-                this.delegate.elyURLDidSendRequest(this, xhr.status, xhr.response);
-                callback(resp, xhr.status);
-            }
-        };
-
-        if (this.delegate.elyURLWillSendRequest(this, object)) {
-            xhr.open("POST", this.absoluteString);
-            xhr.send(fmd);
-        }
-        return this;
     }
 
 }
