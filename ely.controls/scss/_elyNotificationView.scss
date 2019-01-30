@@ -41,7 +41,7 @@
     bottom: auto !important;
     right: 10px !important;
     left: 10px !important;
-    top: 10px !important;
+    top: 10px;
   }
 
 }
@@ -49,7 +49,7 @@
 /* The close button */
 .ely-notification-close-button {
   float: right;
-  font-size: 17px;
+  font-size: 23px;
   margin-top: -3.3px;
   cursor: pointer;
 }

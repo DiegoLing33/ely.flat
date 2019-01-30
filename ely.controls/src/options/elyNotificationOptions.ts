@@ -79,6 +79,11 @@ export default interface elyNotificationOptions extends elyViewOptions {
     contentColor?: string;
 
     /**
+     * Отступ оповщений от края экрана
+     */
+    marginFromScreenEdge?: number;
+
+    /**
      * Положение на экране (вертикально/горизонтально)
      * Символ "/" обязательно
      *

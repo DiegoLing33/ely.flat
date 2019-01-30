@@ -46,6 +46,7 @@ export default class elyNotificationView extends elyControl {
         displayPosition: "top/right",
         fadeTime: 500,
         limit: 15,
+        marginFromScreenEdge: 0,
         messageColor: "#595959",
         moveTime: 500,
         notificationsData: [],
@@ -115,7 +116,7 @@ export default class elyNotificationView extends elyControl {
 
         this.css({"background-color": this.options.backgroundColor, "width": this.options.width});
 
-        const obj: {[name: string]: string} = {};
+        const obj: { [name: string]: string } = {};
         obj[this.getDisplayPositions()[0]] = 10 + "px";
         obj[this.getDisplayPositions()[1]] = 10 + "px";
         this.css(obj);
@@ -185,6 +186,15 @@ export default class elyNotificationView extends elyControl {
         const notifications = elyNotificationView.defaults.notificationsData!;
         const margin = elyNotificationView.defaults.notificationsMargin! + this.notificationHeight;
         const displayPositions = this.getDisplayPositions();
+
+        switch (displayPositions[0]) {
+            case "bottom":
+                this.css({bottom: "+=" + (this.options.marginFromScreenEdge || 0) + "px"});
+                break;
+            default:
+                this.css({top: "+=" + (this.options.marginFromScreenEdge || 0) + "px"});
+                break;
+        }
 
         this.notificate("show");
 
