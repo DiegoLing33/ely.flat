@@ -1739,43 +1739,6 @@ class elyCookie {
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyMath.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Библиотека математики
- */
-class elyMath {
-    /**
-     * Преобразовывает значение переменной X из одного диапазона в другой.
-     *
-     * @param x
-     * @param inMin
-     * @param inMax
-     * @param outMin
-     * @param outMax
-     */
-    static map(x, inMin, inMax, outMin, outMax) {
-        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -1794,311 +1757,30 @@ class elyMath {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyColorUtils.ts                                                     +
- + Файл изменен: 06.01.2019 05:32:41                                          +
+ + Файл: elySerializable.ts                                                   +
+ + Файл изменен: 31.01.2019 02:07:39                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Утилиты для работы с цветом
+ * Декоратор сериализации
  */
-class elyColorUtils {
-    /**
-     * Преобразует HSV цвет в RGB
-     * @param color
-     */
-    static hsv2rgb(color) {
-        let red = 0;
-        let green = 0;
-        let blue = 0;
-        const i = Math.floor(color.hue * 6);
-        const f = color.hue * 6 - i;
-        const p = color.value * (1 - color.saturation);
-        const q = color.value * (1 - f * color.saturation);
-        const t = color.value * (1 - (1 - f) * color.saturation);
-        switch (i % 6) {
-            case 0:
-                red = color.value;
-                green = t;
-                blue = p;
-                break;
-            case 1:
-                red = q;
-                green = color.value;
-                blue = p;
-                break;
-            case 2:
-                red = p;
-                green = color.value;
-                blue = t;
-                break;
-            case 3:
-                red = p;
-                green = q;
-                blue = color.value;
-                break;
-            case 4:
-                red = t;
-                green = p;
-                blue = color.value;
-                break;
-            case 5:
-                red = color.value;
-                green = p;
-                blue = q;
-                break;
+function serializable() {
+    return (target) => {
+        target.isSerializable = true;
+        if (!(target.prototype.hasOwnProperty("serialize") && target.hasOwnProperty("deserialize"))) {
+            console.log(target);
+            throw Error(`Класс ${target.prototype.constructor.name} ` +
+                `не соответствует протоколу efSerializableProtocol!`);
         }
-        return { red, green, blue };
-    }
-    /**
-     * Преобразует RGB цвет в HSV
-     * @param color
-     */
-    static rgb2hsv(color) {
-        const max = Math.max(color.red, color.green, color.blue);
-        const min = Math.min(color.red, color.green, color.blue);
-        const d = max - min;
-        let hue = 0;
-        const saturation = (max === 0 ? 0 : d / max);
-        const value = max / 255;
-        switch (max) {
-            case min:
-                hue = 0;
-                break;
-            case color.red:
-                hue = (color.green - color.blue) + d * (color.green < color.blue ? 6 : 0);
-                hue /= 6 * d;
-                break;
-            case color.green:
-                hue = (color.blue - color.red) + d * 2;
-                hue /= 6 * d;
-                break;
-            case color.blue:
-                hue = (color.red - color.green) + d * 4;
-                hue /= 6 * d;
-                break;
-        }
-        return { hue, saturation, value };
-    }
-    /**
-     * Преобразует HSV в __hex
-     * @param color
-     */
-    static hsv2hex(color) {
-        return elyColorUtils.rgb2hex(elyColorUtils.hsv2rgb(color));
-    }
-    /**
-     * Преобразует HEX в RGB
-     * @param hex
-     */
-    static hex2rgb(hex) {
-        if (hex.length === 3) {
-            hex = hex.replace(/./g, "$&$&");
-        }
-        return {
-            blue: parseInt(hex[4] + hex[5], 16),
-            green: parseInt(hex[2] + hex[3], 16),
-            red: parseInt(hex[0] + hex[1], 16),
-        };
-    }
-    /**
-     * Преобразует __hex цвет в hsv
-     * @param hex
-     */
-    static hex2hsv(hex) {
-        return elyColorUtils.rgb2hsv(elyColorUtils.hex2rgb(hex));
-    }
-    /**
-     * Преобразует RGB в HEX
-     * @param color
-     */
-    static rgb2hex(color) {
-        const rgbToHex = (rgb) => {
-            let hex = Number(rgb).toString(16);
-            if (hex.length < 2) {
-                hex = "0" + hex;
-            }
-            return hex;
-        };
-        return (rgbToHex(color.red) + rgbToHex(color.green) + rgbToHex(color.blue)).toUpperCase();
-    }
+    };
 }
 /**
- * Код белого цвета
+ * Возвращает true, если объект может быть сериализован
+ * @param obj
  */
-elyColorUtils.whiteNumber = 16777215;
-/**
- * Код черного цвета
- */
-elyColorUtils.blackNumber = 0;
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyColor.ts                                                          +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Цвет
- * @class elyColor
- */
-class elyColor {
-    /**
-     * Конструктор
-     * @param {{ __hex?: string, rgb?: elyColorRGB, hsv?: elyColorHSV }} props - параметры
-     */
-    constructor(props = {}) {
-        /**
-         * 16 код цвета
-         * @protected
-         * @type {string}
-         */
-        this.__hex = "000000";
-        if (props.hex)
-            this.__hex = props.hex.startsWith("#") ? props.hex.substr(1) : props.hex;
-        else if (props.rgb)
-            this.__hex = elyColorUtils.rgb2hex(props.rgb);
-        else if (props.hsv)
-            this.__hex = elyColorUtils.hsv2hex(props.hsv);
-        else
-            this.__hex = elyColor.black().getHexString().substr(1);
-    }
-    /**
-     * Возвращает черный цвет
-     * @return {elyColor}
-     */
-    static black() {
-        return new elyColor({ hex: "#000000" });
-    }
-    /**
-     * Возвращает белый цвет
-     * @return {elyColor}
-     */
-    static white() {
-        return new elyColor({ hex: "#ffffff" });
-    }
-    /**
-     * Возвращает красный цвет
-     * @return {elyColor}
-     */
-    static red() {
-        return new elyColor({ hex: "#ff0000" });
-    }
-    /**
-     * Возвращает зеленый цвет
-     * @return {elyColor}
-     */
-    static green() {
-        return new elyColor({ hex: "#00ff00" });
-    }
-    /**
-     * Возвращает синий цвет
-     * @return {elyColor}
-     */
-    static blue() {
-        return new elyColor({ hex: "#0000ff" });
-    }
-    /**
-     * Возвращает число цвета
-     * @return {number}
-     */
-    getByte() {
-        return parseInt(this.__hex, 16);
-    }
-    /**
-     * Возвращает true, если цвет темный
-     * @return {boolean}
-     */
-    isDarker() {
-        return this.getByte() < (elyColorUtils.whiteNumber / 1.8);
-    }
-    /**
-     * Возвращает байты цветов
-     * @return {elyColorRGB}
-     */
-    getRGBBytes() {
-        return {
-            blue: parseInt(this.__hex.substr(4, 2), 16),
-            green: parseInt(this.__hex.substr(2, 2), 16),
-            red: parseInt(this.__hex.substr(0, 2), 16),
-        };
-    }
-    /**
-     * Устанавливает RGB цвета
-     *
-     * @param {{elyColorRGB}} props
-     */
-    setRGBBytes(props) {
-        if (props.rgb.red > 255)
-            props.rgb.red = 255;
-        if (props.rgb.green > 255)
-            props.rgb.green = 255;
-        if (props.rgb.blue > 255)
-            props.rgb.blue = 255;
-        if (props.rgb.red < 0)
-            props.rgb.red = 0;
-        if (props.rgb.green < 0)
-            props.rgb.green = 0;
-        if (props.rgb.blue < 0)
-            props.rgb.blue = 0;
-        this.__hex = props.rgb.red.toString(16) +
-            props.rgb.green.toString(16) +
-            props.rgb.blue.toString(16);
-    }
-    /**
-     * Возвращает цвет светлее
-     * @param {number} percentage
-     * @return {elyColor}
-     */
-    getLighterColor(percentage) {
-        const rgb = this.getRGBBytes();
-        percentage = 1 - percentage;
-        const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 255));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 255));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 255));
-        return new elyColor({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
-    }
-    /**
-     * Возвращает цвет тмнее
-     * @param {number} percentage
-     * @return {elyColor}
-     */
-    getDarkerColor(percentage) {
-        const rgb = this.getRGBBytes();
-        percentage = 1 - percentage;
-        const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 0));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 0));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 0));
-        return new elyColor({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
-    }
-    /**
-     * Возвращает HEX с символом # в начале
-     * @return {string}
-     */
-    getHexString() {
-        return `#${this.__hex}`;
-    }
-    /**
-     * Возвращает HEX с символом # в начале
-     * @return {string}
-     */
-    toString() {
-        return this.getHexString();
-    }
+function isSerializable(obj) {
+    return Object.getOwnPropertyNames(obj.constructor).indexOf("isSerializable") > -1 &&
+        obj.constructor.isSerializable;
 }
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2275,7 +1957,10 @@ class elyFieldView extends elyView {
      */
     tempData(name) {
         this.change(value => {
-            elyCookie.set(`tfd-${name}`, `${value.constructor.name},${value}`, { expires: 5 * 60 });
+            let v = value;
+            if (isSerializable(value))
+                v = value.serialize();
+            elyCookie.set(`tfd-${name}`, `${value.constructor.name},${v}`, { expires: 5 * 60 * 60 });
         });
         this.elyViewWillDraw(() => {
             let val = elyCookie.get(`tfd-${name}`);
@@ -2284,17 +1969,21 @@ class elyFieldView extends elyView {
             const arr = val.split(",");
             const cns = arr.shift();
             if (cns) {
-                if (cns === "elyColor") {
-                    val = new elyColor({ hex: arr.join(",") });
+                if (cns === "String") {
+                    val = arr.join(",");
                 }
                 else if (cns === "Number") {
                     val = parseInt(arr.join(","), 10);
                 }
                 else {
-                    val = arr.join(",");
+                    if (window.elyflatobjects.hasOwnProperty(cns) && window.elyflatobjects[cns].isSerializable)
+                        val = window.elyflatobjects[cns].deserialize(arr.join(","));
+                    else
+                        val = arr.join(",");
                 }
             }
-            this.value(val);
+            if (val !== undefined && val !== null)
+                this.value(val);
         });
     }
 }
@@ -4276,6 +3965,394 @@ class elyFlatApplicationPreloader extends elyView {
 elyFlatApplicationPreloader.default = new elyFlatApplicationPreloader();
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyMath.ts                                                           +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Библиотека математики
+ */
+class elyMath {
+    /**
+     * Преобразовывает значение переменной X из одного диапазона в другой.
+     *
+     * @param x
+     * @param inMin
+     * @param inMax
+     * @param outMin
+     * @param outMax
+     */
+    static map(x, inMin, inMax, outMin, outMax) {
+        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyColorUtils.ts                                                     +
+ + Файл изменен: 06.01.2019 05:32:41                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Утилиты для работы с цветом
+ */
+class elyColorUtils {
+    /**
+     * Преобразует HSV цвет в RGB
+     * @param color
+     */
+    static hsv2rgb(color) {
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        const i = Math.floor(color.hue * 6);
+        const f = color.hue * 6 - i;
+        const p = color.value * (1 - color.saturation);
+        const q = color.value * (1 - f * color.saturation);
+        const t = color.value * (1 - (1 - f) * color.saturation);
+        switch (i % 6) {
+            case 0:
+                red = color.value;
+                green = t;
+                blue = p;
+                break;
+            case 1:
+                red = q;
+                green = color.value;
+                blue = p;
+                break;
+            case 2:
+                red = p;
+                green = color.value;
+                blue = t;
+                break;
+            case 3:
+                red = p;
+                green = q;
+                blue = color.value;
+                break;
+            case 4:
+                red = t;
+                green = p;
+                blue = color.value;
+                break;
+            case 5:
+                red = color.value;
+                green = p;
+                blue = q;
+                break;
+        }
+        return { red, green, blue };
+    }
+    /**
+     * Преобразует RGB цвет в HSV
+     * @param color
+     */
+    static rgb2hsv(color) {
+        const max = Math.max(color.red, color.green, color.blue);
+        const min = Math.min(color.red, color.green, color.blue);
+        const d = max - min;
+        let hue = 0;
+        const saturation = (max === 0 ? 0 : d / max);
+        const value = max / 255;
+        switch (max) {
+            case min:
+                hue = 0;
+                break;
+            case color.red:
+                hue = (color.green - color.blue) + d * (color.green < color.blue ? 6 : 0);
+                hue /= 6 * d;
+                break;
+            case color.green:
+                hue = (color.blue - color.red) + d * 2;
+                hue /= 6 * d;
+                break;
+            case color.blue:
+                hue = (color.red - color.green) + d * 4;
+                hue /= 6 * d;
+                break;
+        }
+        return { hue, saturation, value };
+    }
+    /**
+     * Преобразует HSV в __hex
+     * @param color
+     */
+    static hsv2hex(color) {
+        return elyColorUtils.rgb2hex(elyColorUtils.hsv2rgb(color));
+    }
+    /**
+     * Преобразует HEX в RGB
+     * @param hex
+     */
+    static hex2rgb(hex) {
+        if (hex.length === 3) {
+            hex = hex.replace(/./g, "$&$&");
+        }
+        return {
+            blue: parseInt(hex[4] + hex[5], 16),
+            green: parseInt(hex[2] + hex[3], 16),
+            red: parseInt(hex[0] + hex[1], 16),
+        };
+    }
+    /**
+     * Преобразует __hex цвет в hsv
+     * @param hex
+     */
+    static hex2hsv(hex) {
+        return elyColorUtils.rgb2hsv(elyColorUtils.hex2rgb(hex));
+    }
+    /**
+     * Преобразует RGB в HEX
+     * @param color
+     */
+    static rgb2hex(color) {
+        const rgbToHex = (rgb) => {
+            let hex = Number(rgb).toString(16);
+            if (hex.length < 2) {
+                hex = "0" + hex;
+            }
+            return hex;
+        };
+        return (rgbToHex(color.red) + rgbToHex(color.green) + rgbToHex(color.blue)).toUpperCase();
+    }
+}
+/**
+ * Код белого цвета
+ */
+elyColorUtils.whiteNumber = 16777215;
+/**
+ * Код черного цвета
+ */
+elyColorUtils.blackNumber = 0;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyColor.ts                                                          +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+var elyColor_1;
+let elyColor = elyColor_1 = 
+/**
+ * Цвет
+ * @class elyColor
+ */
+class elyColor {
+    /**
+     * Конструктор
+     * @param {{ __hex?: string, rgb?: elyColorRGB, hsv?: elyColorHSV }} props - параметры
+     */
+    constructor(props = {}) {
+        /**
+         * 16 код цвета
+         * @protected
+         * @type {string}
+         */
+        this.__hex = "000000";
+        if (props.hex)
+            this.__hex = props.hex.startsWith("#") ? props.hex.substr(1) : props.hex;
+        else if (props.rgb)
+            this.__hex = elyColorUtils.rgb2hex(props.rgb);
+        else if (props.hsv)
+            this.__hex = elyColorUtils.hsv2hex(props.hsv);
+        else
+            this.__hex = elyColor_1.black().getHexString().substr(1);
+    }
+    /**
+     * Возвращает черный цвет
+     * @return {elyColor}
+     */
+    static black() {
+        return new elyColor_1({ hex: "#000000" });
+    }
+    /**
+     * Возвращает белый цвет
+     * @return {elyColor}
+     */
+    static white() {
+        return new elyColor_1({ hex: "#ffffff" });
+    }
+    /**
+     * Возвращает красный цвет
+     * @return {elyColor}
+     */
+    static red() {
+        return new elyColor_1({ hex: "#ff0000" });
+    }
+    /**
+     * Возвращает зеленый цвет
+     * @return {elyColor}
+     */
+    static green() {
+        return new elyColor_1({ hex: "#00ff00" });
+    }
+    /**
+     * Возвращает синий цвет
+     * @return {elyColor}
+     */
+    static blue() {
+        return new elyColor_1({ hex: "#0000ff" });
+    }
+    /**
+     * Десериализует объект
+     * @param {string} raw - сериализованный объект
+     * @return {elyColor}
+     */
+    static deserialize(raw) {
+        return new elyColor_1({ hex: raw });
+    }
+    /**
+     * Возвращает число цвета
+     * @return {number}
+     */
+    getByte() {
+        return parseInt(this.__hex, 16);
+    }
+    /**
+     * Возвращает true, если цвет темный
+     * @return {boolean}
+     */
+    isDarker() {
+        return this.getByte() < (elyColorUtils.whiteNumber / 1.8);
+    }
+    /**
+     * Возвращает байты цветов
+     * @return {elyColorRGB}
+     */
+    getRGBBytes() {
+        return {
+            blue: parseInt(this.__hex.substr(4, 2), 16),
+            green: parseInt(this.__hex.substr(2, 2), 16),
+            red: parseInt(this.__hex.substr(0, 2), 16),
+        };
+    }
+    /**
+     * Устанавливает RGB цвета
+     *
+     * @param {{elyColorRGB}} props
+     */
+    setRGBBytes(props) {
+        if (props.rgb.red > 255)
+            props.rgb.red = 255;
+        if (props.rgb.green > 255)
+            props.rgb.green = 255;
+        if (props.rgb.blue > 255)
+            props.rgb.blue = 255;
+        if (props.rgb.red < 0)
+            props.rgb.red = 0;
+        if (props.rgb.green < 0)
+            props.rgb.green = 0;
+        if (props.rgb.blue < 0)
+            props.rgb.blue = 0;
+        this.__hex = props.rgb.red.toString(16) +
+            props.rgb.green.toString(16) +
+            props.rgb.blue.toString(16);
+    }
+    /**
+     * Возвращает цвет светлее
+     * @param {number} percentage
+     * @return {elyColor}
+     */
+    getLighterColor(percentage) {
+        const rgb = this.getRGBBytes();
+        percentage = 1 - percentage;
+        const val = Math.round(255 - (255 * percentage));
+        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 255));
+        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 255));
+        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 255));
+        return new elyColor_1({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
+    }
+    /**
+     * Возвращает цвет тмнее
+     * @param {number} percentage
+     * @return {elyColor}
+     */
+    getDarkerColor(percentage) {
+        const rgb = this.getRGBBytes();
+        percentage = 1 - percentage;
+        const val = Math.round(255 - (255 * percentage));
+        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 0));
+        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 0));
+        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 0));
+        return new elyColor_1({ hex: "#" + elyColorUtils.rgb2hex(rgb) });
+    }
+    /**
+     * Возвращает HEX с символом # в начале
+     * @return {string}
+     */
+    getHexString() {
+        return `#${this.__hex}`;
+    }
+    /**
+     * Возвращает HEX с символом # в начале
+     * @return {string}
+     */
+    toString() {
+        return this.getHexString();
+    }
+    /**
+     * Сериализует объект
+     * @return {string}
+     */
+    serialize() {
+        return this.getHexString();
+    }
+};
+elyColor = elyColor_1 = __decorate([
+    serializable()
+    /**
+     * Цвет
+     * @class elyColor
+     */
+], elyColor);
+var elyColor$1 = elyColor;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -4313,13 +4390,13 @@ class efAppColorManager {
          * @protected
          * @ignore
          */
-        this.__appColor = elyColor.black();
+        this.__appColor = elyColor$1.black();
         /**
          * Цвет навигации
          * @protected
          * @ignore
          */
-        this.__navigationBarColor = elyColor.black();
+        this.__navigationBarColor = elyColor$1.black();
         this.__app = props.app;
     }
     /**
@@ -5075,7 +5152,7 @@ class elyNavigationView extends elyControl$1 {
      */
     navigationBarColor(color) {
         if (color && typeof color === "string")
-            color = new elyColor({ hex: color });
+            color = new elyColor$1({ hex: color });
         return elyObservableProperty.simplePropertyAccess(this, color, this.navigationBarColorProperty);
     }
     /**
@@ -5530,14 +5607,14 @@ class efAppConfig extends elyObservable {
      * Возвращает цвет панели навигации
      */
     getNavigationBarColor() {
-        return new elyColor({ hex: this.getNavigationBarColorString() });
+        return new elyColor$1({ hex: this.getNavigationBarColorString() });
     }
     /**
      * Возвращает основной цвет приложения
      * @return {elyColor}
      */
     getAppColor() {
-        return new elyColor({ hex: this.getAppColorString() });
+        return new elyColor$1({ hex: this.getAppColorString() });
     }
     /**
      * Возвращает true, если используется панель навигации
@@ -6026,7 +6103,7 @@ class elyScreenController extends elyObservable {
                 controller.viewWillAppear(this);
                 this.view.removeViewContent();
                 this.view.addSubView(controller.view);
-                this.view.addSubView(elyFlatApplication.default.footerView);
+                this.view.addSubView(efApplication.default.footerView);
                 this.view.fadeIn(() => {
                     controller.viewDidAppear();
                     if (completion)
@@ -6358,13 +6435,13 @@ elyDeviceDetector.__headers = [
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: elyFlatApplication.ts                                                +
+ + Файл: efApplication.ts                                           +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Приложение
  */
-class elyFlatApplication extends elyObservable {
+class efApplication extends elyObservable {
     /**
      * Конструктор
      */
@@ -6411,7 +6488,7 @@ class elyFlatApplication extends elyObservable {
             else
                 elyXLogger.default.log("Файл конфигурации успешно загружен.");
             // Распознание текущего устройства
-            elyDeviceDetector.default.addDetectedObserver(() => elyFlatApplication.default.init(cfg));
+            elyDeviceDetector.default.addDetectedObserver(() => efApplication.default.init(cfg));
             elyDeviceDetector.default.detect();
         });
         efAppConfig.default.load({ file: efAppConfig.appConfigPath });
@@ -6585,7 +6662,7 @@ class elyFlatApplication extends elyObservable {
                     elyDeviceDetector.default.getScreenSize().height() + "px";
                 elyNotificationView.defaults.marginFromScreenEdge = 40;
                 if (config.manifest.useNavigationBar)
-                    elyFlatApplication.default.navigationView.css({ "padding-top": "40px" });
+                    efApplication.default.navigationView.css({ "padding-top": "40px" });
             }
         }
     }
@@ -6593,7 +6670,7 @@ class elyFlatApplication extends elyObservable {
 /**
  * Паттерн синглтон
  */
-elyFlatApplication.default = new elyFlatApplication();
+efApplication.default = new efApplication();
 function __applyElyOneActions(app) {
     elyOneActionEval.default.actionsRules.content = (arg) => {
         switch (arg) {
@@ -6722,7 +6799,7 @@ class elyNotificationView extends elyControl$1 {
         if (this.options.content || this.contentView.getDocument().innerHTML !== "")
             this.addSubView(this.contentView);
         this._isNotified = true;
-        elyFlatApplication.default.applicationDocument.body.addSubView(this);
+        efApplication.default.applicationDocument.body.addSubView(this);
         this.show();
         this.notificationHeight = this.offSize().height;
         this.hide();
@@ -7939,7 +8016,7 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
         this.colorView.addSubView(this.colorThumbnail);
         this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
         this.colorThumbnail.getDocument().innerHTML = "&nbsp";
-        this.valueProperty.set(elyColor.black());
+        this.valueProperty.set(elyColor$1.black());
         this.getDocument().append(this.actionIconView.getDocument());
         this.actionIconView.addObserver("click", () => this.editableProperty.toggle());
         this.valueProperty.change(value => {
@@ -7959,7 +8036,7 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
         });
         accessory.oninput = () => {
             this.picker.set(accessory.value);
-            const ec = new elyColor({ hex: accessory.value });
+            const ec = new elyColor$1({ hex: accessory.value });
             accessory.value = ec.toString();
             this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
             this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
@@ -7968,7 +8045,7 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
         this.picker = new CP(this.accessoryView.getDocument());
         this.picker.on("exit", () => {
             if (this.editable()) {
-                const ec = new elyColor({ hex: accessory.value });
+                const ec = new elyColor$1({ hex: accessory.value });
                 this.value(ec);
                 this.editable(false);
             }
@@ -7976,14 +8053,14 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
         this.picker.on("change", (color) => {
             if ("#" + color === this.value().toString())
                 return;
-            const ec = new elyColor({ hex: color });
+            const ec = new elyColor$1({ hex: color });
             accessory.value = ec.toString();
             this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
             this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
         });
         this.placeholder("#______");
         this.editable(false);
-        this.value(options.value || elyColor.black());
+        this.value(options.value || elyColor$1.black());
     }
     /**
      * Возвращает и устанавливает плейслхолдер для ввода
@@ -10342,7 +10419,7 @@ let elyModalView = elyModalView_1 = class elyModalView extends elyView {
     static next() {
         if (elyModalView_1.queue.length > 0 && elyModalView_1.currentModal === null) {
             elyModalView_1.currentModal = elyModalView_1.queue.pop();
-            elyFlatApplication.default.applicationDocument.body.addSubView(elyModalView_1.currentModal);
+            efApplication.default.applicationDocument.body.addSubView(elyModalView_1.currentModal);
             elyModalView_1.currentModal.fadeIn();
         }
     }
@@ -10372,7 +10449,7 @@ let elyModalView = elyModalView_1 = class elyModalView extends elyView {
         if (this.modalClosable() || force) {
             this.notificate("dismiss", [this]);
             this.fadeOut(() => {
-                elyFlatApplication.default.applicationDocument.body.removeSubView(this);
+                efApplication.default.applicationDocument.body.removeSubView(this);
                 elyModalView_1.currentModal = null;
                 elyModalView_1.next();
             });
@@ -11161,7 +11238,7 @@ class elyPostRequest extends elyGetRequest {
  * @param result
  */
 const elyOnReady = (result) => {
-    elyFlatApplication.default.addReadyObserver(result);
+    efApplication.default.addReadyObserver(result);
 };
 /**
  *
@@ -11176,7 +11253,7 @@ const addController = (name, viewController, canOverwrite = true) => {
  * Возвращает приложение
  */
 const app = () => {
-    return elyFlatApplication.default;
+    return efApplication.default;
 };
 const developMode = (bool) => {
     if (bool) {
@@ -11192,12 +11269,13 @@ const developMode = (bool) => {
 };
 window.onload = () => {
     elyXLogger.default.clear = true;
-    elyFlatApplication.loadApplication(() => {
+    efApplication.loadApplication(() => {
         //
     });
 };
 window.elyflatobjects = {
     elyView,
+    elyColor: elyColor$1,
     elyControl: elyControl$1,
     elyButton: elyButton$1,
     elyIconView: elyIconView$1,
@@ -11224,5 +11302,5 @@ window.elyflatobjects = {
     elyColorPickerField: elyColorPickerField$1,
 };
 
-export { app, elyOnReady, addController, developMode, elyStylesheet, elyFlatApplication, elyTime, elyDeviceDetector, elyColor, elyGuard, elyTimer, elyCookie, elyXLogger, elySimpleJSONParser, elyUtils, elyColorUtils, elyFileWatcher, elyURL, elyGetRequest, elyPostRequest, elyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyIconView$1 as elyIconView, elyTextViewEditable, elyProgressView$1 as elyProgressView, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyFormView, elyDataGridView$1 as elyDataGridView, elyNotificationView, elyProgressNotificationView, elyListView, elyModalView$1 as elyModalView, elyScrollView, elyTableView, elyInput, elyTextField, elySwitchField, elyDataPickerField, elyColorPickerField$1 as elyColorPickerField, elyScreenController, elyViewController, elySimplePageViewController, elyGridViewController, elySize, elyStyle, elyFieldType, efSize, elyAxis, elyDirection, ef2DVector, ef2DVectorValues, efCanvas, efCanvasLayer };
+export { app, elyOnReady, addController, developMode, elyStylesheet, efApplication, elyTime, elyDeviceDetector, elyColor$1 as elyColor, elyGuard, elyTimer, elyCookie, elyXLogger, elySimpleJSONParser, elyUtils, elyColorUtils, elyFileWatcher, elyURL, elyGetRequest, elyPostRequest, elyView, elyControl$1 as elyControl, elyButton$1 as elyButton, elyIconView$1 as elyIconView, elyTextViewEditable, elyProgressView$1 as elyProgressView, elyLinkTextView$1 as elyLinkTextView, elyTextView$1 as elyTextView, elyGridView, elyStaticGridView$1 as elyStaticGridView, elyPanelView$1 as elyPanelView, elyImageView$1 as elyImageView, elyFormView, elyDataGridView$1 as elyDataGridView, elyNotificationView, elyProgressNotificationView, elyListView, elyModalView$1 as elyModalView, elyScrollView, elyTableView, elyInput, elyTextField, elySwitchField, elyDataPickerField, elyColorPickerField$1 as elyColorPickerField, elyScreenController, elyViewController, elySimplePageViewController, elyGridViewController, elySize, elyStyle, elyFieldType, efSize, elyAxis, elyDirection, ef2DVector, ef2DVectorValues, efCanvas, efCanvasLayer };
 //# sourceMappingURL=ely.flat.js.map

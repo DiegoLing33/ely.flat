@@ -20,12 +20,15 @@
 
 import elyMath from "@core/../../ely.flat.math/src/elyMath";
 import {elyColorHSV, elyColorRGB, elyColorUtils} from "@core/elyColorUtils";
+import {serializable} from "@core/elySerializable";
+import efSerializableProtocol from "@protocols/efSerializableProtocol";
 
+@serializable()
 /**
  * Цвет
  * @class elyColor
  */
-export default class elyColor {
+export default class elyColor implements efSerializableProtocol<elyColor> {
 
     /**
      * Возвращает черный цвет
@@ -65,6 +68,15 @@ export default class elyColor {
      */
     public static blue(): elyColor {
         return new elyColor({hex: "#0000ff"});
+    }
+
+    /**
+     * Десериализует объект
+     * @param {string} raw - сериализованный объект
+     * @return {elyColor}
+     */
+    public static deserialize(raw: string): elyColor | null {
+        return new elyColor({hex: raw});
     }
 
     /**
@@ -181,6 +193,14 @@ export default class elyColor {
      * @return {string}
      */
     public toString(): string {
+        return this.getHexString();
+    }
+
+    /**
+     * Сериализует объект
+     * @return {string}
+     */
+    public serialize(): string {
         return this.getHexString();
     }
 

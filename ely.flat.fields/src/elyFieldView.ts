@@ -35,6 +35,7 @@ import elyCookie from "@core/elyCookie";
 import elyUtils from "@core/elyUtils";
 import elyColor from "@core/elyColor";
 import elyGuard from "@core/elyGuard";
+import {isSerializable} from "@core/elySerializable";
 
 /**
  * Опции {@link elyFieldView}
@@ -270,7 +271,10 @@ export abstract class elyFieldView<T> extends elyView implements efEditableProto
      */
     public tempData(name: string): void {
         this.change(value => {
-            elyCookie.set(`tfd-${name}`, `${value.constructor.name},${value}`, {expires: 5 * 60});
+            let v: any = value;
+            if (isSerializable(value))
+                v = value.serialize();
+            elyCookie.set(`tfd-${name}`, `${value.constructor.name},${v}`, {expires: 5 * 60 * 60});
         });
         this.elyViewWillDraw(() => {
             let val = elyCookie.get(`tfd-${name}`) as any;
@@ -278,15 +282,18 @@ export abstract class elyFieldView<T> extends elyView implements efEditableProto
             const arr = val.split(",");
             const cns = arr.shift();
             if (cns) {
-                if (cns === "elyColor") {
-                    val = new elyColor({hex: arr.join(",")});
+                if (cns === "String") {
+                    val = arr.join(",");
                 } else if (cns === "Number") {
                     val = parseInt(arr.join(","), 10);
                 } else {
-                    val = arr.join(",");
+                    if (window.elyflatobjects.hasOwnProperty(cns) && window.elyflatobjects[cns].isSerializable)
+                        val = window.elyflatobjects[cns].deserialize(arr.join(","));
+                    else
+                        val = arr.join(",");
                 }
             }
-            this.value(val);
+            if (val !== undefined && val !== null) this.value(val);
         });
     }
 }

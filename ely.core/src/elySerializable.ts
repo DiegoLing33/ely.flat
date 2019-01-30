@@ -17,35 +17,32 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efSerializableProtocol.ts                                            +
- + Файл изменен: 07.01.2019 23:56:45                                          +
+ + Файл: elySerializable.ts                                                   +
+ + Файл изменен: 31.01.2019 02:07:39                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {efProtocol} from "@protocols/efProtocol";
+import efSerializableProtocol from "@protocols/efSerializableProtocol";
 
 /**
- * Протокол сериализации
- * @class efSerializableProtocol
- * @template <T>
+ * Декоратор сериализации
  */
-export default class efSerializableProtocol<T> extends efProtocol {
+export function serializable(): ClassDecorator {
+    return (target: any) => {
+        target.isSerializable = true;
+        if (!(target.prototype.hasOwnProperty("serialize") && target.hasOwnProperty("deserialize"))) {
+            console.log(target);
+            throw Error(`Класс ${target.prototype.constructor.name} ` +
+                `не соответствует протоколу efSerializableProtocol!`);
+        }
+    };
+}
 
-    /**
-     * Десериализует объект
-     * @template <T>
-     * @param {string} raw - сериализованный объект
-     * @return {T}
-     */
-    public static deserialize<T>(raw: string): T | null {
-        return null;
-    }
-
-    /**
-     * Сериализует объект
-     * @return {string}
-     */
-    public serialize(): string {
-        return "";
-    }
+/**
+ * Возвращает true, если объект может быть сериализован
+ * @param obj
+ */
+export function isSerializable(obj: any): obj is efSerializableProtocol<any> {
+    return Object.getOwnPropertyNames(obj.constructor).indexOf("isSerializable") > -1 &&
+        obj.constructor.isSerializable;
 }

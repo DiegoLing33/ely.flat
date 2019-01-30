@@ -187,6 +187,7 @@ declare global {
 
 window.elyflatobjects = {
     elyView,
+    elyColor,
 
     elyControl,
     elyButton,
