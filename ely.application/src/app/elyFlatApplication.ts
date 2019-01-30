@@ -19,27 +19,23 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatApplicationPreloader from "@app/app/content/elyFlatApplicationPreloader";
-import elyFlatApplicationLoader from "@app/app/elyFlatApplicationLoader";
-import elyFlatApplicationConfig_Application from "@app/app/options/elyFlatApplication/app";
-import elyFlatApplicationConfig_Navigation from "@app/app/options/elyFlatApplication/navigation";
-import elyFlatApplicationConfig_Sideavigation from "@app/app/options/elyFlatApplication/sidenavigation";
-import elyFlatApplicationConfig_Template from "@app/app/options/elyFlatApplication/template";
-import elyFlatApplicationConfig_Template_Footer from "@app/app/options/elyFlatApplication/template/footer";
+import efAppColorManager from "@app/app/efAppColorManager";
 import elyFlatApplicationConfig from "@app/app/options/elyFlatApplicationConfig";
 import elyFlatSideNavigationView from "@app/app/view/elyFlatSideNavigationView";
 import elyFooterView from "@app/app/view/elyFooterView";
-import elyHeaderView from "@app/app/view/elyHeaderView";
 import elyNavigationView from "@app/app/view/elyNavigationView";
+import efAppConfig from "@app/config/efAppConfig";
+import efAppDocument from "@app/document/efAppDocument";
 import elyScreenController from "@controllers/elyScreenController";
 import elyControl from "@controls/action/elyControl";
-import elyStylesheet from "@controls/elyStylesheet";
 import elyIconView from "@controls/text/elyIconView";
-import elyColor from "@core/elyColor";
 import elyLogger from "@core/elyLogger";
 import elyOneActionEval from "@core/elyOneActionEval";
 import elyObservable from "@core/observable/elyObservable";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
 import elyXLogger from "@core/utils/elyXLogger";
+import elyDeviceDetector from "@core/elyDeviceDetector";
+import elyStylesheet from "@controls/elyStylesheet";
+import elyNotificationView from "@controls/notification/elyNotificationView";
 
 /**
  * Наблюдатель за завершением загрузки приложения
@@ -91,22 +87,28 @@ export default class elyFlatApplication extends elyObservable {
      */
     public static loadApplication(closure: () => void): void {
         elyXLogger.default.log("Загрузка приложения...");
-        if (!elyFlatApplication.default.getConfig()) {
-            elyFlatApplicationLoader.loadApplicationConfiguration((config) => {
-                elyFlatApplication.default.init(config);
-            });
-        }
+        efAppConfig.default.addLoadedObserver((result, cfg) => {
+            console.log(cfg);
+            if (!result) elyXLogger.default.error("Файл конфигурации не найден. " +
+                "Будет использована стандратная конфигурация.");
+            else elyXLogger.default.log("Файл конфигурации успешно загружен.");
+
+            // Распознание текущего устройства
+            elyDeviceDetector.default.addDetectedObserver(() => elyFlatApplication.default.init(cfg));
+            elyDeviceDetector.default.detect();
+        });
+        efAppConfig.default.load({file: efAppConfig.appConfigPath});
     }
+
+    /**
+     * Менеджер цветов
+     */
+    public readonly applicationColorManager: efAppColorManager;
 
     /**
      * Тело страницы
      */
     public readonly bodyView: elyControl;
-
-    /**
-     * Заголовок
-     */
-    public readonly headerView: elyHeaderView;
 
     /**
      * Строитель макета
@@ -139,9 +141,14 @@ export default class elyFlatApplication extends elyObservable {
     public readonly preloader: elyFlatApplicationPreloader;
 
     /**
+     * Документ
+     */
+    public readonly applicationDocument: efAppDocument = new efAppDocument();
+
+    /**
      * Конфигурация
      */
-    protected config: elyFlatApplicationConfig | undefined;
+    protected config: efAppConfig | undefined;
 
     /**
      * Количество сигналов зугрузчиков
@@ -149,20 +156,14 @@ export default class elyFlatApplication extends elyObservable {
     protected readySignalsShouldBeReceived: number;
 
     /**
-     * Цвет приложения
-     */
-    protected applicationColorProperty: elyObservableProperty<elyColor>;
-
-    /**
      * Конструктор
      */
     public constructor() {
         super();
+        this.applicationColorManager = new efAppColorManager({app: this});
         this.readySignalsShouldBeReceived = 0;
-        this.applicationColorProperty = new elyObservableProperty<elyColor>();
 
         this.bodyView = new elyControl({element: document.body});
-        this.headerView = new elyHeaderView();
         this.containerView = new elyControl({class: "ef-cntr"});
         this.wrapperView = new elyControl({class: "ef-wrp"});
         this.navigationView = new elyNavigationView();
@@ -177,14 +178,8 @@ export default class elyFlatApplication extends elyObservable {
 
         this.containerView.addSubView(elyScreenController.default.view);
 
-        this.applicationColorProperty.change(value => {
-            this.applyApplicationColor(value);
-        });
-
         this.wrapperView.addObserver("click", () => {
-            if (this.config!.sidenavigation!.enabled) {
-                this.sideNavigationView.dismiss();
-            }
+            if (this.config!.isSideNavigationBarUsed()) this.sideNavigationView.dismiss();
         });
 
         this.bodyView.getDocument().onmousemove = (e: MouseEvent) => {
@@ -213,81 +208,11 @@ export default class elyFlatApplication extends elyObservable {
     }
 
     /**
-     * Возвращает цвет приложения
-     */
-    public applicationColor(): elyColor;
-
-    /**
-     * Устанавливает цвет приложения
-     * @param color
-     */
-    public applicationColor(color: elyColor | string): elyFlatApplication;
-
-    /**
-     * Устанавливает или возвращает цвет приложения
-     * @param color
-     */
-    public applicationColor(color?: elyColor | string): elyColor | elyFlatApplication {
-        if (typeof color === "string") color = new elyColor({hex: color});
-        return elyObservableProperty.simplePropertyAccess(this, color, this.applicationColorProperty);
-    }
-
-    /**
-     * Изменяет цветовую гамму приложения
-     * @param color
-     */
-    protected applyApplicationColor(color: elyColor): elyFlatApplication {
-        const darker = color.getDarkerColor(0.1);
-        const lighter = color.getLighterColor(0.18);
-        elyStylesheet.global.addClass("bg-primary", {
-            backgroundColor: color.toString(),
-            color: color.isDarker() ? "white" : "black",
-        });
-        elyStylesheet.global.addClass("brd-primary", {
-            borderColor: color.toString(),
-        });
-
-        elyStylesheet.global.addClass("text-primary", {
-            color: color.toString(),
-        });
-
-        elyStylesheet.global.addClass("bg-info", {
-            backgroundColor: lighter.toString(),
-            color: lighter.isDarker() ? "white" : "black",
-        });
-        elyStylesheet.global.addClass("brd-info", {
-            borderColor: lighter.toString(),
-        });
-
-        elyStylesheet.global.addClass("text-info", {
-            color: lighter.toString(),
-        });
-
-        elyStylesheet.global.add("::-webkit-scrollbar-track", {
-            borderColor: "#c2c2c2",
-        });
-
-        elyStylesheet.global.add("::-webkit-scrollbar", {
-            borderColor: "#c2c2c2",
-            width: "5px",
-        });
-
-        elyStylesheet.global.add("::-webkit-scrollbar-thumb", {
-            backgroundColor: darker.toString(),
-        });
-
-        if (this.navigationView) this.navigationView.navigationBarColor(color);
-        return this;
-    }
-
-    /**
      * Инициилизирует приложение
-     * @param config
+     * @param {efAppConfig} config
      */
-    protected init(config: elyFlatApplicationConfig) {
+    protected init(config: efAppConfig) {
         this.config = config;
-        elyLogger.debug("Конфигураци:");
-        elyLogger.debugObject(this.config);
         this.applyConfiguration(config);
 
         this.notificate("ready", [(flag: boolean, message?: string) => {
@@ -305,7 +230,7 @@ export default class elyFlatApplication extends elyObservable {
             this.readySignalsShouldBeReceived--;
             elyLogger.debug("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
             if (this.readySignalsShouldBeReceived === 0) {
-                if (this.config!.app!.useContentController) {
+                if (this.config!.manifest.useContentController) {
                     __applyElyOneActions(this);
                 }
                 elyScreenController.default.present("index");
@@ -318,109 +243,131 @@ export default class elyFlatApplication extends elyObservable {
      * Применяет конфигурацию
      * @param config
      */
-    protected applyConfiguration(config: elyFlatApplicationConfig) {
-        elyLogger.debug("~~~> Применение конфигурации");
+    protected applyConfiguration(config: efAppConfig) {
+        elyXLogger.default.log("~~~> Применение конфигурации");
 
-        if (this.config!.app) setUpAppConfig(this, this.config!.app!);
-        if (this.config!.navigation) setUpNavigationConfig(this, this.config!.navigation!);
-        if (this.config!.template) setUpTemplateConfig(this, this.config!.template!);
-        if (this.config!.sidenavigation) setUpSidebarConfig(this, this.config!.sidenavigation!);
+        //
+        // App
+        //
+        this.applicationDocument.head.title(config.getAppTitle());
 
-        /**
-         * Настраивает app секцию
-         * @param application
-         * @param app
-         */
-        function setUpAppConfig(application: elyFlatApplication, app: elyFlatApplicationConfig_Application) {
-            if (app.title) application.headerView.title(app.title);
-        }
+        //
+        // Manifest
+        //
 
-        /**
-         * Настраивает navigation секцию
-         * @param app
-         * @param navigation
-         */
-        function setUpNavigationConfig(app: elyFlatApplication, navigation: elyFlatApplicationConfig_Navigation) {
-            app.navigationView.titleView.text(navigation.title).addObserver("click", () => {
-                elyScreenController.default.present("index");
+        //
+        //  Template
+        //
+        this.containerView.getStyle().maxWidth = typeof config.template.maxContainerWidth === "number" ?
+            config.template.maxContainerWidth + "px" : config.template.maxContainerWidth;
+        this.applicationColorManager.applyApplicationColor(config.getAppColor());
+        this.footerView.titleView.text(config.template.footer.title);
+        this.footerView.subtitleView.text(config.template.footer.subtitle);
+
+        //
+        //  Navigation config
+        //
+        if (config.isNavigationBarUsed()) {
+            this.bodyView.addSubView(this.navigationView);
+            this.navigationView.titleView.text(config.navigationBar.title);
+            if (config.manifest.useContentController)
+                this.navigationView.titleView.addObserver("click", () => {
+                    elyScreenController.default.present(config.contentController.defaultContentId);
+                });
+            config.navigationBar.items.forEach(value => {
+                value.item = value.item || "elyLinkTextView";
+                this.navigationView.itemsView.add(elyControl.fromObject(value));
             });
-            app.bodyView.addSubView(app.navigationView);
-            if (navigation.items)
-                navigation.items.forEach((value) => {
-                    value.item = value.item || "elyLinkTextView";
-                    app.navigationView.itemsView.add(elyControl.fromObject(value));
-                });
-            if (navigation.imageUrl) {
-                app.navigationView.navigationBarImage(navigation.imageUrl);
-                app.navigationView.imageView.addObserver("click", () => {
-                    elyScreenController.default.present("index");
-                });
+            if (config.navigationBar.imageUrl) {
+                this.navigationView.navigationBarImage(config.navigationBar.imageUrl);
+                if (config.manifest.useContentController)
+                    this.navigationView.imageView.addObserver("click", () => {
+                        elyScreenController.default.present(config.contentController.defaultContentId);
+                    });
             }
+            this.applicationColorManager.applyNavigationBarColor(config.getNavigationBarColor());
         }
 
-        /**
-         * Настраивает template секцию
-         * @param app
-         * @param template
-         */
-        function setUpTemplateConfig(app: elyFlatApplication, template: elyFlatApplicationConfig_Template) {
-
-            if (template.maxContainerWidth) {
-                app.containerView.getStyle().maxWidth = template.maxContainerWidth + "px";
+        //
+        //  Side Navigation config
+        //
+        if (config.isSideNavigationBarUsed()) {
+            if (config.isNavigationBarUsed()) {
+                const showButton = new elyControl({
+                    class: "ef-sidenav-toggle",
+                    subviews: [new elyIconView({iconName: "bars"})],
+                });
+                showButton.addObserver("click", () => {
+                    this.sideNavigationView.toggle();
+                });
+                this.navigationView.addSubView(showButton);
             }
-
-            if (template.color) {
-                app.applicationColor(new elyColor({hex: template.color}));
-            }
-            if (template.footer) setUpTemplateFooterConfig(app, template.footer);
-
-            /**
-             * Настраивает template.footer секцию
-             * @param app
-             * @param footer
-             */
-            function setUpTemplateFooterConfig(app: elyFlatApplication,
-                                               footer: elyFlatApplicationConfig_Template_Footer) {
-                if (footer.title)
-                    app.footerView.titleView.text(footer.title);
-                if (footer.subtitle)
-                    app.footerView.subtitleView.text(footer.subtitle);
-            }
+            this.sideNavigationView.apply();
+            if (config.sideNavigationBar.allowMouseEvents)
+                this.sideNavigationView.applyMouseEvents();
+            config.sideNavigationBar.items.forEach(value => {
+                value.item = value.item || "elyLinkTextView";
+                this.sideNavigationView.listView.add(elyControl.fromObject(value));
+            });
         }
 
-        /**
-         * Настраивает sidebar секцию
-         * @param app
-         * @param sidebar
-         */
-        function setUpSidebarConfig(app: elyFlatApplication, sidebar: elyFlatApplicationConfig_Sideavigation) {
-            if (sidebar.enabled) {
-                if (app.navigationView) {
-                    const showButton = new elyControl({
-                        class: "ef-sidenav-toggle",
-                        subviews: [new elyIconView({iconName: "bars"})],
-                    });
-                    showButton.addObserver("click", () => {
-                        app.sideNavigationView.toggle();
-                    });
-                    app.navigationView.addSubView(showButton);
-                }
-
-                app.sideNavigationView.apply();
-
-                if (sidebar.allowMouseEvents)
-                    app.sideNavigationView.applyMouseEvents();
-
-                if (sidebar.items) {
-                    for (const item of sidebar.items) {
-                        if (item.line) {
-                            app.sideNavigationView.listView.add(elyControl.line());
-                        } else {
-                            item.item = item.item || "elyLinkTextView";
-                            app.sideNavigationView.listView.add(elyControl.fromObject(item));
-                        }
-                    }
-                }
+        //
+        // Meta
+        //
+        if (config.manifest.useMeta) {
+            this.applicationDocument.head.setCharset(config.meta.charset);
+            this.applicationDocument.head.addMetaValue({name: "apple-mobile-web-app-title", content: config.app.title});
+            this.applicationDocument.head.addMetaValue({
+                content: config.meta.appleMobile.statusBarStyle,
+                name: "apple-mobile-web-app-status-bar-style",
+            });
+            this.applicationDocument.head.addMetaValue({
+                content: config.manifest.allowStandaloneMode ? "yes" : "no",
+                name: "apple-mobile-web-app-capable",
+            });
+            this.applicationDocument.head.addMetaValue({
+                content: config.getNavigationBarColorString(),
+                name: "theme-color",
+            });
+        }
+        if (config.manifest.useViewPort) this.applicationDocument.head.addViewPort(config.meta.viewport);
+        if (config.manifest.useApplicationIcon) {
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/apple-touch-icon.png",
+                rel: "apple-touch-icon",
+                sizes: "180x180",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon-32x32.png",
+                rel: "icon",
+                sizes: "32x32",
+                type: "image/png",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon-16x16.png",
+                rel: "icon",
+                sizes: "16x16",
+                type: "image/png",
+            });
+            this.applicationDocument.head.addLink({
+                href: config.meta.iconPath + "/favicon.ico",
+                rel: "shortcut icon",
+            });
+            this.applicationDocument.head.addLink({
+                color: config.getNavigationBarColorString(),
+                href: config.meta.iconPath + "/safari-pinned-tab.svg",
+                rel: "mask-icon",
+            });
+        }
+        if (config.manifest.allowStandaloneMode && config.manifest.useIPhoneXStandaloneFix) {
+            if (elyDeviceDetector.default.isIPhoneX() && elyDeviceDetector.default.isStandalone()) {
+                elyStylesheet.global.addClass("ef-sidenav-toggle", {paddingTop: "30px"});
+                elyStylesheet.global.addClass("ef-wrp", {paddingTop: "40px"});
+                elyStylesheet.global.addClass("ef-sidenav-title", {paddingTop: "60px"});
+                this.bodyView.getStyle().minHeight = elyDeviceDetector.default.getScreenSize().height() + "px";
+                elyNotificationView.defaults.marginFromScreenEdge = 40;
+                if (config.manifest.useNavigationBar)
+                    elyFlatApplication.default.navigationView.css({"padding-top": "40px"});
             }
         }
 
