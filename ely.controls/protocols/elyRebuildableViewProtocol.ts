@@ -23,6 +23,8 @@ import elyViewOptions from "@core/controls/elyViewOptions";
 
 /**
  * Элемент, который может быть перестроен
+ * @class elyRebuildableViewProtocol
+ * @augments {elyView}
  */
 export default abstract class elyRebuildableViewProtocol extends elyView {
 
@@ -45,7 +47,7 @@ export default abstract class elyRebuildableViewProtocol extends elyView {
      * Запрещает или отменяет запрет перестроения
      * @param deny
      */
-    public denyRebuild(deny: boolean): elyRebuildableViewProtocol {
+    public denyRebuild(deny: boolean): elyRebuildableViewProtocol | any {
         this.__denyRebuild = deny;
         return this;
     }
@@ -53,8 +55,21 @@ export default abstract class elyRebuildableViewProtocol extends elyView {
     /**
      * Выполняет перестроени элемента
      */
-    public rebuild(): elyRebuildableViewProtocol {
+    public rebuild(): elyRebuildableViewProtocol | any {
         if (!this.__denyRebuild) this.__rebuild();
+        this.notificate("rebuilt");
+        return this;
+    }
+
+    /**
+     * Добавляет наблюдатель: элемент был перестроен
+     *
+     * Имя обсервера: rebuilt
+     *
+     * @param o - наблюдатель
+     */
+    public addRebuiltObserver(o: () => void): elyRebuildableViewProtocol | any {
+        this.addObserver("rebuilt", o);
         return this;
     }
 
@@ -65,5 +80,5 @@ export default abstract class elyRebuildableViewProtocol extends elyView {
      * @private
      * @ignore
      */
-    protected abstract __rebuild(): elyRebuildableViewProtocol;
+    protected abstract __rebuild(): elyRebuildableViewProtocol | any;
 }
