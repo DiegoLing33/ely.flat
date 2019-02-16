@@ -1,0 +1,3 @@
+[submodule "efi"]
+	path = efi
+	url = git://github.com/DiegoLing33/ely.flat.git
