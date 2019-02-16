@@ -9468,6 +9468,60 @@ elyStyle.muted = new elyStyle("muted");
 })(window, document, 'CP');
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: efContainerView.ts                                                   +
+ + Файл изменен: 09.02.2019 19:10:18                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения контейнер с элементом
+ * @class efContainerView
+ * @template T
+ * @augments elyView
+ */
+class efContainerView extends elyView {
+    /**
+     * Конструктор
+     * @param {T} view
+     * @param options
+     */
+    constructor(view, options = {}) {
+        super(options);
+        /**
+         * Элемент отображения
+         * @protected
+         * @ignore
+         */
+        this.__theView = view;
+        this.getDocument().append(view.getDocument());
+    }
+    /**
+     * Возвращает содержимое контейнера
+     * @return {T}
+     */
+    getView() {
+        return this.__theView;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -9501,13 +9555,13 @@ elyStyle.muted = new elyStyle("muted");
  *
  *
  */
-let elyColorPickerField = class elyColorPickerField extends elyFieldView {
+let elyColorPickerField = class elyColorPickerField extends efField {
     /**
      * Конструктор
      * @param options
      */
     constructor(options = {}) {
-        super({ accessory: new elyControl$1({ tag: "input", class: "ef-input" }) });
+        super(options);
         /**
          * Элемент отображения цвета
          * @type {elyControl}
@@ -9518,20 +9572,23 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
          * @type {elyControl}
          */
         this.colorThumbnail = new elyControl$1();
-        this.actionIconView = new elyControl$1({ class: "ef-input-status ef-color-pict" });
-        const accessory = this.accessoryView.getDocument();
+        this.actionIconView = new efContainerView(new efIconView({ iconName: "edit" }));
+        this.addClass("ef-input");
+        const accessory = this.getAccessory();
         // this.colorThumbnail.addClass("bg-primary");
         this.colorView.addSubView(this.colorThumbnail);
-        this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
-        this.colorThumbnail.getDocument().innerHTML = "&nbsp";
+        // this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
+        // this.colorThumbnail.getDocument().innerHTML = "&nbsp";
         this.valueProperty.set(elyColor$1.black());
+        this.actionIconView.addClass("ef-input-suffix");
         this.getDocument().append(this.actionIconView.getDocument());
+        this.addClass("with-suffix");
         this.actionIconView.addObserver("click", () => this.editableProperty.toggle());
         this.valueProperty.change(value => {
             this.picker.set(value.toString());
             accessory.value = (value.toString());
-            this.colorThumbnail.css({ "background-color": value.getDarkerColor(0.2).toString() });
-            this.accessoryView.css({ color: value.getDarkerColor(0.14).toString() });
+            // this.colorThumbnail.css({"background-color": value.getDarkerColor(0.2).toString()});
+            this.getAccessory().style.color = value.getDarkerColor(0.14).toString();
         });
         this.editableProperty.change((value) => {
             accessory.disabled = !value;
@@ -9546,11 +9603,11 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
             this.picker.set(accessory.value);
             const ec = new elyColor$1({ hex: accessory.value });
             accessory.value = ec.toString();
-            this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
-            this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
+            // this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
+            this.getAccessory().style.color = ec.getDarkerColor(0.14).toString();
         };
         // @ts-ignore
-        this.picker = new CP(this.accessoryView.getDocument());
+        this.picker = new CP(this.getAccessory());
         this.picker.on("exit", () => {
             if (this.editable()) {
                 const ec = new elyColor$1({ hex: accessory.value });
@@ -9563,8 +9620,8 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
                 return;
             const ec = new elyColor$1({ hex: color });
             accessory.value = ec.toString();
-            this.colorThumbnail.css({ "background-color": ec.getDarkerColor(0.2).toString() });
-            this.accessoryView.css({ color: ec.getDarkerColor(0.14).toString() });
+            // this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
+            this.getAccessory().style.color = ec.getDarkerColor(0.14).toString();
         });
         this.placeholder("#______");
         this.editable(false);
@@ -9577,8 +9634,8 @@ let elyColorPickerField = class elyColorPickerField extends elyFieldView {
      */
     placeholder(value) {
         if (value === undefined)
-            return this.accessoryView.getDocument().placeholder;
-        this.accessoryView.getDocument().placeholder = value;
+            return this.getAccessory().placeholder;
+        this.getAccessory().placeholder = value;
         return this;
     }
 };
@@ -12622,60 +12679,6 @@ class efLinkTextView extends efTextView {
  * @typedef {efTextViewOptions} efLinkTextViewOptions
  * @property {string} [url = "#"]
  */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efContainerView.ts                                                   +
- + Файл изменен: 09.02.2019 19:10:18                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения контейнер с элементом
- * @class efContainerView
- * @template T
- * @augments elyView
- */
-class efContainerView extends elyView {
-    /**
-     * Конструктор
-     * @param {T} view
-     * @param options
-     */
-    constructor(view, options = {}) {
-        super(options);
-        /**
-         * Элемент отображения
-         * @protected
-         * @ignore
-         */
-        this.__theView = view;
-        this.getDocument().append(view.getDocument());
-    }
-    /**
-     * Возвращает содержимое контейнера
-     * @return {T}
-     */
-    getView() {
-        return this.__theView;
-    }
-}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +

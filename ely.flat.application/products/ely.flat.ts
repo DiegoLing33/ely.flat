@@ -22,77 +22,75 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import efApplication from "@app/app/efApplication";
+import elyFileWatcher from "@app/app/elyFileWatcher";
+import {efAppDevelopConsole} from "@app/develop/efAppDevelopConsole";
+import efCanvas from "@cnv/efCanvas";
+import efCanvasLayer from "@cnv/efCanvasLayer";
+import efSize from "@cnv/objs/efSize";
+import elyGridViewController from "@controllers/elyGridViewController";
+import elyScreenController from "@controllers/elyScreenController";
+import elySimplePageViewController from "@controllers/elySimplePageViewController";
+import elyViewController from "@controllers/elyViewController";
+import {efButton} from "@controls/action/efButton";
+import elyControl from "@controls/action/elyControl";
+import elyInput from "@controls/action/elyInput";
+import elyProgressView from "@controls/action/elyProgressView";
+import {efPanelView} from "@controls/content/efPanelView";
+import {elyDataGridView} from "@controls/data/elyDataGridView";
+import elyStylesheet from "@controls/elyStylesheet";
 import "@controls/elyUIExt";
-import elyTextAreaField from "@controls/fields/elyTextAreaField";
 import elyGridView from "@controls/flex/elyGridView";
 import elyStaticGridView from "@controls/flex/elyStaticGridView";
+import {efField} from "@controls/input/efField";
+import {efSwitchField} from "@controls/input/efSwitchField";
+import {efTextField} from "@controls/input/efTextField";
+import {efGridLayoutView} from "@controls/layout/efGridLayoutView";
+import {efRowLayoutView} from "@controls/layout/efRowLayoutView";
+import {efListView} from "@controls/list/efListView";
+import {efNavigationView} from "@controls/navigation/efNavigationView";
+import {efNotificationView} from "@controls/notification/efNotificationView";
+import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
+import {efHeaderTextView} from "@controls/text/efHeaderTextView";
+import {efIconView} from "@controls/text/efIconView";
+import {efLinkTextView} from "@controls/text/efLinkTextView";
+import {efTextView} from "@controls/text/efTextView";
+import elyIconView from "@controls/text/elyIconView";
 import elyTextView from "@controls/text/elyTextView";
+import elyTextViewEditable from "@controls/text/elyTextViewEditable";
+import {efImageView} from "@controls/view/efImageView";
+import {efModalView} from "@controls/view/efModalView";
+import {efPreloaderView} from "@controls/view/efPreloaderView";
+import {elyFormView} from "@controls/view/elyFormView";
+import elyScrollView from "@controls/view/elyScrollView";
+import elyTableView from "@controls/view/elyTableView";
 import elyView from "@core/controls/elyView";
+import elyColor from "@core/elyColor";
+import {elyColorUtils} from "@core/elyColorUtils";
+import elyCookie from "@core/elyCookie";
+import elyDeviceDetector from "@core/elyDeviceDetector";
+import elyGuard from "@core/elyGuard";
+import elySimpleJSONParser from "@core/elySimpleJSONParser";
+import {elyTime} from "@core/elyTime";
+import elyTimer from "@core/elyTimer";
 import elyUtils from "@core/elyUtils";
 import elyXLogger from "@core/utils/elyXLogger";
+import elyGetRequest from "@core/web/request/elyGetRequest";
+import elyPostRequest from "@core/web/request/elyPostRequest";
+import elyURL from "@core/web/url/elyURL";
+import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
 import elyAxis from "@enums/elyAxis";
 import elyDirection from "@enums/elyDirection";
 import elySize from "@enums/elySize";
 import elyStyle from "@enums/elyStyle";
-import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
-import elyStylesheet from "@controls/elyStylesheet";
-import {elyFormView} from "@controls/view/elyFormView";
-import {elyTextField} from "@fields/elyTextField";
+import Size from "@enums/Size";
+import Style from "@enums/Style";
+import TextFieldType from "@enums/textFieldType";
+import Weight from "@enums/Weight";
 import {elyDataPickerField} from "@fields/elyDataPickerField";
-import elyScreenController from "@controllers/elyScreenController";
-import elyViewController from "@controllers/elyViewController";
-import elyFileWatcher from "@app/app/elyFileWatcher";
-import elyControl from "@controls/action/elyControl";
-import elyInput from "@controls/action/elyInput";
-import elySimplePageViewController from "@controllers/elySimplePageViewController";
-import efSize from "@cnv/objs/efSize";
+import {elyTextField} from "@fields/elyTextField";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
-import efCanvasLayer from "@cnv/efCanvasLayer";
-import efCanvas from "@cnv/efCanvas";
-import elyGridViewController from "@controllers/elyGridViewController";
-import elyProgressView from "@controls/action/elyProgressView";
-import {elyDataGridView} from "@controls/data/elyDataGridView";
-import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
-import elyIconView from "@controls/text/elyIconView";
-import elyTextViewEditable from "@controls/text/elyTextViewEditable";
-import elyScrollView from "@controls/view/elyScrollView";
-import elyTableView from "@controls/view/elyTableView";
-import elyDeviceDetector from "@core/elyDeviceDetector";
-import {elyTime} from "@core/elyTime";
-import elyColor from "@core/elyColor";
-import elyGuard from "@core/elyGuard";
-import elyTimer from "@core/elyTimer";
-import elyCookie from "@core/elyCookie";
-import {elyColorUtils} from "@core/elyColorUtils";
-import elySimpleJSONParser from "@core/elySimpleJSONParser";
-import elyPostRequest from "@core/web/request/elyPostRequest";
-import elyGetRequest from "@core/web/request/elyGetRequest";
-import elyURL from "@core/web/url/elyURL";
-import efApplication from "@app/app/efApplication";
-import {efTextView} from "@controls/text/efTextView";
-import {efListView} from "@controls/list/efListView";
-import {efNavigationView} from "@controls/navigation/efNavigationView";
-import {efLinkTextView} from "@controls/text/efLinkTextView";
-import {efButton} from "@controls/action/efButton";
-import Style from "@enums/Style";
-import Size from "@enums/Size";
-import Weight from "@enums/Weight";
-import {efIconView} from "@controls/text/efIconView";
-import {efTextField} from "@controls/input/efTextField";
-import TextFieldType from "@enums/textFieldType";
-import {efField} from "@controls/input/efField";
-import {efHeaderTextView} from "@controls/text/efHeaderTextView";
-import {efSwitchField} from "@controls/input/efSwitchField";
-import {efRowLayoutView} from "@controls/layout/efRowLayoutView";
-import {efGridLayoutView} from "@controls/layout/efGridLayoutView";
-import {efPanelView} from "@controls/content/efPanelView";
-import {efAppDevelopConsole} from "@app/develop/efAppDevelopConsole";
-import {efPreloaderView} from "@controls/view/efPreloaderView";
-import {efModalView} from "@controls/view/efModalView";
-import {efImageView} from "@controls/view/efImageView";
-import {efNotificationView} from "@controls/notification/efNotificationView";
-
 
 /**
  * @interface elyViewOptions
@@ -146,7 +144,6 @@ import {efNotificationView} from "@controls/notification/efNotificationView";
  * @property {string} [fieldIcon]
  * @property {string} [value]
  */
-
 
 /**
  *

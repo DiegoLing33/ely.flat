@@ -12,7 +12,7 @@
     "baseUrl": "./",
     "paths": {
       "@app/*": [
-        "./ely.app/*"
+        "./app/*"
       ],
       "@core/*": [
         "../ely.core/*"
@@ -24,25 +24,25 @@
         "./controls/options/*"
       ],
       "@controllers/*": [
-        "./ely.controls.controllers/src/*"
+        "./controllers/*"
       ],
       "@devMods/*": [
-        "./ely.controls.modules/src/*"
+        "./modules/*"
       ],
       "@enums/*": [
-        "./ely.flat.enums/src/*"
+        "./enums/*"
       ],
       "@cnv/*": [
-        "./ely.flat.cnv/src/*"
+        "./canvas/*"
       ],
       "@play/*": [
-        "./ely.flat.play/src/*"
+        "./play/*"
       ],
       "@math/*": [
-        "./ely.flat.math/src/*"
+        "../ely.core/math/*"
       ],
       "@protocols/*": [
-        "./ely.flat.protocols/*"
+        "./protocols/*"
       ],
       "@fields/*": [
         "./ely.flat.fields/src/*"
