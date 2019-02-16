@@ -42,8 +42,12 @@ console.log(elyXLogger.styles.fgYellow + figlet.textSync(`e l y . f l a t`));
 console.log(elyXLogger.styles.reset);
 
 function createWindow() {
-    const win = new BrowserWindow({width: 900, height: 650});
-    win.loadFile(path.resolve("app/index.html"));
+    const win = new BrowserWindow({
+        height: 650,
+        icon: path.resolve(__dirname + "/res/resources/icon/favicon-32x32.png"),
+        width: 900,
+    });
+    win.loadFile(path.resolve(__dirname + "/app/index.html"));
 
     win.setResizable(false);
     win.center();
@@ -59,7 +63,7 @@ function createWindow() {
 app.setName("efi");
 app.on("ready", createWindow);
 
-efi.workingDirectory = __dirname;
+efi.workingDirectory = path.resolve("./");
 
 const server = expressApp.listen(1583, () => {
     expressApp.get("/init", (req: any, res: any) => {

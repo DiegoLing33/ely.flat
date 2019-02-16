@@ -1,6 +1,6 @@
 {
   "name": "efi",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "The ely.flat installer and builder.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/DiegoLing33/efi#readme",
@@ -9,9 +9,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "efi --rebuild-app": "rollup app/app.js --file app/index.js --format iife",
-    "efi --rebuild-index": "tsc index.ts"
+    "start": "node index.js"
   },
   "author": {
     "name": "Diego Ling",
