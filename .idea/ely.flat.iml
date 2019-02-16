@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/dist" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/modules/elyUIWorkshop.elymod" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/products" />
+      <excludeFolder url="file://$MODULE_DIR$/ely.flat.play/bin" />
       <excludeFolder url="file://$MODULE_DIR$/products" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
