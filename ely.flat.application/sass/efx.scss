@@ -1,0 +1,30 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: efx.scss                                                              +
+// Файл создан: 04.02.2019 18:43:38                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+@import "extra/font-awesome/font-awesome";
+@import "extra/animate";
+
+@import "../ely.controls.modules/src/elyColorPicker.elymod/_style";
+
+@import "variables/variables";
+@import "utils/utils";
+
+@import "controls/main";
+@import "controls/boxes";
+@import "controls/navigation";
+@import "controls/buttons";
+@import "controls/grid";
+@import "controls/fields";
+@import "controls/text";
+@import "controls/progress";
+@import "controls/modals";
+@import "controls/app";

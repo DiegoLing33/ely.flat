@@ -1,0 +1,241 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _boxes.scss                                                           +
+// Файл создан: 04.02.2019 18:44:30                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../utils/utils";
+@import "../variables/variables";
+
+.--scroll {
+  overflow: hidden;
+}
+
+//
+// +--------------+
+// | Boxing style |
+// +--------------+
+//
+.box {
+  @include applyDefaultShadow();
+  background: #fff;
+  border: 1px solid #dcdfe6;
+
+  // Box content
+  .box-content {
+    padding: 15px;
+  }
+
+
+  .box-header {
+    background-color: #f5f7fa;
+    border-bottom: 1px solid #e4e7ed;
+    padding: 0 20px;
+    line-height: 40px;
+    position: relative;
+    height: 40px;
+    color: #909399;
+    font-size: 14px;
+    margin: 0;
+
+    &.--tabs {
+      padding: 0;
+      @include deny-selection();
+
+      .box-header {
+        overflow: hidden;
+        margin-bottom: -1px;
+      }
+
+      .--item {
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        border: 1px solid transparent;
+        margin: -1px -1px 0;
+        color: #909399;
+        padding: 0 20px;
+        box-sizing: border-box;
+        display: inline-block;
+        list-style: none;
+        font-size: 14px;
+        font-weight: 500;
+        position: relative;
+
+        &:hover {
+          color: getPrimaryColor();
+          cursor: pointer;
+        }
+
+        &.--active {
+          color: getPrimaryColor();
+          background-color: #fff;
+          border-right-color: #dcdfe6;
+          border-left-color: #dcdfe6;
+        }
+      }
+
+      .--wrapper {
+        white-space: nowrap;
+        position: relative;
+        transition: transform .3s;
+        float: left;
+        z-index: 2;
+      }
+    }
+  }
+}
+
+.ef-panel {
+  margin-bottom: 24px;
+  border: solid 1px $panelBorderColor;
+  border-radius: 3px;
+  transition: .2s;
+  background-color: $panelBackgroundColor;
+
+  .ef-row {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .--content {
+    padding: 24px;
+  }
+
+  .--footer {
+    border-top: solid 1px $panelBorderColor;
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: $panelFooterBackgroundColor;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    text-align: center;
+    margin-top: -1px;
+    color: $panelFooterTextColor;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.6s;
+
+    &:hover {
+      color: $panelFooter_Hover_TextColor;
+      background-color: $panelFooter_Hover_BackgroundColor;
+    }
+
+    &:active {
+      opacity: 0.4;
+    }
+  }
+
+  .--header {
+    color: $panelHeaderTextColor;
+    padding: 18px 20px;
+    border-bottom: 1px solid $panelBorderColor;
+    box-sizing: border-box;
+
+    .--action {
+      float: right;
+      padding: 3px 0px;
+    }
+  }
+
+  &.--hover {
+    &:hover {
+      @include applyDefaultShadow();
+    }
+  }
+}
+
+.ef-loading {
+  background-color: rgba(255, 255, 255, 0.76);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: opacity 0.3s;
+  z-index: $loadingZIndex;
+  @include deny-selection();
+
+  &.--fixed {
+    position: fixed;
+  }
+
+  .--wrapper {
+
+    .ef-icon {
+      font-size: 70px;
+      color: getPrimaryColor();
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    top: 50%;
+    margin-top: -35px;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    z-index: $loadingZIndex + 1;
+
+    .--title {
+      padding: 15px;
+      color: rgba(0, 0, 0, 0.63);
+    }
+  }
+}
+
+table{
+  border-collapse: collapse;
+}
+
+
+$efDataGridViewTableBorder: 1px solid rgba(0, 0, 0, 0.58);
+
+.ef-dgv {
+  width: 100%;
+
+  tr {
+    border-bottom: 1px solid rgb(220, 220, 220);
+  }
+
+  td, th {
+    color: rgba(0, 0, 0, 0.56);
+    padding: 10px;
+  }
+
+  th{
+    color: rgba(0, 0, 0, 0.84);
+  }
+
+  th {
+    .ef-text {
+      font-weight: bold;
+    }
+  }
+
+  caption{
+    caption-side: top;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    color: #6c757d;
+    text-align: left;
+  }
+}
+
+.ef-dgv.bordered {
+  border: $efDataGridViewTableBorder;
+
+  td, th {
+    color: rgba(0, 0, 0, 0.84);
+    border: $efDataGridViewTableBorder;
+    padding: 10px;
+  }
+
+  th {
+    background-color: rgba(0, 0, 0, 0.09);
+  }
+}

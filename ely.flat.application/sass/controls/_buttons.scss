@@ -1,0 +1,150 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _buttons.scss                                                         +
+// Файл создан: 04.02.2019 19:13:46                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../variables/variables";
+@import "../utils/utils";
+@import "../utils/media";
+
+//
+//  Buttons
+//
+
+.button {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: colorStyle("default");
+  @if (lightness(colorStyle("default")) > 80) {
+    color: $buttonLightBackgroundTextColor;
+  } @else {
+    color: $buttonDarkBackgroundTextColor;
+  }
+  @if (lightness(colorStyle("default")) > 99) {
+    border: 1px solid #dcdfe6;
+  } @else {
+    border: 1px solid colorStyle("default");
+  }
+  -webkit-appearance: none;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: .7s;
+  font-weight: 500;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-radius: 4px;
+  opacity: 1;
+
+  &:hover {
+    opacity: $buttonHoverOpacity;
+  }
+
+  &.--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.--rounded {
+    border-radius: $buttonRoundRadius;
+    padding: $buttonRoundPadding;
+  }
+
+  &.--circle {
+    border-radius: 50%;
+    padding: $buttonCirclePadding;
+  }
+
+  @each $style in $stylesList {
+    &.--#{$style} {
+      @if (lightness(colorStyle($style)) > 80) {
+        color: #606266 !important;
+      } @else {
+        color: #fff !important;
+      }
+      background-color: colorStyle($style) !important;
+      @if (lightness(colorStyle($style)) > 99) {
+        border-color: #dcdfe6 !important;
+      } @else {
+        border-color: colorStyle($style) !important;
+      }
+    }
+    &.--#{$style}-outline {
+      @if ($style == "default") {
+        color: gray !important;
+      } @else {
+        color: colorStyle($style) !important;
+        border-color: colorStyle($style) !important;
+        background-color: transparentize(colorStyle($style), 0.95) !important;
+      }
+    }
+  }
+
+  @each $sizeName in $sizesList {
+    &.--#{$sizeName}{
+      padding: #{getTheSize($sizeName, 12)}px #{getTheSize($sizeName, 20)}px !important;
+      font-size: #{getTheSize($sizeName, 14)}px !important;
+    }
+    @include mobile-only{
+      $k: 1.4;
+      &.--xlarge{
+        padding: #{getTheSize("xlarge", 12) / $k}px #{getTheSize("xlarge", 20) / $k}px !important;
+        font-size: #{getTheSize("xlarge", 14) / $k}px !important;
+      }
+    }
+  }
+
+  &.--fill{
+    width: 100%;
+  }
+}
+
+
+.button-text {
+  @extend .button;
+  border-color: transparent;
+  color: colorStyle("primary");
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
+.button-group {
+  display: inline-block;
+  vertical-align: middle;
+
+  .button {
+    float: left;
+    position: relative;
+  }
+}
+
+.button-group > .button:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.button-group > .button:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.button-group > .button + .button {
+  border-left: $buttonsGroupSeparator;
+}
+
+.button-group > .button:not(:last-child):not(:first-child) {
+  border-radius: 0;
+}

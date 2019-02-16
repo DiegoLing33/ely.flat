@@ -1,0 +1,621 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _fields.scss                                                          +
+// Файл создан: 05.02.2019 23:45:16                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../variables/variables";
+@import "../utils/utils";
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Input
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-input {
+  position: relative;
+  font-size: 14px;
+  display: inline-block;
+  width: 100%;
+
+  &.error {
+    input {
+      border: 1px solid rgba(232, 0, 0, 0.86);
+    }
+  }
+
+  &.--disabled {
+    input {
+      background-color: $input_Disabled_BackgroundColor;
+      border-color: $input_Disabled_BorderColor;
+      color: #c0c4cc;
+      cursor: not-allowed;
+    }
+  }
+
+  &.with-suffix {
+    input {
+      padding-right: 30px;
+    }
+  }
+
+  &.with-prefix {
+    input {
+      padding-left: 30px;
+    }
+  }
+
+  input {
+    -webkit-appearance: none;
+    background-color: $inputBackgroundColor;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid $inputBorderColor;
+    box-sizing: border-box;
+    color: $inputTextColor;
+    display: inline-block;
+    font-size: inherit;
+    height: 40px;
+    outline: none;
+    padding: 0 15px;
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: $inputFocusColor;
+    }
+  }
+
+  .ef-icon {
+    height: 100%;
+    width: 25px;
+    text-align: center;
+    transition: all .3s;
+    line-height: 43px;
+
+    &::after {
+      content: '';
+      height: 100%;
+      width: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .ef-input-prefix, .ef-input-suffix {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    text-align: center;
+    color: $inputPrefSufTextColor;
+    transition: all .3s;
+  }
+
+  .ef-input-prefix {
+    left: 5px;
+  }
+
+  .ef-input-suffix {
+    right: 5px;
+  }
+}
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Textarea
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-textarea {
+  display: inline-block;
+  width: 100%;
+  vertical-align: bottom;
+  font-size: 14px;
+
+  textarea {
+    display: block;
+    resize: vertical;
+    padding: 5px 15px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    width: 100%;
+    font-size: inherit;
+    color: $inputTextColor;
+    background-color: $inputBackgroundColor;
+    background-image: none;
+    border: 1px solid $inputBorderColor;
+    border-radius: 4px;
+    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+    &:focus {
+      outline: none;
+      border-color: $inputFocusColor;
+    }
+  }
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Input group
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-input-group {
+  line-height: normal;
+  display: inline-table;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  .ef-input-block {
+    background-color: $inputBlockBackgroundColor;
+    color: $inputBlockTextColor;
+    vertical-align: middle;
+    display: table-cell;
+    position: relative;
+    border: 1px solid $inputBlockBorderColor;
+    border-radius: 4px;
+    padding: 0 20px;
+    width: 1px;
+    white-space: nowrap;
+  }
+}
+
+.ef-input-group > input:first-child, .ef-input-group > div:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.ef-input-group > input:last-child, .ef-input-group > div:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.ef-input-group > input:not(:last-child):not(:first-child),
+.ef-input-group > div:not(:last-child):not(:first-child) {
+  border-radius: 0;
+}
+
+.ef-input-group > input + input, .ef-input-group > div + div,
+.ef-input-group > div + input, .ef-input-group > input + div {
+  //border-left: 1px solid #dcdfe6;
+}
+
+.ef-input-group > div {
+  &:first-child {
+    border-right: none;
+  }
+
+  &:last-child {
+    border-left: none;
+  }
+}
+
+.ef-input-group > div:not(:last-child):not(:first-child) {
+  border-left: none;
+  border-right: none;
+}
+
+.ef-input-group > div + input, .ef-input-group > input + div {
+  border-left: $inputGroupSeparator;
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Input number
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-input-number {
+  position: relative;
+  display: inline-block;
+  line-height: 38px;
+  width: 100%;
+
+  input {
+    -webkit-appearance: none;
+    padding-left: 50px;
+    padding-right: 50px;
+    text-align: center;
+
+  }
+
+  &:hover {
+    input {
+      outline: none;
+      border-color: $inputFocusColor;
+    }
+  }
+
+  .increase, .decrease {
+    position: absolute;
+    z-index: 1;
+    top: 1px;
+    width: 40px;
+    height: auto;
+    text-align: center;
+    background: $inputBlockBackgroundColor;
+    color: $inputBlockTextColor;
+    cursor: pointer;
+    font-size: 13px;
+
+    &:hover {
+      color: $inputFocusColor;
+    }
+  }
+
+  &.--disabled {
+    .increase, .decrease {
+      border-color: $input_Disabled_BorderColor;
+      color: $input_Disabled_TextColor;
+      cursor: not-allowed;
+    }
+  }
+
+  .decrease {
+    left: 1px;
+    border-radius: 4px 0 0 4px;
+    border-right: 1px solid $inputBlockBorderColor;
+  }
+
+  .increase {
+    right: 1px;
+    border-radius: 0 4px 4px 0;
+    border-left: 1px solid $inputBlockBorderColor;
+  }
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Switch
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-switch {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  font-size: 14px;
+  line-height: 20px;
+  height: 20px;
+  vertical-align: middle;
+  @include deny-selection();
+
+  input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    margin: 0;
+  }
+
+  .ef-text {
+    transition: .2s;
+    height: 20px;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    vertical-align: middle;
+    color: #303133;
+  }
+
+  .ef-text + .--core {
+    margin-left: 10px;
+  }
+
+  .--core + .ef-text {
+    margin-left: 10px;
+  }
+
+  .--core {
+    margin: 0;
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border: 1px solid $inputBorderColor;
+    outline: none;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background: $inputBorderColor;
+    cursor: pointer;
+    transition: border-color .3s, background-color .3s;
+    vertical-align: middle;
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      border-radius: 100%;
+      transition: all .3s;
+      width: 16px;
+      height: 16px;
+      background-color: $switchCoreBackgroundColor;
+    }
+
+  }
+
+  &.--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  input:checked {
+    ~ .--core {
+      border-color: getPrimaryColor();
+      background-color: getPrimaryColor();
+
+      &:after {
+        left: 100%;
+        margin-left: -17px;
+      }
+    }
+  }
+
+  input:disabled {
+    ~ .--core {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  @each $style in $stylesList {
+    &.--#{$style} {
+      input:checked {
+        ~ .--core {
+          border-color: colorStyle($style);
+          background-color: colorStyle($style);
+
+          &:after {
+            left: 100%;
+            margin-left: -17px;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Slider
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.ef-slider {
+
+  &:before {
+    display: table;
+    content: "";
+  }
+
+  &:after {
+    clear: both;
+  }
+
+  &.disabled {
+    .ef-slider-run {
+      cursor: not-allowed;
+
+      .ef-slider-bar {
+        background-color: $sliderBarBackgroundColor;
+
+      }
+
+      .ef-slider-button-wrapper {
+        .ef-slider-button {
+          border-color: $sliderBarBackgroundColor;
+
+          &:hover {
+            cursor: not-allowed;
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+
+  .ef-slider-pin {
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    border-radius: 100%;
+    background-color: $sliderPinBackgroundColor;
+    transform: translateX(-50%);
+  }
+
+  .ef-slider-run {
+
+    width: 100%;
+    height: 6px;
+    margin: 16px 0;
+    background-color: $sliderRunBackgroundColor;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+
+    .ef-slider-bar {
+      height: 6px;
+      background-color: colorStyle("primary");
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      position: absolute;
+    }
+
+    .ef-slider-button-wrapper {
+      height: 36px;
+      width: 36px;
+      position: absolute;
+      z-index: $sliderButtonZIndex;
+      top: -15px;
+      transform: translateX(-50%);
+      background-color: transparent;
+      text-align: center;
+      user-select: none;
+      line-height: normal;
+
+      &:after {
+        display: inline-block;
+        content: "";
+        height: 100%;
+        vertical-align: middle;
+      }
+
+      .ef-slider-button {
+        vertical-align: middle;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: solid 2px colorStyle("primary");
+        background-color: $sliderButtonBackgroundColor;
+        border-radius: 50%;
+        transition: .2s;
+        user-select: none;
+
+        &:hover {
+          transform: scale(1.2);
+          cursor: grab;
+        }
+      }
+    }
+
+  }
+
+  &.vertical {
+    position: relative;
+
+    .ef-slider-run {
+      width: 6px;
+      height: 100%;
+      margin: 0 16px;
+
+      .ef-slider-bar {
+        width: 6px;
+        height: auto;
+        border-radius: 0 0 3px 3px;
+      }
+
+      .ef-slider-button-wrapper {
+        top: auto;
+        left: -14px;
+        transform: translateY(50%);
+      }
+
+    }
+  }
+
+}
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Checkbox
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.ef-checkbox {
+  color: #606266;
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.6s;
+  @include deny-selection();
+
+  .ef-text {
+    display: inline-block;
+    line-height: 25px;
+    font-size: 14px;
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .--core {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #ffffff;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    transition: all 0.6s;
+
+    &:after {
+      transition: all;
+      content: "";
+      position: absolute;
+      display: none;
+      left: 9px;
+      top: 5px;
+      width: 5px;
+      height: 10px;
+      border: solid getPrimaryColor();
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+
+  }
+
+  input:checked {
+    ~ .--core {
+      background-color: getPrimaryColor();
+
+      &:after {
+        display: block;
+        border-color: white;
+      }
+    }
+  }
+
+
+  &:hover {
+    .--core {
+      border-color: getPrimaryColor();
+    }
+  }
+
+  //
+  // --bordered
+  //
+  &.--bordered {
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    height: 40px;
+    padding-left: 47px;
+
+    .--core {
+      margin: 6px 10px;
+
+    }
+
+    .ef-text {
+      line-height: 39px;
+    }
+
+  }
+}

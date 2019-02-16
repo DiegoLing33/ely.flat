@@ -1,0 +1,51 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _text.scss                                                            +
+// Файл создан: 06.02.2019 00:27:45                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../variables/variables";
+@import "../utils/utils";
+
+
+@each $sizeName in $sizesList {
+  .text-#{$sizeName} {
+    font-size: #{getTheSize($sizeName, 14)}px;
+  }
+}
+
+@each $style in $stylesList {
+  .text-#{$style} {
+    color: colorStyle($style) !important;
+  }
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 100;
+  margin-bottom: 15px;
+  margin-top: 15px;
+  color: rgb(43, 43, 43);
+}
+
+body {
+  font-family: sans-serif;
+}
+
+a {
+  color: $linkTextColor;
+  text-decoration: none;
+}
+
+.ef-text {
+
+  display: block;
+
+  &.--centered {
+    text-align: center;
+  }
+
+}

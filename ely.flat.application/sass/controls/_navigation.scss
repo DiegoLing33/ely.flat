@@ -1,0 +1,161 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _navigation.scss                                                      +
+// Файл создан: 04.02.2019 19:09:07                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../variables/variables";
+@import "../utils/utils";
+@import "../utils/media";
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Navigation bar
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-navigation {
+  background-color: $navigationBarBackgroundColor;
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding-left: 0;
+  z-index: $navigationBar;
+  @include deny-selection();
+
+  &.--fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  &:before, &:after {
+    display: table;
+    content: "";
+  }
+
+  &:after {
+    clear: both;
+  }
+
+  &.--horizontal {
+    padding-left: 55px;
+    border-bottom: $navigationBarLine;
+
+    .--item {
+      float: left;
+      margin: 0;
+      border-bottom: 2px solid transparent;
+      color: white;
+
+    }
+  }
+
+  .--item {
+    height: $navigationBarHeight;
+    line-height: $navigationBarHeight;
+    font-size: 14px;
+    color: white;
+    padding: 0 20px;
+    list-style: none;
+    cursor: pointer;
+    position: relative;
+    transition: all .3s;
+    box-sizing: border-box;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    &.logo {
+      font-size: 20px;
+      transition: opacity .7s;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+        background-color: transparent;
+      }
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.53);
+    }
+
+    &.active {
+      color: $navigationActiveTextColor;
+    }
+
+  }
+
+  .--toggle {
+    display: none;
+    position: absolute;
+    height: 70px !important;
+    line-height: 70px !important;
+    right: 40px;
+    font-size: 25px !important;
+    color: white;
+    opacity: 0.45;
+    transition: 0.9s;
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  .--progress-line {
+    transition: all 0.5s;
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 4px;
+    background-color: $navigationLineColor;
+  }
+
+}
+
+@include mobile-only {
+  .ef-navigation {
+    text-align: center;
+    padding: 0 !important;
+
+    .--item {
+      float: none !important;
+      height: $navigationBarHeight__mobile !important;
+      line-height: $navigationBarHeight__mobile !important;
+      opacity: 1 !important;
+
+      &.logo {
+        font-size: 25px !important;
+        margin: 0 60px;
+      }
+    }
+
+    &.--open {
+      .--item:not(.logo) {
+        display: block;
+        text-align: left;
+        background-color: rgba(0, 0, 0, 0.31);
+
+        &:hover {
+          color: getPrimaryColor();
+        }
+      }
+    }
+
+    .--item:not(.logo){
+      display: none;
+    }
+
+    .--toggle {
+      display: table-cell;
+    }
+  }
+}

@@ -1,0 +1,148 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _variables.scss                                                       +
+// Файл создан: 04.02.2019 18:43:01                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+$shadowStyle: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04) !default;
+
+// Стили
+$stylesList: default, primary, success, info, warning, danger;
+
+// Размеры
+$sizesList: xsmall, small, normal, large, xlarge, xxlarge;
+
+// Толщина
+$weightsList: regular, standard, thin, thin, light, fat;
+
+//
+//  Карта цветов
+//
+$colorsMap: (
+        default: #fff,
+        primary: #409EFF,
+        success: #67c23a,
+        info: #909399,
+        warning: #cf9236,
+        danger: #f56c6c
+);
+
+$sizesMap: (
+        xsmall: 1/2,
+        small: 1/1.5,
+        normal: 1,
+        large: 2,
+        xlarge: 4,
+        xxlarge: 6
+);
+
+$weightsMap: (
+        regular: 300,
+        standard: 400,
+        thin: 100,
+        light: 200,
+        fat: 700
+);
+
+//
+//  Index Z
+//
+$navigationBar: 800;
+$sliderButtonZIndex: 100;
+$loadingZIndex: 700;
+
+//
+// Текст
+//
+$linkTextColor: map-get($colorsMap, "primary");
+
+//
+//  Панели
+//
+$panelBorderColor: #eaeefb;
+$panelBackgroundColor: #fff;
+
+$panelFooterTextColor: #d3dce6;
+$panelFooterBackgroundColor: #fff;
+
+$panelFooter_Hover_TextColor: #409EFF;
+$panelFooter_Hover_BackgroundColor: #f9fafc;
+
+$panelHeaderTextColor: #616161;
+
+
+//
+//  Кнопки
+//
+$buttonHoverOpacity: 0.7 !default;
+$buttonRoundRadius: 20px !default;
+$buttonRoundPadding: 12px 23px !default;
+$buttonCirclePadding: 12px !default;
+
+$buttonLightBackgroundTextColor: #606266;
+$buttonDarkBackgroundTextColor: #fff;
+
+$buttonsGroupSeparator: 1px solid rgba(0, 0, 0, 0.1);
+
+//
+//  Поля ввода
+//
+$inputFocusColor: #409EFF;
+
+$inputBackgroundColor: #fff;
+$inputBorderColor: #dcdfe6;
+$inputTextColor: #606266;
+
+$input_Disabled_BackgroundColor: #f5f7fa;
+$input_Disabled_BorderColor: #e4e7ed;
+$input_Disabled_TextColor: #c0c4cc;
+
+$inputPrefSufTextColor: #c0c4cc;
+
+$inputBlockBackgroundColor: #f5f7fa;
+$inputBlockTextColor: #909399;
+$inputBlockBorderColor: #dcdfe6;
+
+$inputGroupSeparator: 1px solid #dcdfe6;
+
+$switchCoreBackgroundColor: #fff;
+
+$sliderBarBackgroundColor: $inputPrefSufTextColor;
+$sliderPinBackgroundColor: #fff;
+$sliderRunBackgroundColor: #e4e7ed;
+$sliderButtonBackgroundColor: #fff;
+
+
+//
+//  Текст
+//
+$sizeRegular: 16 !default;
+$sizeFill: 100% !default;
+$sizeMedium: 28 !default;
+$sizeLarge: ($sizeMedium * 2) !default;
+
+$sizeSmall: 13 !default;
+$sizeExtraLarge: ($sizeLarge * 2) !default;
+$sizeExtraSmall: ($sizeSmall / 2) !default;
+
+//
+//  Навигация
+//
+
+$navigationBarBackgroundColor: rgb(43, 43, 43);
+$navigationBarLine: 4px solid lighten($navigationBarBackgroundColor, 30%);
+$navigationLineColor: #76d1ff;
+$navigationActiveTextColor: #fff587;
+
+$navigationBarHeight: 56px;
+$navigationBarHeight__mobile: 70px;
+
+//
+//  Приложение
+//
+$wrapperMarginTop: 50px;

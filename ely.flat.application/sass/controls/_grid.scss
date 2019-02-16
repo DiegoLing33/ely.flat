@@ -1,0 +1,63 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _grid.scss                                                            +
+// Файл создан: 05.02.2019 23:26:07                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+.ef-row {
+  position: relative;
+  box-sizing: border-box;
+
+  &::before, &::after {
+    display: table;
+    content: "";
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+.ef-row{
+  .ef-col + .ef-col{
+    padding-left: 5px;
+  }
+  .ef-col:first-child:not(:last-child){
+    padding-right: 5px;
+  }
+  .ef-col-* + .ef-col-*{
+    padding-left: 5px;
+  }
+  .ef-col-*:first-child:not(:last-child){
+    padding-right: 5px;
+  }
+}
+
+$countGrid: 24;
+
+.ef-col {
+  float: left;
+  box-sizing: border-box;
+}
+
+@for $i from 0 to $countGrid + 1 {
+  .ef-col-#{$i} {
+    width: percentage($i / $countGrid);
+    float: left;
+    box-sizing: border-box;
+  }
+}
+
+@for $i from 0 to 10 + 1 {
+  .ef-ncol-#{$i} {
+    width: percentage($i / 10);
+    float: left;
+    box-sizing: border-box;
+  }
+}

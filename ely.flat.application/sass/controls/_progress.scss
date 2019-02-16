@@ -1,0 +1,100 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _progress.scss                                                        +
+// Файл создан: 06.02.2019 03:49:59                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@import "../utils/utils";
+
+.ef-progress{
+  position: relative;
+  line-height: 1;
+
+  .label{
+    font-size: 14px;
+    color: #606266;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    line-height: 1;
+  }
+
+
+  .ef-progress-bar{
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    box-sizing: border-box;
+
+    &.with-text{
+      padding-right: 50px;
+      margin-right: -55px;
+    }
+
+    .ef-progress-container{
+      height: 6px;
+      border-radius: 100px;
+      background-color: #ebeef5;
+      overflow: hidden;
+      position: relative;
+      vertical-align: middle;
+
+      .ef-progress-line{
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background-color: colorStyle("primary");
+        text-align: right;
+        border-radius: 100px;
+        line-height: 1;
+        white-space: nowrap;
+        transition: width 0.6s ease;
+
+        &::after{
+          display: inline-block;
+          content: "";
+          height: 100%;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+
+  &.--circular{
+    display: inline-block;
+
+    .ef-progress-circle{
+      height: 120px;
+      width: 120px;
+      transform: rotate(-90deg);
+
+      .--track{
+        stroke: rgb(229, 233, 242);
+        stroke-width: 12px;
+      }
+      .--path{
+        stroke: rgb(32, 160, 255);
+        stroke-dasharray: 339.292;
+        stroke-width: 12px;
+        transition: all 0.7s;
+      }
+    }
+
+    .label{
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+      transform: translate(0, -50%);
+    }
+  }
+}
+

@@ -1,0 +1,207 @@
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//                                                                             +
+// Diego Ling: ely.flat                                                        +
+//                                                                             +
+// Проект: ely.flat                                                            +
+//                                                                             +
+// Файл: _app.scss                                                             +
+// Файл создан: 08.02.2019 01:07:36                                            +
+//                                                                             +
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+@import "../variables/variables";
+@import "../utils/media";
+@import "../utils/utils";
+
+body{
+  font-weight: 400;
+}
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Content application
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.ef--wrapper {
+  margin-top: $wrapperMarginTop;
+
+  &.--with-fixed-nav {
+    margin-top: $wrapperMarginTop + $navigationBarHeight;
+
+    @include mobile-only {
+      margin-top: $wrapperMarginTop + $navigationBarHeight__mobile !important;
+    }
+  }
+}
+
+.ef--container {
+
+}
+
+.ef-simple-content {
+  .--content-header {
+    @include deny-selection();
+
+    margin-bottom: 50px;
+
+    .--title {
+      margin-bottom: 10px;
+      transition: 0.7s;
+      opacity: 0.76;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .--description {
+      transition: 0.7s;
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+  }
+}
+
+.ef-footer {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  @include deny-selection();
+
+  .--title {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.35;
+    padding: 5px;
+    transition: all 0.7s;
+  }
+
+  .--sub-title {
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.15;
+    transition: all 0.7s;
+  }
+
+  &:hover {
+    cursor: default;
+    .--title {
+      opacity: 0.66;
+    }
+
+    .--sub-title {
+      opacity: 0.46;
+    }
+  }
+}
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Notification
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+/* The panel */
+.ely-notification-panel {
+  //display: none;
+  padding: 10px;
+  position: fixed;
+  z-index: 99999999;
+  @include applyDefaultShadow();
+  transition: top 500ms ease-out;
+  max-width: 100% !important;
+
+  @include mobile-only {
+    bottom: auto !important;
+    right: 10px !important;
+    left: 10px !important;
+    top: 10px;
+  }
+
+}
+
+/* The close button */
+.ely-notification-close-button {
+  float: right;
+  font-size: 20px;
+  margin-top: -3.3px;
+  cursor: pointer;
+}
+
+/* The title */
+.ely-notification-title-label {
+  font-size: 17px;
+  margin-bottom: 3px
+}
+
+/* The message */
+.ely-notification-message-label {
+  font-size: 13px;
+}
+
+/* The content block */
+.ely-notification-content {
+  margin-top: 10px;
+  margin-left: -10px;
+  padding: 10px;
+  margin-bottom: -10px;
+  background-color: rgba(0, 0, 0, 0.0175);
+  font-size: 13px;
+}
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Develop console
+//
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+.ef-app-develop-console{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.90);
+  height: 400px;
+  z-index: 10000;
+
+  .ef-textarea {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    vertical-align: bottom;
+    font-size: 14px;
+
+    textarea {
+      display: block;
+      resize: vertical;
+      padding: 5px 15px;
+      line-height: 1.5;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      font-size: inherit;
+      color: #b1b5bc;
+      background-color: transparent;
+      background-image: none;
+      border: none;
+      border-radius: 0;
+      transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+      &:focus {
+        outline: none;
+        border-color: $inputFocusColor;
+      }
+    }
+  }
+  h3{
+    color: #707070;
+    text-align: center;
+  }
+}

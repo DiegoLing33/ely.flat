@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "outDir": "./ely.build.js",
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "./ely.app/*"
+      ],
+      "@core/*": [
+        "../ely.core/*"
+      ],
+      "@controls/*": [
+        "./controls/*"
+      ],
+      "@options/*": [
+        "./controls/options/*"
+      ],
+      "@controllers/*": [
+        "./ely.controls.controllers/src/*"
+      ],
+      "@devMods/*": [
+        "./ely.controls.modules/src/*"
+      ],
+      "@enums/*": [
+        "./ely.flat.enums/src/*"
+      ],
+      "@cnv/*": [
+        "./ely.flat.cnv/src/*"
+      ],
+      "@play/*": [
+        "./ely.flat.play/src/*"
+      ],
+      "@math/*": [
+        "./ely.flat.math/src/*"
+      ],
+      "@protocols/*": [
+        "./ely.flat.protocols/*"
+      ],
+      "@fields/*": [
+        "./ely.flat.fields/src/*"
+      ]
+    },
+    "experimentalDecorators": true,
+    "declaration": true,
+    "declarationDir": "ely.d.types"
+  },
+  "exclude": [
+    "./node_modules",
+    "./extra",
+    "./ely.documentation",
+    "./bin",
+    "./dist"
+  ]
+}

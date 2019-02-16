@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Develop</title>
+    <!--<link rel="stylesheet" href="../products/ely.flat.application.css">-->
+    <link rel="stylesheet" href="../sass/efx.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<br><br>
+<body style="padding: 30px; background-color: #fefefe">
+
+<ul class="ef-navigation --horizontal --fixed">
+    <li class="--toggle fa fa-navicon" onclick="testnav()"></li>
+    <li class="--item logo">ely.Design</li>
+    <li class="--item">Home</li>
+    <li class="--item">Panels</li>
+    <li class="--item">Buttons</li>
+    <div class="--progress-line" style="width: 0%"></div>
+</ul>
+
+<h1 class="text-xxlarge">Boxes</h1>
+<h1>Simple box</h1>
+<div class="box">
+    <div class="box-content">
+        Some text
+    </div>
+</div>
+<h1>Box with header</h1>
+<div class="box">
+    <div class="box-header">
+        The header
+    </div>
+    <div class="box-content">
+        Some text
+    </div>
+</div>
+<h1>Box with tabs</h1>
+<div class="box">
+    <div class="box-header --tabs">
+        <div class="--scroll">
+            <div class="--wrapper">
+                <div class="--item --active">Home</div>
+                <div class="--item">Profile</div>
+                <div class="--item">Info</div>
+            </div>
+        </div>
+    </div>
+    <div class="box-content">
+        Some text
+    </div>
+</div>
+<h1 class="text-xxlarge">Layout</h1>
+<div class="ef-panel --hover">
+    <div class="--content" style="text-align: center">
+        .ef-col-24
+        <div class="ef-row">
+            <div class="ef-col-24">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+        </div>
+        .ef-col-12
+        <div class="ef-row">
+            <div class="ef-col-12">
+                <div class="bg-primary" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+            <div class="ef-col-12">
+                <div class="bg-primary" style="margin: 5px; padding: 5px; border-radius: 4px">B 2</div>
+            </div>
+        </div>
+        .ef-col-8
+        <div class="ef-row">
+            <div class="ef-col-8">
+                <div class="bg-warning" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+            <div class="ef-col-8">
+                <div class="bg-warning" style="margin: 5px; padding: 5px; border-radius: 4px">B 2</div>
+            </div>
+            <div class="ef-col-8">
+                <div class="bg-warning" style="margin: 5px; padding: 5px; border-radius: 4px">C 3</div>
+            </div>
+        </div>
+        .ef-col-6
+        <div class="ef-row">
+            <div class="ef-col-6">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+            <div class="ef-col-6">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">B 2</div>
+            </div>
+            <div class="ef-col-6">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">C 3</div>
+            </div>
+            <div class="ef-col-6">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">D 4</div>
+            </div>
+        </div>
+        .ef-col-4
+        <div class="ef-row">
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">B 2</div>
+            </div>
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">C 3</div>
+            </div>
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">D 4</div>
+            </div>
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">E 5</div>
+            </div>
+            <div class="ef-col-4">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">F 6</div>
+            </div>
+        </div>
+        .ef-col-3
+        <div class="ef-row">
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">A 1</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">B 2</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">C 3</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">D 4</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">E 5</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">F 6</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">G 7</div>
+            </div>
+            <div class="ef-col-3">
+                <div class="bg-success" style="margin: 5px; padding: 5px; border-radius: 4px">H 9</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<h1 class="text-xxlarge">Panels</h1>
+<h1>Simple panel</h1>
+<div style="margin-bottom: 20px">Use this panels just for something</div>
+<div class="ef-panel --hover">
+    <div class="--content">
+        I am a panel.
+    </div>
+</div>
+<h1>Panel with action</h1>
+<div style="margin-bottom: 20px">Use this panels for activity</div>
+<div class="ef-panel --hover">
+    <div class="--content">
+        I am a panel with action footer.
+    </div>
+    <div class="--footer">
+        I am action footer
+    </div>
+</div>
+<h1>Panel with header and action</h1>
+<div style="margin-bottom: 20px">Use this panels...</div>
+<div class="ef-panel --hover">
+    <div class="--header">
+        Text
+    </div>
+    <div class="--content">
+        I am a panel with action footer.
+    </div>
+    <div class="--footer">
+        I am action footer
+    </div>
+</div>
+<h1>Panel with header action and footer action</h1>
+<div style="margin-bottom: 20px">Use this panels...</div>
+<div class="ef-panel --hover">
+    <div class="--header">
+        Text
+        <div class="--action button-text">
+            <span class="fa fa-times"></span>
+        </div>
+    </div>
+    <div class="--content">
+        I am a panel with action footer.
+    </div>
+    <div class="--footer">
+        I am action footer
+    </div>
+</div>
+<br>
+<h1 class="text-xxlarge">Buttons style</h1>
+<br>
+<h1>Default state buttons</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="button --default">Button A</div>
+            <div class="button --primary">Button B</div>
+            <div class="button --info">Button C</div>
+            <div class="button --success">Button D</div>
+            <div class="button --warning">Button E</div>
+            <div class="button --danger">Button F</div>
+        </div>
+        <div class="ef-row">
+            <div class="button --default-outline">Button A</div>
+            <div class="button --primary-outline">Button B</div>
+            <div class="button --info-outline">Button C</div>
+            <div class="button --success-outline">Button D</div>
+            <div class="button --warning-outline">Button E</div>
+            <div class="button --danger-outline">Button F</div>
+        </div>
+        <div class="ef-row">
+            <div class="button --default --rounded">Button A</div>
+            <div class="button --primary --rounded">Button B</div>
+            <div class="button --info --rounded">Button C</div>
+            <div class="button --success --rounded">Button D</div>
+            <div class="button --warning --rounded">Button E</div>
+            <div class="button --danger --rounded">Button F</div>
+        </div>
+        <div class="ef-row">
+            <div class="button --primary --circle">A</div>
+        </div>
+    </div>
+</div>
+<h1>Disabled buttons</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="button --default --disabled">Button A</div>
+            <div class="button --primary --disabled">Button B</div>
+            <div class="button --info --disabled">Button C</div>
+            <div class="button --success --disabled">Button D</div>
+            <div class="button --warning --disabled">Button E</div>
+            <div class="button --danger --disabled">Button F</div>
+        </div>
+    </div>
+</div>
+<h1>Buttons sizes</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="button --primary --xsmall">Button xsmall</div>
+            <div class="button --primary --small">Button small</div>
+            <div class="button --primary">Button default</div>
+            <div class="button --primary --large">Button large</div>
+            <div class="button --primary --xlarge">Button xlarge</div>
+        </div>
+        <div class="ef-row">
+            <div class="button --primary --fill">Button fill a block</div>
+        </div>
+    </div>
+</div>
+<h1>Buttons group</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="button-group">
+                <div class="button --primary">A</div>
+                <div class="button --primary">B</div>
+                <div class="button --primary">C</div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<h1 class="text-xxlarge">Fields style</h1>
+<br>
+<h1>Basic input</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-input">
+            <input type="text" autocomplete="off" placeholder="Type something">
+        </div>
+    </div>
+</div>
+<h1>Disabled input</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-input disabled">
+            <input type="text" autocomplete="off" disabled placeholder="Type something">
+        </div>
+    </div>
+</div>
+<h1>Suffix and prefix</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="ef-input with-prefix">
+                <input type="text" autocomplete="off" placeholder="Type something">
+                <div class="ef-input-prefix">
+                    <span class="ef-icon fa fa-clock-o"></span>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <div class="ef-input with-suffix">
+                <input type="text" autocomplete="off" placeholder="Type something">
+                <div class="ef-input-suffix">
+                    <span class="ef-icon fa fa-clock-o"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>Textarea</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-textarea">
+            <textarea type="text" autocomplete="off" rows="2" placeholder="Type something"></textarea>
+        </div>
+    </div>
+</div>
+<h1>Input groups</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <div class="ef-input ef-input-group">
+                <div class="ef-input-block">http://</div>
+                <input type="text" autocomplete="off" placeholder="Type something">
+            </div>
+        </div>
+        <div class="ef-row">
+            <div class="ef-input ef-input-group">
+                <div class="ef-input-block">http://</div>
+                <input type="text" autocomplete="off" placeholder="Type something">
+                <div class="ef-input-block">.com</div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <div class="ef-input ef-input-group">
+                <input type="text" autocomplete="off" placeholder="Type something">
+                <div class="ef-input-block">.com</div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <div class="ef-input ef-input-group">
+                <input type="text" autocomplete="off" placeholder="Domain" style="width: 30%">
+                <input type="text" autocomplete="off" placeholder="Type something" style="width: 70%">
+                <div class="ef-input-block">.com</div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>Number input</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <h3>Default</h3>
+            <div class="ef-input-number">
+                <div class="increase">+</div>
+                <div class="decrease">-</div>
+                <div class="ef-input">
+                    <input type="text" value="0" autocomplete="off" placeholder="Type something">
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <h3>Disabled</h3>
+            <div class="ef-input-number --disabled">
+                <div class="increase">+</div>
+                <div class="decrease">-</div>
+                <div class="ef-input --disabled">
+                    <input type="text" disabled value="0" autocomplete="off" placeholder="Type something">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>Switches</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            <h3>Unchecked</h3>
+            <label class="ef-switch">
+                <input type="checkbox">
+                <span class="--core"></span>
+            </label>
+        </div>
+        <div class="ef-row">
+            <h3>Checked</h3>
+            <label class="ef-switch">
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+        </div>
+        <div class="ef-row">
+            <h3>Checked with label</h3>
+            <label class="ef-switch">
+                <input type="checkbox">
+                <span class="label">Some label</span>
+                <span class="--core"></span>
+            </label>
+            <br><br>
+            <label class="ef-switch">
+                <input type="checkbox">
+                <span class="--core"></span>
+                <span class="label">Some label</span>
+            </label>
+            <br><br>
+            <label class="ef-switch">
+                <input type="checkbox" checked>
+                <span class="label">Some label</span>
+                <span class="--core"></span>
+                <span class="label">Some label</span>
+            </label>
+        </div>
+        <div class="ef-row">
+            <h3>Checked with style</h3>
+            <label class="ef-switch --success">
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+            <label class="ef-switch --danger">
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+            <label class="ef-switch --info">
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+            <label class="ef-switch --warning">
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+        </div>
+        <div class="ef-row">
+            <h3>Disabled</h3>
+            <label class="ef-switch">
+                <input disabled type="checkbox">
+                <span class="--core"></span>
+            </label>
+        </div>
+    </div>
+</div>
+<h1>Checkbox</h1>
+<div class="ef-panel">
+    <div class="--content">
+        <div class="ef-row">
+            <h3>Simple checkbox</h3>
+            <label class="ef-checkbox">
+                <span class="ef-text">Option</span>
+                <input type="checkbox">
+                <span class="--core"></span>
+            </label>
+            <br>
+            <label class="ef-checkbox">
+                <span class="ef-text">Checked</span>
+                <input type="checkbox" checked>
+                <span class="--core"></span>
+            </label>
+        </div>
+        <div class="ef-row">
+            <h3>Bordered</h3>
+            <label class="ef-checkbox --bordered">
+                <input type="checkbox" checked>
+                <span class="ef-text">Checked</span>
+                <span class="--core"></span>
+            </label>
+        </div>
+    </div>
+</div>
+<h1>Slider</h1>
+<div class="ef-panel --hover">
+    <div class="--content">
+        <div class="ef-row">
+            Default
+            <div class="ef-slider">
+                <div class="ef-slider-run">
+                    <div class="ef-slider-bar" style="width: 55%"></div>
+                    <div class="ef-slider-button-wrapper" style="left: 55%">
+                        <div class="ef-slider-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            Stylized
+            <div class="ef-slider">
+                <div class="ef-slider-run">
+                    <div class="ef-slider-bar bg-danger" style="width: 55%"></div>
+                    <div class="ef-slider-button-wrapper" style="left: 55%">
+                        <div class="ef-slider-button bd-danger"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ef-slider">
+                <div class="ef-slider-run">
+                    <div class="ef-slider-bar bg-success" style="width: 55%"></div>
+                    <div class="ef-slider-button-wrapper" style="left: 55%">
+                        <div class="ef-slider-button bd-success"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            Disabled
+            <div class="ef-slider disabled">
+                <div class="ef-slider-run">
+                    <div class="ef-slider-bar" style="width: 55%"></div>
+                    <div class="ef-slider-button-wrapper" style="left: 55%">
+                        <div class="ef-slider-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            With pins
+            <div class="ef-slider">
+                <div class="ef-slider-run">
+                    <div class="ef-slider-bar" style="width: 20%"></div>
+                    <div class="ef-slider-button-wrapper" style="left: 20%">
+                        <div class="ef-slider-button"></div>
+                    </div>
+                    <!--<div class="ef-slider-pin" style="left: 20%"></div>-->
+                    <div class="ef-slider-pin" style="left: 30%"></div>
+                    <div class="ef-slider-pin" style="left: 40%"></div>
+                    <div class="ef-slider-pin" style="left: 50%"></div>
+                    <div class="ef-slider-pin" style="left: 60%"></div>
+                    <div class="ef-slider-pin" style="left: 70%"></div>
+                    <div class="ef-slider-pin" style="left: 80%"></div>
+                    <div class="ef-slider-pin" style="left: 90%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            Vertical
+            <div class="ef-slider vertical">
+                <div class="ef-slider-run" style="height: 200px">
+                    <div class="ef-slider-bar" style="bottom: 0; height: 55%"></div>
+                    <div class="ef-slider-button-wrapper" style="bottom: 55%">
+                        <div class="ef-slider-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1 class="text-xxlarge">Progress bars</h1>
+<h1>Linear</h1>
+<div class="ef-panel">
+    <div class="--content">
+        <div class="ef-row">
+            <h3>Default</h3>
+            <div class="ef-progress">
+                <div class="ef-progress-bar">
+                    <div class="ef-progress-container">
+                        <div class="ef-progress-line" style="width: 70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <h3>Colors</h3>
+            <div class="ef-progress">
+                <div class="ef-progress-bar">
+                    <div class="ef-progress-container">
+                        <div class="ef-progress-line bg-primary" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="ef-progress">
+                <div class="ef-progress-bar">
+                    <div class="ef-progress-container">
+                        <div class="ef-progress-line bg-success" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="ef-progress">
+                <div class="ef-progress-bar">
+                    <div class="ef-progress-container">
+                        <div class="ef-progress-line bg-warning" style="width: 40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <h3>With label</h3>
+            <div class="ef-progress">
+                <div class="ef-progress-bar with-text">
+                    <div class="ef-progress-container">
+                        <div class="ef-progress-line" style="width: 70%"></div>
+                    </div>
+                </div>
+                <div class="label">70%</div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>Circular</h1>
+<div class="ef-panel">
+    <div class="--content">
+        <div class="ef-row">
+            <h3>Default</h3>
+            <div class="ef-progress --circular">
+                <div class="ef-progress-circle">
+                    <svg width="120" height="120" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" fill="none" class="--track"></circle>
+                        <circle cx="60" cy="60" r="54" fill="none" class="--path stroke-primary"></circle>
+                        <!--2 * π * R  = C-->
+                    </svg>
+                </div>
+                <div class="label">100%</div>
+            </div>
+        </div>
+        <div class="ef-row">
+            <h3>Colors</h3>
+            <div class="ef-row">
+                <div class="ef-col-8">
+                    <div class="ef-progress --circular">
+                        <div class="ef-progress-circle">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" class="--track"></circle>
+                                <circle id="tt1" cx="60" cy="60" r="54" fill="none"
+                                        class="--path stroke-primary"></circle>
+                                <!--2 * π * R  = C-->
+                            </svg>
+                        </div>
+                        <div class="label" id="tt1t">100%</div>
+                    </div>
+                </div>
+                <div class="ef-col-8">
+                    <div class="ef-progress --circular">
+                        <div class="ef-progress-circle">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" class="--track"></circle>
+                                <circle id="tt2" cx="60" cy="60" r="54" fill="none"
+                                        class="--path stroke-danger"></circle>
+                                <!--2 * π * R  = C-->
+                            </svg>
+                        </div>
+                        <div class="label" id="tt2t">100%</div>
+                    </div>
+                </div>
+                <div class="ef-col-8">
+                    <div class="ef-progress --circular">
+                        <div class="ef-progress-circle">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" class="--track"></circle>
+                                <circle id="tt3" cx="60" cy="60" r="54" fill="none"
+                                        class="--path stroke-warning"></circle>
+                                <!--2 * π * R  = C-->
+                            </svg>
+                        </div>
+                        <div class="label" id="tt3t">100%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<h1>Loading panel</h1>
+<div class="ef-panel">
+    <div class="--content">
+        <div style="position: relative; height: 400px">
+            Some text here
+            <div class="ef-loading">
+                <div class="--wrapper">
+                    <span class="fa fa-refresh fa-spin"></span>
+                    <div class="--title">Please wait...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    setTimeout(() => {
+        document.getElementsByClassName("--progress-line")[0].style["width"] = "100%";
+        setTimeout(() => {
+            document.getElementsByClassName("--progress-line")[0].style["opacity"] = "0";
+            setTimeout(() => {
+                document.getElementsByClassName("--progress-line")[0].style["width"] = "0";
+                document.getElementsByClassName("--progress-line")[0].style["opacity"] = "1";
+            }, 1000);
+        }, 1000);
+
+        document.getElementById("tt1").setAttribute("stroke-dashoffset", 339.292 * (1 - 0.23));
+        document.getElementById("tt1t").innerText = "23%";
+        document.getElementById("tt2").setAttribute("stroke-dashoffset", 339.292 * (1 - 0.5));
+        document.getElementById("tt2t").innerText = "50%";
+
+
+        let a = 0;
+        setInterval(() => {
+            document.getElementById("tt3").setAttribute("stroke-dashoffset", 339.292 * (1 - a));
+            document.getElementById("tt3t").innerText = Math.round(a * 100) + "%";
+            a += 0.01;
+            a %= 1;
+        }, 1000);
+    }, 2000);
+
+    function testnav() {
+        let nav = document.getElementsByClassName("ef-navigation")[0];
+        if (nav.getAttribute("class").indexOf("--open") > -1)
+            nav.classList.remove("--open");
+        else nav.classList.add("--open");
+    }
+</script>
+</body>
+</html>
