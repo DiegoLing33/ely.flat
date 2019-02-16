@@ -17,30 +17,27 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyRangeFieldOptions.ts                                              +
- + Файл изменен: 23.11.2018 23:03:37                                          +
+ + Файл: init.ts                                                              +
+ + Файл изменен: 06.01.2019 04:52:01                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFieldOptions from "./elyFieldOptions";
+import * as child_process from "child_process";
+import elyXLogger from "../core/elyXLogger";
 
-/**
- * Опции для {@see elyRangeField}
- */
-export default interface elyRangeFieldOptions extends elyFieldOptions<number> {
+export function init(logger: elyXLogger, prompt?: string, end?: () => void, root?: string) {
+    logger.log("[~~] Создание проекта...");
+    logger.log("[~~] Создание стартовых файлов проекта...");
 
-    /**
-     * Максимальное значение
-     */
-    max?: number;
+    const path = root || require("path").resolve("./");
+    const builder = __dirname.replace("/cli", "");
 
-    /**
-     * Минимальное значение
-     */
-    min?: number;
-
-    /**
-     * Шаг
-     */
-    step?: number;
+    child_process.exec(`cp ${builder}/start/* ${path}`, () => {
+        child_process.exec(`cp ${builder}/build/* ${path}`, () => {
+            logger.log("[OK] Проект успешно создан!");
+            logger.log("Главный файл приложения: &cynapp.js");
+            logger.log("Конфигурация приложения: &cynapp.config.json");
+            if (end) end();
+        });
+    });
 }

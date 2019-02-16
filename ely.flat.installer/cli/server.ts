@@ -17,63 +17,64 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: ef2DSpritesManager                                                   +
- + Файл изменен: 28.12.2018 22:27:17                                          +
+ + Файл: server.ts                                                            +
+ + Файл изменен: 06.01.2019 04:52:01                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyUtils from "@core/elyUtils";
-import elyObservable from "@core/observable/elyObservable";
-import ef2DSprite from "@play/ef2DSprite";
+import express = require("express");
+import * as path from "path";
+import elyXLogger from "../core/elyXLogger";
 
-/**
- * Менеджер спрайтов
- */
-export default class ef2DSpritesManager extends elyObservable {
+const app = express();
+import * as bodyParser from "body-parser";
+import figlet = require("figlet");
+// @ts-ignore
+import filewatcher = require("filewatcher");
+import {efi} from "../efi";
+import {buildProject} from "./build";
 
-    /**
-     * Стандартный менеджер спрайтов
-     */
-    public static default = new ef2DSpritesManager();
+export function startServer(logger: elyXLogger, address: string = "127.0.0.1", root?: string) {
+    efi.liveUpdateServer.server = app.listen(1580, () => {
 
-    /**
-     * Спрайты
-     */
-    public sprites: { [name: string]: ef2DSprite } = {};
+        console.clear();
+        console.log(elyXLogger.styles.fgYellow + figlet.textSync(`e l y . f l a t`));
+        console.log(elyXLogger.styles.reset);
 
-    /**
-     * Загружено спрайтов
-     */
-    protected __loaded: number = 0;
+        logger.log(`Сервер запущен: http://${address}:1580`);
+        efi.liveUpdateServer.state = true;
+    });
 
-    /**
-     * Добавляет спрайт
-     * @param name
-     */
-    public add(name: string): void {
-        if (!(name in this.sprites)) {
-            this.sprites[name] = new ef2DSprite({name});
-            this.sprites[name].addLoadedObserver(() => {
-                this.__loaded++;
-            });
-        }
-    }
+    root = path.resolve(path.resolve(root || "./") + "/build");
 
-    /**
-     * Добавляет список спрайтов
-     * @param names
-     */
-    public addList(names: string[]): void {
-        for (const name of names) {
-            this.add(name);
-        }
-    }
+    app.use(express.static(root));
 
-    /**
-     * Возвращает true, если все спрайты загружены
-     */
-    public isEverythingLoaded(): boolean {
-        return this.__loaded === elyUtils.count(this.sprites);
-    }
+    app.use("/app.config.json", (req: any, res: any) => {
+        res.sendFile(path.resolve(root + "/app.config.json"));
+    });
 
+    app.use(bodyParser.urlencoded({
+        extended: true,
+    }));
+
+    app.use(bodyParser.json());
+
+    const watcher = filewatcher();
+    watcher.add(path.resolve(root + "/../app.js"));
+
+    watcher.on("change", (file: any, stat: any) => {
+        if (stat) logger.log("[~~] Сборка APPJS...");
+        buildProject(logger, () => {
+            //
+        }, true);
+    });
+}
+
+export function stopServer(logger: elyXLogger, end?: () => void) {
+    logger.log(`[~~] Остановка live update server`);
+    efi.liveUpdateServer.server.close(() => {
+        efi.liveUpdateServer.state = false;
+        logger.log(`[OK] Остановка live update server`);
+        if (end) end();
+    });
 }

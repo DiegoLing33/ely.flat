@@ -1,0 +1,44 @@
+{
+  "name": "efi",
+  "version": "1.0.6",
+  "description": "The ely.flat installer and builder.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/DiegoLing33/efi#readme",
+  "keywords": [
+    "ely.flat"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "start": "node_modules/.bin/electron index.js",
+    "efi --rebuild-app": "rollup app/app.js --file app/index.js --format iife",
+    "efi --rebuild-index": "tsc index.ts"
+  },
+  "author": {
+    "name": "Diego Ling",
+    "email": "diegoling33@gmail.com"
+  },
+  "files": [
+    "*"
+  ],
+  "bin": {
+    "efi": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DiegoLing33/efi.git"
+  },
+  "dependencies": {
+    "boxen": "latest",
+    "figlet": "latest",
+    "filewatcher": "^3.0.1",
+    "prompt": "latest",
+    "rollup": "^0.67.4",
+    "express": "latest",
+    "electron": "5.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@types/boxen": "^2.1.0",
+    "@types/electron": "1.6.10",
+    "@types/express": "^4.16.1"
+  }
+}

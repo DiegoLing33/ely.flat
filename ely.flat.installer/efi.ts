@@ -17,25 +17,36 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efAppDocumentBody.ts                                                 +
- + Файл изменен: 30.01.2019 01:55:32                                          +
+ + Файл: efi.ts                                                               +
+ + Файл изменен: 16.02.2019 02:20:01                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
+interface efiInteface {
+    liveUpdateServer: { server: any, state: boolean };
+    workingDirectory: string;
+}
 
-/**
- * Документ: Тело
- * @class efAppDocumentHead
- * @augments {elyView}
- */
-export default class efAppDocumentBody extends elyControl {
+export const efi: efiInteface = {
 
     /**
-     * Конструктор
+     * Сервер
      */
-    public constructor() {
-        super({element: document.body});
-    }
+    liveUpdateServer: {
 
-}
+        /**
+         * Сущность
+         */
+        server: null,
+        /**
+         * Состояние
+         */
+        state: false,
+    },
+
+    /**
+     * Рабочая область
+     * @type {string}
+     */
+    workingDirectory: "",
+};

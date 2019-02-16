@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "my.First.App",
+    "title": "ely.flat { Installer }",
     "author": null
   },
   "manifest": {
@@ -8,11 +8,12 @@
     "useMeta": true,
     "useApplicationIcon": true,
     "useViewPort": true,
-    "useNavigationBar": true,
+    "useNavigationBar": false,
     "useSideNavigationBar": false,
     "useContentController": true,
     "useContentRouter": true,
-    "useIPhoneXStandaloneFix": true
+    "useIPhoneXStandaloneFix": true,
+    "useDevelopMode": true
   },
   "contentController": {
     "defaultContentId": "index",
@@ -22,7 +23,7 @@
     "maxContainerWidth": 700,
     "footer": {
       "title": "Works with ely.Flat Application Engine",
-      "subtitle": "My application"
+      "subtitle": "ely.flat { Installer } - 2019"
     }
   },
   "sideNavigationBar": {
@@ -34,13 +35,13 @@
     ]
   },
   "navigationBar": {
-    "title": "my.App{ }",
-    "color": "#000000",
+    "title": "ely.flat *{* Installer *}*",
+    "color": "#2b2b2b",
     "subtitle": null,
     "extendedStyle": false,
     "items": [
       {
-        "text": "Home",
+        "text": "Главный экран",
         "icon": "home",
         "action": "#content(index)"
       }
@@ -48,7 +49,7 @@
   },
   "meta": {
     "charset": "UTF-8",
-    "iconPath": "resources/icon",
+    "iconPath": "../resources/icon",
     "appleMobile": {
       "statusBarStyle": "black-translucent"
     },
