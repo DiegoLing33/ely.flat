@@ -6,7 +6,7 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 
 
 export default {
-    input: 'products/ely.flat.ts',
+    input: 'bin/ely.flat.ts',
     output: {
         file: '../products/ely.flat.js', format: 'es', sourcemap: true
     },

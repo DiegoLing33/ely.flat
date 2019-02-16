@@ -53,10 +53,6 @@
     "declarationDir": "ely.d.types"
   },
   "exclude": [
-    "./node_modules",
-    "./extra",
-    "./ely.documentation",
-    "./bin",
-    "./dist"
+    "./node_modules"
   ]
 }
