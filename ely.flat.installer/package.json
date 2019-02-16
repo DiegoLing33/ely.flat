@@ -9,7 +9,7 @@
   ],
   "main": "index.js",
   "scripts": {
-    "start": "node_modules/.bin/electron index.js",
+    "start": "node index.js",
     "efi --rebuild-app": "rollup app/app.js --file app/index.js --format iife",
     "efi --rebuild-index": "tsc index.ts"
   },
