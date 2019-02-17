@@ -28,7 +28,7 @@ export function execRequest(command, loadingText, data, response) {
         prog.present();
     }
     new elyGetRequest({url: "http://127.0.0.1:1583/" + command}).send(data, (resp) => {
-        response(resp.response === "ok", resp);
+        response(resp.response, resp);
         if (loadingText) prog.dismiss(true);
     });
 }
