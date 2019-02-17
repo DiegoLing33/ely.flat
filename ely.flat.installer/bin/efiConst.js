@@ -18,28 +18,30 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efi.ts                                                               +
- + Файл изменен: 16.02.2019 02:20:01                                          +
+ + Файл: efiConst.ts                                                          +
+ + Файл изменен: 17.02.2019 21:09:41                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 exports.__esModule = true;
-exports.efi = {
+/**
+ * Константы efi
+ * @class efiConst
+ */
+var efiConst = /** @class */ (function () {
+    function efiConst() {
+    }
     /**
-     * Сервер
+     * Путь к файлам сборки ely.flat
      */
-    liveUpdateServer: {
-        /**
-         * Сущность
-         */
-        server: null,
-        /**
-         * Состояние
-         */
-        state: false
-    },
+    efiConst.BUILD_PATH = "build";
     /**
-     * Рабочая область
-     * @type {string}
+     * Путь к стартовым файлам приложения
      */
-    workingDirectory: ""
-};
+    efiConst.APPLICATION_FILES_PATH = "start";
+    /**
+     * Путь к ресурсам приложения
+     */
+    efiConst.RESOURCES_FILES_PATH = "resources";
+    return efiConst;
+}());
+exports.efiConst = efiConst;
