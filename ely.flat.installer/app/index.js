@@ -12731,7 +12731,10 @@
             let appInitGrid = this.factoryGridCell("init", "terminal", "Init the app",
                 "Инициилизирует новое приложение и выполняет первую сборку.", (panel) => {
                     panel.opacity(0.4);
-                    initApplicationCommand(() => panel.opacity(1));
+                    initApplicationCommand(() => {
+                        panel.opacity(1);
+                        update();
+                    });
                 });
 
 
