@@ -62,7 +62,9 @@ export class IndexViewController extends elySimplePageViewController {
                 panel.opacity(0.4);
                 initApplicationCommand(() => {
                     panel.opacity(1);
-                    update();
+                    setTimeout(() => {
+                        this.update();
+                    }, 1000);
                 });
             });
 
