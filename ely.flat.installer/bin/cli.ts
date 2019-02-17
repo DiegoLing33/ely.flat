@@ -1,4 +1,3 @@
-"use strict";
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
  + ,--. o                   |    o                                            +
@@ -19,15 +18,14 @@
  + Проект: ely.flat                                                           +
  +                                                                            +
  + Файл: cli.ts                                                               +
- + Файл изменен: 30.01.2019 03:15:15                                          +
+ + Файл изменен: 17.02.2019 23:42:30                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-exports.__esModule = true;
-var figlet = require("figlet");
-var elyXLogger_1 = require("../core/elyXLogger");
-var build_1 = require("./build");
-var init_1 = require("./init");
-var server_1 = require("./server");
+
+import * as figlet from "figlet";
+import elyXLogger from "../core/elyXLogger";
+import {efi} from "./efi";
+
 /**
  * Выводит сообщение с помощью
  * @private
@@ -41,53 +39,62 @@ function __help() {
     console.log("\t-i --init\tСоздает начальный проект");
     console.log("\t-b --build\tВыполняет сборку проекта");
     console.log("\t-u --update\tОбновляет js файл в сборке");
-    console.log("\t-l --live\tЗапускает систему ely.flat.builder watcher");
     console.log("\t-s --server\tЗапуск автономного сервера с режимом live update");
     console.log("\t-h --help\tСправка cli");
     console.log("\t-v --version\tВерсия ely flat installer");
     console.log();
     console.log();
 }
+
 /**
  * CLI MODE
  *
- * @param logger
  * @param args
  */
-function cli(logger, args) {
+export function cli(args: any) {
+
     // Start
     console.clear();
-    console.log(elyXLogger_1["default"].styles.fgYellow + figlet.textSync("e l y . f l a t . c l i"));
-    console.log(elyXLogger_1["default"].styles.reset);
+    console.log(elyXLogger.styles.fgYellow + figlet.textSync(`e l y . f l a t . c l i`));
+    console.log(elyXLogger.styles.reset);
     console.log();
-    logger.log("Добро пожаловать в строитель ely.flat!");
+    efi.logger.log(`Добро пожаловать в строитель ely.flat [${require("../package.json").version}]!`);
     console.log();
-    logger.log("\u0410\u0440\u0433\u0443\u043C\u0435\u043D\u0442\u044B \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u044B: [" + args.join(", ") + "]");
+    efi.logger.log(`Аргументы получены: [${args.join(", ")}]`);
+
     // Logic
     switch (args[0]) {
+        case "--get-wd":
+        case "-gwd":
+            efi.logger.log(`Текущая рабочая директория: ${efi.workingDirectory}`);
+            break;
+        case "--set-wd":
+        case "-swd":
+            efi.changeWorkingDirectory(args[1]);
+            break;
         case "--init":
         case "-i":
-            init_1.init(logger, undefined);
+            efi.initTheApplication(efi.workingDirectory);
             break;
         case "--build":
         case "-b":
-            build_1.buildProject(logger, undefined);
+            efi.buildTheApplication(efi.workingDirectory);
             break;
         case "--update":
         case "-u":
-            build_1.buildProject(logger, undefined, true);
+            efi.compileTheApplication(efi.workingDirectory);
             break;
         case "--server":
         case "-s":
-            server_1.startServer(logger);
+            efi.runLiveUpdateServer(efi.workingDirectory);
             break;
         case "--stop-server":
         case "-ss":
-            server_1.stopServer(logger);
+            efi.stopLiveUpdateServer(efi.workingDirectory);
             break;
         case "--version":
         case "-v":
-            logger.log("Текущая версия: 1.1.0");
+            efi.logger.log("Текущая версия: " + require("../package.json").version);
             break;
         case "--help":
         case "-h":
@@ -96,4 +103,3 @@ function cli(logger, args) {
             break;
     }
 }
-exports.cli = cli;
