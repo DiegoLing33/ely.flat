@@ -36,6 +36,7 @@ import elyColor from "@core/elyColor";
 import elyUtils from "@core/elyUtils";
 import elyObservable from "@core/observable/elyObservable";
 import elyGetRequest from "@core/web/request/elyGetRequest";
+import elyGuard from "@core/elyGuard";
 
 /**
  * Конфигурация приложения
@@ -152,17 +153,24 @@ export default class efAppConfig extends elyObservable implements efAppConfigInt
 
     /**
      * Загружает конфигурацию
-     * @param props
+     * @param {{file?: string, data?: *}} props
      */
-    public load(props: { file: string }): void {
-        new elyGetRequest({url: props.file}).send({}, (response, status) => {
-            if (response) {
-                elyUtils.mergeDeep(this, response);
+    public load(props: { file?: string, data?: any }): void {
+        if (elyGuard.isSet(props.file)) {
+            new elyGetRequest({url: props.file!}).send({}, (response, status) => {
+                if (response) {
+                    elyUtils.mergeDeep(this, response);
+                    this.notificate("loaded", [true, this]);
+                } else {
+                    this.notificate("loaded", [false, this]);
+                }
+            });
+        } else {
+            if (props.data) {
+                elyUtils.mergeDeep(this, props.data);
                 this.notificate("loaded", [true, this]);
-            } else {
-                this.notificate("loaded", [false, this]);
             }
-        });
+        }
     }
 
     /**
