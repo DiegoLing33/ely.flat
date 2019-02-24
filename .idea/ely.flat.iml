@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/ely.flat.test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/ely.build.js" />
+      <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/bin" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/dist" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/modules/elyUIWorkshop.elymod" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/products" />
