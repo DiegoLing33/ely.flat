@@ -25,7 +25,7 @@
 import {
     efAppConfigInterface,
     efConfigSection_app,
-    efConfigSection_contentController,
+    efConfigSection_contentController, efConfigSection_develop,
     efConfigSection_manifest,
     efConfigSection_meta,
     efConfigSection_navigationBar,
@@ -33,10 +33,10 @@ import {
     efConfigSection_template,
 } from "@app/config/efAppConfigSections";
 import elyColor from "@core/elyColor";
+import elyGuard from "@core/elyGuard";
 import elyUtils from "@core/elyUtils";
 import elyObservable from "@core/observable/elyObservable";
 import elyGetRequest from "@core/web/request/elyGetRequest";
-import elyGuard from "@core/elyGuard";
 
 /**
  * Конфигурация приложения
@@ -65,6 +65,14 @@ export default class efAppConfig extends elyObservable implements efAppConfigInt
     public app: efConfigSection_app = {
         author: null,
         title: "my.App",
+    };
+
+    /**
+     * Секция: разработка
+     * {@link efConfigSection_develop}
+     */
+    public develop: efConfigSection_develop = {
+        appFile: "js/index.js",
     };
 
     /**
@@ -97,7 +105,7 @@ export default class efAppConfig extends elyObservable implements efAppConfigInt
      * {@link efConfigSection_navigationBar}
      */
     public navigationBar: efConfigSection_navigationBar = {
-        color: null,
+        color: "#2b2b2b",
         extendedStyle: false,
         imageUrl: null,
         items: [],

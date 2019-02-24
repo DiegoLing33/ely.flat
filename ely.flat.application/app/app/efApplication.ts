@@ -24,6 +24,7 @@ import elyFooterView from "@app/app/view/elyFooterView";
 import efAppConfig from "@app/config/efAppConfig";
 import {efAppDevelopConsole} from "@app/develop/efAppDevelopConsole";
 import efAppDocument from "@app/document/efAppDocument";
+import {efSingleApp} from "@app/efSingleApp";
 import elyScreenController from "@controllers/elyScreenController";
 import elyControl from "@controls/action/elyControl";
 import elyStylesheet from "@controls/elyStylesheet";
@@ -34,6 +35,7 @@ import elyDeviceDetector from "@core/elyDeviceDetector";
 import elyOneActionEval from "@core/elyOneActionEval";
 import elyObservable from "@core/observable/elyObservable";
 import elyXLogger from "@core/utils/elyXLogger";
+import elyFileWatcher from "@app/app/elyFileWatcher";
 
 /**
  * Наблюдатель за завершением загрузки приложения
@@ -95,7 +97,20 @@ export default class efApplication extends elyObservable {
             elyDeviceDetector.default.addDetectedObserver(() => efApplication.default.init(cfg));
             elyDeviceDetector.default.detect();
         });
-        efAppConfig.default.load({file: efAppConfig.appConfigPath});
+        if (efSingleApp.isUsesSingle()) {
+            elyXLogger.default.log("Загрузка single версии приложения...");
+            efSingleApp.initApplication(vc => {
+                efSingleApp.applicationInitFunction(cfg => {
+                    efApplication.default.addReadyObserver(next => {
+                        elyScreenController.default.addControllerName("index", vc);
+                        next(true);
+                    });
+                    efAppConfig.default.load({data: cfg});
+                })(vc);
+            });
+        } else {
+            efAppConfig.default.load({file: efAppConfig.appConfigPath});
+        }
     }
 
     /**
@@ -361,6 +376,11 @@ export default class efApplication extends elyObservable {
             window.onkeyup = ev => {
                 if (ev.key === "~") efAppDevelopConsole.shared.hidden(!efAppDevelopConsole.shared.hidden());
             };
+            new elyFileWatcher({filePath: config.develop.appFile || "js/index.js"}).start().addUpdateListener(() => {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            });
         }
     }
 }

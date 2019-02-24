@@ -314,6 +314,16 @@ export interface efConfigSection_meta {
 }
 
 /**
+ * Секция конфигурации: Разработка
+ */
+export interface efConfigSection_develop {
+    /**
+     * Главный скомпилированный файл приложения
+     */
+    appFile: string;
+}
+
+/**
  * Конфигурация приложения (интерфейс)
  */
 export interface efAppConfigInterface {
@@ -359,4 +369,10 @@ export interface efAppConfigInterface {
      * {@link efConfigSection_meta}
      */
     meta: efConfigSection_meta;
+
+    /**
+     * Секция: разработка
+     * {@link efConfigSection_develop}
+     */
+    develop: efConfigSection_develop;
 }
