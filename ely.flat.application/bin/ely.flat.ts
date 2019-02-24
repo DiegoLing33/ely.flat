@@ -91,6 +91,9 @@ import {elyDataPickerField} from "@fields/elyDataPickerField";
 import {elyTextField} from "@fields/elyTextField";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
+import {TefSingleInit} from "@app/efSingleApp";
+import {efSingleApp} from "../app/efSingleApp";
+import {efxApp} from "@efxApp/efxApp";
 
 /**
  * @interface elyViewOptions
@@ -179,35 +182,62 @@ const navigation = (): efNavigationView => {
     return app().getApplicationNavigationView();
 };
 
-const developMode = (bool: boolean) => {
-    if (bool) {
-        elyOnReady(next => {
-            new elyFileWatcher({filePath: "js/index.js"}).start().addUpdateListener(() => {
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
-            });
-            next(true);
+window.onload = () => {
+
+    elyXLogger.default.clear = true;
+    if (efSingleApp.isUsesSingle()) {
+        efSingleApp.applicationInitFunction = window.efSingleInit!;
+        Object.keys(window.elyflatobjects).forEach(value => {
+            window[value] = window.elyflatobjects[value];
         });
     }
-};
-
-window.onload = () => {
-    elyXLogger.default.clear = true;
     efApplication.loadApplication(() => {
-        //
     });
 };
-
 declare global {
     interface Window {
         elyflatobjects: any;
+        efSingleInit?: TefSingleInit;
+
+        [key: string]: any;
     }
 }
 
+/**
+ * @param {*} config
+ * @return {function(vc: elySimplePageViewController)}
+ */
+window.efSingleInit = window.efSingleInit || undefined;
+
 window.elyflatobjects = {
-    elyView,
+    app,
+    navigation,
+    elyOnReady,
+    addController,
+
+    efxApp,
+
+    elyStylesheet,
+    efApplication,
+
+    elyTime,
+    elyDeviceDetector,
     elyColor,
+    elyGuard,
+    elyTimer,
+    elyCookie,
+
+    elyXLogger,
+    elySimpleJSONParser,
+    elyUtils,
+    elyColorUtils,
+    elyFileWatcher,
+
+    elyURL,
+    elyGetRequest,
+    elyPostRequest,
+
+    elyView,
 
     elyControl,
 
@@ -233,25 +263,61 @@ window.elyflatobjects = {
     elyDataPickerField,
     elyColorPickerField,
 
+    elyScreenController,
+    elyViewController,
+    elySimplePageViewController,
+    elyGridViewController,
+
+    Style,
+    Size,
+    Weight,
+    TextFieldType,
+
+    elySize,
+    elyStyle,
+    efSize,
+    elyAxis,
+    elyDirection,
+
+    ef2DVector,
+    ef2DVectorValues,
+    efCanvas,
+    efCanvasLayer,
+
     efTextView,
     efLinkTextView,
     efIconView,
+    efHeaderTextView,
+
     efButton,
 
     efListView,
 
+    efField,
+    efTextField,
+    efSwitchField,
+
+    efRowLayoutView,
+    efGridLayoutView,
+
+    efPanelView,
+
     efNavigationView,
+
+    efPreloaderView,
 
     efAppDevelopConsole,
 };
 
 // @ts-ignore
+/** exporting */
 export {
     app,
     navigation,
     elyOnReady,
     addController,
-    developMode,
+
+    efxApp,
 
     elyStylesheet,
     efApplication,
