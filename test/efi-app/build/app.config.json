@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "my.First.App",
+    "author": null
+  },
+  "manifest": {
+    "allowStandaloneMode": true,
+    "useMeta": true,
+    "useApplicationIcon": true,
+    "useViewPort": true,
+    "useNavigationBar": true,
+    "useSideNavigationBar": false,
+    "useContentController": true,
+    "useContentRouter": true,
+    "useIPhoneXStandaloneFix": true,
+    "useDevelopMode": true
+  },
+  "contentController": {
+    "defaultContentId": "index",
+    "errorContentId": "error"
+  },
+  "template": {
+    "maxContainerWidth": 700,
+    "color": "#409EFF",
+    "footer": {
+      "title": "Works with ely.Flat Application Engine",
+      "subtitle": "My application"
+    }
+  },
+  "navigationBar": {
+    "title": "my.App{ }",
+    "color": "#2b2b2b",
+    "subtitle": null,
+    "extendedStyle": false,
+    "items": [
+      {
+        "text": "Home",
+        "icon": "home",
+        "action": "#content(index)"
+      }
+    ]
+  },
+  "meta": {
+    "charset": "UTF-8",
+    "iconPath": "resources/icon",
+    "appleMobile": {
+      "statusBarStyle": "black-translucent"
+    },
+    "viewport": {
+      "fit": "cover",
+      "userScale": "no",
+      "initialScale": 1.0,
+      "maximumScale": 1.0,
+      "width": "device-width"
+    }
+  }
+}
