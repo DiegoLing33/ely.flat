@@ -70,15 +70,23 @@ export default abstract class elyView extends elyObject {
 
         if (options.action) this.actionString(options.action);
         if (options.class) this.addClass(...options.class.split(" "));
-        this.__view.onclick = (ev: any) => {
-            this.notificate("click", [ev]);
-        };
+
+        this.__view.onclick = (ev: any) => this.notificate("click", [ev]);
+        this.__view.onmouseenter = (ev: MouseEvent) => this.notificate("mouseEnter", [ev]);
+        this.__view.onmouseleave = (ev: MouseEvent) => this.notificate("mouseLeave", [ev]);
+
         if (options.style) this.css(options.style);
         this.addObserver("click", () => {
             if (this.__actionString !== "") elyOneActionEval.default.go(this.__actionString);
         });
         this.hiddenProperty = new elyObservableProperty<boolean>(false);
-        this.hiddenProperty.change(value => this.__view.hidden = value);
+        this.hiddenProperty.change(value => {
+            if (this.getStyle().display && this.getStyle().display !== "none") {
+                this.getDocument().hidden = value;
+            } else {
+                this.getStyle().display = value ? "none" : null;
+            }
+        });
         this.hidden(options.hidden || false);
         if (options.opacity) this.opacity(options.opacity);
         if (options.disabled) this.disabled(options.disabled);
@@ -516,6 +524,42 @@ export default abstract class elyView extends elyObject {
             closure(this, bd.clientWidth, bd.clientHeight);
         });
         closure(this, bd.clientWidth, bd.clientHeight);
+        return this;
+    }
+
+    /**
+     * Добавляет наблюдатель: нажатие на объект
+     *
+     * Имя обсервера: click
+     *
+     * @param {function(e: MouseEvent)} o - наблюдатель
+     */
+    public addClickObserver(o: (e: MouseEvent) => void): elyView {
+        this.addObserver("click", o);
+        return this;
+    }
+
+    /**
+     * Добавляет наблюдатель: мыш наведена на объект
+     *
+     * Имя обсервера: mouseEnter
+     *
+     * @param {function(e: MouseEvent)} o - наблюдатель
+     */
+    public addMouseEnterObserver(o: (e: MouseEvent) => void): elyView {
+        this.addObserver("mouseEnter", o);
+        return this;
+    }
+
+    /**
+     * Добавляет наблюдатель: мыш наведена на объект
+     *
+     * Имя обсервера: mouseLeave
+     *
+     * @param {function(e: MouseEvent)} o - наблюдатель
+     */
+    public addMouseLeaveObserver(o: (e: MouseEvent) => void): elyView {
+        this.addObserver("mouseLeave", o);
         return this;
     }
 
