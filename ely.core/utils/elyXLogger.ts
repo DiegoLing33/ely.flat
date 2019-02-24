@@ -191,6 +191,11 @@ export default class elyXLogger {
     };
 
     /**
+     * Определение логирования косоль ely.flat/window
+     */
+    public static autoLogger: boolean = false;
+
+    /**
      * Формирует строку `[ OK ]` или `[ NO ]` в зависимости от условия
      * @param {boolean} condition
      * @return {string}
@@ -230,7 +235,7 @@ export default class elyXLogger {
 
     protected static __log(...obj: any[]): void {
         if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-            && window.elyflatobjects.efAppDevelopConsole.shared) {
+            && window.elyflatobjects.efAppDevelopConsole.shared && elyXLogger.autoLogger) {
             window.elyflatobjects.efAppDevelopConsole.shared.print(...obj);
         } else {
             console.log(...obj);
@@ -239,7 +244,7 @@ export default class elyXLogger {
 
     protected static __error(...obj: any[]): void {
         if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-            && window.elyflatobjects.efAppDevelopConsole.shared) {
+            && window.elyflatobjects.efAppDevelopConsole.shared && elyXLogger.autoLogger) {
             window.elyflatobjects.efAppDevelopConsole.shared.error(...obj);
         } else {
             console.error(...obj);
@@ -363,9 +368,8 @@ export default class elyXLogger {
         if (this.clear) {
             if (!error) elyXLogger.__log(elyXLogger.__loggerFilter(strToDisplay, true));
             else elyXLogger.__error(elyXLogger.__loggerFilter(strToDisplay, true));
-        } else
-            if(!error) elyXLogger.__log(strToDisplay);
-            else elyXLogger.__error(strToDisplay);
+        } else if (!error) elyXLogger.__log(strToDisplay);
+        else elyXLogger.__error(strToDisplay);
     }
 
     /**
