@@ -58,6 +58,11 @@ var efiApplicationServer = /** @class */ (function () {
         var _this = this;
         try {
             this.server = this.app.listen(this.port, function () {
+                _this.app.use(function (req, res, next) {
+                    res.header("Access-Control-Allow-Origin", "*");
+                    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    next();
+                });
                 efi_1.efi.logger.log("Сервер успешно запущен. Порт: " + _this.port);
                 _this.__server();
                 callback(true);
@@ -148,6 +153,30 @@ var efiApplicationServer = /** @class */ (function () {
                 }
             });
         });
+        this.app.get(efiApplicationServer.methods.getDBFile, function (req, res) {
+            efi_1.efi.logger.log("GUI \u0437\u0430\u043F\u0440\u043E\u0441: \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u0435 \u0431\u0430\u0437\u044B \u0434\u0430\u043D\u043D\u044B\u0445");
+            efi_1.efi.checkElyFlatExists(efi_1.efi.workingDirectory, function (result) {
+                if (result) {
+                    res.sendFile(efi_1.efi.workingDirectory + "/db/db.json");
+                }
+                else {
+                    response(res, false, { error: "База данных не найдена!" });
+                }
+            });
+        });
+        this.app.get("/r/:method", function (req, res) {
+            var method = req.params.method;
+            var func = efi_1.efi[method];
+            efi_1.efi.logger.log("\u0417\u0430\u043F\u0440\u043E\u0441 [&cyn" + method + "&rst]. \u0410\u0440\u0433\u0443\u043C\u0435\u043D\u0442\u044B: " + JSON.stringify(req.query));
+            if (typeof func === "function") {
+                func(efi_1.efi.workingDirectory, req.query, function (result, data) {
+                    response(res, result, data);
+                });
+            }
+            else {
+                response(res, false, { error: "Метод API не найден" });
+            }
+        });
         /**
          * Отображает ответ
          * @param res
@@ -165,6 +194,7 @@ var efiApplicationServer = /** @class */ (function () {
         build: "/build",
         compile: "/compile",
         getConfig: "/getConfig",
+        getDBFile: "/getDBFile",
         getWorkingDirectory: "/getWorkingDirectory",
         init: "/init",
         isLiveUpdateServerRunning: "/isLiveUpdateServerRunning",

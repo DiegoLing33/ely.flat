@@ -13,7 +13,7 @@
     "useContentController": true,
     "useContentRouter": true,
     "useIPhoneXStandaloneFix": true,
-    "useDevelopMode": true
+    "useDevelopMode": false
   },
   "contentController": {
     "defaultContentId": "index",

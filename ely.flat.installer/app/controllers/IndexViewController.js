@@ -94,12 +94,38 @@ export class IndexViewController extends elySimplePageViewController {
         efiSettingsPanel.getContentView().add("Рабочая директория".textView());
         efiSettingsPanel.getContentView().add(workingDirectoryField);
 
+        let efXAppInit = this.factoryGridCell("efxapp_init", "cube", "efx-app init",
+            "efX-app позволяет создать самое простое и одновременно полноценное REST приложение с небольшой " +
+            "базой данных и запросами.", () => {
+            });
+        let efXDB = this.factoryGridCell("efxapp_db", "server", "Database view",
+            "База данных Вашего efX-app приложения", () => {
+                elyScreenController.default.present("dbview");
+            });
+        let efXMethods = this.factoryGridCell("efxapp_methods", "gears", "REST Methods",
+            "REST функции Вашего приложения", () => {
+
+            });
+
         this.efiVersion = new efTextView({textSize: Size.large, textWeight: Weight.thin, text: "version: 0"});
         this.efiVersion.centered().opacity(0.14);
 
         this.view.add(appInitGrid, configGrid, buildGrid);
         this.view.add(serverRunGrid);
         this.view.add(efiSettingsPanel);
+        this.view.add("efX-app".headerTextView({
+            headerLevel: 1,
+            textSize: Size.xxlarge,
+            textCenter: true,
+            textWeight: Weight.thin
+        }));
+        this.view.add("Создайте своё простое приложение...".textView({
+            opacity: 0.3,
+            textCenter: true,
+            style: {paddingBottom: "40px"}
+        }));
+        this.view.add(efXAppInit);
+        this.view.add(efXDB, efXMethods);
         this.view.add(this.efiVersion);
 
     }
@@ -158,9 +184,11 @@ export class IndexViewController extends elySimplePageViewController {
                 this.lockCell("build", !data.efHere);
                 this.lockCell("server", !data.efHere);
                 this.efiVersion.text(`efi ${data.version}`);
-
             }
         });
+
+        this.lockCell("efxapp_methods", true);
+        this.lockCell("efxapp_init", true);
     }
 
     /**

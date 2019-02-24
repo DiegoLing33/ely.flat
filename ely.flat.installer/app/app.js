@@ -13,6 +13,7 @@ import {IndexViewController} from "./controllers/IndexViewController";
 import {workingDirectoryField} from "./utils/utils";
 import {getWorkingDirectoryCommand} from "./utils/commands";
 import {ServerViewController} from "./controllers/ServerViewController";
+import {DatabaseViewController} from "./controllers/efxapp/DatabaseViewController";
 
 
 //
@@ -24,6 +25,9 @@ elyOnReady(next => {
     addController("index", new IndexViewController());
     addController("config", new ConfigViewController());
     addController("server", new ServerViewController());
+
+    //efx-app
+    addController("dbview", new DatabaseViewController());
 
     // Сообщает приложению, что все успешно запустилось.
     // Попробуйте раскомментировать строку ниже для примера и понимания.

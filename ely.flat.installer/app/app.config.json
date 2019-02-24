@@ -20,7 +20,7 @@
     "errorContentId": "error"
   },
   "template": {
-    "maxContainerWidth": 700,
+    "maxContainerWidth": 900,
     "footer": {
       "title": "Works with ely.Flat Application Engine",
       "subtitle": "ely.flat { Installer } - 2019"

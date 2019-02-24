@@ -17,6 +17,9 @@
       "@core/*": [
         "../ely.core/*"
       ],
+      "@efxApp/*": [
+        "./efxApp/*"
+      ],
       "@controls/*": [
         "./controls/*"
       ],

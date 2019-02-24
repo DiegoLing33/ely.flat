@@ -25,14 +25,17 @@
 import * as fs from "fs";
 import * as rollup from "rollup";
 import elyXLogger from "../core/elyXLogger";
+import {efiConst} from "./efiConst";
 import {efiLiveUpdateServer} from "./efiLiveUpdateServer";
 import {efiUtils} from "./efiUtils";
+import {efxAppDatabase} from "./efxapp/efxAppDatabase";
 
 /**
  * Обработчик с результатом
  */
 export type TResultCallback = (result: boolean) => void;
 export type TErrorCallback = (error?: string) => void;
+export type TNextCallback = (result: boolean, data: any) => void;
 
 /**
  * Основной класс утилиты efi
@@ -274,4 +277,136 @@ export class efi {
         });
     }
 
+    /**
+     * Возвращает элементы базы данных
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static getDBItems(path: string, request: any, next: TNextCallback): void {
+        if (!fs.existsSync(path + "/" + efiConst.DB_FILES_PATH + "/db.json")) {
+            return efi.nextErrorSend("Модуль efx-app не установлен!", next);
+        }
+        fs.readFile(path + "/" + efiConst.DB_FILES_PATH + "/db.json", (err, content) => {
+            if (err) return efi.nextErrorSend(err.message, next);
+            try {
+                const JSON_DATA = JSON.parse(String(content));
+                next(true, JSON_DATA);
+            } catch (e) {
+                efi.nextErrorSend(e.message, next);
+            }
+        });
+    }
+
+    /**
+     * Устанавливает значение существующей строки
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static setDBItemValue(path: string, request: any, next: TNextCallback): void {
+
+        if (!(request.table && request.column && request.value && request.rowIndex)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+
+        const table: string = request.table;
+        const column: string = request.column;
+        const value: string = request.value;
+        const rowIndex: number = parseInt(String(request.rowIndex), 10);
+
+        const db = new efxAppDatabase(path + "/" + efiConst.DB_FILES_PATH + "/db.json", err => {
+            if (err) return efi.nextErrorSend(err, next);
+            db.setTableRowColumnItem(table, rowIndex, column, value, err1 => {
+                if (err1) efi.nextErrorSend(err1, next);
+                else next(true, {});
+            });
+        });
+    }
+
+    /**
+     * Возвращает элементы таблицы
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static getTableItems(path: string, request: any, next: TNextCallback): void {
+        if (!(request.table)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        const table: string = request.table;
+        const db = new efxAppDatabase(path + "/" + efiConst.DB_FILES_PATH + "/db.json", err => {
+            if (err) return efi.nextErrorSend(err, next);
+            const items = db.getTableItems(table);
+            if (!items) return efi.nextErrorSend(`Таблица ${table} не найдена в базе данных!`, next);
+            next(true, {items});
+        });
+    }
+
+    /**
+     * Возвращает строки таблицы по критерию
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static getTableRows(path: string, request: any, next: TNextCallback): void {
+        if (!(request.table && request.selector)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        const table: string = request.table;
+        const selector: any = request.selector;
+        const db = new efxAppDatabase(path + "/" + efiConst.DB_FILES_PATH + "/db.json", err => {
+            if (err) return efi.nextErrorSend(err, next);
+            db.getTableRows(table, selector, (err1, rows) => {
+                if (err1) {
+                    this.nextErrorSend(err1, next);
+                } else {
+                    next(true, {rows});
+                }
+            });
+        });
+    }
+
+    /**
+     * Добавляет запись в таблицу
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static addTableRow(path: string, request: any, next: TNextCallback): void {
+        if (!(request.table)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        const table: string = request.table;
+        const data: any = request;
+        delete data.table;
+        const db = new efxAppDatabase(path + "/" + efiConst.DB_FILES_PATH + "/db.json", err => {
+            if (err) return efi.nextErrorSend(err, next);
+            efi.logger.log("Добавление строки в efX-app database: " + JSON.stringify(data, null, 2));
+            db.addTableRow(table, data, err1 => {
+                next(err1 === undefined, {});
+            });
+        });
+    }
+
+    /**
+     * Простой мтеод проверки
+     * @param path
+     * @param request
+     * @param next
+     */
+    public static testEFX(path: string, request: any, next: TNextCallback): void {
+        next(true, {});
+    }
+
+    /**
+     * Вызывает TNextCallback с сообщением об ошибке
+     * @param error
+     * @param next
+     */
+    public static nextErrorSend(error: string, next: TNextCallback): void {
+        efi.logger.error(error);
+        next(false, {error});
+        return null;
+    }
 }

@@ -40,6 +40,7 @@ export class efiApplicationServer {
         build: "/build",
         compile: "/compile",
         getConfig: "/getConfig",
+        getDBFile: "/getDBFile",
         getWorkingDirectory: "/getWorkingDirectory",
         init: "/init",
         isLiveUpdateServerRunning: "/isLiveUpdateServerRunning",
@@ -83,6 +84,11 @@ export class efiApplicationServer {
     public startServer(callback: TResultCallback) {
         try {
             this.server = this.app.listen(this.port, () => {
+                this.app.use((req, res, next) => {
+                    res.header("Access-Control-Allow-Origin", "*");
+                    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    next();
+                });
                 efi.logger.log("Сервер успешно запущен. Порт: " + this.port);
                 this.__server();
                 callback(true);
@@ -180,6 +186,30 @@ export class efiApplicationServer {
                     response(res, false, {error: "Конфигурация не найдена!"});
                 }
             });
+        });
+
+        this.app.get(efiApplicationServer.methods.getDBFile, (req, res) => {
+            efi.logger.log(`GUI запрос: получение базы данных`);
+            efi.checkElyFlatExists(efi.workingDirectory, result => {
+                if (result) {
+                    res.sendFile(efi.workingDirectory + "/db/db.json");
+                } else {
+                    response(res, false, {error: "База данных не найдена!"});
+                }
+            });
+        });
+
+        this.app.get("/r/:method", (req, res) => {
+            const method = req.params.method;
+            const func = efi[method];
+            efi.logger.log(`Запрос [&cyn${method}&rst]. Аргументы: ${JSON.stringify(req.query)}`);
+            if (typeof func === "function") {
+                func(efi.workingDirectory, req.query, (result, data) => {
+                    response(res, result, data);
+                });
+            } else {
+                response(res, false, {error: "Метод API не найден"});
+            }
         });
 
         /**

@@ -21,6 +21,7 @@ export default {
             resolve: ['.ts'],
             "@app": path.resolve('./app'),
             "@core": path.resolve('../ely.core'),
+            "@efxApp": path.resolve('./efxApp'),
             "@controls": path.resolve('./controls'),
             "@options": path.resolve('./controls/options'),
             "@controllers": path.resolve('./controllers'),

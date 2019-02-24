@@ -61,8 +61,10 @@ exports.__esModule = true;
 var fs = require("fs");
 var rollup = require("rollup");
 var elyXLogger_1 = require("../core/elyXLogger");
+var efiConst_1 = require("./efiConst");
 var efiLiveUpdateServer_1 = require("./efiLiveUpdateServer");
 var efiUtils_1 = require("./efiUtils");
+var efxAppDatabase_1 = require("./efxapp/efxAppDatabase");
 /**
  * Основной класс утилиты efi
  * @class efi
@@ -317,6 +319,140 @@ var efi = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * Возвращает элементы базы данных
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.getDBItems = function (path, request, next) {
+        if (!fs.existsSync(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json")) {
+            return efi.nextErrorSend("Модуль efx-app не установлен!", next);
+        }
+        fs.readFile(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json", function (err, content) {
+            if (err)
+                return efi.nextErrorSend(err.message, next);
+            try {
+                var JSON_DATA = JSON.parse(String(content));
+                next(true, JSON_DATA);
+            }
+            catch (e) {
+                efi.nextErrorSend(e.message, next);
+            }
+        });
+    };
+    /**
+     * Устанавливает значение существующей строки
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.setDBItemValue = function (path, request, next) {
+        if (!(request.table && request.column && request.value && request.rowIndex)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        var table = request.table;
+        var column = request.column;
+        var value = request.value;
+        var rowIndex = parseInt(String(request.rowIndex), 10);
+        var db = new efxAppDatabase_1.efxAppDatabase(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json", function (err) {
+            if (err)
+                return efi.nextErrorSend(err, next);
+            db.setTableRowColumnItem(table, rowIndex, column, value, function (err1) {
+                if (err1)
+                    efi.nextErrorSend(err1, next);
+                else
+                    next(true, {});
+            });
+        });
+    };
+    /**
+     * Возвращает элементы таблицы
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.getTableItems = function (path, request, next) {
+        if (!(request.table)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        var table = request.table;
+        var db = new efxAppDatabase_1.efxAppDatabase(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json", function (err) {
+            if (err)
+                return efi.nextErrorSend(err, next);
+            var items = db.getTableItems(table);
+            if (!items)
+                return efi.nextErrorSend("\u0422\u0430\u0431\u043B\u0438\u0446\u0430 " + table + " \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u0430 \u0432 \u0431\u0430\u0437\u0435 \u0434\u0430\u043D\u043D\u044B\u0445!", next);
+            next(true, { items: items });
+        });
+    };
+    /**
+     * Возвращает строки таблицы по критерию
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.getTableRows = function (path, request, next) {
+        var _this = this;
+        if (!(request.table && request.selector)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        var table = request.table;
+        var selector = request.selector;
+        var db = new efxAppDatabase_1.efxAppDatabase(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json", function (err) {
+            if (err)
+                return efi.nextErrorSend(err, next);
+            db.getTableRows(table, selector, function (err1, rows) {
+                if (err1) {
+                    _this.nextErrorSend(err1, next);
+                }
+                else {
+                    next(true, { rows: rows });
+                }
+            });
+        });
+    };
+    /**
+     * Добавляет запись в таблицу
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.addTableRow = function (path, request, next) {
+        if (!(request.table)) {
+            return efi.nextErrorSend("Передано недостаточно аргументов для выполнения действия.", next);
+        }
+        var table = request.table;
+        var data = request;
+        delete data.table;
+        var db = new efxAppDatabase_1.efxAppDatabase(path + "/" + efiConst_1.efiConst.DB_FILES_PATH + "/db.json", function (err) {
+            if (err)
+                return efi.nextErrorSend(err, next);
+            efi.logger.log("Добавление строки в efX-app database: " + JSON.stringify(data, null, 2));
+            db.addTableRow(table, data, function (err1) {
+                next(err1 === undefined, {});
+            });
+        });
+    };
+    /**
+     * Простой мтеод проверки
+     * @param path
+     * @param request
+     * @param next
+     */
+    efi.testEFX = function (path, request, next) {
+        next(true, {});
+    };
+    /**
+     * Вызывает TNextCallback с сообщением об ошибке
+     * @param error
+     * @param next
+     */
+    efi.nextErrorSend = function (error, next) {
+        efi.logger.error(error);
+        next(false, { error: error });
+        return null;
     };
     /**
      * Рабочая директория

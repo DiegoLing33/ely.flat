@@ -141,3 +141,49 @@ export function setConfigCommand(path, value, callback) {
         callback(resp.response);
     });
 }
+
+/**
+ * Выполняет команду получения базы данных
+ * @param callback
+ */
+export function getDBDItemsCommand(callback) {
+    makeAppRequest("r/getDBItems", {}, resp => {
+        callback(resp.response, resp);
+    }, {
+        title: "Получение данных базы",
+        info: true
+    });
+}
+
+
+/**
+ * Выполняет команду установки значения
+ * @param table
+ * @param rowIndex
+ * @param column
+ * @param value
+ * @param callback
+ */
+export function setDBDItemValueCommand(table, rowIndex, column, value, callback) {
+    makeAppRequest("r/setDBItemValue", {table, rowIndex, column, value}, resp => {
+        callback(resp.response, resp);
+    }, {
+        title: "Получение данных базы",
+        info: true
+    });
+}
+
+
+/**
+ * Выполняет команду установки значения
+ * @param table
+ * @param callback
+ */
+export function getTableItemsCommand(table, callback) {
+    makeAppRequest("r/getTableItems", {table}, resp => {
+        callback(resp.response, resp);
+    }, {
+        title: "Получение данных таблицы " + table,
+        info: true
+    });
+}

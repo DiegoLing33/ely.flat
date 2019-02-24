@@ -42,6 +42,18 @@ var efiConst = /** @class */ (function () {
      * Путь к ресурсам приложения
      */
     efiConst.RESOURCES_FILES_PATH = "resources";
+    /**
+     * Путь к электрону
+     */
+    efiConst.ELECTRON_PATH = "/node_modules/.bin/electron";
+    /**
+     * Путь до директории тестирования
+     */
+    efiConst.TEST_PATH = "/../test/efi-app";
+    /**
+     * Путь до директории базы данных
+     */
+    efiConst.DB_FILES_PATH = "db";
     return efiConst;
 }());
 exports.efiConst = efiConst;

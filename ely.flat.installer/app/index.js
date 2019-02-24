@@ -2202,7 +2202,7 @@
         }
         static __log(...obj) {
             if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-                && window.elyflatobjects.efAppDevelopConsole.shared) {
+                && window.elyflatobjects.efAppDevelopConsole.shared && elyXLogger.autoLogger) {
                 window.elyflatobjects.efAppDevelopConsole.shared.print(...obj);
             }
             else {
@@ -2211,7 +2211,7 @@
         }
         static __error(...obj) {
             if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-                && window.elyflatobjects.efAppDevelopConsole.shared) {
+                && window.elyflatobjects.efAppDevelopConsole.shared && elyXLogger.autoLogger) {
                 window.elyflatobjects.efAppDevelopConsole.shared.error(...obj);
             }
             else {
@@ -2456,6 +2456,10 @@
          */
         bgWhite: "\x1b[47m",
     };
+    /**
+     * Определение логирования косоль ely.flat/window
+     */
+    elyXLogger.autoLogger = false;
 
     /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      + ,--. o                   |    o                                            +
@@ -5065,18 +5069,26 @@
         }
         /**
          * Загружает конфигурацию
-         * @param props
+         * @param {{file?: string, data?: *}} props
          */
         load(props) {
-            new elyGetRequest({ url: props.file }).send({}, (response, status) => {
-                if (response) {
-                    elyUtils.mergeDeep(this, response);
+            if (elyGuard.isSet(props.file)) {
+                new elyGetRequest({ url: props.file }).send({}, (response, status) => {
+                    if (response) {
+                        elyUtils.mergeDeep(this, response);
+                        this.notificate("loaded", [true, this]);
+                    }
+                    else {
+                        this.notificate("loaded", [false, this]);
+                    }
+                });
+            }
+            else {
+                if (props.data) {
+                    elyUtils.mergeDeep(this, props.data);
                     this.notificate("loaded", [true, this]);
                 }
-                else {
-                    this.notificate("loaded", [false, this]);
-                }
-            });
+            }
         }
         /**
          * Добавляет наблюдатель: загрузка конфигурации завершена
@@ -6817,6 +6829,48 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efSingleApp.ts                                                       +
+     + Файл изменен: 19.02.2019 22:26:41                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Простое приложение ely.flat
+     * @class efSingleApp
+     */
+    class efSingleApp extends elyObservable {
+        /**
+         * Приложение, испольщзующее single
+         */
+        static isUsesSingle() {
+            return window.hasOwnProperty("efSingleInit") && window.efSingleInit;
+        }
+        static initApplication(callback) {
+            const vc = new elySimplePageViewController();
+            vc.title("efSingle App");
+            vc.description("Простейшее приложение ely.flat");
+            callback(vc);
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
      + Проект: ely.flat.application                                               +
      +                                                                            +
      + Файл: elyScreenController.ts                                               +
@@ -7740,7 +7794,21 @@
                 elyDeviceDetector.default.addDetectedObserver(() => efApplication.default.init(cfg));
                 elyDeviceDetector.default.detect();
             });
-            efAppConfig.default.load({ file: efAppConfig.appConfigPath });
+            if (efSingleApp.isUsesSingle()) {
+                elyXLogger.default.log("Загрузка single версии приложения...");
+                efSingleApp.initApplication(vc => {
+                    efSingleApp.applicationInitFunction(cfg => {
+                        efApplication.default.addReadyObserver(next => {
+                            elyScreenController.default.addControllerName("index", vc);
+                            next(true);
+                        });
+                        efAppConfig.default.load({ data: cfg });
+                    })(vc);
+                });
+            }
+            else {
+                efAppConfig.default.load({ file: efAppConfig.appConfigPath });
+            }
         }
         /**
          * Возвращает конфигурацию приложения
@@ -8033,6 +8101,832 @@
         designable("iconSize", elyDesignableFieldState.SET, "string|number", elySize.rawList())
     ], elyIconView);
     var elyIconView$1 = elyIconView;
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat.application                                               +
+     +                                                                            +
+     + Файл: elyFileWatcher.ts                                                    +
+     + Файл изменен: 23.11.2018 23:19:03                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Отслеживание изменения файла
+     */
+    class elyFileWatcher extends elyObservable {
+        /**
+         * Конструктор
+         * @param options
+         */
+        constructor(options) {
+            super();
+            /**
+             * Последний размер файла
+             */
+            this.lastFileSize = -1;
+            /**
+             * Стартовое значение на первой итерации
+             */
+            this.startValue = null;
+            /**
+             * Поток
+             */
+            this.thread = null;
+            this.filePath = options.filePath;
+            const view = new elyControl$1();
+            view.getStyle().backgroundColor = "rgb(110, 136, 73)";
+            view.getStyle().textAlign = "center";
+            view.getStyle().position = "fixed";
+            view.getStyle().bottom = "0";
+            view.getStyle().left = "0";
+            view.getStyle().right = "0";
+            view.getStyle().zIndex = "1000";
+            view.getStyle().padding = "15px";
+            const iconView = new elyIconView$1({ iconName: "refresh" });
+            iconView.iconSpinning(true);
+            iconView.getStyle().marginLeft = "15px";
+            const textView = new elyTextView$1({ text: "Develop file watching" });
+            textView.getStyle().display = "inline-block";
+            view.addSubView(textView);
+            view.addSubView(iconView);
+            document.body.append(view.getDocument());
+            this.addListener((size) => {
+                textView.text(`Develop file watching. Size: *${size}* bytes`);
+            });
+        }
+        /**
+         * Добавляет слушатель изменения файла
+         * @param observer
+         */
+        addListener(observer) {
+            this.addObserver("changed", observer);
+            return this;
+        }
+        /**
+         * Добавляет слушатель изменения файла по отношению к первоначальной стадии
+         * @param observer
+         */
+        addUpdateListener(observer) {
+            this.addObserver("updated", observer);
+            return this;
+        }
+        /**
+         * Запускает систему прослушивания
+         */
+        start() {
+            this.thread = setInterval(() => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("HEAD", this.filePath, true);
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === xhr.DONE) {
+                        const size = Math.round(parseInt(xhr.getResponseHeader("Content-Length") || "0", 10)
+                            / (1024) * 100) / 100;
+                        if (this.lastFileSize === -1)
+                            this.lastFileSize = size;
+                        if (size !== this.lastFileSize)
+                            this.notificate("changed", [size]);
+                        this.lastFileSize = size;
+                        if (this.startValue === null)
+                            this.startValue = size;
+                        if (this.startValue !== size)
+                            this.notificate("updated", [size]);
+                    }
+                };
+                xhr.send();
+            }, 1000);
+            return this;
+        }
+        stop() {
+            if (this.thread)
+                clearInterval(this.thread);
+            return this;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efCanvas.ts                                                          +
+     + Файл изменен: 28.12.2018 01:10:10                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Холст
+     */
+    class efCanvas extends elyView {
+        /**
+         * Конструктор
+         * @param {{size: efSize, layers?: efCanvasLayer[]}} props
+         */
+        constructor(props) {
+            super();
+            /**
+             * Размер холста
+             */
+            this.size = new efSize();
+            /**
+             * Слои
+             */
+            this.layers = new elyObservableArray();
+            this.addClass("ef-cnv");
+            this.size.heightProperty.change(value => this.forEachLayer(layer => {
+                layer.getDocument().height = value;
+                layer.getStyle().height = value + "px";
+                layer.size.height(value);
+            }));
+            this.size.widthProperty.change(value => this.forEachLayer(layer => {
+                layer.getDocument().width = value;
+                layer.getStyle().width = value + "px";
+                layer.size.width(value);
+            }));
+            this.size.width(props.size.width());
+            this.size.height(props.size.height());
+            this.layers.change(() => {
+                this.removeViewContent();
+                this.layers.get().forEach((layer, i) => {
+                    this.getDocument().append(layer.getDocument());
+                    layer.getStyle().zIndex = String(i + 1);
+                });
+                this.size.width(this.size.width());
+                this.size.height(this.size.height());
+            });
+        }
+        /**
+         * Цикл по слоям
+         * @param cb
+         */
+        forEachLayer(cb) {
+            this.layers.get().forEach((value, index) => {
+                cb(value, index);
+            });
+            return this;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efContextElement.ts                                                  +
+     + Файл изменен: 04.01.2019 21:55:41                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Элемент контекста `ef.cnv`
+     */
+    class efContextElement {
+        /**
+         * Конструктор
+         * @param {{ rect: ef2DRect, angle?: number, filter?: string }} props - параметры
+         */
+        constructor(props) {
+            this.rect = props.rect;
+            this.angle = props.angle || undefined;
+            this.filter = props.filter || undefined;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efContextImage.ts                                                    +
+     + Файл изменен: 04.01.2019 22:07:06                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Изображение `ef.cnv`
+     */
+    class efContextImage extends efContextElement {
+        /**
+         * Конструктор
+         * @param {{ rect: ef2DRect, image: CanvasImageSource, subImage?:
+         * ef2DRect, angle?: number, filter?: string}} props - параметры
+         */
+        constructor(props) {
+            super(props);
+            this.image = props.image;
+            this.subImage = props.subImage || undefined;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efContextRect.ts                                                     +
+     + Файл изменен: 04.01.2019 21:53:18                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Прямоугольник `ef.cnv`
+     */
+    class efContextRect extends efContextElement {
+        /**
+         * Конструктор
+         * @param {{rect: ef2DRect, fillColor?: elyColor,
+         * strokeColor?: elyColor, strokeWidth?: number, angle?: number}} props - параметры
+         */
+        constructor(props) {
+            super(props);
+            /**
+             * Толщина линии обводки
+             * @type {number}
+             */
+            this.strokeWidth = 1;
+            this.strokeColor = props.strokeColor || undefined;
+            this.fillColor = props.fillColor || undefined;
+            this.strokeWidth = props.strokeWidth === undefined ? 1 : props.strokeWidth;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: elyAxis                                                              +
+     + Файл изменен: 28.12.2018 01:03:22                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Перечисление направлений в измерении
+     */
+    class elyAxis {
+    }
+    /**
+     * Направление X
+     */
+    elyAxis.x = "x";
+    /**
+     * Направление Y
+     */
+    elyAxis.y = "y";
+    /**
+     * Направление Z
+     */
+    elyAxis.z = "z";
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: ef2DVector.ts                                                        +
+     + Файл изменен: 06.01.2019 05:03:43                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Прослушиваемый вектор.
+     *
+     * Используйте метод {@link ef2DVector::addChangeObserver} для прослушивания изменений вектора.
+     * @class ef2DVector
+     * @augments {elyObservable}
+     */
+    class ef2DVector extends elyObservable {
+        /**
+         * Конструктор
+         * @param props
+         */
+        constructor(props = { x: 0, y: 0 }) {
+            super();
+            /**
+             * Свойство: ось x
+             */
+            this.xProperty = new elyObservableProperty(0);
+            /**
+             * Свойство: ось y
+             */
+            this.yProperty = new elyObservableProperty(0);
+            if (props.values) {
+                this.x(props.values.x);
+                this.y(props.values.y);
+            }
+            else {
+                this.x(props.x || 0);
+                this.y(props.y || 0);
+            }
+            this.xProperty.change(value => this.notificate("changed", [elyAxis.x, value, this.y()]));
+            this.yProperty.change(value => this.notificate("changed", [elyAxis.y, this.x(), value]));
+        }
+        /**
+         * Нулевой вектор
+         * @return {ef2DVector}
+         */
+        static zero() {
+            return new ef2DVector();
+        }
+        /**
+         * Возвращает и устанавливает ось x
+         * @param {number} [value] - значение
+         * @returns {number|this|null}
+         */
+        x(value) {
+            return elyObservableProperty.simplePropertyAccess(this, value, this.xProperty);
+        }
+        /**
+         * Возвращает и устанавливает ось y
+         * @param {number} [value] - значение
+         * @returns {number|this|null}
+         */
+        y(value) {
+            return elyObservableProperty.simplePropertyAccess(this, value, this.yProperty);
+        }
+        /**
+         * Добавляет наблюдатель: изменение координат
+         *
+         * Имя обсервера: changed
+         *
+         * @param o - наблюдатель
+         *
+         *
+         *     vc.addChangeObserver( (dir, nX, nY) => {
+         *        if( dir === elyAxis.x){
+         *          // Изменился X
+         *        } else {
+         *          // Изменился Y
+         *        }
+         *     });
+         *
+         *
+         */
+        addChangeObserver(o) {
+            this.addObserver("changed", o);
+            return this;
+        }
+        /**
+         * Преобразует объект в строку
+         * @return {string}
+         */
+        toString() {
+            return `ef2DVector{x: ${this.x()}, y: ${this.y()}}`;
+        }
+        /**
+         * Возвращает true, если векторы идентичны
+         * @param vector
+         */
+        equals(vector) {
+            return this.x() === vector.x() && this.y() === vector.y();
+        }
+        /**
+         * Возвращает константные значения вектора
+         */
+        getValues() {
+            return new ef2DVectorValues({ point: this });
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: ef2DVectorValues.ts                                                  +
+     + Файл изменен: 04.01.2019 22:39:06                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Векторные константные значения
+     * @class ef2DVectorValues
+     */
+    class ef2DVectorValues {
+        /**
+         * Создает и возвращает нулевой вектор
+         * @return {ef2DVectorValues}
+         */
+        static zero() {
+            return new ef2DVectorValues({ x: 0, y: 0 });
+        }
+        /**
+         * Конструктор
+         * @param {{ point?: ef2DVector, x?: number, y?: number }} props - параметры
+         */
+        constructor(props) {
+            if (props.point) {
+                this.x = props.point.x();
+                this.y = props.point.y();
+            }
+            else {
+                this.x = props.x || 0;
+                this.y = props.y || 0;
+            }
+        }
+        /**
+         * Создает вектор из значений
+         * @return {ef2DVector}
+         */
+        getVector() {
+            return new ef2DVector({ values: this });
+        }
+        /**
+         * Возвращает true, если векторные значения идентичны
+         * @param {ef2DVectorValues} vector - вектор сравнения
+         */
+        equals(vector) {
+            return this.x === vector.x && this.y === vector.y;
+        }
+        /**
+         * Преобразует объект в строку
+         */
+        toString() {
+            return `{x: ${this.x}, y: ${this.y}}`;
+        }
+        /**
+         * Возвращает новые значения, умноженные на x,y или на xy
+         * @param {{ x?: number, y?: number, xy?: number }} props
+         * @return {ef2DVectorValues}
+         */
+        getMultiplied(props) {
+            if (props.x && props.y)
+                return new ef2DVectorValues({ x: this.x * props.x, y: this.y * props.y });
+            if (props.xy)
+                return new ef2DVectorValues({ x: this.x * props.xy, y: this.y * props.xy });
+            return new ef2DVectorValues({ x: this.x, y: this.y });
+        }
+        /**
+         * Возвращает новые значения, сумированные с x,y или с xy
+         * @param {{ x?: number, y?: number, xy?: number }} props
+         * @return {ef2DVectorValues}
+         */
+        getAdd(props) {
+            if (props.x && props.y)
+                return new ef2DVectorValues({ x: this.x + props.x, y: this.y + props.y });
+            if (props.xy)
+                return new ef2DVectorValues({ x: this.x + props.xy, y: this.y + props.xy });
+            return new ef2DVectorValues({ x: this.x, y: this.y });
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: ef2DRect.ts                                                          +
+     + Файл изменен: 06.01.2019 05:09:28                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Прямоугольник
+     */
+    class ef2DRect {
+        /**
+         * Конструктор
+         * @param {{ position: ef2DVectorValues, size: efSize }} props
+         */
+        constructor(props) {
+            this.size = props.size;
+            this.position = props.position;
+        }
+        /**
+         * Возвращает вторую точку прямоугольника
+         * @return {ef2DVectorValues}
+         */
+        getSecondPosition() {
+            return new ef2DVectorValues({
+                x: this.position.x + this.size.width(),
+                y: this.position.y + this.size.height(),
+            });
+        }
+        /**
+         * Возвращает центральную позицию прямоугольника
+         * @return {ef2DVectorValues}
+         */
+        getCenterPosition() {
+            return new ef2DVectorValues({
+                x: this.position.x + (this.size.width() / 2),
+                y: this.position.y + (this.size.height() / 2),
+            });
+        }
+        /**
+         * Возвращает true, если точка находится в квадрате
+         * @param {ef2DVectorValues} point
+         * @return {boolean}
+         */
+        isPointInRect(point) {
+            const x = point.x;
+            const y = point.y;
+            const pos = this.position;
+            return y >= pos.y && y < pos.y + this.size.height()
+                && x >= pos.x && x < pos.x + this.size.width();
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efContextText.ts                                                     +
+     + Файл изменен: 04.01.2019 22:16:14                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Текст `ef.cnv`
+     */
+    class efContextText extends efContextElement {
+        /**
+         * Конструктор
+         * @param {{ text: string, vector: ef2DVectorValues, font?: { size: number, fontName: string },
+         * fillColor?: elyColor, strokeColor?: elyColor, strokeWidth?: number, alignCenter?: number, maxWidth?: number,
+         * lineSpacing?: number }} props
+         */
+        constructor(props) {
+            super(Object.assign({}, props, { rect: new ef2DRect({ position: props.vector, size: efSize.zero() }) }));
+            /**
+             * Шрифт
+             */
+            this.font = { size: 14, fontName: "Arial" };
+            /**
+             * Толщина линии обводки текста
+             */
+            this.strokeWidth = 1;
+            /**
+             * Вырванивание по центру
+             */
+            this.alignCenter = false;
+            /**
+             * Расстояние между линиями
+             */
+            this.lineSpacing = 5;
+            this.text = props.text;
+            this.fillColor = props.fillColor || undefined;
+            this.strokeColor = props.strokeColor || undefined;
+            this.strokeWidth = props.strokeWidth === undefined ? 1 : props.strokeWidth;
+            this.alignCenter = props.alignCenter || false;
+            this.maxWidth = props.maxWidth || undefined;
+            this.lineSpacing = props.lineSpacing === undefined ? 5 : props.lineSpacing;
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
+     + Файл: efCanvasLayer.ts                                                     +
+     + Файл изменен: 28.12.2018 01:10:41                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    class efCanvasLayer extends elyView {
+        /**
+         * Конструктор
+         */
+        constructor() {
+            super({ tag: "canvas" });
+            /**
+             * Размеры
+             */
+            this.size = efSize.zero();
+            this.addClass("ef-cnv-layer");
+            this._ctx = this.getDocument().getContext("2d");
+        }
+        /**
+         * Возвращает контекст
+         * @return {CanvasRenderingContext2D}
+         */
+        getContext() {
+            return this._ctx;
+        }
+        /**
+         * Возвращает DOM объект
+         */
+        getDocument() {
+            return super.getDocument();
+        }
+        /**
+         * Отрисовывает объект {@link efContextElement}
+         * @param {efContextElement|efContextRect|efContextImage} e
+         */
+        draw(e) {
+            this.getContext().save();
+            if (e.angle)
+                this.rotateCanvas({ vector: e.rect.position, size: e.rect.size, angle: e.angle });
+            if (e.filter)
+                this.getContext().filter = e.filter;
+            if (e instanceof efContextRect) {
+                if (e.fillColor) {
+                    this.getContext().fillStyle = e.fillColor.getHexString();
+                    this.getContext().fillRect(e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
+                }
+                if (e.strokeColor) {
+                    this.getContext().strokeStyle = e.strokeColor.getHexString();
+                    this.getContext().lineWidth = e.strokeWidth;
+                    this.getContext().strokeRect(e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
+                }
+            }
+            else if (e instanceof efContextImage) {
+                if (e.subImage) {
+                    this.getContext().drawImage(e.image, e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height(), e.subImage.position.x, e.subImage.position.y, e.subImage.size.width(), e.subImage.size.height());
+                }
+                else {
+                    this.getContext().drawImage(e.image, e.rect.position.x, e.rect.position.y, e.rect.size.width(), e.rect.size.height());
+                }
+            }
+            else if (e instanceof efContextText) {
+                if (e.font)
+                    this.getContext().font = `${e.font.size}px ${e.font.fontName}`;
+                if (e.alignCenter)
+                    this.getContext().textAlign = "center";
+                if (e.strokeWidth)
+                    this.getContext().lineWidth = e.strokeWidth;
+                const pieces = e.text.split("\n");
+                let y = e.font.size;
+                for (const str of pieces) {
+                    if (e.fillColor) {
+                        this.getContext().fillStyle = e.fillColor.getHexString();
+                        this.getContext().fillText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
+                    }
+                    if (e.strokeColor) {
+                        this.getContext().strokeStyle = e.strokeColor.getHexString();
+                        this.getContext().strokeText(str, e.rect.position.x, e.rect.position.y + y, e.maxWidth);
+                    }
+                    y += (e.font.size + e.lineSpacing);
+                }
+            }
+            this.getContext().restore();
+        }
+        /**
+         * Поворачивает холст относительно координаты и размера
+         * @param {{ vector: ef2DVectorValues, size: efSize, angle: number }} props - параметры
+         */
+        rotateCanvas(props) {
+            const pos = props.vector;
+            const size = props.size;
+            const angle = props.angle;
+            this.getContext().translate(pos.x + (size.width() / 2), pos.y + (size.height() / 2));
+            this.getContext().rotate(angle * Math.PI / 180);
+            this.getContext().translate(-(pos.x + (size.width() / 2)), -(pos.y + (size.height() / 2)));
+        }
+        /**
+         * Очищает слой
+         */
+        clear() {
+            const size = this.size;
+            this.getContext().clearRect(0, 0, size.width(), size.height());
+            return this;
+        }
+    }
 
     /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      +                                                                            +
@@ -11287,6 +12181,531 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
+     + Файл: elySimpleJSONParser.ts                                               +
+     + Файл создан: 23.11.2018 23:03:37                                           +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Упрощенный парсер JSON без использованию исплюченй
+     */
+    class elySimpleJSONParser {
+        /**
+         * JSON парсер, не выкидывающий исключений. В случае неудачного парсинга
+         * аргумент возвратной функции будет принимать значение null.
+         * Ошибка парсинга JSON будет выведена в консоль с уровнем error (3).
+         *
+         * @param str
+         * @param callback
+         */
+        static parse(str, callback) {
+            try {
+                const val = JSON.parse(str);
+                callback(val);
+            }
+            catch (e) {
+                elyXLogger.default.error("JSON Parsing error: " + e.message);
+                callback(null);
+            }
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Файл: elyTime.ts                                                           +
+     + Файл создан: 23.11.2018 23:03:37                                           +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Модуль elyFlat для работы со временем
+     * @class elyTime
+     */
+    class elyTime {
+        /**
+         * Конструткор
+         * @param {{date?: Date}} options - опции
+         */
+        constructor(options = { date: new Date() }) {
+            this.date = options.date;
+        }
+        /**
+         * Создает объект времени по дате
+         * @param {number} [day] - день
+         * @param {number} [month] - месяц
+         * @param {number} [year] - год
+         * @param {number} [hour] - час
+         * @param {number} [minute] - минута
+         * @param {number} [second] - секунда
+         *
+         * @return {elyTime}
+         */
+        static byDate(day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0) {
+            return new elyTime({ date: new Date(year, month - 1, day, hour, minute, second) });
+        }
+        /**
+         * Возвращает объект текущего времени
+         * @return {elyTime}
+         */
+        static now() {
+            return new elyTime({ date: new Date() });
+        }
+        /**
+         * Возвращает количество часов со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         *
+         * @return {string}
+         *
+         *
+         *     time.hoursString(5); // 5 часов
+         *     time.hoursString(2); // 2 часа
+         *
+         *
+         */
+        static hoursString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "часов",
+                "час",
+                "часа",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Возвращает количество минут со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         *
+         * @return {string}
+         *
+         *
+         *     time.minutesString(5); // 5 минут
+         *     time.minutesString(2); // 2 минуты
+         *
+         *
+         */
+        static minutesString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "минут",
+                "минута",
+                "минуты",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Возвращает количество секунд со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         *
+         * @return {string}
+         *
+         *
+         *     time.secondsString(5); // 5 секунд
+         *     time.secondsString(2); // 2 секунды
+         *
+         *
+         */
+        static secondsString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "секунд",
+                "секунда",
+                "секунды",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Возвращает количество дней со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         * @return {string}
+         *
+         *
+         *     time.daysString(5); // 5 дней
+         *     time.daysString(2); // 2 дня
+         *
+         *
+         */
+        static daysString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "дней",
+                "день",
+                "дня",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Возвращает количество месяцев со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         * @return {string}
+         *
+         *
+         *     time.monthsString(5); // 5 месяцев
+         *     time.monthsString(2); // 2 месяца
+         *
+         *
+         */
+        static monthsString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "месяцев",
+                "месяц",
+                "месяца",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Возвращает количество лет со склонением
+         * @param {number} value - значение
+         * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+         * величины закловной
+         * @return {string}
+         *
+         *
+         *     time.yearsString(5); // 5 лет
+         *     time.yearsString(2); // 2 года
+         *
+         *
+         */
+        static yearsString(value, isUpperFirstChar = false) {
+            return elyTime.__stringByLastNumber(value, [
+                "лет",
+                "год",
+                "года",
+            ], isUpperFirstChar);
+        }
+        /**
+         * Преобразует временной код в части: дни, часы, минуты, секунды.
+         * Такая технология может быть полезна для создания таймеров.
+         *
+         * Использование:
+         * - Сначала необходимо получить разницу веремни, например, используя вычитание;
+         * - Полученное значение может быть трансформировано через этот метод.
+         *
+         * @param {number }timeCode - врменной код
+         * @return {elyTimeDifferences}
+         */
+        static timeCodeToVars(timeCode) {
+            const source = timeCode;
+            timeCode /= 1000;
+            const _days = Math.floor(timeCode / 86400);
+            timeCode -= _days * 86400;
+            const _hours = Math.floor(timeCode / 3600) % 24;
+            timeCode -= _hours * 3600;
+            const _minutes = Math.floor(timeCode / 60) % 60;
+            timeCode -= _minutes * 60;
+            const _seconds = Math.floor(timeCode % 60);
+            return { days: _days, hours: _hours, minutes: _minutes, seconds: _seconds, source };
+        }
+        static __stringByLastNumber(num, list, isUpperFirstChar) {
+            const str = list[elyTime.__lastNumberChar(num)];
+            return num + " " + (isUpperFirstChar ? (str[0].toUpperCase() + str.substr(1)) : str);
+        }
+        static __lastNumberChar(num) {
+            const d100 = num % 100;
+            if (d100 > 10 && d100 < 15)
+                return 0;
+            const d10 = num % 10;
+            if (d10 === 0 || d10 > 4)
+                return 0;
+            if (d10 === 1)
+                return 1;
+            if (d10 > 1 && d10 < 5)
+                return 2;
+            return 0;
+        }
+        /**
+         * Возвращает timestamp
+         * @return {number}
+         */
+        getTime() {
+            return this.date.getTime();
+        }
+        /**
+         * Возвращает количество дней в месяце для
+         * даты, указанной в elyTime.
+         *
+         * @return {number}
+         */
+        getDaysInMonth() {
+            return 32 - new Date(this.date.getFullYear(), this.date.getMonth(), 32).getDate();
+        }
+        /**
+         * Возвращает разницу времени
+         * @param {elyTime} time - время сравнения
+         *
+         * @return {elyTimeDifferences}
+         */
+        getDifference(time) {
+            return elyTime.timeCodeToVars(Math.abs(this.getTime() - time.getTime()));
+        }
+        /**
+         * Возвращает разницу времени
+         *
+         * @return {elyTimeDifferences}
+         */
+        getDifferenceNow() {
+            return this.getDifference(elyTime.now());
+        }
+        /**
+         * Возвращает true, елси текущее время позже, чем время,
+         * указанное в аршументе.
+         * @param {elyTime} time - время сравнения
+         *
+         * @return {boolean}
+         */
+        isLaterThen(time) {
+            return this.getDifference(time).source > 0;
+        }
+        /**
+         * Возвращает строку времени
+         * @param {boolean} withTime - если установлено true, в строке будет отображено
+         * время в формате HH:MM:SS
+         *
+         * @return {string}
+         */
+        getString(withTime = false) {
+            const dateString = this.formatZero(this.date.getDate()) + "." +
+                this.formatZero(this.date.getMonth() + 1) + "." + this.date.getFullYear();
+            if (!withTime)
+                return dateString;
+            const timeString = this.formatZero(this.date.getHours()) + ":" +
+                this.formatZero(this.date.getMinutes()) + ":" + this.formatZero(this.date.getSeconds());
+            return `${dateString} ${timeString}`;
+        }
+        /**
+         * Возвращает строку времени
+         * @param withSeconds - флаг секунд. Добавляет или убирает SS из формата.
+         *
+         * @return {string}
+         */
+        getTimeString(withSeconds = true) {
+            let ts = this.formatZero(this.date.getHours()) + ":" +
+                this.formatZero(this.date.getMinutes());
+            if (withSeconds)
+                ts += ":" + this.formatZero(this.date.getSeconds());
+            return ts;
+        }
+        /**
+         * Возвращает дату
+         * @return {{date: number, month: number, year: number}}
+         */
+        getDate() {
+            return { date: this.date.getDate(), month: this.date.getMonth() + 1, year: this.date.getFullYear() };
+        }
+        /**
+         * Возвращает время
+         * @return {{hours: number, milliseconds: number, minutes: number, seconds: number}}
+         */
+        getDateTime() {
+            return {
+                hours: this.date.getHours(),
+                milliseconds: this.date.getMilliseconds(),
+                minutes: this.date.getMinutes(),
+                seconds: this.date.getSeconds(),
+            };
+        }
+        /**
+         * Возвращает индекс дня недели
+         * @return {number}
+         */
+        getWeekDayIndex() {
+            switch (this.date.getDay()) {
+                case 0:
+                    return 6;
+                case 1:
+                    return 0;
+                case 2:
+                    return 1;
+                case 3:
+                    return 2;
+                case 4:
+                    return 3;
+                case 5:
+                    return 4;
+                case 6:
+                    return 5;
+                default:
+                    return 0;
+            }
+        }
+        /**
+         * Возвращает название дня недели
+         * @param {boolean} isShort
+         * @return {string}
+         */
+        getWeekDayName(isShort = false) {
+            return isShort ? elyTime.weekDaysShortList[this.getWeekDayIndex()] :
+                elyTime.weekDaysList[this.getWeekDayIndex()];
+        }
+        /**
+         * Возвращает строку времени
+         * @return {string}
+         */
+        toString() {
+            return this.getString(true);
+        }
+        formatZero(str) {
+            if (str % 10 === str) {
+                return "0" + str;
+            }
+            return String(str);
+        }
+    }
+    /**
+     * Список дней ндели
+     * @type {string[]}
+     *
+     * - "Понедельник"
+     * - "Вторник"
+     * - "Среда"
+     * - "Четверг"
+     * - "Пятница"
+     * - "Суббота"
+     * - "Воскресение"
+     */
+    elyTime.weekDaysList = [
+        "Понедельник", "Вторник", "Среда",
+        "Четверг", "Пятница", "Суббота", "Воскресение",
+    ];
+    /**
+     * Список коротких названий дней недели
+     * @type {string[]}
+     *
+     * - "Пн"
+     * - "Вт"
+     * - "Ср"
+     * - "Чт"
+     * - "Пт"
+     * - "Сб"
+     * - "Вс"
+     */
+    elyTime.weekDaysShortList = [
+        "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс",
+    ];
+    /**
+     * Список названий мясяцев
+     * @type {string[]}
+     */
+    elyTime.monthsList = [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+        "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+    ];
+    /**
+     * Список названий коротких названий мясяцев
+     * @type {string[]}
+     */
+    elyTime.monthsShortList = [
+        "Янв", "Фев", "Мрт", "Апр", "Май", "Июн",
+        "Июл", "Авг", "Сен", "Окт", "Ноб", "Дек",
+    ];
+    /**
+     * @typedef {Object} elyTimeDifferences
+     * @property {number} days
+     * @property {number} hours
+     * @property {number} minutes
+     * @property {number} seconds
+     * @property {number} source
+     */
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Файл: elyPostRequest.ts                                                    +
+     + Файл создан: 23.11.2018 23:03:37                                           +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * POST запрос
+     */
+    class elyPostRequest extends elyGetRequest {
+        /**
+         * Конструктор
+         * @param options
+         */
+        constructor(options) {
+            super(options);
+        }
+        /**
+         * Отправляет данные
+         * @param data
+         * @param callback
+         */
+        send(data, callback) {
+            let fmd = data;
+            if (!(data instanceof FormData)) {
+                fmd = new FormData();
+                for (const index in data) {
+                    if (data.hasOwnProperty(index)) {
+                        if (data[index] instanceof Array) {
+                            for (const it of data[index])
+                                fmd.append(index, it);
+                        }
+                        else {
+                            fmd.set(index, data[index]);
+                        }
+                    }
+                }
+            }
+            this.xhr.open("POST", this.url.absoluteString);
+            this.xhr.onreadystatechange = () => {
+                if (this.xhr.readyState === XMLHttpRequest.DONE) {
+                    let resp = this.xhr.response;
+                    try {
+                        if (this.useJson)
+                            resp = JSON.parse(resp);
+                    }
+                    catch (e) {
+                        elyLogger.warning("Ошибка возникла при обработке JSON в elyGetRequest! " + this.url.absoluteString);
+                        elyLogger.debugObject(this);
+                        resp = null;
+                    }
+                    if (callback)
+                        callback(resp, this.xhr.status);
+                }
+            };
+            // this.xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            this.xhr.send(fmd);
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
      + Файл: color.picker.ts                                                      +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -12225,6 +13644,101 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
+     + Файл: efxApp.ts                                                            +
+     + Файл изменен: 22.02.2019 23:04:56                                          +
+     +                                                                            +
+     +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+    /**
+     * Приложение efX-app
+     * @class {efxApp}
+     * @augments {elyObservable}
+     */
+    class efxApp extends elyObservable {
+        /**
+         * Конструктор
+         * @param props
+         */
+        constructor(props = {}) {
+            super();
+            /**
+             * @protected
+             * @ignore
+             */
+            this.__isConnected = false;
+            /**
+             * @protected
+             * @ignore
+             */
+            this.__host = "http://localhost";
+            /**
+             * @protected
+             * @ignore
+             */
+            this.__port = 1583;
+        }
+        /**
+         * Возвращает состояние подключения
+         * @return {boolean}
+         */
+        isConnected() {
+            return this.__isConnected;
+        }
+        /**
+         * Возвращает хост соединения
+         * @return {string}
+         */
+        getHost() {
+            return this.__host;
+        }
+        /**
+         * Возвращает порт соединения
+         * @return {number}
+         */
+        getPort() {
+            return this.__port;
+        }
+        /**
+         * Соединяется с сервером efX-app
+         * @param callback
+         */
+        connect(callback) {
+            this.sendRaw("testEFX", {}, (result, response) => {
+                this.__isConnected = result;
+                callback(result);
+            });
+        }
+        sendRaw(method, data, callback) {
+            const req = new elyGetRequest({ url: this.getHost() + ":" + this.getPort() + "/r/" + method });
+            req.send(data, (response, status1) => {
+                if (!response || !response.response) {
+                    callback(false, null);
+                }
+                else {
+                    callback(response.response, response);
+                }
+            });
+        }
+    }
+
+    /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     +                                                                            +
+     + ,--. o                   |    o                                            +
+     + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+     + |   |||---'|   ||   |    |    ||   ||   |                                  +
+     + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+     +            `---'                    `---'                                  +
+     +                                                                            +
+     + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+     + Mail: <diegoling33@gmail.com>                                              +
+     +                                                                            +
+     + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+     + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+     +                                                                            +
+     + Использование, изменение, копирование, распространение, обмен/продажа      +
+     + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+     +                                                                            +
+     + Проект: ely.flat                                                           +
+     +                                                                            +
      + Файл: ely.flat.ts                                                          +
      + Файл изменен: 02.01.2019 14:04:43                                          +
      +                                                                            +
@@ -12290,15 +13804,72 @@
     const addController = (name, viewController, canOverwrite = true) => {
         elyScreenController.default.addControllerName(name, viewController, canOverwrite);
     };
+    /**
+     * Возвращает приложение
+     * @return {efApplication}
+     */
+    const app = () => {
+        return efApplication.default;
+    };
+    /**
+     * Возвращает навигацию
+     * @return {efNavigationView}
+     */
+    const navigation = () => {
+        return app().getApplicationNavigationView();
+    };
+    const developMode = (bool) => {
+        if (bool) {
+            elyOnReady(next => {
+                new elyFileWatcher({ filePath: "js/index.js" }).start().addUpdateListener(() => {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
+                });
+                next(true);
+            });
+        }
+    };
     window.onload = () => {
         elyXLogger.default.clear = true;
+        if (efSingleApp.isUsesSingle()) {
+            efSingleApp.applicationInitFunction = window.efSingleInit;
+            Object.keys(window.elyflatobjects).forEach(value => {
+                window[value] = window.elyflatobjects[value];
+            });
+        }
         efApplication.loadApplication(() => {
-            //
         });
     };
+    /**
+     * @param {*} config
+     * @return {function(vc: elySimplePageViewController)}
+     */
+    window.efSingleInit = window.efSingleInit || undefined;
     window.elyflatobjects = {
-        elyView,
+        app,
+        navigation,
+        elyOnReady,
+        addController,
+        developMode,
+        efxApp,
+        elyStylesheet,
+        efApplication,
+        elyTime,
+        elyDeviceDetector,
         elyColor: elyColor$1,
+        elyGuard,
+        elyTimer,
+        elyCookie,
+        elyXLogger,
+        elySimpleJSONParser,
+        elyUtils,
+        elyColorUtils,
+        elyFileWatcher,
+        elyURL,
+        elyGetRequest,
+        elyPostRequest,
+        elyView,
         elyControl: elyControl$1,
         elyIconView: elyIconView$1,
         elyTextViewEditable,
@@ -12318,12 +13889,37 @@
         elyTextField,
         elyDataPickerField,
         elyColorPickerField: elyColorPickerField$1,
+        elyScreenController,
+        elyViewController,
+        elySimplePageViewController,
+        elyGridViewController,
+        Style,
+        Size,
+        Weight,
+        TextFieldType,
+        elySize,
+        elyStyle,
+        efSize,
+        elyAxis,
+        elyDirection,
+        ef2DVector,
+        ef2DVectorValues,
+        efCanvas,
+        efCanvasLayer,
         efTextView,
         efLinkTextView,
         efIconView,
+        efHeaderTextView,
         efButton,
         efListView,
+        efField,
+        efTextField,
+        efSwitchField,
+        efRowLayoutView,
+        efGridLayoutView,
+        efPanelView,
         efNavigationView,
+        efPreloaderView,
         efAppDevelopConsole,
     };
 
@@ -12483,6 +14079,37 @@
     function setConfigCommand(path, value, callback) {
         makeAppRequest("setConfigValue", {path, value}, resp => {
             callback(resp.response);
+        });
+    }
+
+    /**
+     * Выполняет команду получения базы данных
+     * @param callback
+     */
+    function getDBDItemsCommand(callback) {
+        makeAppRequest("r/getDBItems", {}, resp => {
+            callback(resp.response, resp);
+        }, {
+            title: "Получение данных базы",
+            info: true
+        });
+    }
+
+
+    /**
+     * Выполняет команду установки значения
+     * @param table
+     * @param rowIndex
+     * @param column
+     * @param value
+     * @param callback
+     */
+    function setDBDItemValueCommand(table, rowIndex, column, value, callback) {
+        makeAppRequest("r/setDBItemValue", {table, rowIndex, column, value}, resp => {
+            callback(resp.response, resp);
+        }, {
+            title: "Получение данных базы",
+            info: true
         });
     }
 
@@ -12765,12 +14392,38 @@
             efiSettingsPanel.getContentView().add("Рабочая директория".textView());
             efiSettingsPanel.getContentView().add(workingDirectoryField);
 
+            let efXAppInit = this.factoryGridCell("efxapp_init", "cube", "efx-app init",
+                "efX-app позволяет создать самое простое и одновременно полноценное REST приложение с небольшой " +
+                "базой данных и запросами.", () => {
+                });
+            let efXDB = this.factoryGridCell("efxapp_db", "server", "Database view",
+                "База данных Вашего efX-app приложения", () => {
+                    elyScreenController.default.present("dbview");
+                });
+            let efXMethods = this.factoryGridCell("efxapp_methods", "gears", "REST Methods",
+                "REST функции Вашего приложения", () => {
+
+                });
+
             this.efiVersion = new efTextView({textSize: Size.large, textWeight: Weight.thin, text: "version: 0"});
             this.efiVersion.centered().opacity(0.14);
 
             this.view.add(appInitGrid, configGrid, buildGrid);
             this.view.add(serverRunGrid);
             this.view.add(efiSettingsPanel);
+            this.view.add("efX-app".headerTextView({
+                headerLevel: 1,
+                textSize: Size.xxlarge,
+                textCenter: true,
+                textWeight: Weight.thin
+            }));
+            this.view.add("Создайте своё простое приложение...".textView({
+                opacity: 0.3,
+                textCenter: true,
+                style: {paddingBottom: "40px"}
+            }));
+            this.view.add(efXAppInit);
+            this.view.add(efXDB, efXMethods);
             this.view.add(this.efiVersion);
 
         }
@@ -12829,9 +14482,11 @@
                     this.lockCell("build", !data.efHere);
                     this.lockCell("server", !data.efHere);
                     this.efiVersion.text(`efi ${data.version}`);
-
                 }
             });
+
+            this.lockCell("efxapp_methods", true);
+            this.lockCell("efxapp_init", true);
         }
 
         /**
@@ -12915,6 +14570,145 @@
     }
 
     /**
+     * Контроллер отображения: Просмотр баз данных
+     */
+    class DatabaseViewController extends elySimplePageViewController {
+
+        /**
+         * Данный метод выполняется после загрузки экрана
+         *
+         * + В данном методе рекомендуется выполнять элементарную отрисовку,
+         *   а также программную логику контроллера элемента отображения.
+         * + Данный метод выполняется один раз.
+         *
+         * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
+         * понимания отрисовки элементов elyView.
+         */
+        viewDidLoad() {
+            // Вызов рдительского метода
+            super.viewDidLoad();
+
+            // Установка заголовка и описания
+            // для контроллера типа elySimplePageViewController
+            this.title("efX-app");
+            this.description("Просмотр баз данных");
+
+            this.data = {};
+            this.currentTable = null;
+
+            addHomeButton(this.view);
+            this.view.add(new elyControl$1({tag: "br"}));
+
+            let info = new efPanelView({
+                panelActionText: "Хорошо, понятно.",
+                panelActionClick: () => {
+                    info.fadeOut();
+                }
+            });
+            info.getContentView().add(
+                ("*Внимание!* База данных не предусмотрена для больших нагрузок. {nl}Система efX-app разработана для личного ипользования. " +
+                    "Например, если Вы разрабатываете приложение для умного дома, то здесь может быть записано состояние Ваших умных устройств." +
+                    "{nl}{nl}Здесь Вы можете посмотреть записанные в **efX-app database** данные, удалить или изменить их.")
+                    .textView({textWeight: Weight.light})
+            );
+            this.view.add(info);
+
+            this.dbsView = new efGridLayoutView();
+
+            this.contentDbView = new efPanelView({});
+            this.contentDbView.getContentView().add("Нет данных для отображения.".textView({opacity: 0.3}));
+
+            this.view.add(this.dbsView, this.contentDbView);
+
+            this.view.rowAt(4).columnAt(0).getStyle().width = "20%";
+            this.view.rowAt(4).columnAt(1).getStyle().width = "80%";
+
+            app().getApplicationLoaderView().hidden(false);
+        }
+
+        viewWillAppear(screen) {
+            this.currentTable = null;
+            app().getApplicationLoaderView().hidden(false);
+            if (this.contentDbView) {
+                this.contentDbView.getContentView().getRows().clear();
+                this.contentDbView.panelActionText("");
+                this.contentDbView.getContentView().add("Нет данных для отображения.".textView({opacity: 0.3}));
+            }
+        }
+
+        viewDidAppear() {
+            this.update();
+        }
+
+
+        /**
+         * Обновляет контроллер и состояние элементов на нем
+         */
+        update() {
+            getDBDItemsCommand((result, data) => {
+                this.dbsView.getRows().clear();
+                this.contentDbView.getContentView().getRows().clear();
+                this.contentDbView.panelTitle("");
+                this.contentDbView.getContentView().add("Нет данных для отображения.".textView({opacity: 0.3}));
+
+                const items = data.items;
+                for (let key in items) {
+                    let item = new efButton({text: key, fill: true});
+                    item.click(() => {
+                        showDB(key, data);
+                    });
+                    this.dbsView.add(item);
+                }
+
+                app().getApplicationLoaderView().hidden(true);
+                if (this.currentTable) showDB(this.currentTable, data);
+            });
+
+            const showDB = (name, data) => {
+                this.currentTable = name;
+                this.contentDbView.getContentView().getRows().clear();
+                const dv = new elyDataGridView({
+                    sourceData: data.db[name],
+                    headers: data.items[name].items,
+                    borderedStyle: true,
+                });
+                dv.addCellDrawObserver((rowIndex, colIndex, cell, view) => {
+                    cell.addObserver("click", () => {
+                        if (cell.inEdit) return;
+                        cell.inEdit = true;
+                        const colName = data.items[name].items[colIndex];
+                        const val = data.db[name][rowIndex];
+                        if (colName !== "id") {
+                            let tf = new efTextField({value: val[colIndex]});
+                            tf.setRightIcon("save");
+                            tf.getRightIconView().addClass("button");
+                            tf.getRightIconView().css({padding: "0", backgroundColor: "transparent", border: "none"});
+                            tf.getRightIconView().addObserver("click", () => {
+                                tf.editable(false);
+                                setDBDItemValueCommand(name, rowIndex, colName, tf.value(), (result) => {
+                                    tf.editable(true);
+                                    const tv = new efTextView({text: result ? tf.value() : val});
+                                    cell.clearView();
+                                    cell.getDocument().append(tv.getDocument());
+                                });
+                            });
+                            cell.clearView();
+                            cell.getDocument().append(tf.getDocument());
+                        }
+                    });
+                });
+                dv.update();
+                this.contentDbView.getContentView().add(dv);
+                this.contentDbView.panelTitle(`База данных: ${name}`);
+                this.contentDbView.panelActionText("Обновить");
+                this.contentDbView.panelActionClick(() => {
+                    this.update();
+                });
+            };
+        }
+    }
+
+    /**
      * Класс контроллера отображения Index (главного экрана)
      *
      * @controller IndexViewController
@@ -12931,6 +14725,9 @@
         addController("index", new IndexViewController());
         addController("config", new ConfigViewController());
         addController("server", new ServerViewController());
+
+        //efx-app
+        addController("dbview", new DatabaseViewController());
 
         // Сообщает приложению, что все успешно запустилось.
         // Попробуйте раскомментировать строку ниже для примера и понимания.
