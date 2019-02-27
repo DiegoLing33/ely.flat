@@ -1,4 +1,4 @@
-# ely.flat **{ }**
+# ely.flat
 
 ## Модули библиотеки ely.core
 

@@ -27,6 +27,7 @@
   "dependencies": {
     "boxen": "latest",
     "figlet": "latest",
+    "pdfmake": "^0.1.53",
     "prompt": "latest",
     "rollup": "^0.67.4",
     "rollup-plugin-alias": "^1.5.1",
@@ -41,8 +42,7 @@
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.7.0",
     "tslib": "^1.9.3",
-    "typescript": "^3.3.0-dev.20181205",
-    "@compodoc/compodoc": "1.1.8"
+    "typescript": "^3.3.0-dev.20181205"
   },
   "devDependencies": {
     "@types/figlet": "^1.2.0",

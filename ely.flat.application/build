@@ -117,19 +117,6 @@ if ${CSS_FLAG}; then
 fi
 
 if ${DOC_FLAG}; then
-    add="
-        window.onload = () => {
-            let elements = document.getElementsByClassName(\" language-typescript\");
-
-            for(let element of elements){
-                element.innerHTML = element.innerHTML.replace(/<span class=\"token operator\">\*<\/span>/g, \"\");
-                element.innerHTML = element.innerHTML.replace(/      /g, \"\");
-            }
-
-            console.log(elements);
-        };
-    "
-    compodoc -p ../tsconfig.json --disableSourceCode --disablePrivate -d ../documentation
-    doctext=$(cat "../documentation/js/compodoc.js")
-    echo "${doctext} ${add}" > "../documentation/js/compodoc.js"
+    cd ../
+    node "@compodoc/compodoc/bin/index-cli.js" -p tsconfig.json --disableSourceCode --disablePrivate -n "ely.flat { doc }" --language "ru-RU"
 fi
