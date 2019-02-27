@@ -22,17 +22,54 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/Observable";
+import Observable from "./observable/Observable";
+
+/**
+ * Опции для {@link Timer}
+ */
+export interface TimerOptions {
+
+    /**
+     * Продолжительность таймера
+     */
+    duration: number;
+
+    /**
+     * Цикличные повторы
+     */
+    loop?: boolean;
+}
 
 /**
  * Таймер
+ *
+ * ```ts
+ *
+ * const timer = new Timer({duration: 10 * 1000}); // Таймер на 10 сек
+ *
+ * // Добавляем наблюдатель начала работы таймера
+ * timer.addStartObserver( () => {
+ *    console.log( "Go!" );
+ * });
+ *
+ * // Добавляем наблюдатель окончания работы таймера
+ * timer.addEndObserver( () => {
+ *    console.log( "Time is up!" );
+ * });
+ *
+ * // Запускаем таймер
+ * timer.start();
+ * ```
+ *
  * @class {Timer}
+ * @augments {Observable}
  */
-export default class Timer extends elyObservable {
+export default class Timer extends Observable {
 
     /**
      * Время таймера
      * @type {number}
+     * @ignore
      * @protected
      */
     protected __duration: number;
@@ -40,21 +77,23 @@ export default class Timer extends elyObservable {
     /**
      * Циклический таймер
      * @type {boolean}
+     * @ignore
      * @protected
      */
     protected readonly __loop: boolean = false;
 
     /**
      * Поток
+     * @ignore
      * @protected
      */
     protected __thread: any;
 
     /**
      * Конструктор
-     * @param props
+     * @param {{ duration: number, loop: boolean | undefined }} props - свойства
      */
-    public constructor(props: { duration: number, loop?: boolean }) {
+    public constructor(props: TimerOptions) {
         super();
         /**
          * @protected
@@ -73,7 +112,7 @@ export default class Timer extends elyObservable {
      *
      * Имя обсервера: addEndObserver
      *
-     * @param o - наблюдатель
+     * @param {function} o - наблюдатель
      */
     public addEndObserver(o: () => void): Timer {
         this.addObserver("endTimer", o);
@@ -85,7 +124,7 @@ export default class Timer extends elyObservable {
      *
      * Имя обсервера: startTimer
      *
-     * @param o - наблюдатель
+     * @param {function} o - наблюдатель
      */
     public addStartObserver(o: () => void): Timer {
         this.addObserver("startTimer", o);
@@ -119,7 +158,8 @@ export default class Timer extends elyObservable {
     /**
      * Останавливает таймер
      * @param {boolean} [notificate = true] - если установлено значение true,
-     * после выполнения метода, будет вызвано событие `endTimer` {@link Timer.addEndObserver(o)}
+     * после выполнения метода, будет вызвано событие `endTimer`.
+     * {@link Timer.addEndObserver}
      */
     public stop(notificate: boolean = true): void {
         if (this.__loop) clearInterval(this.__thread);

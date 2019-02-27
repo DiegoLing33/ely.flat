@@ -25,17 +25,19 @@
  * @param {T|*} testVar - Проверяемая переменная
  * @param {function(value: T)} callback - Обработчик с переменной
  * @param {T} [opt] - Опциональное значение, если переменная null или undefined
+ * @return
  *
+ * ```typescript
  *
- *     const a = 123;
- *     const b = null;
+ * const a = 123;
+ * const b = null;
  *
- *     variable(b, value => a = value, 100);
- *     variable(a, value => b = value);
+ * variable(b, value => a = value, 100);
+ * variable(a, value => b = value);
  *
- *     // a = 100
- *     // b = 100
- *
+ * // a = 100
+ * // b = 100
+ * ```
  *
  */
 export function variable<T>(testVar: any, callback: (value: T) => void, opt?: T): void {
@@ -52,39 +54,38 @@ export function variable<T>(testVar: any, callback: (value: T) => void, opt?: T)
  * @param {*} [context] - Контекст
  * @param {T} [opt] - Опциональное значение, если переменная null или undefined
  *
+ * @return
  *
- *     const a = 123;
- *     const b = null;
+ * ```typescript
  *
- *     class MyClass{
+ * class MyClass{
  *
- *         public constructor(options = {}){
- *             this.a = null;
- *             this.b = null;
+ *      public constructor(options = {}){
+ *          this.a = null;
+ *          this.b = null;
  *
- *             variableAndSet(options.a, this.setA, this, "theA");
- *             variableAndSet(options.b, this.setB, this, "theB");
+ *          variableAndSet(options.a, this.setA, this, "theA");
+ *          variableAndSet(options.b, this.setB, this, "theB");
  *
- *             // Альтернатива:
- *             // variable(options.a, value => this.setA(value), "theA");
- *             // variable(options.b, value => this.setB(value), "theB");
- *         }
+ *          // Альтернатива:
+ *          // variable(options.a, value => this.setA(value), "theA");
+ *          // variable(options.b, value => this.setB(value), "theB");
+ *      }
  *
- *         setA(value){
- *             this.a = value;
- *         }
+ *      setA(value){
+ *          this.a = value;
+ *      }
  *
- *         setB(value){
- *             this.b = value;
- *         }
+ *      setB(value){
+ *          this.b = value;
+ *      }
  *
- *     }
+ * }
  *
- *     const mc = new MyClass({a: 123});
- *     // mc.a = 123
- *     // mc.b = "theB"
- *
- *
+ * const mc = new MyClass({a: 123});
+ * // mc.a = 123
+ * // mc.b = "theB"
+ * ```
  */
 export function variableAndSet<T>(testVar: any, callback: (value: T) => void, context: any, opt?: T): void {
     variable(testVar, (value: T) => {
@@ -111,20 +112,21 @@ export function isNone(obj: any): obj is null {
 }
 
 /**
- * Парсинг JSON без try/catch конструкции
+ * Парсинг JSON *без try/catch* конструкции
  *
  * @param {string} jsonString - строка JSON
  * @param {*} [opt = {}] - значение в случае неудачи
  *
  * @return {*}
  *
+ * ```typescript
  *
- *     const a = safeJsonParse("a");
- *     const b = safeJsonParse("{\"a\": 1}");
+ * const a = safeJsonParse("a");
+ * const b = safeJsonParse("{\"a\": 1}");
  *
- *     // a = {}
- *     // b = {a: 1};
- *
+ * // a = {}
+ * // b = {a: 1};
+ * ```
  *
  */
 export function safeJsonParse(jsonString: string, opt: any = {}): any {

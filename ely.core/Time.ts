@@ -51,13 +51,12 @@ export interface TimeDifferences {
 
 /**
  * Модуль elyFlat для работы со временем
- * @class elyTime
+ * @class Time
  */
 export default class Time {
 
     /**
      * Список дней ндели
-     * @type {string[]}
      *
      * - "Понедельник"
      * - "Вторник"
@@ -66,6 +65,8 @@ export default class Time {
      * - "Пятница"
      * - "Суббота"
      * - "Воскресение"
+     *
+     * @type {string[]}
      */
     public static weekDaysList: string[] = [
         "Понедельник", "Вторник", "Среда",
@@ -74,7 +75,6 @@ export default class Time {
 
     /**
      * Список коротких названий дней недели
-     * @type {string[]}
      *
      * - "Пн"
      * - "Вт"
@@ -83,6 +83,8 @@ export default class Time {
      * - "Пт"
      * - "Сб"
      * - "Вс"
+     *
+     * @type {string[]}
      */
     public static weekDaysShortList: string[] = [
         "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс",
@@ -132,15 +134,16 @@ export default class Time {
 
     /**
      * Возвращает количество часов со склонением
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
      *
      * ```typescript
      *
-     * time.hoursString(5); // 5 часов
-     * time.hoursString(2); // 2 часа
+     * Time.hoursString(5); // 5 часов
+     * Time.hoursString(2); // 2 часа
      * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
      *
      * @return {string}
      *
@@ -155,15 +158,16 @@ export default class Time {
 
     /**
      * Возвращает количество минут со склонением
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
      *
      * ```typescript
      *
-     * time.minutesString(5); // 5 минут
-     * time.minutesString(2); // 2 минуты
+     * Time.minutesString(5); // 5 минут
+     * Time.minutesString(2); // 2 минуты
      * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
      *
      * @return {string}
      *
@@ -178,15 +182,17 @@ export default class Time {
 
     /**
      * Возвращает количество секунд со склонением
+     *
+     * ```typescript
+     *
+     * Time.secondsString(5); // 5 секунд
+     * Time.secondsString(2); // 2 секунды
+     * ```
+     *
      * @param {number} value - значение
      * @param {boolean} [isUpperFirstChar = false] - делает первую букву
      * величины закловной
      *
-     * ```typescript
-     *
-     * time.secondsString(5); // 5 секунд
-     * time.secondsString(2); // 2 секунды
-     * ```
      *
      * @return {string}
      *
@@ -201,16 +207,16 @@ export default class Time {
 
     /**
      * Возвращает количество дней со склонением
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     * @return {string}
      *
      * ```typescript
      *
-     * time.daysString(5); // 5 дней
-     * time.daysString(2); // 2 дня
+     * Time.daysString(5); // 5 дней
+     * Time.daysString(2); // 2 дня
      * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
      *
      * @return {string}
      *
@@ -225,15 +231,17 @@ export default class Time {
 
     /**
      * Возвращает количество месяцев со склонением
+     *
+     * ```typescript
+     *
+     * Time.monthsString(5); // 5 месяцев
+     * Time.monthsString(2); // 2 месяца
+     * ```
+     *
      * @param {number} value - значение
      * @param {boolean} [isUpperFirstChar = false] - делает первую букву
      * величины закловной
      *
-     * ```typescript
-     *
-     * time.monthsString(5); // 5 месяцев
-     * time.monthsString(2); // 2 месяца
-     * ```
      *
      * @return {string}
      */
@@ -247,15 +255,17 @@ export default class Time {
 
     /**
      * Возвращает количество лет со склонением
+     *
+     * ```typescript
+     *
+     * Time.yearsString(5); // 5 лет
+     * Time.yearsString(2); // 2 года
+     * ```
+     *
      * @param {number} value - значение
      * @param {boolean} [isUpperFirstChar = false] - делает первую букву
      * величины закловной
      *
-     * ```typescript
-     *
-     * time.yearsString(5); // 5 лет
-     * time.yearsString(2); // 2 года
-     * ```
      * @return {string}
      */
     public static yearsString(value: number, isUpperFirstChar: boolean = false): string {
@@ -343,6 +353,16 @@ export default class Time {
      * @param {Time} time - время сравнения
      *
      * @return {TimeDifferences}
+     *
+     *
+     * ```ts
+     *
+     * const d1 = Time.byDate(10, 1, 2019);
+     * const d2 = Time.byDate(15, 1, 2019);
+     *
+     * const diff = d1.getDifference(d2);
+     * const daysString = Time.daysString(diff.days); // 5 дней
+     * ```
      */
     public getDifference(time: Time): TimeDifferences {
         return Time.timeCodeToVars(Math.abs(this.getTime() - time.getTime()));
