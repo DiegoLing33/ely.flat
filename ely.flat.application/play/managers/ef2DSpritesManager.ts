@@ -22,14 +22,14 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyUtils from "@core/elyUtils";
-import elyObservable from "@core/observable/elyObservable";
+import Utils from "@core/Utils";
+import Observable from "@core/observable/Observable";
 import ef2DSprite from "@play/ef2DSprite";
 
 /**
  * Менеджер спрайтов
  */
-export default class ef2DSpritesManager extends elyObservable {
+export default class ef2DSpritesManager extends Observable {
 
     /**
      * Стандартный менеджер спрайтов
@@ -73,7 +73,7 @@ export default class ef2DSpritesManager extends elyObservable {
      * Возвращает true, если все спрайты загружены
      */
     public isEverythingLoaded(): boolean {
-        return this.__loaded === elyUtils.count(this.sprites);
+        return this.__loaded === Utils.count(this.sprites);
     }
 
 }

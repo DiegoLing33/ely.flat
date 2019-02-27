@@ -24,7 +24,7 @@
 
 import efContextElement from "@cnv/context/efContextElement";
 import efSize from "@cnv/objs/efSize";
-import elyColor from "@core/elyColor";
+import Color from "@core/Color";
 import ef2DRect from "@math/ef2DRect";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 
@@ -46,12 +46,12 @@ export default class efContextText extends efContextElement {
     /**
      * Цвет заливки текста
      */
-    public fillColor?: elyColor;
+    public fillColor?: Color;
 
     /**
      * Цвет обводки текста
      */
-    public strokeColor?: elyColor;
+    public strokeColor?: Color;
 
     /**
      * Толщина линии обводки текста
@@ -76,12 +76,12 @@ export default class efContextText extends efContextElement {
     /**
      * Конструктор
      * @param {{ text: string, vector: ef2DVectorValues, font?: { size: number, fontName: string },
-     * fillColor?: elyColor, strokeColor?: elyColor, strokeWidth?: number, alignCenter?: number, maxWidth?: number,
+     * fillColor?: Color, strokeColor?: Color, strokeWidth?: number, alignCenter?: number, maxWidth?: number,
      * lineSpacing?: number }} props
      */
     public constructor(props: {
         text: string, vector: ef2DVectorValues, font?: { size: number, fontName: string },
-        fillColor?: elyColor, strokeColor?: elyColor, strokeWidth?: number, alignCenter?: boolean, maxWidth?: number,
+        fillColor?: Color, strokeColor?: Color, strokeWidth?: number, alignCenter?: boolean, maxWidth?: number,
         lineSpacing?: number,
     }) {
         super({...props, rect: new ef2DRect({position: props.vector, size: efSize.zero()})});

@@ -22,15 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
-import elyGetRequest from "@core/web/request/elyGetRequest";
+import Observable from "@core/observable/Observable";
+import URLRequest from "@core/web/request/URLRequest";
 
 /**
  * Приложение efX-app
  * @class {efxApp}
- * @augments {elyObservable}
+ * @augments {Observable}
  */
-export class efxApp extends elyObservable {
+export class efxApp extends Observable {
 
     /**
      * @protected
@@ -86,21 +86,51 @@ export class efxApp extends elyObservable {
      * Соединяется с сервером efX-app
      * @param callback
      */
-    public connect(callback: (result: boolean) => void): void {
-        this.sendRaw("testEFX", {}, (result, response) => {
-            this.__isConnected = result;
-            callback(result);
+    public connect(callback: (result: any) => void): void {
+        this.sendRaw("list", {}, (res) => {
+            const self = this;
+            this.__isConnected = res.status;
+            if (res.status) {
+                const obj = {};
+                (res.response as string[]).forEach(value => {
+                    Object.defineProperty(obj, value, {
+                        get: () => {
+                            return {
+                                rows(data: any, callback: (a: any) => void) {
+                                    self.sendRaw("select", {table: value, ...data}, response => {
+                                        callback(response.response);
+                                    });
+                                },
+                            };
+                        },
+                    });
+                });
+                callback(obj);
+            }
         });
     }
 
-    public sendRaw(method: string, data: any, callback: (result: boolean, response: any) => void): void {
-        const req = new elyGetRequest({url: this.getHost() + ":" + this.getPort() + "/r/" + method});
-        req.send(data, (response, status1) => {
-            if (!response || !response.response) {
-                callback(false, null);
-            } else {
-                callback(response.response, response);
-            }
+    public global(callback: (db: any) => void): void {
+        this.sendRaw("select", {table: "global"}, response => {
+            const obj: any = {};
+            response.response.forEach((o: any) => {
+                obj[o.name] = {
+                    value: o.value,
+                    set(value: any, callback: () => void) {
+                        this.sendRaw("set", {table: "global", id: o.id}, (a: any) => {
+                            callback();
+                        });
+                    },
+                };
+
+            });
+            callback(obj);
+        });
+    }
+
+    public sendRaw(method: string, data: any, callback: (response: any) => void): void {
+        URLRequest.sendGET(this.getHost() + ":" + this.getPort() + "/db/" + method, data, response => {
+           callback(response);
         });
     }
 }

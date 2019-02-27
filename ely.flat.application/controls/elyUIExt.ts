@@ -22,12 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {efButton, efButtonOptions} from "@controls/action/efButton";
-import {efListView, efListViewOptions} from "@controls/list/efListView";
-import {efNotificationView} from "@controls/notification/efNotificationView";
-import {efHeaderTextView, efHeaderTextViewOptions} from "@controls/text/efHeaderTextView";
-import {efIconView, efIconViewOptions} from "@controls/text/efIconView";
-import {efTextView, efTextViewOptions} from "@controls/text/efTextView";
+import Button, {ButtonOptions} from "@controls/action/Button";
+import ListView, {ListViewOptions} from "@controls/list/ListView";
+import NotificationView from "@controls/notification/NotificationView";
+import HeaderTextView, {HeaderTextViewOptions} from "@controls/text/HeaderTextView";
+import IconView, {IconViewOptions} from "@controls/text/IconView";
+import TextView, {TextViewOptions} from "@controls/text/TextView";
+import SendFileRequest from "@core/web/request/SendFileRequest";
+import SendJsonRequest from "@core/web/request/SendJsonRequest";
+import URLRequest, {URLRequestMethod} from "@core/web/request/URLRequest";
 
 declare global {
 
@@ -37,28 +40,33 @@ declare global {
     interface String {
 
         /**
-         * Преобразует строку в efTextView
-         * @param {efTextViewOptions} options - опции
+         * Преобразует строку в TextView
+         * @param {TextViewOptions} options - опции
          */
-        textView(options?: efTextViewOptions): efTextView;
+        textView(options?: TextViewOptions): TextView;
 
         /**
-         * Преобразует строку в efHeaderTextView
-         * @param {efHeaderTextViewOptions} options - опции
+         * Преобразует строку в HeaderTextView
+         * @param {HeaderTextViewOptions} options - опции
          */
-        headerTextView(options?: efHeaderTextViewOptions): efHeaderTextView;
+        headerTextView(options?: HeaderTextViewOptions): HeaderTextView;
 
         /**
-         * Преобразует строку в efButton
-         * @param {efButtonOptions} options - опции
+         * Преобразует строку в Button
+         * @param {ButtonOptions} options - опции
          */
-        button(options?: efButtonOptions): efButton;
+        button(options?: ButtonOptions): Button;
 
         /**
-         * Преобразует строку в efIconView
-         * @param {efIconViewOptions} options - опции
+         * Преобразует строку в IconView
+         * @param {IconViewOptions} options - опции
          */
-        iconView(options?: efIconViewOptions): efIconView;
+        iconView(options?: IconViewOptions): IconView;
+
+        /**
+         * Преобразует строку в объект elyURL
+         */
+        url(): URL;
     }
 
     /**
@@ -66,10 +74,10 @@ declare global {
      */
     interface Array<T> {
         /**
-         * Преобразует массив в список efListView
+         * Преобразует массив в список ListView
          * @param options
          */
-        listView(options?: efListViewOptions): efListView;
+        listView(options?: ListViewOptions): ListView;
     }
 
     interface Window {
@@ -79,49 +87,162 @@ declare global {
          * @param {string?} title - заголовок
          * @param {string?} content - контент
          */
-        notifi: (text: string, title?: string, content?: string) => void;
+        notifi(text: string, title?: string, content?: string): void;
+    }
+
+    interface URL {
+        /**
+         * Создает URL запрос из данного URL
+         * @param {{ data?: *, method?: URLRequestMethod, async?: boolean }} props - опции
+         *
+         * @return {URLRequest}
+         */
+        createUrlRequest(props?: { data?: any, method?: URLRequestMethod, async?: boolean }): URLRequest;
+
+        /**
+         * Создает SendJson запрос из данного URL
+         * @param {*} object - объект для передачи
+         * @param {{ async?: boolean }} props - опции
+         *
+         * @return {SendJsonRequest}
+         */
+        createSendJsonRequest(object: any, props?: { async?: boolean }): SendJsonRequest;
+
+        /**
+         * Создает SendJson запрос из данного URL
+         * @param {File[]} files - файлы для передачи
+         * @param {{ async?: boolean }} props - опции
+         *
+         * @return {SendFileRequest}
+         */
+        createSendFileRequest(files: File[], props?: { async?: boolean }): SendFileRequest;
+
+        /**
+         * Возвращает абсолютную строку URL
+         * @return {string}
+         */
+        getAbsoluteString(): string;
+
+        /**
+         * Возвращает URL очищенный от запроса
+         * @return {string}
+         */
+        getClear(): string;
     }
 }
 
 /**
- * Создает {@link efTextView} элемент из строки
- * @param {efTextViewOptions} options - опции {@link efTextViewOptions}
+ * Возвращает текущий URL
+ * @return {URL}
  */
-String.prototype.textView = function(options: efTextViewOptions = {}) {
-    return new efTextView({text: this as string, ...options});
+(URL as any).current = () => new URL(window.location.href);
+
+/**
+ * Возвращает абсолютную строку URL
+ * @return {string}
+ */
+URL.prototype.getAbsoluteString = function() {
+    return String(this);
 };
 
 /**
- * Создает {@link efHeaderTextView} элемент из строки
- * @param {efHeaderTextViewOptions} options - опции {@link efHeaderTextViewOptions}
+ * Возвращает URL очищенный от запроса
+ * @return {string}
  */
-String.prototype.headerTextView = function(options: efHeaderTextViewOptions = {headerLevel: 1}) {
-    return new efHeaderTextView({text: this as string, ...options});
+URL.prototype.getClear = function() {
+    return (new RegExp("(http[s]?:\\/\\/.+)\\?").exec(this.getAbsoluteString())! || [])[1] || "";
 };
 
 /**
- * Создает {@link efButton} из строки
- * @param {efButtonOptions} options - опции {@link efButtonOptions}
+ * Создает URL запрос из данного URL
+ * @param {{ data?: *, method?: URLRequestMethod, async?: boolean }} props - опции
+ *
+ * @return {URLRequest}
  */
-String.prototype.button = function(options?: efButtonOptions) {
-    return new efButton({text: this as string, ...options});
+URL.prototype.createUrlRequest = function(props: { data?: any, method?: URLRequestMethod, async?: boolean } = {}):
+    URLRequest {
+    props = props || {};
+    const data = props.data;
+    const method = props.method;
+    const async = props.async;
+    return new URLRequest({url: this.getAbsoluteString(), data, method, async});
 };
 
 /**
- * Создает {@link efIconView} из строки
- * @param {efIconViewOptions} options - опции {@link efIconViewOptions}
+ * Создает SendJson запрос из данного URL
+ * @param {*} object - объект для передачи
+ * @param {{ async?: boolean }} props - опции
+ *
+ * @return {SendJsonRequest}
  */
-String.prototype.iconView = function(options?: efIconViewOptions) {
-    return new efIconView({iconName: this as string, ...options});
+URL.prototype.createSendJsonRequest = function(object: any, props: { async?: boolean } = {}): SendJsonRequest {
+    props = props || {};
+    return new SendJsonRequest({url: this.getAbsoluteString(), object, ...props});
 };
 
 /**
- * Содает {@link efListView} из массива строк или элементов
- * @param options - опции {@link efListViewOptions}
- * @return {efListView}
+ * Создает SendJson запрос из данного URL
+ * @param {File[]} files - файлы для передачи
+ * @param {{ async?: boolean }} props - опции
+ *
+ * @return {SendFileRequest}
  */
-Array.prototype.listView = function(options?: efListViewOptions) {
-    return new efListView({items: this, ...options});
+URL.prototype.createSendFileRequest = function(files: File[], props?: { async?: boolean }): SendFileRequest {
+    props = props || {};
+    return new SendFileRequest({url: this.getAbsoluteString(), files, ...props});
+};
+
+/**
+ * Создает {@link TextView} элемент из строки
+ * @param {TextViewOptions} options - опции {@link TextViewOptions}
+ * @return {TextView}
+ */
+String.prototype.textView = function(options: TextViewOptions = {}) {
+    return new TextView({text: this as string, ...options});
+};
+
+/**
+ * Создает {@link HeaderTextView} элемент из строки
+ * @param {HeaderTextViewOptions} options - опции {@link HeaderTextViewOptions}
+ * @return {HeaderTextView}
+ */
+String.prototype.headerTextView = function(options: HeaderTextViewOptions = {headerLevel: 1}) {
+    return new HeaderTextView({text: this as string, ...options});
+};
+
+/**
+ * Создает {@link Button} из строки
+ * @param {ButtonOptions} options - опции {@link ButtonOptions}
+ * @return {Button}
+ */
+String.prototype.button = function(options?: ButtonOptions) {
+    return new Button({text: this as string, ...options});
+};
+
+/**
+ * Создает {@link IconView} из строки
+ * @param {IconViewOptions} options - опции {@link IconViewOptions}
+ * @return {IconView}
+ */
+String.prototype.iconView = function(options?: IconViewOptions) {
+    return new IconView({iconName: this as string, ...options});
+};
+
+/**
+ * Создает {@link URL} из строки
+ * @return {URL}
+ */
+String.prototype.url = function() {
+    return new URL(this as string);
+};
+
+/**
+ * Содает {@link ListView} из массива строк или элементов
+ * @param options - опции {@link ListViewOptions}
+ * @return {ListView}
+ */
+Array.prototype.listView = function(options?: ListViewOptions) {
+    return new ListView({items: this, ...options});
 };
 
 /**
@@ -132,5 +253,5 @@ Array.prototype.listView = function(options?: efListViewOptions) {
  * @param {string?} content - контента
  */
 Window.prototype.notifi = (text, title, content) => {
-    new efNotificationView({title, message: text, content}).present();
+    new NotificationView({title, message: text, content}).present();
 };

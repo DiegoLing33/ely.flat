@@ -22,138 +22,64 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import efApplication from "@app/app/efApplication";
-import elyFileWatcher from "@app/app/elyFileWatcher";
-import {efAppDevelopConsole} from "@app/develop/efAppDevelopConsole";
-import efCanvas from "@cnv/efCanvas";
-import efCanvasLayer from "@cnv/efCanvasLayer";
-import efSize from "@cnv/objs/efSize";
-import elyGridViewController from "@controllers/elyGridViewController";
-import elyScreenController from "@controllers/elyScreenController";
-import elySimplePageViewController from "@controllers/elySimplePageViewController";
-import elyViewController from "@controllers/elyViewController";
-import {efButton} from "@controls/action/efButton";
-import elyControl from "@controls/action/elyControl";
-import elyInput from "@controls/action/elyInput";
-import elyProgressView from "@controls/action/elyProgressView";
-import {efPanelView} from "@controls/content/efPanelView";
-import {elyDataGridView} from "@controls/data/elyDataGridView";
-import elyStylesheet from "@controls/elyStylesheet";
+import Application from "@app/app/Application";
+import AppFileWatcher from "@app/app/AppFileWatcher";
+import SingleApp, {TefSingleInit} from "@app/SingleApp";
+import GridViewController from "@controllers/GridViewController";
+import ScreenController from "@controllers/ScreenController";
+import SimplePageViewController from "@controllers/SimplePageViewController";
+import ViewController from "@controllers/ViewController";
+import Button from "@controls/action/Button";
+import Control from "@controls/action/Control";
+import AppStylesheet from "@app/AppStylesheet";
+import PanelView from "@controls/content/PanelView";
 import "@controls/elyUIExt";
-import elyGridView from "@controls/flex/elyGridView";
-import elyStaticGridView from "@controls/flex/elyStaticGridView";
-import {efField} from "@controls/input/efField";
-import {efSwitchField} from "@controls/input/efSwitchField";
-import {efTextField} from "@controls/input/efTextField";
-import {efGridLayoutView} from "@controls/layout/efGridLayoutView";
-import {efRowLayoutView} from "@controls/layout/efRowLayoutView";
-import {efListView} from "@controls/list/efListView";
-import {efNavigationView} from "@controls/navigation/efNavigationView";
-import {efNotificationView} from "@controls/notification/efNotificationView";
-import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
-import {efHeaderTextView} from "@controls/text/efHeaderTextView";
-import {efIconView} from "@controls/text/efIconView";
-import {efLinkTextView} from "@controls/text/efLinkTextView";
-import {efTextView} from "@controls/text/efTextView";
-import elyIconView from "@controls/text/elyIconView";
-import elyTextView from "@controls/text/elyTextView";
-import elyTextViewEditable from "@controls/text/elyTextViewEditable";
-import {efImageView} from "@controls/view/efImageView";
-import {efModalView} from "@controls/view/efModalView";
-import {efPreloaderView} from "@controls/view/efPreloaderView";
-import {elyFormView} from "@controls/view/elyFormView";
-import elyScrollView from "@controls/view/elyScrollView";
-import elyTableView from "@controls/view/elyTableView";
-import elyView from "@core/controls/elyView";
-import elyColor from "@core/elyColor";
-import {elyColorUtils} from "@core/elyColorUtils";
-import elyCookie from "@core/elyCookie";
-import elyDeviceDetector from "@core/elyDeviceDetector";
-import elyGuard from "@core/elyGuard";
-import elySimpleJSONParser from "@core/elySimpleJSONParser";
-import {elyTime} from "@core/elyTime";
-import elyTimer from "@core/elyTimer";
-import elyUtils from "@core/elyUtils";
-import elyXLogger from "@core/utils/elyXLogger";
-import elyGetRequest from "@core/web/request/elyGetRequest";
-import elyPostRequest from "@core/web/request/elyPostRequest";
-import elyURL from "@core/web/url/elyURL";
-import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
-import elyAxis from "@enums/elyAxis";
-import elyDirection from "@enums/elyDirection";
-import elySize from "@enums/elySize";
-import elyStyle from "@enums/elyStyle";
+import Field from "@controls/input/Field";
+import SwitchField from "@controls/input/SwitchField";
+import TextField from "@controls/input/TextField";
+import GridLayoutView from "@controls/layout/GridLayoutView";
+import RowLayoutView from "@controls/layout/rowLayoutView";
+import ListView from "@controls/list/ListView";
+import NavigationView from "@controls/navigation/navigationView";
+import HeaderTextView from "@controls/text/HeaderTextView";
+import IconView from "@controls/text/IconView";
+import LinkTextView from "@controls/text/LinkTextView";
+import TextView from "@controls/text/TextView";
+import ImageView from "@controls/view/ImageView";
+import ModalView from "@controls/view/ModalView";
+import PreloaderView from "@controls/view/PreloaderView";
+import Color from "@core/Color";
+import {ColorUtils} from "@core/ColorUtils";
+import View from "@core/controls/View";
+import Cookies from "@core/Cookies";
+import DeviceDetector from "@core/DeviceDetector";
+import {isNone, isSet, safeJsonParse, variable, variableAndSet} from "@core/Guard";
+import Observable from "@core/observable/Observable";
+import ObservableArray from "@core/observable/properties/ObservableArray";
+import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
+import ObservableDictionary from "@core/observable/properties/ObservableDictionary";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import Time from "@core/Time";
+import Timer from "@core/Timer";
+import Utils from "@core/Utils";
+import SendFileRequest from "@core/web/request/SendFileRequest";
+import SendJsonRequest from "@core/web/request/sendJsonRequest";
+import URLRequest, {URLRequestHeaderName, URLRequestMethod} from "@core/web/request/URLRequest";
+import {efxApp} from "@efxApp/efxApp";
 import Size from "@enums/Size";
 import Style from "@enums/Style";
-import TextFieldType from "@enums/textFieldType";
+import TextFieldType from "@enums/TextFieldType";
 import Weight from "@enums/Weight";
-import {elyDataPickerField} from "@fields/elyDataPickerField";
-import {elyTextField} from "@fields/elyTextField";
-import ef2DVector from "@math/ef2DVector";
-import ef2DVectorValues from "@math/ef2DVectorValues";
-import {TefSingleInit} from "@app/efSingleApp";
-import {efSingleApp} from "../app/efSingleApp";
-import {efxApp} from "@efxApp/efxApp";
-
-/**
- * @interface elyViewOptions
- */
-
-/**
- * @typedef {Object} IPosition
- * @property {number|string} [top]
- * @property {number|string} [right]
- * @property {number|string} [bottom]
- * @property {number|string} [left]
- */
-
-/**
- * @typedef {Object} elyFlexGridViewOptions
- * @property {number[][]} [flex]
- * @property {IPosition} [margin]
- */
-
-/**
- * @typedef {elyFlexGridViewOptions} elyFormViewOptions
- * @property {boolean} [checkEmpty = true] - проверка на пустоту
- * @property {boolean} [detectSubmitButton = true] - автоопределение кнопки submit
- * @property {boolean} [checkValidation = true] - проверка валидации
- */
-
-/**
- * @typedef {Object} elyFieldViewOptions
- * @property {string} [placeholder]
- * @property {boolean} [editable]
- * @property {string} [hint]
- */
-
-/**
- * @typedef {elyFieldViewOptions} elySwitchFieldOptions
- * @property {string} [title]
- * @property {boolean} [value]
- */
-
-/**
- * @typedef {elyFieldOptions} elyDataPickerFieldOptions
- * @property {number} [maxTipsCount]
- * @property {Object|string[]} [items]
- * @property {*} [value]
- */
-
-/**
- * @typedef {elyFieldOptions} elyTextFieldOptions
- * @property {elyFieldType} [fieldType]
- * @property {boolean} [encrypted]
- * @property {string} [fieldIcon]
- * @property {string} [value]
- */
+import XLogger from "@core/utils/XLogger";
+import AppDevelopConsole from "@app/develop/appDevelopConsole";
+import NotificationView from "@controls/notification/notificationView";
 
 /**
  *
  * @param result
  */
 const elyOnReady = (result: (next: (result: boolean, reason?: string) => void) => void): void => {
-    efApplication.default.addReadyObserver(result);
+    Application.default.addReadyObserver(result);
 };
 
 /**
@@ -162,36 +88,44 @@ const elyOnReady = (result: (next: (result: boolean, reason?: string) => void) =
  * @param viewController
  * @param canOverwrite
  */
-const addController = (name: string, viewController: elyViewController, canOverwrite: boolean = true): void => {
-    elyScreenController.default.addControllerName(name, viewController, canOverwrite);
+const addController = (name: string, viewController: ViewController, canOverwrite: boolean = true): void => {
+    Application.default.getApplicationScreenController().addControllerName(name, viewController, canOverwrite);
 };
 
 /**
  * Возвращает приложение
- * @return {efApplication}
+ * @return {Application}
  */
-const app = (): efApplication => {
-    return efApplication.default;
+const app = (): Application => {
+    return Application.default;
 };
 
 /**
- * Возвращает навигацию
- * @return {efNavigationView}
+ * Возвращает контроллер экранов
+ * @return {ScreenController}
  */
-const navigation = (): efNavigationView => {
+const screenController = (): ScreenController => {
+    return app().getApplicationScreenController();
+}
+
+/**
+ * Возвращает навигацию
+ * @return {NavigationView}
+ */
+const navigation = (): NavigationView => {
     return app().getApplicationNavigationView();
 };
 
 window.onload = () => {
-
-    elyXLogger.default.clear = true;
-    if (efSingleApp.isUsesSingle()) {
-        efSingleApp.applicationInitFunction = window.efSingleInit!;
+    XLogger.default.clear = true;
+    if (SingleApp.isUsesSingle()) {
+        SingleApp.applicationInitFunction = window.efSingleInit!;
         Object.keys(window.elyflatobjects).forEach(value => {
             window[value] = window.elyflatobjects[value];
         });
     }
-    efApplication.loadApplication(() => {
+    Application.loadApplication(() => {
+        //
     });
 };
 declare global {
@@ -205,206 +139,182 @@ declare global {
 
 /**
  * @param {*} config
- * @return {function(vc: elySimplePageViewController)}
+ * @return {function(vc: SimplePageViewController)}
  */
-window.efSingleInit = window.efSingleInit || undefined;
+window.efSingleInit = window.efSingleInit || (window.ef || null);
 
 window.elyflatobjects = {
-    app,
-    navigation,
-    elyOnReady,
     addController,
+    app,
+    elyOnReady,
+    navigation,
+    screenController,
 
+    AppDevelopConsole,
     efxApp,
 
-    elyStylesheet,
-    efApplication,
+    // elyGuard
 
-    elyTime,
-    elyDeviceDetector,
-    elyColor,
-    elyGuard,
-    elyTimer,
-    elyCookie,
+    isNone,
+    isSet,
+    safeJsonParse,
+    variable,
+    variableAndSet,
 
-    elyXLogger,
-    elySimpleJSONParser,
-    elyUtils,
-    elyColorUtils,
-    elyFileWatcher,
+    // elyObservable
+    Observable,
+    ObservableArray,
+    ObservableBoolean,
+    ObservableDictionary,
+    ObservableProperty,
 
-    elyURL,
-    elyGetRequest,
-    elyPostRequest,
+    // elyRequest
+    URLRequest,
+    URLRequestHeaderName,
+    URLRequestMethod,
 
-    elyView,
+    SendFileRequest,
+    SendJsonRequest,
 
-    elyControl,
+    AppStylesheet,
+    Application,
 
-    elyIconView,
-    elyTextViewEditable,
+    DeviceDetector,
+    Color,
+    Time,
+    Timer,
+    Cookies,
 
-    elyProgressView,
-    elyTextView,
-    elyGridView,
-    elyStaticGridView,
-    efImageView,
-    elyFormView,
-    elyDataGridView,
-    efNotificationView,
-    elyProgressNotificationView,
+    XLogger,
+    Utils,
+    ColorUtils,
+    AppFileWatcher,
 
-    efModalView,
-    elyScrollView,
-    elyTableView,
+    View,
 
-    elyInput,
-    elyTextField,
-    elyDataPickerField,
-    elyColorPickerField,
+    Control,
 
-    elyScreenController,
-    elyViewController,
-    elySimplePageViewController,
-    elyGridViewController,
+    ScreenController,
+    ViewController,
+    SimplePageViewController,
+    GridViewController,
 
     Style,
     Size,
     Weight,
     TextFieldType,
 
-    elySize,
-    elyStyle,
-    efSize,
-    elyAxis,
-    elyDirection,
+    TextView,
+    LinkTextView,
+    IconView,
+    HeaderTextView,
 
-    ef2DVector,
-    ef2DVectorValues,
-    efCanvas,
-    efCanvasLayer,
+    Button,
 
-    efTextView,
-    efLinkTextView,
-    efIconView,
-    efHeaderTextView,
+    ListView,
 
-    efButton,
+    Field,
+    TextField,
+    SwitchField,
 
-    efListView,
+    RowLayoutView,
+    GridLayoutView,
 
-    efField,
-    efTextField,
-    efSwitchField,
+    PanelView,
+    ImageView,
 
-    efRowLayoutView,
-    efGridLayoutView,
+    NavigationView,
+    ModalView,
+    NotificationView,
 
-    efPanelView,
-
-    efNavigationView,
-
-    efPreloaderView,
-
-    efAppDevelopConsole,
+    PreloaderView,
 };
 
 // @ts-ignore
 /** exporting */
 export {
+    // Types
     app,
     navigation,
     elyOnReady,
     addController,
+    screenController,
 
     efxApp,
+    AppDevelopConsole,
 
-    elyStylesheet,
-    efApplication,
+    // elyGuard
+    variable,
+    variableAndSet,
+    isSet,
+    isNone,
+    safeJsonParse,
 
-    elyTime,
-    elyDeviceDetector,
-    elyColor,
-    elyGuard,
-    elyTimer,
-    elyCookie,
+    // elyObservable
+    Observable,
+    ObservableProperty,
+    ObservableArray,
+    ObservableDictionary,
+    ObservableBoolean,
 
-    elyXLogger,
-    elySimpleJSONParser,
-    elyUtils,
-    elyColorUtils,
-    elyFileWatcher,
+    // elyRequest
+    URLRequest,
+    URLRequestMethod,
+    URLRequestHeaderName,
 
-    elyURL,
-    elyGetRequest,
-    elyPostRequest,
+    SendJsonRequest,
+    SendFileRequest,
 
-    elyView,
+    AppStylesheet,
+    Application,
 
-    elyControl,
+    Time,
+    DeviceDetector,
+    Color,
+    Timer,
+    Cookies,
 
-    elyIconView,
-    elyTextViewEditable,
+    XLogger,
+    Utils,
+    ColorUtils,
+    AppFileWatcher,
 
-    elyProgressView,
-    elyTextView,
-    elyGridView,
-    elyStaticGridView,
-    efImageView,
-    elyFormView,
-    elyDataGridView,
-    efNotificationView,
-    elyProgressNotificationView,
+    View,
 
-    efModalView,
-    elyScrollView,
-    elyTableView,
+    Control,
 
-    elyInput,
-    elyTextField,
-    elyDataPickerField,
-    elyColorPickerField,
-
-    elyScreenController,
-    elyViewController,
-    elySimplePageViewController,
-    elyGridViewController,
+    ScreenController,
+    ViewController,
+    SimplePageViewController,
+    GridViewController,
 
     Style,
     Size,
     Weight,
     TextFieldType,
 
-    elySize,
-    elyStyle,
-    efSize,
-    elyAxis,
-    elyDirection,
+    TextView,
+    LinkTextView,
+    IconView,
+    HeaderTextView,
 
-    ef2DVector,
-    ef2DVectorValues,
-    efCanvas,
-    efCanvasLayer,
+    Button,
 
-    efTextView,
-    efLinkTextView,
-    efIconView,
-    efHeaderTextView,
+    ListView,
 
-    efButton,
+    Field,
+    TextField,
+    SwitchField,
 
-    efListView,
+    RowLayoutView,
+    GridLayoutView,
 
-    efField,
-    efTextField,
-    efSwitchField,
+    PanelView,
+    ImageView,
 
-    efRowLayoutView,
-    efGridLayoutView,
+    NavigationView,
+    ModalView,
+    NotificationView,
 
-    efPanelView,
-
-    efNavigationView,
-
-    efPreloaderView,
+    PreloaderView,
 };

@@ -1,0 +1,39 @@
+{
+  "name": "test",
+  "columns": {
+    "id": {
+      "type": "id"
+    },
+    "name": {
+      "type": "string"
+    },
+    "value": {
+      "type": "object"
+    }
+  },
+  "rows": [
+    {
+      "name": "light-1",
+      "value": [
+        127,
+        1,
+        105
+      ],
+      "id": "cb72e40257627ae77ed49493a78b11f5"
+    },
+    {
+      "name": "light-2",
+      "value": [
+        400,
+        244,
+        100
+      ],
+      "id": "c8f5476fca439deac23accd5e74c081e"
+    },
+    {
+      "name": "chainik",
+      "value": "on",
+      "id": "c6d17d9ffcfc74b29df97b2f3b6d0a18"
+    }
+  ]
+}

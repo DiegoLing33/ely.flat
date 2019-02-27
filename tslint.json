@@ -17,6 +17,7 @@
     "arrow-return-shorthand": false,
     "no-console": false,
     "max-classes-per-file": false
+//    "unified-signatures": false
   },
   "rulesDirectory": []
 }

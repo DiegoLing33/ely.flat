@@ -22,7 +22,7 @@ export class ConfigViewController extends elySimplePageViewController {
         super.viewDidLoad();
 
         // Установка заголовка и описания
-        // для контроллера типа elySimplePageViewController
+        // для контроллера типа SimplePageViewController
         this.title("ely.flat *{* Installer *}*");
         this.description("Настройка приложения");
 

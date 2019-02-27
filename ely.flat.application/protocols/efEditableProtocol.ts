@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableBoolean from "@core/observable/properties/elyObservableBoolean";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import {efProtocol} from "@protocols/efProtocol";
 
 /**
@@ -33,9 +33,9 @@ import {efProtocol} from "@protocols/efProtocol";
 export class efEditableProtocol extends efProtocol {
     /**
      * Свойство: флаг возможности редактирования
-     * @type {elyObservableBoolean}
+     * @type {ObservableBoolean}
      */
-    public readonly editableProperty: elyObservableBoolean = new elyObservableBoolean(true);
+    public readonly editableProperty: ObservableBoolean = new ObservableBoolean(true);
 
     /**
      * Возвращает флаг возможности редактирования
@@ -56,6 +56,6 @@ export class efEditableProtocol extends efProtocol {
      * @returns {boolean|this}
      */
     public editable(value?: boolean): boolean | efEditableProtocol {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.editableProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.editableProperty);
     }
 }

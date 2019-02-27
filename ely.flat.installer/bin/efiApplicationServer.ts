@@ -24,8 +24,10 @@
 
 import express = require("express");
 import * as http from "http";
-import elyXLogger from "../core/elyXLogger";
+import {efiDatabaseApi} from "./api/efiDatabaseApi";
+import elyXLogger from "./core/elyXLogger";
 import {efi, TResultCallback} from "./efi";
+import {TEfiServerApiMethod, TResponseApiCallback} from "./efiTypes";
 
 /**
  * Сервер
@@ -85,8 +87,10 @@ export class efiApplicationServer {
         try {
             this.server = this.app.listen(this.port, () => {
                 this.app.use((req, res, next) => {
+                    res.header("Content-Type", "text/json");
                     res.header("Access-Control-Allow-Origin", "*");
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    this.app.set("json spaces", 2);
                     next();
                 });
                 efi.logger.log("Сервер успешно запущен. Порт: " + this.port);
@@ -211,6 +215,37 @@ export class efiApplicationServer {
                 response(res, false, {error: "Метод API не найден"});
             }
         });
+
+        this.app.use("/db/:method", (req, res) => {
+            const func = efiDatabaseApi[req.params.method] as
+                ((p: string, c: TResponseApiCallback) => TEfiServerApiMethod);
+            efi.logger.log(`Запрос [&redDB&rst] [&cyn${req.params.method}&rst]: ${JSON.stringify(req.query)}`);
+
+            if (typeof func === "function") {
+                const method = func(efi.workingDirectory, (status, response) => {
+                    sendResponseAPIFormat(res, status, response);
+                });
+                const args = {};
+                for (const arg of method.args) {
+                    if (!req.query.hasOwnProperty(arg)) {
+                        return sendResponseAPIFormat(res, false, `Не найден аргумент: ${arg}`);
+                    } else {
+                        args[arg] = req.query[arg];
+                    }
+                }
+                return method.method({...args, ...req.query});
+            }
+            sendResponseAPIFormat(res, false, "Метод API не найден");
+        });
+
+        function sendResponseAPIFormat(res, status: boolean, response: any): void {
+            if (!status) efi.logger.error(`Ошибка: ${response}`);
+            res.send({
+                response,
+                status,
+            });
+            return;
+        }
 
         /**
          * Отображает ответ

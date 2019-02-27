@@ -46,13 +46,13 @@ var Key = {
  *
  */
 
-import elyObservable from "@core/observable/elyObservable";
+import Observable from "@core/observable/Observable";
 
 /**
  * Клавиатура
- * @augments {elyObservable}
+ * @augments {Observable}
  */
-export default class efKeyboard extends elyObservable {
+export default class efKeyboard extends Observable {
 
     /**
      * Стандартная клавиатура

@@ -10,11 +10,9 @@
 //  Подключение необходимых модулей
 //
 import {
-    addController,
-    efButton, efTextField, efxApp,
-    elyOnReady,
-    elySimplePageViewController,
-} from "./ely.flat";
+    addController, Button,
+    elyOnReady, SimplePageViewController, TextField, View,
+} from "../../ely.flat.installer/build/ely.flat";
 
 //
 // Режим разработчика. Раскоментируйте
@@ -32,7 +30,7 @@ import {
  * @controllerName Index
  */
 
-class IndexViewController extends elySimplePageViewController {
+class IndexViewController extends SimplePageViewController {
 
     /**
      * Данный метод выполняется после загрузки экрана
@@ -42,21 +40,21 @@ class IndexViewController extends elySimplePageViewController {
      * + Данный метод выполняется один раз.
      *
      * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-     * понимания отрисовки элементов elyView.
+     * понимания отрисовки элементов View.
      */
     viewDidLoad() {
         // Вызов рдительского метода
         super.viewDidLoad();
 
         // Установка заголовка и описания
-        // для контроллера типа elySimplePageViewController
+        // для контроллера типа SimplePageViewController
         this.title("ely.Flat *{* *}*");
         this.description("Приложение разработано на основе ely.flat framework");
 
-        let name = new efTextField({placeholder: "Введите название"});
-        let count = new efTextField({placeholder: "Введите количество"});
+        let name = new TextField({placeholder: "Введите название"});
+        let count = new TextField({placeholder: "Введите количество"});
         // Создание первого элемента!
-        let button = new efButton({text: "Добавить", fill: true});
+        let button = new Button({text: "Добавить", fill: true});
         button.click(() => {
             if(name.isEmpty()) return name.error(true);
             if(count.isEmpty()) return count.error(true);
@@ -67,9 +65,10 @@ class IndexViewController extends elySimplePageViewController {
             });
         });
 
+
         // Отображение элемента в макете контроллера
         this.view.add(name, count);
-        this.view.add("<br>".textView());
+        this.view.add(View.breakLine());
         this.view.add(button);
     }
 }
@@ -78,6 +77,7 @@ class IndexViewController extends elySimplePageViewController {
 //  Обработка завершения запуска приложения
 //
 elyOnReady(next => {
+
 
     // Регистрация контроллера в приложении по имени
     addController("index", new IndexViewController());

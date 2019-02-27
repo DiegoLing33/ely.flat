@@ -3,6 +3,7 @@
     <module2copyright>
       <element module="TS" copyright="Diego Ling" />
       <element module="SCSS" copyright="Diego Ling (short)" />
+      <element module="D.TS" copyright="Diego Ling" />
     </module2copyright>
     <LanguageOptions name="SCSS">
       <option name="fileTypeOverride" value="3" />

@@ -41,7 +41,8 @@
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.7.0",
     "tslib": "^1.9.3",
-    "typescript": "^3.3.0-dev.20181205"
+    "typescript": "^3.3.0-dev.20181205",
+    "@compodoc/compodoc": "1.1.8"
   },
   "devDependencies": {
     "@types/figlet": "^1.2.0",

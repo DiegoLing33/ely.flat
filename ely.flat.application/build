@@ -30,6 +30,7 @@ CREATE_SINGLE_FLAG=true
 BUILD_FLAG=true
 CSS_FLAG=false
 JS_FLAG=false
+DOC_FLAG=false
 
 # Flags detecting
 for i in "$@" ; do
@@ -48,6 +49,9 @@ for i in "$@" ; do
     elif [[ "$i" == "-css" ]]; then
         echo "FLAG: $i. CSS BUILDING MODE"
         CSS_FLAG=true
+    elif [[ "$i" == "-doc" ]]; then
+        echo "FLAG: $i. CSS BUILDING DOC"
+        DOC_FLAG=true
     elif [[ "$i" == "-a" ]]; then
         echo "FLAG: $i. ALL BUILDING MODE"
         CSS_FLAG=true
@@ -110,4 +114,22 @@ if ${CSS_FLAG}; then
     echo "Copying the map file..."
         cp "${ELY_FLAT_STYLE_X_DIST_FILE_PATH}.map" "${INSTALLER_RES_DIR}/css"
     fi
+fi
+
+if ${DOC_FLAG}; then
+    add="
+        window.onload = () => {
+            let elements = document.getElementsByClassName(\" language-typescript\");
+
+            for(let element of elements){
+                element.innerHTML = element.innerHTML.replace(/<span class=\"token operator\">\*<\/span>/g, \"\");
+                element.innerHTML = element.innerHTML.replace(/      /g, \"\");
+            }
+
+            console.log(elements);
+        };
+    "
+    compodoc -p ../tsconfig.json --disableSourceCode --disablePrivate
+    doctext=$(cat "../documentation/js/compodoc.js")
+    echo "${doctext} ${add}" > "../documentation/js/compodoc.js"
 fi

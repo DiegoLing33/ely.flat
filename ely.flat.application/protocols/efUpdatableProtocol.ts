@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableBoolean from "@core/observable/properties/elyObservableBoolean";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import {efProtocol} from "@protocols/efProtocol";
 
 /**
@@ -34,10 +34,10 @@ export class efUpdatableProtocol extends efProtocol {
 
     /**
      * Свойство: флаг разрешения обновления объекта
-     * @type {elyObservableBoolean}
+     * @type {ObservableBoolean}
      */
-    public readonly canUpdateProperty: elyObservableBoolean
-        = new elyObservableBoolean(true);
+    public readonly canUpdateProperty: ObservableBoolean
+        = new ObservableBoolean(true);
 
     /**
      * Возвращает флаг разрешения обновления объекта
@@ -58,7 +58,7 @@ export class efUpdatableProtocol extends efProtocol {
      * @returns {boolean|this}
      */
     public canUpdate(value?: boolean): boolean | efUpdatableProtocol {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.canUpdateProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.canUpdateProperty);
     }
 
     /**

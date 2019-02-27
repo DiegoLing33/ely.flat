@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import {efProtocol} from "@protocols/efProtocol";
 
 /**
@@ -34,9 +34,9 @@ export class efValueProtocol<T> extends efProtocol {
 
     /**
      * Свойство: значение поля ввода
-     * @type {elyObservableProperty<T>}
+     * @type {ObservableProperty<T>}
      */
-    public readonly valueProperty: elyObservableProperty<T> = new elyObservableProperty<T>();
+    public readonly valueProperty: ObservableProperty<T> = new ObservableProperty<T>();
 
     /**
      * Возвращает значение поля ввода
@@ -57,7 +57,7 @@ export class efValueProtocol<T> extends efProtocol {
      * @returns {T|this|null}
      */
     public value(value?: T | null): T | null | efValueProtocol<T> {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.valueProperty);
     }
 
     /**

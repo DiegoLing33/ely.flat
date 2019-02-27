@@ -23,7 +23,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import * as figlet from "figlet";
-import elyXLogger from "../core/elyXLogger";
+import elyXLogger from "./core/elyXLogger";
 import {efi} from "./efi";
 
 /**

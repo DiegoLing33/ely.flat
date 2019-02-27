@@ -19,7 +19,6 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatServer from "@app/app/ely.server/elyFlatServer";
-import elyPostRequest from "@core/web/request/elyPostRequest";
 
 /**
  * Загружает файлы на сервер
@@ -33,14 +32,14 @@ export default class elyFlatServerFiles {
      * @param callback
      */
     public static upload(token: string, files: File[], callback: (result: boolean, error: any) => void): void {
-        new elyPostRequest(elyFlatServer.url + "/fs.upload?token=" + token).send(files,
-            (response, status1) => {
-                if (response && response.result) {
-                    callback(response.result, null);
-                } else if (response && response.error) {
-                    callback(false, response.error);
-                }
-            });
+        // new elyPostRequest(elyFlatServer.url + "/fs.upload?token=" + token).send(files,
+        //     (response, status1) => {
+        //         if (response && response.result) {
+        //             callback(response.result, null);
+        //         } else if (response && response.error) {
+        //             callback(false, response.error);
+        //         }
+        //     });
     }
 
     /**
@@ -51,11 +50,11 @@ export default class elyFlatServerFiles {
      */
     public static getFile(id: number, callback: (result: any | null, err: any | null) => void,
                           autoErrors: boolean | number[] = true): void {
-        elyFlatServer.getRequest("fs", "getFile", {id}, response => {
-            if (response && !response.error) callback(response.response, null);
-            else if (response && response.error) callback(null, response.error);
-            else callback(null, null);
-        });
+        // elyFlatServer.getRequest("fs", "getFile", {id}, response => {
+        //     if (response && !response.error) callback(response.response, null);
+        //     else if (response && response.error) callback(null, response.error);
+        //     else callback(null, null);
+        // });
     }
 
     /**
@@ -67,10 +66,10 @@ export default class elyFlatServerFiles {
      */
     public static removeFile(token: string, id: number, callback: (result: any | null, err: any | null) => void,
                              autoErrors: boolean | number[] = true): void {
-        elyFlatServer.getRequest("fs", "remove", {id, token}, response => {
-            if (response && !response.error) callback(response.response.result, null);
-            else if (response && response.error) callback(false, response.error);
-            else callback(false, null);
-        });
+        // elyFlatServer.getRequest("fs", "remove", {id, token}, response => {
+        //     if (response && !response.error) callback(response.response.result, null);
+        //     else if (response && response.error) callback(false, response.error);
+        //     else callback(false, null);
+        // });
     }
 }

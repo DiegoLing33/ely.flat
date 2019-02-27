@@ -18,23 +18,24 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
-import elyTextView from "@controls/text/elyTextView";
+import Control from "@controls/action/Control";
+import TextView from "@controls/text/TextView";
 
 /**
  * Подвал приложения
+ * @deprecated
  */
-export default class elyFooterView extends elyControl {
+export default class elyFooterView extends Control {
 
     /**
      * Основной текст
      */
-    public readonly titleView: elyTextView;
+    public readonly titleView: TextView;
 
     /**
      * Дополнительный текст
      */
-    public readonly subtitleView: elyTextView;
+    public readonly subtitleView: TextView;
 
     /**s
      * Констуктор
@@ -42,8 +43,8 @@ export default class elyFooterView extends elyControl {
     constructor() {
         super({class: "ef-footer"});
 
-        this.titleView = new elyTextView({class: "--title"});
-        this.subtitleView = new elyTextView({class: "--sub-title"});
+        this.titleView = new TextView({class: "--title"});
+        this.subtitleView = new TextView({class: "--sub-title"});
         this.addSubView(this.titleView);
         this.addSubView(this.subtitleView);
     }

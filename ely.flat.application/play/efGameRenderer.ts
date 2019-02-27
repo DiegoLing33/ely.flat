@@ -25,7 +25,7 @@
 import efContextImage from "@cnv/context/efContextImage";
 import efContextRect from "@cnv/context/efContextRect";
 import efContextText from "@cnv/context/efContextText";
-import elyColor from "@core/elyColor";
+import Color from "@core/Color";
 import ef2DRect from "@math/ef2DRect";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import efMouse from "@play/controllers/efMouse";
@@ -96,14 +96,14 @@ export default class efGameRenderer {
     public renderBackground(): void {
         this.canvas.backgroundLayer.clear();
         this.canvas.backgroundLayer.draw(new efContextRect({
-            fillColor: elyColor.black(),
+            fillColor: Color.black(),
             rect: new ef2DRect({position: ef2DVectorValues.zero(), size: this.canvas.size}),
         }));
         this.game.world.worldData!.map.forEach((row, rowIndex) => {
             row.forEach((col: any, colIndex) => {
                 if (col === 0) {
                     this.canvas.backgroundLayer.draw(new efContextRect({
-                        fillColor: elyColor.black(),
+                        fillColor: Color.black(),
                         rect: new ef2DRect({
                             position: new ef2DVectorValues({
                                 x: colIndex * efGameSettings.tileSize,
@@ -147,17 +147,17 @@ export default class efGameRenderer {
                 data.push(`Direct: ${this.game.target.directionName}`);
             }
             this.canvas.foregroundLayer.draw(new efContextText({
-                fillColor: elyColor.white(),
+                fillColor: Color.white(),
                 text: data.join("\n"),
                 vector: new ef2DVectorValues({x: 10, y: 10}),
             }));
         }
 
-        let mc = new elyColor({hex: "#ccc"});
+        let mc = new Color({hex: "#ccc"});
         if (this.game.world.isEntityAt(efMouse.default.getGridPosition()))
-            mc = new elyColor({hex: "#fdc784"});
+            mc = new Color({hex: "#fdc784"});
         if (!this.game.world.isPathing(efMouse.default.getGridPosition()))
-            mc = new elyColor({hex: "#fd3439"});
+            mc = new Color({hex: "#fd3439"});
         this.canvas.foregroundLayer.draw(new efContextRect({
             rect: new ef2DRect({
                 position: efMouse.default.getGridPosition().getMultiplied({xy: efGameSettings.tileSize}),
@@ -182,7 +182,7 @@ export default class efGameRenderer {
             this.canvas.entityLayer.draw(new efContextRect({
                 angle: entity.angle,
                 rect: entity.getAbsoluteRect(),
-                strokeColor: elyColor.red(),
+                strokeColor: Color.red(),
             }));
         }
     }

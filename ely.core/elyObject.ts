@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
+import elyObservable from "@core/observable/Observable";
 
 /**
  * Объект

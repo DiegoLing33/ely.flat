@@ -24,10 +24,10 @@
 
 import efCanvas from "@cnv/efCanvas";
 import efSize from "@cnv/objs/efSize";
-import elyControl from "@controls/action/elyControl";
-import elyView from "@core/controls/elyView";
-import elyObservable from "@core/observable/elyObservable";
-import elyXLogger from "@core/utils/elyXLogger";
+import Control from "@controls/action/Control";
+import View from "@core/controls/View";
+import Observable from "@core/observable/Observable";
+import XLogger from "@core/utils/XLogger";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import efKeyboard from "@play/controllers/efKeyboard";
@@ -41,13 +41,13 @@ import efGameWorld from "@play/efGameWorld";
 import efEntity from "@play/entities/efEntity";
 import ef2DSpritesManager from "@play/managers/ef2DSpritesManager";
 
-export default class efGame extends elyObservable {
+export default class efGame extends Observable {
 
     /**
      * Игровой фрейм
-     * @type {elyView}
+     * @type {View}
      */
-    public frameView: elyView = new elyControl({class: "ef-game-frame"});
+    public frameView: View = new Control({class: "ef-game-frame"});
 
     /**
      * Холст
@@ -98,14 +98,14 @@ export default class efGame extends elyObservable {
      */
     public constructor(props: { size: efSize }) {
         super();
-        elyXLogger.default.log("Инициилизация игрового движка...");
+        XLogger.default.log("Инициилизация игрового движка...");
         this.spritesManager = new ef2DSpritesManager();
 
         //
         //  Renderer gen
         //
-        elyXLogger.default.log("Инициилизация игрового рендера...");
-        elyXLogger.default.log(`Размер: ${props.size}`);
+        XLogger.default.log("Инициилизация игрового рендера...");
+        XLogger.default.log(`Размер: ${props.size}`);
         this.canvas = new efGameCanvas({size: props.size});
         this.camera = new ef2DCamera({
             size: new efSize({

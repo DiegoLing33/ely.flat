@@ -27,10 +27,10 @@ import efContextImage from "@cnv/context/efContextImage";
 import efContextRect from "@cnv/context/efContextRect";
 import efContextText from "@cnv/context/efContextText";
 import efSize from "@cnv/objs/efSize";
-import elyView from "@core/controls/elyView";
+import View from "@core/controls/View";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 
-export default class efCanvasLayer extends elyView {
+export default class efCanvasLayer extends View {
 
     /**
      * Размеры

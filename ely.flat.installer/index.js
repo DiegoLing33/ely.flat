@@ -7,10 +7,11 @@ var figlet = require("figlet");
 var path = require("path");
 var process = require("process");
 var cli_1 = require("./bin/cli");
+var elyXLogger_1 = require("./bin/core/elyXLogger");
 var efi_1 = require("./bin/efi");
 var efiApplicationServer_1 = require("./bin/efiApplicationServer");
 var efiConst_1 = require("./bin/efiConst");
-var elyXLogger_1 = require("./core/elyXLogger");
+var efiDatabase_1 = require("./bin/efxapp/db/efiDatabase");
 //
 //  CLI Performing
 //
@@ -66,6 +67,7 @@ function gui(wd) {
     var server = new efiApplicationServer_1.efiApplicationServer();
     server.startServer(function () {
         efi_1.efi.workingDirectory = wd || path.resolve("./");
+        efi_1.efi.db = new efiDatabase_1.efiDatabase({ path: efi_1.efi.workingDirectory + "/db" });
         // nothing is done
     });
 }

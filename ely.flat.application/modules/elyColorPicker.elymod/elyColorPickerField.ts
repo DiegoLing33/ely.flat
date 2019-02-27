@@ -20,16 +20,16 @@
 
 import "@devMods/elyColorPicker.elymod/color.picker";
 
-import elyControl from "@controls/action/elyControl";
-import {efField, efFieldOptions} from "@controls/input/efField";
-import elyColor from "@core/elyColor";
+import Control from "@controls/action/Control";
+import Field, {FieldOptions} from "@controls/input/Field";
+import ContainerView from "@controls/layout/ContainerView";
+import IconView from "@controls/text/IconView";
+import Color from "@core/Color";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
-import {efContainerView} from "@controls/layout/efContainerView";
-import {efIconView} from "@controls/text/efIconView";
 
 /**
  * @class elyColorPickerField
- * @augments {elyField<string>}
+ * @augments {Field<string>}
  * Поле выблора цвета
  *
  *
@@ -44,7 +44,7 @@ import {efIconView} from "@controls/text/efIconView";
  */
 @designable("value", elyDesignableFieldState.DENY)
 @designable("placeholder", elyDesignableFieldState.DENY)
-export default class elyColorPickerField extends efField<elyColor> {
+export default class elyColorPickerField extends Field<Color> {
 
     /**
      * Элемент выбора
@@ -54,24 +54,24 @@ export default class elyColorPickerField extends efField<elyColor> {
 
     /**
      * Элемент отображения цвета
-     * @type {elyControl}
+     * @type {Control}
      */
-    public colorView: elyControl = new elyControl({class: "ef-color-pict"});
+    public colorView: Control = new Control({class: "ef-color-pict"});
 
     /**
      * Иконка цвета
-     * @type {elyControl}
+     * @type {Control}
      */
-    public colorThumbnail: elyControl = new elyControl();
+    public colorThumbnail: Control = new Control();
 
-    public readonly actionIconView: efContainerView<efIconView> =
-        new efContainerView<efIconView>(new efIconView({iconName: "edit"}));
+    public readonly actionIconView: ContainerView<IconView> =
+        new ContainerView<IconView>(new IconView({iconName: "edit"}));
 
     /**
      * Конструктор
      * @param options
      */
-    public constructor(options: efFieldOptions<elyColor> = {}) {
+    public constructor(options: FieldOptions<Color> = {}) {
         super(options);
         this.addClass("ef-input");
         const accessory = this.getAccessory() as HTMLInputElement;
@@ -80,7 +80,7 @@ export default class elyColorPickerField extends efField<elyColor> {
         this.colorView.addSubView(this.colorThumbnail);
         // this.actionIconView.getDocument().append(this.colorThumbnail.getDocument());
         // this.colorThumbnail.getDocument().innerHTML = "&nbsp";
-        this.valueProperty.set(elyColor.black());
+        this.valueProperty.set(Color.black());
         this.actionIconView.addClass("ef-input-suffix");
         this.getDocument().append(this.actionIconView.getDocument());
         this.addClass("with-suffix");
@@ -104,7 +104,7 @@ export default class elyColorPickerField extends efField<elyColor> {
 
         accessory.oninput = () => {
             this.picker.set(accessory.value);
-            const ec = new elyColor({hex: accessory.value});
+            const ec = new Color({hex: accessory.value});
             accessory.value = ec.toString();
             // this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
             this.getAccessory().style.color = ec.getDarkerColor(0.14).toString();
@@ -115,7 +115,7 @@ export default class elyColorPickerField extends efField<elyColor> {
 
         this.picker.on("exit", () => {
             if (this.editable()) {
-                const ec = new elyColor({hex: accessory.value});
+                const ec = new Color({hex: accessory.value});
                 this.value(ec);
                 this.editable(false);
             }
@@ -123,7 +123,7 @@ export default class elyColorPickerField extends efField<elyColor> {
 
         this.picker.on("change", (color: string) => {
             if ("#" + color === this.value()!.toString()) return;
-            const ec = new elyColor({hex: color});
+            const ec = new Color({hex: color});
             accessory.value = ec.toString();
             // this.colorThumbnail.css({"background-color": ec.getDarkerColor(0.2).toString()});
             this.getAccessory().style.color = ec.getDarkerColor(0.14).toString();
@@ -131,7 +131,7 @@ export default class elyColorPickerField extends efField<elyColor> {
 
         this.placeholder("#______");
         this.editable(false);
-        this.value(options.value || elyColor.black());
+        this.value(options.value || Color.black());
     }
 
     /**

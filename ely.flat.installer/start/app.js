@@ -11,9 +11,9 @@
 //
 import {
     addController,
-    efButton,
+    Button,
     elyOnReady,
-    elySimplePageViewController,
+    SimplePageViewController,
 } from "./ely.flat";
 
 /**
@@ -23,7 +23,7 @@ import {
  * @controllerName Index
  */
 
-class IndexViewController extends elySimplePageViewController {
+class IndexViewController extends SimplePageViewController {
 
     /**
      * Данный метод выполняется после загрузки экрана
@@ -33,19 +33,20 @@ class IndexViewController extends elySimplePageViewController {
      * + Данный метод выполняется один раз.
      *
      * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-     * понимания отрисовки элементов elyView.
+     * понимания отрисовки элементов View.
      */
     viewDidLoad() {
         // Вызов рдительского метода
         super.viewDidLoad();
 
         // Установка заголовка и описания
-        // для контроллера типа elySimplePageViewController
+        // для контроллера типа SimplePageViewController
         this.title("ely.Flat *{* *}*");
         this.description("Приложение разработано на основе ely.flat framework");
 
         // Создание первого элемента!
-        let button = new efButton({text: "Нажми на меня", fill: true});
+        let button = new Button({text: "Нажми на меня", fill: true});
+
         button.click(() => {
             button.fadeOut();
         });

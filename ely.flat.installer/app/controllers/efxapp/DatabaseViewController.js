@@ -1,14 +1,7 @@
-import {
-    efButton,
-    efLinkTextView,
-    efPanelView,
-    efTextView,
-    Style,
-    elyControl,
-    elySimplePageViewController, elyDataGridView, efGridLayoutView, efPreloaderView, app, efTextField, Weight
-} from "../../../build/ely.flat";
+
 import {addHomeButton, workingDirectoryField} from "../../utils/utils";
 import {getDBDItemsCommand, getTableItemsCommand, setDBDItemValueCommand} from "../../utils/commands";
+import {app, GridLayoutView, PanelView, View, Weight} from "../../../build/ely.flat";
 
 /**
  * Контроллер отображения: Просмотр баз данных
@@ -23,14 +16,14 @@ export class DatabaseViewController extends elySimplePageViewController {
      * + Данный метод выполняется один раз.
      *
      * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-     * понимания отрисовки элементов elyView.
+     * понимания отрисовки элементов View.
      */
     viewDidLoad() {
         // Вызов рдительского метода
         super.viewDidLoad();
 
         // Установка заголовка и описания
-        // для контроллера типа elySimplePageViewController
+        // для контроллера типа SimplePageViewController
         this.title("efX-app");
         this.description("Просмотр баз данных");
 
@@ -38,9 +31,9 @@ export class DatabaseViewController extends elySimplePageViewController {
         this.currentTable = null;
 
         addHomeButton(this.view);
-        this.view.add(new elyControl({tag: "br"}));
+        this.view.add(View.breakLine());
 
-        let info = new efPanelView({
+        let info = new PanelView({
             panelActionText: "Хорошо, понятно.",
             panelActionClick: () => {
                 info.fadeOut();
@@ -54,9 +47,9 @@ export class DatabaseViewController extends elySimplePageViewController {
         );
         this.view.add(info);
 
-        this.dbsView = new efGridLayoutView();
+        this.dbsView = new GridLayoutView();
 
-        this.contentDbView = new efPanelView({});
+        this.contentDbView = new PanelView({});
         this.contentDbView.getContentView().add("Нет данных для отображения.".textView({opacity: 0.3}));
 
         this.view.add(this.dbsView, this.contentDbView);

@@ -23,7 +23,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efSize from "@cnv/objs/efSize";
-import elyXLogger from "@core/utils/elyXLogger";
+import XLogger from "@core/utils/XLogger";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import efEntity from "@play/entities/efEntity";
 import ef2DMovableSizableEntityProtocol from "@play/protocols/ef2DMovableSizableEntityProtocol";
@@ -46,7 +46,7 @@ export default class ef2DCamera extends ef2DMovableSizableEntityProtocol {
     public constructor(props: { size: efSize }) {
         super();
         this.size = props.size;
-        elyXLogger.default.log(`Инициилизирована камера: ${props.size.toString()}`);
+        XLogger.default.log(`Инициилизирована камера: ${props.size.toString()}`);
     }
 
     /**

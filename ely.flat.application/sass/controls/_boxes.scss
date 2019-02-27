@@ -151,7 +151,7 @@
 }
 
 .ef-loading {
-  background-color: rgba(255, 255, 255, 0.76);
+  background-color: $loadingColor;
   position: absolute;
   top: 0;
   left: 0;
@@ -169,7 +169,11 @@
 
     .ef-icon {
       font-size: 70px;
-      color: getPrimaryColor();
+      @if ($darkMode) {
+        color: #d9d1e5 !important;
+      } @else {
+        color: getPrimaryColor();
+      }
       display: block;
       margin-bottom: 10px;
     }
@@ -183,12 +187,12 @@
 
     .--title {
       padding: 15px;
-      color: rgba(0, 0, 0, 0.63);
+      color: $loadingTextColor;
     }
   }
 }
 
-table{
+table {
   border-collapse: collapse;
 }
 
@@ -207,7 +211,7 @@ $efDataGridViewTableBorder: 1px solid rgba(0, 0, 0, 0.58);
     padding: 10px;
   }
 
-  th{
+  th {
     color: rgba(0, 0, 0, 0.84);
   }
 
@@ -217,7 +221,7 @@ $efDataGridViewTableBorder: 1px solid rgba(0, 0, 0, 0.58);
     }
   }
 
-  caption{
+  caption {
     caption-side: top;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;

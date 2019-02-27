@@ -22,19 +22,16 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
-import {efTextView} from "@controls/text/efTextView";
-// import elyTextView from "@controls/text/elyTextView";
-// import elyTextViewEditable from "@controls/text/elyTextViewEditable";
-import elyView from "@core/controls/elyView";
-import elyViewOptions from "@core/controls/elyViewOptions";
+import Control from "@controls/action/Control";
+import TextView from "@controls/text/TextView";
+import View, {ViewOptions} from "@core/controls/View";
 import {designable, elyDesignableFieldState} from "@core/elyDesignable";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 
 /**
  * Опции для {@link elyDataGridViewOptions}
  */
-export interface elyDataGridViewOptions extends elyViewOptions {
+export interface elyDataGridViewOptions extends ViewOptions {
 
     /**
      * Количество строк
@@ -69,13 +66,13 @@ export interface elyDataGridViewOptions extends elyViewOptions {
     /**
      * Заголовок таблицы
      */
-    title?: string | elyView;
+    title?: string | View;
 }
 
 /**
  * Делегат элементов
  */
-type elyDataGridViewItemDelegate = (rowIndex: number, colIndex: number) => any | elyView;
+type elyDataGridViewItemDelegate = (rowIndex: number, colIndex: number) => any | View;
 
 /**
  * Делегат заголовков
@@ -101,7 +98,7 @@ type elyDataGridViewShouldSaveDelegate = (rowIndex: number, colIndex: number, va
  *
  * @author Diego Ling
  */
-export class elyDataGridView<T> extends elyView {
+export default class elyDataGridView<T> extends View {
 
     /**
      * Запрещает обновление
@@ -128,19 +125,19 @@ export class elyDataGridView<T> extends elyView {
      * Свойство: количество строк таблицы
      * @ignore
      */
-    protected readonly rowsCountProperty: elyObservableProperty<number>;
+    protected readonly rowsCountProperty: ObservableProperty<number>;
 
     /**
      * Свойство: количество колонок в таблице
      * @ignore
      */
-    protected readonly colsCountProperty: elyObservableProperty<number>;
+    protected readonly colsCountProperty: ObservableProperty<number>;
 
     /**
      * Свойство: флаг - первая колонка - колонка заголовков
      * @ignore
      */
-    protected readonly firstColumnIsHeaderProperty: elyObservableProperty<boolean>;
+    protected readonly firstColumnIsHeaderProperty: ObservableProperty<boolean>;
 
     /**
      * Исходные данные
@@ -158,13 +155,13 @@ export class elyDataGridView<T> extends elyView {
      * Свойство: флаг - рамка вокруг таблицы
      * @ignore
      */
-    protected readonly borderedStyleProperty: elyObservableProperty<boolean>;
+    protected readonly borderedStyleProperty: ObservableProperty<boolean>;
 
     /**
      * Свойство: заголовок таблицы
      * @ignore
      */
-    protected readonly titleProperty: elyObservableProperty<string | elyView>;
+    protected readonly titleProperty: ObservableProperty<string | View>;
 
     /**
      * Делегат запроса на разрешение редактировании ячейки
@@ -190,11 +187,11 @@ export class elyDataGridView<T> extends elyView {
         this.sourceData = props.sourceData || [];
         this.headers    = props.headers || null;
 
-        this.rowsCountProperty           = new elyObservableProperty<number>(props.rowsCount || 0);
-        this.colsCountProperty           = new elyObservableProperty<number>(props.colsCount || 0);
-        this.firstColumnIsHeaderProperty = new elyObservableProperty<boolean>(props.firstColumnIsHeader || false);
-        this.borderedStyleProperty       = new elyObservableProperty<boolean>(false);
-        this.titleProperty               = new elyObservableProperty<string | elyView>("");
+        this.rowsCountProperty           = new ObservableProperty<number>(props.rowsCount || 0);
+        this.colsCountProperty           = new ObservableProperty<number>(props.colsCount || 0);
+        this.firstColumnIsHeaderProperty = new ObservableProperty<boolean>(props.firstColumnIsHeader || false);
+        this.borderedStyleProperty       = new ObservableProperty<boolean>(false);
+        this.titleProperty               = new ObservableProperty<string | View>("");
 
         this.rowsCountProperty.change(() => this.update());
         this.colsCountProperty.change(() => this.update());
@@ -228,14 +225,14 @@ export class elyDataGridView<T> extends elyView {
     /**
      * Устанавливает заголовок таблицы
      */
-    public title(value: string | elyView): elyDataGridView<T>;
+    public title(value: string | View): elyDataGridView<T>;
 
     /**
      * Возвращает и устанавливает заголовок таблицы
      */
-    public title(value?: string | elyView): string | null | elyDataGridView<T> {
-        const val = elyObservableProperty.simplePropertyAccess(this, value, this.titleProperty);
-        return val instanceof elyView ? "" : val;
+    public title(value?: string | View): string | null | elyDataGridView<T> {
+        const val = ObservableProperty.simplePropertyAccess(this, value, this.titleProperty);
+        return val instanceof View ? "" : val;
     }
 
     /**
@@ -252,7 +249,7 @@ export class elyDataGridView<T> extends elyView {
      * Возвращает и устанавливает флаг - рамка вокруг таблицы
      */
     public borderedStyle(value?: boolean): boolean | null | elyDataGridView<T> {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.borderedStyleProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.borderedStyleProperty);
     }
 
     /**
@@ -287,7 +284,7 @@ export class elyDataGridView<T> extends elyView {
      * Возвращает и устанавливает флаг - первая колонка - колонка заголовков
      */
     public firstColumnIsHeader(value?: boolean): boolean | null | elyDataGridView<T> {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.firstColumnIsHeaderProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.firstColumnIsHeaderProperty);
     }
 
     /**
@@ -304,7 +301,7 @@ export class elyDataGridView<T> extends elyView {
      * Возвращает и устанавливает количество колонок в таблице
      */
     public colsCount(value?: number): number | null | elyDataGridView<T> {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.colsCountProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.colsCountProperty);
     }
 
     /**
@@ -321,7 +318,7 @@ export class elyDataGridView<T> extends elyView {
      * Возвращает и устанавливает количество строк таблицы
      */
     public rowsCount(value?: number): number | null | elyDataGridView<T> {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.rowsCountProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.rowsCountProperty);
     }
 
     /**
@@ -366,7 +363,7 @@ export class elyDataGridView<T> extends elyView {
      * Имя обсервера: rowDraw
      * @param o
      */
-    public addRowDrawObserver(o: (rowIndex: number, row: elyView) => void): elyDataGridView<T> {
+    public addRowDrawObserver(o: (rowIndex: number, row: View) => void): elyDataGridView<T> {
         this.addObserver("rowDraw", o);
         return this;
     }
@@ -376,9 +373,9 @@ export class elyDataGridView<T> extends elyView {
      *
      * Имя обсервера: cellDraw
      *
-     * @param {function(rowIndex: number, colIndex: number, cell: elyView, view: elyView)} o - наблюдатель
+     * @param {function(rowIndex: number, colIndex: number, cell: View, view: View)} o - наблюдатель
      */
-    public addCellDrawObserver(o: (rowIndex: number, colIndex: number, cell: elyView, view: elyView) => void):
+    public addCellDrawObserver(o: (rowIndex: number, colIndex: number, cell: View, view: View) => void):
         elyDataGridView<T> {
         this.addObserver("cellDraw", o);
         return this;
@@ -391,7 +388,7 @@ export class elyDataGridView<T> extends elyView {
      *
      * @param o - наблюдатель
      */
-    public addHeaderRowDrawObserver(o: (row: elyView) => void): elyDataGridView<T> {
+    public addHeaderRowDrawObserver(o: (row: View) => void): elyDataGridView<T> {
         this.addObserver("headerRowDraw", o);
         return this;
     }
@@ -403,7 +400,7 @@ export class elyDataGridView<T> extends elyView {
      *
      * @param o - наблюдатель
      */
-    public addHeaderCellDrawObserver(o: (colIndex: number, cell: elyView, view: elyView) => void): elyDataGridView<T> {
+    public addHeaderCellDrawObserver(o: (colIndex: number, cell: View, view: View) => void): elyDataGridView<T> {
         this.addObserver("headerCellDraw", o);
         return this;
     }
@@ -418,19 +415,19 @@ export class elyDataGridView<T> extends elyView {
         // Отрисовка заголовка
         //
         if (this.titleProperty.get()) {
-            const cap = new elyControl({tag: "caption"});
-            cap.addSubView(elyControl.tryMutateToView(this.titleProperty.get()));
+            const cap = new Control({tag: "caption"});
+            cap.addSubView(Control.tryMutateToView(this.titleProperty.get()));
             this.getDocument().append(cap.getDocument());
         }
         //
         // Отрисовка заголовков таблицы
         //
         if (this.headers) {
-            const row = new elyControl({tag: "tr"});
+            const row = new Control({tag: "tr"});
             this.notificate("headerRowDraw", [row]);
             for (let j = 0; j < this.colsCount(); j++) {
-                const col  = new elyControl({tag: "th"});
-                const cell = elyControl.tryMutateToView(this.headersDelegateProperty(j));
+                const col  = new Control({tag: "th"});
+                const cell = Control.tryMutateToView(this.headersDelegateProperty(j));
                 this.notificate("headerCellDraw", [j, col, cell]);
                 col.addSubView(cell);
                 row.addSubView(col);
@@ -441,11 +438,11 @@ export class elyDataGridView<T> extends elyView {
         //  Отрисовка элементов таблицы
         //
         for (let i = 0; i < this.rowsCount(); i++) {
-            const row = new elyControl({tag: "tr"});
+            const row = new Control({tag: "tr"});
             this.notificate("rowDraw", [i, row]);
             for (let j = 0; j < this.colsCount(); j++) {
-                const col = new elyControl({tag: (j === 0 && this.firstColumnIsHeader()) ? "th" : "td"});
-                const view = new efTextView({text: String(this.itemDelegateProperty(i, j))});
+                const col = new Control({tag: (j === 0 && this.firstColumnIsHeader()) ? "th" : "td"});
+                const view = new TextView({text: String(this.itemDelegateProperty(i, j))});
                 // if (this.allowEditDelegateProperty(i, j)) {
                 //     if (view instanceof elyTextView) {
                 //         view = elyTextView.editable(view);

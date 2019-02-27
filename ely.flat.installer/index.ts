@@ -6,10 +6,11 @@ import * as figlet from "figlet";
 import * as path from "path";
 import process = require("process");
 import {cli} from "./bin/cli";
+import elyXLogger from "./bin/core/elyXLogger";
 import {efi} from "./bin/efi";
 import {efiApplicationServer} from "./bin/efiApplicationServer";
 import {efiConst} from "./bin/efiConst";
-import elyXLogger from "./core/elyXLogger";
+import {efiDatabase} from "./bin/efxapp/db/efiDatabase";
 
 //
 //  CLI Performing
@@ -74,6 +75,7 @@ function gui(wd?: string) {
 
     server.startServer(() => {
         efi.workingDirectory = wd || path.resolve("./");
+        efi.db = new efiDatabase({path: efi.workingDirectory + "/db"});
         // nothing is done
     });
 

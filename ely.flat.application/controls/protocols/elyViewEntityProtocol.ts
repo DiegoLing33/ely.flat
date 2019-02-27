@@ -18,12 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControlOptions from "../options/elyControlOptions";
+import {ControlOptions} from "@controls/action/Control";
 
 /**
  * Сущность, созданная из объекта
  */
-export default interface elyViewEntityProtocol extends elyControlOptions {
+export default interface elyViewEntityProtocol extends ControlOptions {
     item: string;
 
     /**

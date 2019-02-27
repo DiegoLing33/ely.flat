@@ -19,13 +19,13 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyFlatServer from "@app/app/ely.server/elyFlatServer";
-import {efButton} from "@controls/action/efButton";
-import elyControl from "@controls/action/elyControl";
-import {efTextField} from "@controls/input/efTextField";
-import elyNotificationView from "@controls/notification/efNotificationView";
-import {efImageView} from "@controls/view/efImageView";
-import {efModalView} from "@controls/view/efModalView";
+import {Button} from "@controls/action/Button";
+import Control from "@controls/action/Control";
+import TextField from "@controls/input/TextField";
+import {ImageView} from "@controls/view/ImageView";
+import {ModalView} from "@controls/view/ModalView";
 import elyEncrypt from "@core/secure/elyEncrypt";
+import {NotificationView} from "@controls/notification/NotificationView";
 
 /**
  * Тест каптчи
@@ -101,23 +101,23 @@ export default class elyFlatServerCaptcha {
     /**
      * Модальное окно
      */
-    protected readonly modal: efModalView;
+    protected readonly modal: ModalView;
 
     /**
      * Поле изображения
      */
-    protected readonly imageView: efImageView = new efImageView();
+    protected readonly imageView: ImageView = new ImageView();
 
     /**
      * Поле ввода
      */
-    protected readonly textField: efTextField = new efTextField({placeholder: "Введите символы с картинки"});
+    protected readonly textField: TextField = new TextField({placeholder: "Введите символы с картинки"});
 
     /**
      * Кнопка
-     * @type {efButton}
+     * @type {Button}
      */
-    protected readonly button: efButton = new efButton({text: "Отправить", fill: true});
+    protected readonly button: Button = new Button({text: "Отправить", fill: true});
 
     /**
      * Соль
@@ -144,10 +144,10 @@ export default class elyFlatServerCaptcha {
      * @param options
      */
     public constructor(options: { name?: string } = {}) {
-        this.modal = new efModalView({modalTitle: "Защита"});
+        this.modal = new ModalView({modalTitle: "Защита"});
         // this.modal.__titleTextContainerView.iconName("shield");
         this.textField.getStyle().margin = "10px 0";
-        const control                    = new elyControl({style: {"text-align": "center"}});
+        const control                    = new Control({style: {"text-align": "center"}});
         control.addSubView(this.imageView);
         control.addSubView(this.textField);
         control.addSubView(this.button);
@@ -175,7 +175,7 @@ export default class elyFlatServerCaptcha {
                     if (this.attempts > elyFlatServerCaptcha.MAX_ATTEMPTS) {
                         __sendCallback(false);
                         this.modal.dismiss(true);
-                        new elyNotificationView({
+                        new NotificationView({
                             message: "Попробуйте еще раз." +
                                          " У Вас это точно получится.",
                             title:   "Первышено число попыток",

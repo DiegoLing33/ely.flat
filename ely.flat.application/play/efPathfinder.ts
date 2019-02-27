@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
+import Observable from "@core/observable/Observable";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import efGameWorld from "@play/efGameWorld";
 import efCharacter from "@play/entities/efCharacter";
@@ -32,7 +32,7 @@ import {astar, Graph} from "@play/utils/astar";
 /**
  * Поиск кратчайшего пути
  */
-export default class efPathfinder extends elyObservable {
+export default class efPathfinder extends Observable {
 
     /**
      * Объект игры

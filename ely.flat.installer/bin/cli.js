@@ -24,7 +24,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 exports.__esModule = true;
 var figlet = require("figlet");
-var elyXLogger_1 = require("../core/elyXLogger");
+var elyXLogger_1 = require("./core/elyXLogger");
 var efi_1 = require("./efi");
 /**
  * Выводит сообщение с помощью

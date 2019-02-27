@@ -1,12 +1,12 @@
 import {
-    efIconView,
-    efPanelView,
-    elyScreenController,
-    elySimplePageViewController,
+    IconView,
+    PanelView,
+    screenController,
+    SimplePageViewController,
     Size,
     Style,
     Weight,
-    efTextView,
+    TextView,
 } from "../../build/ely.flat";
 import {workingDirectoryField} from "../utils/utils";
 import {
@@ -19,7 +19,7 @@ import {
 /**
  * Контроллер отображения: Главный экран
  */
-export class IndexViewController extends elySimplePageViewController {
+export class IndexViewController extends SimplePageViewController {
 
     /**
      * Данный метод выполняется после загрузки экрана
@@ -29,7 +29,7 @@ export class IndexViewController extends elySimplePageViewController {
      * + Данный метод выполняется один раз.
      *
      * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-     * понимания отрисовки элементов elyView.
+     * понимания отрисовки элементов View.
      */
     viewDidLoad() {
         // Вызов рдительского метода
@@ -39,7 +39,7 @@ export class IndexViewController extends elySimplePageViewController {
 
 
         // Установка заголовка и описания
-        // для контроллера типа elySimplePageViewController
+        // для контроллера типа SimplePageViewController
         this.title("ely.flat *{* Installer *}*");
         this.description("Приложение для сборки и запуска приложения ely.flat.application");
 
@@ -47,7 +47,7 @@ export class IndexViewController extends elySimplePageViewController {
         let serverRunGrid = this.factoryGridCell("server", "refresh", "Live update server",
             "Запускает сервер живого обновления для отладки и разработки, " +
             "который обновляется при изменении файлов приложения.", () => {
-                elyScreenController.default.present("server");
+                screenController().present("server");
             });
 
         let buildGrid = this.factoryGridCell("build", "gavel", "Build the app",
@@ -71,10 +71,10 @@ export class IndexViewController extends elySimplePageViewController {
 
         let configGrid = this.factoryGridCell("config", "cog", "Configuration",
             "Настройки приложения.", () => {
-                elyScreenController.default.present("config");
+                screenController().present("config");
             });
 
-        let efiSettingsPanel = new efPanelView({
+        let efiSettingsPanel = new PanelView({
             panelTitle: "Настройки efi",
             panelActionText: "Изменить",
             panelActionClick: () => {
@@ -107,7 +107,7 @@ export class IndexViewController extends elySimplePageViewController {
 
             });
 
-        this.efiVersion = new efTextView({textSize: Size.large, textWeight: Weight.thin, text: "version: 0"});
+        this.efiVersion = new TextView({textSize: Size.large, textWeight: Weight.thin, text: "version: 0"});
         this.efiVersion.centered().opacity(0.14);
 
         this.view.add(appInitGrid, configGrid, buildGrid);
@@ -137,15 +137,15 @@ export class IndexViewController extends elySimplePageViewController {
      * @param title
      * @param desc
      * @param action
-     * @return {efPanelView}
+     * @return {PanelView}
      */
     factoryGridCell(name, icon, title, desc, action) {
         title = title.toUpperCase();
 
-        let panelView = new efPanelView();
+        let panelView = new PanelView();
         panelView.getStyle().height = "250px";
 
-        let iconView = new efIconView({
+        let iconView = new IconView({
             iconName: icon,
             iconStyle: Style.primary,
             iconSize: Size.xlarge,

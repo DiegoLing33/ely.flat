@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {efNotificationViewOptions, efNotificationView} from "@controls/notification/efNotificationView";
+import {NotificationViewOptions, NotificationView} from "@controls/notification/NotificationView";
 import elyIconView from "@controls/text/elyIconView";
 import elyTextView from "@controls/text/elyTextView";
 import elySize from "@enums/elySize";
@@ -26,7 +26,7 @@ import elySize from "@enums/elySize";
 /**
  * Опции
  */
-interface elyProgressNotificationOptions extends efNotificationViewOptions {
+interface elyProgressNotificationOptions extends NotificationViewOptions {
     /**
      * Отображаемые сообщения
      */
@@ -41,7 +41,7 @@ interface elyProgressNotificationOptions extends efNotificationViewOptions {
 /**
  * Шаблон прогресса
  */
-export default class elyProgressNotificationView extends efNotificationView {
+export default class elyProgressNotificationView extends NotificationView {
 
     /**
      * Коэффициент времени, необходимы для переключения строки

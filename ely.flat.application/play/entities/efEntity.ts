@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import elyDirection from "@enums/elyDirection";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
@@ -72,8 +72,8 @@ export default class efEntity extends ef2DMovableSizableEntityProtocol {
      * Свойство: видимость сущности
      * @ignore
      */
-    protected readonly visibleProperty: elyObservableProperty<boolean>
-        = new elyObservableProperty<boolean>(true);
+    protected readonly visibleProperty: ObservableProperty<boolean>
+        = new ObservableProperty<boolean>(true);
 
     //
     //  States
@@ -157,7 +157,7 @@ export default class efEntity extends ef2DMovableSizableEntityProtocol {
      * @returns {boolean|this|null}
      */
     public visible(value?: boolean): boolean | null | efEntity {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.visibleProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.visibleProperty);
     }
 
     /**

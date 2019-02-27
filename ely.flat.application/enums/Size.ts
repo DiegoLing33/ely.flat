@@ -33,48 +33,56 @@ export default class Size extends elyEnum<string> {
 
     /**
      * Стандартный размер
-     * @return elySize
+     * @type {Size}
      */
     public static readonly default = new Size("normal");
 
     /**
      * Основной размер, используемый в ely.flat
+     * @type {Size}
      */
     public static readonly normal = new Size("regular");
 
     /**
      * Размер во весь блок
+     * @type {Size}
      */
     public static readonly fill = new Size("fill");
 
     /**
      * Маленький размер
+     * @type {Size}
      */
     public static readonly small = new Size("small");
 
     /**
      * Очень маленький размер
+     * @type {Size}
      */
     public static readonly xsmall = new Size("xsmall");
 
     /**
      * Большой размер
+     * @type {Size}
      */
     public static readonly large = new Size("large");
 
     /**
      * Очень большой размер
+     * @type {Size}
      */
     public static readonly xlarge = new Size("xlarge");
 
     /**
      * Огромный размер
+     * @type {Size}
      */
     public static readonly xxlarge = new Size("xxlarge");
 
     /**
      * Свой размер
-     * @param value
+     * @param {string|number} value
+     * @type {Size}
      */
     public static custom(value: string | number): Size {
         if (typeof value === "number") value = value.toString() + "px";
@@ -83,7 +91,8 @@ export default class Size extends elyEnum<string> {
 
     /**
      * Возвращает размер по его названию
-     * @param name
+     * @param {string} name
+     * @return {Size}
      */
     public static byName(name: string): Size {
         return new Size(name);
@@ -91,6 +100,7 @@ export default class Size extends elyEnum<string> {
 
     /**
      * Список
+     * @return {*}
      */
     public static rawList() {
         return {
@@ -114,8 +124,8 @@ export default class Size extends elyEnum<string> {
     /**
      * Конструктор
      * @ignore
-     * @param val
-     * @param custom
+     * @param {string} val
+     * @param {boolean} custom
      */
     protected constructor(val: string, custom: boolean = false) {
         super(val);

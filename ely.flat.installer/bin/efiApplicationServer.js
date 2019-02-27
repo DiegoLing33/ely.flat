@@ -35,6 +35,7 @@ var __assign = (this && this.__assign) || function () {
 };
 exports.__esModule = true;
 var express = require("express");
+var efiDatabaseApi_1 = require("./api/efiDatabaseApi");
 var efi_1 = require("./efi");
 /**
  * Сервер
@@ -59,8 +60,10 @@ var efiApplicationServer = /** @class */ (function () {
         try {
             this.server = this.app.listen(this.port, function () {
                 _this.app.use(function (req, res, next) {
+                    res.header("Content-Type", "text/json");
                     res.header("Access-Control-Allow-Origin", "*");
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    _this.app.set("json spaces", 2);
                     next();
                 });
                 efi_1.efi.logger.log("Сервер успешно запущен. Порт: " + _this.port);
@@ -177,6 +180,36 @@ var efiApplicationServer = /** @class */ (function () {
                 response(res, false, { error: "Метод API не найден" });
             }
         });
+        this.app.use("/db/:method", function (req, res) {
+            var func = efiDatabaseApi_1.efiDatabaseApi[req.params.method];
+            efi_1.efi.logger.log("\u0417\u0430\u043F\u0440\u043E\u0441 [&redDB&rst] [&cyn" + req.params.method + "&rst]: " + JSON.stringify(req.query));
+            if (typeof func === "function") {
+                var method = func(efi_1.efi.workingDirectory, function (status, response) {
+                    sendResponseAPIFormat(res, status, response);
+                });
+                var args = {};
+                for (var _i = 0, _a = method.args; _i < _a.length; _i++) {
+                    var arg = _a[_i];
+                    if (!req.query.hasOwnProperty(arg)) {
+                        return sendResponseAPIFormat(res, false, "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D \u0430\u0440\u0433\u0443\u043C\u0435\u043D\u0442: " + arg);
+                    }
+                    else {
+                        args[arg] = req.query[arg];
+                    }
+                }
+                return method.method(__assign({}, args, req.query));
+            }
+            sendResponseAPIFormat(res, false, "Метод API не найден");
+        });
+        function sendResponseAPIFormat(res, status, response) {
+            if (!status)
+                efi_1.efi.logger.error("\u041E\u0448\u0438\u0431\u043A\u0430: " + response);
+            res.send({
+                response: response,
+                status: status
+            });
+            return;
+        }
         /**
          * Отображает ответ
          * @param res

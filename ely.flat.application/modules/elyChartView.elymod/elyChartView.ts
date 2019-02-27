@@ -18,12 +18,12 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyControl from "@controls/action/elyControl";
+import Control from "@controls/action/Control";
 import elyTableView from "@controls/view/elyTableView";
-import elyView from "@core/controls/elyView";
-import elyViewOptions from "@core/controls/elyViewOptions";
-import elyObservableArray from "@core/observable/properties/elyObservableArray";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import View from "@core/controls/View";
+import elyViewOptions from "@core/controls/ViewOptions";
+import ObservableArray from "@core/observable/properties/ObservableArray";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 
 interface elyChartViewOptions extends elyViewOptions {
 
@@ -46,7 +46,7 @@ interface elyChartViewData {
 /**
  * Граффик
  */
-export default class elyChartView extends elyControl {
+export default class elyChartView extends Control {
 
     /**
      * Заголовок
@@ -56,27 +56,27 @@ export default class elyChartView extends elyControl {
     /**
      * Отображение ступеней
      */
-    public readonly ticksView: elyControl;
+    public readonly ticksView: Control;
 
     /**
      * Данные графика
      */
-    public readonly data: elyObservableArray<elyChartViewData>;
+    public readonly data: ObservableArray<elyChartViewData>;
 
     /**
      * Шаг
      */
-    public readonly step: elyObservableProperty<number>;
+    public readonly step: ObservableProperty<number>;
 
     /**
      * Максимальная высота
      */
-    public readonly maxHeight: elyObservableProperty<number>;
+    public readonly maxHeight: ObservableProperty<number>;
 
     /**
      * Фон
      */
-    public readonly chartBackgroundView: elyView;
+    public readonly chartBackgroundView: View;
 
     /**
      * Конструктор
@@ -85,21 +85,21 @@ export default class elyChartView extends elyControl {
     constructor(options: elyChartViewOptions = {}) {
         super(options);
 
-        this.step = new elyObservableProperty<number>(50);
+        this.step = new ObservableProperty<number>(50);
 
         this.addClass("ef-chart");
 
-        this.data      = new elyObservableArray<elyChartViewData>();
-        this.maxHeight = new elyObservableProperty<number>(240);
+        this.data      = new ObservableArray<elyChartViewData>();
+        this.maxHeight = new ObservableProperty<number>(240);
 
         this.tableView = new elyTableView({title: "", class: "ef-chart-default"});
         this.addSubView(this.tableView);
         this.tableView.denyRebuild(true);
 
-        this.ticksView = new elyControl({class: "ticks"});
+        this.ticksView = new Control({class: "ticks"});
         this.addSubView(this.ticksView);
 
-        this.chartBackgroundView = new elyControl({class: "chart-bg"});
+        this.chartBackgroundView = new Control({class: "chart-bg"});
         this.addSubView(this.chartBackgroundView);
 
         this.step.change(() => this.update());
@@ -160,9 +160,9 @@ export default class elyChartView extends elyControl {
         this.chartBackgroundView.css({height: (mH + 120) + "px"});
 
         for (let i = 0; i < levels; i++) {
-            const tick = new elyControl({class: "tick"});
+            const tick = new Control({class: "tick"});
             tick.css({height: height + "px"});
-            const tt                   = new elyControl({tag: "p"});
+            const tt                   = new Control({tag: "p"});
             tt.getDocument().innerText = (this.step.get(1) * (levels - i)).toString();
             tick.addSubView(tt);
             this.ticksView.addSubView(tick);
@@ -198,7 +198,7 @@ export default class elyChartView extends elyControl {
             //
             const col = elyTableView.createTableColumnView();
             col.addClass("bar");
-            const ctn                   = new elyControl({tag: "p"});
+            const ctn                   = new Control({tag: "p"});
             ctn.getDocument().innerText = value.value.toString();
             col.addSubView(ctn);
             col.css({width: (offsetSize - 10) + "px", height: ((value.value * mH) / upb) + "px"});

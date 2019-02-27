@@ -1,14 +1,13 @@
 import {
-    efTextField,
-    elyGetRequest,
+    TextField,
     elyProgressNotificationView,
-    elyScreenController,
-    Style
+    screenController,
+    Style, URLRequest
 } from "../../build/ely.flat";
 
 export function addHomeButton(view) {
     view.add("Назад".button({buttonStyle: Style.info}).fill().click(() => {
-        elyScreenController.default.present("index");
+        screenController().present("index");
     }));
 }
 
@@ -27,13 +26,13 @@ export function execRequest(command, loadingText, data, response) {
     if (loadingText) {
         prog.present();
     }
-    new elyGetRequest({url: "http://127.0.0.1:1583/" + command}).send(data, (resp) => {
-        response(resp.response, resp);
-        if (loadingText) prog.dismiss(true);
+    URLRequest.sendGET("http://127.0.0.1:1583/" + command, data, (response, status) => {
+       response(status, response);
+       if(loadingText) prog.dismiss(true);
     });
 }
 
-export const workingDirectoryField = new efTextField({placeholder: "Рабочая директория"});
+export const workingDirectoryField = new TextField({placeholder: "Рабочая директория"});
 
 /**
  * @type {{win: Window}}

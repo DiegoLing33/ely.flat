@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyXLogger from "@core/utils/elyXLogger";
+import XLogger from "@core/utils/XLogger";
 import elyDirection from "@enums/elyDirection";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
@@ -141,7 +141,7 @@ export default class efCharacter extends efEntity {
         if (this.__requestPathDelegate) {
             return this.__requestPathDelegate(point);
         } else {
-            elyXLogger.default.error(`Ошибка построения пути для ${this} в точку ${point}`);
+            XLogger.default.error(`Ошибка построения пути для ${this} в точку ${point}`);
             return [];
         }
     }

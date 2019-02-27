@@ -42,7 +42,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: elyColorUtils.ts                                                     +
+     + Файл: ColorUtils                                                     +
      + Файл изменен: 06.01.2019 05:32:41                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -280,7 +280,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: elyColor.ts                                                          +
+     + Файл: Color                                                          +
      + Файл изменен: 31.01.2019 02:40:23                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -293,7 +293,7 @@
     class elyColor {
         /**
          * Конструктор
-         * @param {{ __hex?: string, rgb?: elyColorRGB, hsv?: elyColorHSV }} props - параметры
+         * @param {{ __hex?: string, rgb?: ColorRGB, hsv?: ColorHSV }} props - параметры
          */
         constructor(props = {}) {
             /**
@@ -370,7 +370,7 @@
         }
         /**
          * Возвращает байты цветов
-         * @return {elyColorRGB}
+         * @return {ColorRGB}
          */
         getRGBBytes() {
             return {
@@ -382,7 +382,7 @@
         /**
          * Устанавливает RGB цвета
          *
-         * @param {{elyColorRGB}} props
+         * @param {{ColorRGB}} props
          */
         setRGBBytes(props) {
             if (props.rgb.red > 255)
@@ -476,7 +476,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyUtils.ts                                                          +
+     + Файл: Utils.ts                                                       +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -749,7 +749,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyGuard.ts                                                          +
+     + Файл: Guard.ts                                                          +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -811,7 +811,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyObservable.ts                                                     +
+     + Файл: Observable.ts                                                  +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -891,7 +891,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyObservableProperty.ts                                             +
+     + Файл: ObservableProperty                                             +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -943,7 +943,7 @@
          *
          *
          *     // Создаем прослушиваемый параметр
-         *     let prop = new elyObservableProperty<string>();
+         *     let prop = new ObservableProperty<string>();
          *
          *     // Отображаем в консоль "защищенное" значение (с флагом guard)
          *     console.log( prop.get( "test" ) ); // test
@@ -965,7 +965,7 @@
          *
          *
          *     // Создаем прослушиваемый параметр
-         *     let prop = new elyObservableProperty<string>();
+         *     let prop = new ObservableProperty<string>();
          *     prop.set( "Tom" );
          *
          *     // Запрещаем перезапись
@@ -991,7 +991,7 @@
          *
          *
          *     // Создаем прослушиваемый параметр
-         *     let prop = new elyObservableProperty<string>();
+         *     let prop = new ObservableProperty<string>();
          *     prop.set( "Tom" );
          *
          *     // Отображаем в консоль "защищенное" значение (с флагом guard)
@@ -1025,7 +1025,7 @@
          *
          *
          *     // Создание свойства
-         *     let observableString = new elyObservableProperty<string>();
+         *     let observableString = new ObservableProperty<string>();
          *
          *     observableString.change( value => {
          *          console.log("Set to: " + value);
@@ -1072,7 +1072,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyObservableDictionary.ts                                           +
+     + Файл: ObservableDictionary                                           +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -1257,7 +1257,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyStylesheet.ts                                                     +
+     + Файл: AppStylesheet.ts                                                     +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /*
@@ -1279,7 +1279,7 @@
      * Использование, изменение, копирование, распространение, обмен/продажа
      * могут выполняться исключительно в согласии с условиями файла COPYING.
      *
-     * Файл: elyStylesheet.ts
+     * Файл: AppStylesheet.ts
      * Файл создан: 19.11.2018 20:56:39
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      *
@@ -1399,7 +1399,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppColorManager.ts                                                 +
+     + Файл: AppColorManagers                                                 +
      + Файл изменен: 30.01.2019 01:44:27                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -1434,27 +1434,27 @@
         applyApplicationColor(color) {
             const darker = color.getDarkerColor(0.1);
             const lighter = color.getLighterColor(0.18);
-            // elyStylesheet.global.addClass("bg-primary", {
+            // AppStylesheet.global.addClass("bg-primary", {
             //     backgroundColor: color.toString(),
             //     color: color.isDarker() ? "white" : "black",
             // });
-            // elyStylesheet.global.addClass("brd-primary", {
+            // AppStylesheet.global.addClass("brd-primary", {
             //     borderColor: color.toString(),
             // });
             //
-            // elyStylesheet.global.addClass("text-primary", {
+            // AppStylesheet.global.addClass("text-primary", {
             //     color: color.toString(),
             // });
             //
-            // elyStylesheet.global.addClass("bg-info", {
+            // AppStylesheet.global.addClass("bg-info", {
             //     backgroundColor: lighter.toString(),
             //     color: lighter.isDarker() ? "white" : "black",
             // });
-            // elyStylesheet.global.addClass("brd-info", {
+            // AppStylesheet.global.addClass("brd-info", {
             //     borderColor: lighter.toString(),
             // });
             //
-            // elyStylesheet.global.addClass("text-info", {
+            // AppStylesheet.global.addClass("text-info", {
             //     color: lighter.toString(),
             // });
             elyStylesheet.global.add("::-webkit-scrollbar-track", {
@@ -1518,7 +1518,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyViewCounter.ts                                                    +
+     + Файл: viewCounter.ts                                                 +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -1649,7 +1649,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyView.ts                                                           +
+     + Файл: View                                                           +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -1759,7 +1759,7 @@
          * @param className - имя класса стилей или кортеж имен
          *
          *
-         *     let obj = new elyControl();
+         *     let obj = new Control();
          *     obj.addClass("animate");
          *     obj.addClass("go");
          *
@@ -2140,12 +2140,12 @@
      * Использование, изменение, копирование, распространение, обмен/продажа
      * могут выполняться исключительно в согласии с условиями файла COPYING.
      *
-     * Файл: elyXLogger* Файл создан: 04.12.2018 07:03:21
+     * Файл: XLogger* Файл создан: 04.12.2018 07:03:21
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      *
      */
     /**
-     * elyXLogger - логгер уровня X
+     * XLogger - логгер уровня X
      */
     class elyXLogger {
         /**
@@ -2477,7 +2477,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyControl.ts                                                        +
+     + Файл: Control                                                        +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     var elyControl_1;
@@ -2498,7 +2498,7 @@
                 this.addSubView(...options.subviews);
         }
         /**
-         * Создает elyControl или объект elyControlObjectProtocol
+         * Создает Control или объект elyControlObjectProtocol
          * @param obj
          */
         static fromObject(obj) {
@@ -2528,19 +2528,19 @@
             return elyControl_1.empty();
         }
         /**
-         * Создает elyControl или объект elyControlObjectProtocol из JSON строки
+         * Создает Control или объект elyControlObjectProtocol из JSON строки
          * @param json
          */
         static fromJSON(json) {
             return elyControl_1.fromObject(JSON.parse(json));
         }
         /**
-         * Выполняет попытку мутировать obj в объект elyView.
+         * Выполняет попытку мутировать obj в объект View.
          * Иначе возвращает пустой элемент.
          *
          *
          *     let obj = "Тест";
-         *     let view = elyControl.tryMutateToView(obj);
+         *     let view = Control.tryMutateToView(obj);
          *
          *     typeOf view; // elyTextView
          *     view.text(); // "Тест"
@@ -2578,7 +2578,7 @@
                     this.getDocument().appendChild(view.getDocument());
                 }
                 else {
-                    elyXLogger.default.error("В объект elyControl может быть добавлен только элемент " +
+                    elyXLogger.default.error("В объект Control может быть добавлен только элемент " +
                         "реализующий протокол elyContentProtocol!");
                 }
             });
@@ -2615,7 +2615,7 @@
      */
     elyControl.line = () => new elyControl_1({ tag: "hr" });
     /**
-     * Пустой объект elyControl
+     * Пустой объект Control
      */
     elyControl.empty = () => new elyControl_1();
     elyControl = elyControl_1 = __decorate([
@@ -2644,7 +2644,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efIconView.ts                                                        +
+     + Файл: IconView.ts                                                      +
      + Файл изменен: 08.02.2019 00:19:40                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -2656,7 +2656,7 @@
     class efIconView extends elyView {
         /**
          * Конструткор
-         * @param {efIconViewOptions} options
+         * @param {IconViewOptions} options
          */
         constructor(options) {
             super(Object.assign({ tag: "span" }, options));
@@ -2818,7 +2818,7 @@
         }
     }
     /**
-     * @typedef {Object} efIconViewOptions
+     * @typedef {Object} IconViewOptions
      * @property {string} [iconName]
      * @property {Size|string|number} [iconSize]
      * @property {Weight|string|number} [iconWeight]
@@ -2844,7 +2844,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efTextView.ts                                                        +
+     + Файл: TextViews                                                        +
      + Файл изменен: 08.02.2019 00:09:09                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -2863,7 +2863,7 @@
     class efTextView extends elyView {
         /**
          * Конструктор
-         * @param {efTextViewOptions} options - опции
+         * @param {TextViewOptions} options - опции
          */
         constructor(options = {}) {
             super(Object.assign({ tag: "span" }, options));
@@ -3019,7 +3019,7 @@
         }
         /**
          * Выравнивает текст по середине.
-         * Можно считать алиасом выражения `efTextView.textCenter(true)`.
+         * Можно считать алиасом выражения `TextView.textCenter(true)`.
          * @return {this}
          */
         centered() {
@@ -3041,7 +3041,7 @@
         }
     }
     /**
-     * @typedef {Object} efTextViewOptions
+     * @typedef {Object} TextViewOptions
      * @property {string} [text = ""]
      * @property {boolean} [textCenter = false]
      * @property {Style|string} [textStyle]
@@ -3224,7 +3224,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efPreloaderView.ts                                                   +
+     + Файл: PreloaderViews                                                   +
      + Файл изменен: 15.02.2019 01:13:20                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -3236,7 +3236,7 @@
     class efPreloaderView extends elyView {
         /**
          * Конструктор
-         * @param {efPreloaderViewOptions} options - опции
+         * @param {PreloaderViewOptions} options - опции
          */
         constructor(options = {}) {
             super(options);
@@ -3335,7 +3335,7 @@
         }
     }
     /**
-     * @typedef {Object} efPreloaderViewOptions
+     * @typedef {Object} PreloaderViewOptions
      * @property {boolean} [fixedPosition = false]
      * @property {string} [title = false]
      * @property {Style} [preloaderStyle]
@@ -3360,7 +3360,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppPreloaderView.ts                                                +
+     + Файл: AppPreloaderView.ts                                              +
      + Файл изменен: 15.02.2019 01:31:19                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -3501,7 +3501,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyCookie.ts                                                         +
+     + Файл: Cookiess                                                         +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -3570,7 +3570,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: elyTimer.ts                                                          +
+     + Файл: Timer                                                          +
      + Файл изменен: 08.01.2019 01:11:46                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -3683,7 +3683,7 @@
      * Использование, изменение, копирование, распространение, обмен/продажа
      * могут выполняться исключительно в согласии с условиями файла COPYING.
      *
-     * Файл: elyObservableBoolean.ts
+     * Файл: ObservableBoolean
      * Файл создан: 28.11.2018 01:03:35
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
      *
@@ -4521,7 +4521,7 @@
         //  */
         // public static tryMutate(obj: any): elyTextView {
         //     try {
-        //         if (obj instanceof elyView) {
+        //         if (obj instanceof View) {
         //             if (obj instanceof elyTextView) return obj;
         //             return obj.getDocument().innerText.textView();
         //         } else return String(obj).textView();
@@ -4972,7 +4972,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppConfig.ts                                                       +
+     + Файл: AppConfigs                                                       +
      + Файл изменен: 30.01.2019 00:57:41                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -4980,14 +4980,14 @@
      * Конфигурация приложения
      * @class efAppConfig
      * @augments {elyObservable}
-     * @augments {efAppConfigInterface}
+     * @augments {AppConfigInterface}
      */
     class efAppConfig extends elyObservable {
         constructor() {
             super();
             /**
              * Секция: приложение
-             * {@link efConfigSection_app}
+             * {@link ConfigSection_app}
              */
             this.app = {
                 author: null,
@@ -4995,7 +4995,7 @@
             };
             /**
              * Секция: манифест
-             * {@link efConfigSection_manifest}
+             * {@link ConfigSection_manifest}
              */
             this.manifest = {
                 allowStandaloneMode: true,
@@ -5010,7 +5010,7 @@
             };
             /**
              * Секция: контроллер контента
-             * {@link efConfigSection_contentController}
+             * {@link ConfigSection_contentController}
              */
             this.contentController = {
                 defaultContentId: "index",
@@ -5018,7 +5018,7 @@
             };
             /**
              * Секция: панель навигации
-             * {@link efConfigSection_navigationBar}
+             * {@link ConfigSection_navigationBar}
              */
             this.navigationBar = {
                 color: null,
@@ -5030,7 +5030,7 @@
             };
             /**
              * Секция: боковая панель навигации
-             * {@link efConfigSection_sideNavigationBar}
+             * {@link ConfigSection_sideNavigationBar}
              */
             this.sideNavigationBar = {
                 allowMouseEvents: true,
@@ -5038,7 +5038,7 @@
             };
             /**
              * Секция: шаблон
-             * {@link efConfigSection_template}
+             * {@link ConfigSection_template}
              */
             this.template = {
                 color: "#194d6d",
@@ -5050,7 +5050,7 @@
             };
             /**
              * Секция: мета данные
-             * {@link efConfigSection_meta}
+             * {@link ConfigSection_meta}
              */
             this.meta = {
                 appleMobile: {
@@ -5178,7 +5178,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efField.ts                                                           +
+     + Файл: Field.ts                                                         +
      + Файл изменен: 09.02.2019 14:42:04                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5191,7 +5191,7 @@
     class efField extends elyView {
         /**
          * Конструктор
-         * @param {efTextFieldOptions} options
+         * @param {TextFieldOptions} options
          */
         constructor(options = {}) {
             super(options);
@@ -5331,7 +5331,7 @@
         }
     }
     /**
-     * @typedef {Object} efFieldOptions
+     * @typedef {Object} FieldOptions
      * @template T
      * @property {T} [value]
      * @property {boolean} [editable = true]
@@ -5357,7 +5357,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efTextArea.ts                                                        +
+     + Файл: TextAreas                                                        +
      + Файл изменен: 09.02.2019 21:45:17                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5369,7 +5369,7 @@
     class efTextArea extends efField {
         /**
          * Конструктор
-         * @param {efTextAreaOptions} options - опции
+         * @param {TextAreaOptions} options - опции
          */
         constructor(options = {}) {
             super(options);
@@ -5439,7 +5439,7 @@
         }
     }
     /**
-     * @typedef {efTextFieldOptions} efTextAreaOptions
+     * @typedef {TextFieldOptions} TextAreaOptions
      * @property {number} [rowsCount = 5]
      * @property {string} [value]
      * @property {boolean} [editable = true]
@@ -5466,7 +5466,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efHeaderTextView.ts                                                  +
+     + Файл: HeaderTextView.ts                                                +
      + Файл изменен: 09.02.2019 15:19:08                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5483,7 +5483,7 @@
         }
     }
     /**
-     * @typedef {efTextViewOptions} efHeaderTextViewOptions
+     * @typedef {TextViewOptions} HeaderTextViewOptions
      * @property {number} [headerLevel = 1]
      */
 
@@ -5506,7 +5506,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppDevelopConsole.ts                                               +
+     + Файл: AppDevelopConsoles                                               +
      + Файл изменен: 10.02.2019 18:49:26                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5598,7 +5598,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppDocumentBody.ts                                                 +
+     + Файл: AppDocumentBodys                                                 +
      + Файл изменен: 30.01.2019 01:55:32                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5635,7 +5635,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppDocumentHead.ts                                                 +
+     + Файл: appDocumentHeads                                                 +
      + Файл изменен: 30.01.2019 01:54:59                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5756,7 +5756,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efAppDocument.ts                                                     +
+     + Файл: AppDocument.ts                                                   +
      + Файл изменен: 30.01.2019 01:54:33                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5810,7 +5810,7 @@
      +                                                                            +
      + Проект: ely.flat.application                                               +
      +                                                                            +
-     + Файл: elyViewController.ts                                                 +
+     + Файл: ViewController                                                 +
      + Файл изменен: 30.11.2018 00:25:05                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -5936,7 +5936,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyObservableArray.ts                                                +
+     + Файл: ObservableArray                                                +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -6134,7 +6134,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efRowLayoutView.ts                                                   +
+     + Файл: RowLayoutView.ts                                                 +
      + Файл изменен: 09.02.2019 16:35:37                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6321,7 +6321,7 @@
         }
     }
     /**
-     * @typedef {Object} efRowLayoutViewOptions
+     * @typedef {Object} RowLayoutViewOptions
      * @property {number} [rowLength = 24]
      * @property {boolean} [rowItemsStaticSize = false]
      * @property {elyView[]} [items]
@@ -6346,7 +6346,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efGridLayoutView.ts                                                  +
+     + Файл: GridLayoutView.ts                                                +
      + Файл изменен: 09.02.2019 16:34:32                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6489,7 +6489,7 @@
         }
     }
     /**
-     * @typedef {Object} efGridLayoutViewOptions
+     * @typedef {Object} GridLayoutViewOptions
      * @property {number} [rowsLength = 24]
      * @property {boolean} [staticGrid = false]
      * @property {elyView[][] | efRowLayoutView[]} [items]
@@ -6514,7 +6514,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: elyGridViewController.ts                                             +
+     + Файл: GridViewController.ts                                          +
      + Файл изменен: 09.02.2019 18:42:19                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6755,7 +6755,7 @@
      +                                                                            +
      + Проект: ely.flat.application                                               +
      +                                                                            +
-     + Файл: elySimplePageViewController.ts                                       +
+     + Файл: SimplePageViewController.ts                                    +
      + Файл изменен: 30.11.2018 01:52:55                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6831,7 +6831,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efSingleApp.ts                                                       +
+     + Файл: SingleApps                                                       +
      + Файл изменен: 19.02.2019 22:26:41                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6873,7 +6873,7 @@
      +                                                                            +
      + Проект: ely.flat.application                                               +
      +                                                                            +
-     + Файл: elyScreenController.ts                                               +
+     + Файл: ScreenController                                               +
      + Файл изменен: 30.11.2018 00:19:28                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -6991,7 +6991,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efListView.ts                                                        +
+     + Файл: ListViews                                                        +
      + Файл изменен: 07.02.2019 23:53:41                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -7003,7 +7003,7 @@
     class efListView extends elyRebuildableViewProtocol {
         /**
          * Конструктор
-         * @param {efListViewOptions} options
+         * @param {ListViewOptions} options
          */
         constructor(options = {}) {
             super(Object.assign({ tag: "ul" }, options));
@@ -7030,8 +7030,8 @@
          *
          * Наблюдатель принимает два параметра: view и container.
          *
-         * Элементы в efListView хранятся в контейнерах. Поэтому
-         * при добавлении слушатель получает два elyView элемента.
+         * Элементы в ListView хранятся в контейнерах. Поэтому
+         * при добавлении слушатель получает два View элемента.
          * Благодаря этому слушателю, Вы можете кастомизировать контейнер.
          *
          * Имя обсервера: itemWillAdd
@@ -7061,7 +7061,7 @@
         }
     }
     /**
-     * @typedef {Object} efListViewOptions
+     * @typedef {Object} ListViewOptions
      * @property {elyView[]} [items]
      */
 
@@ -7084,7 +7084,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efNavigationView.ts                                                  +
+     + Файл: NavigationView.ts                                                +
      + Файл изменен: 07.02.2019 23:43:35                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -7096,7 +7096,7 @@
     class efNavigationView extends efListView {
         /**
          * Конструктор
-         * @param {efNavigationViewOptions} options
+         * @param {NavigationViewOptions} options
          */
         constructor(options = { horizontal: true, fixed: false }) {
             super(options);
@@ -7188,7 +7188,7 @@
         }
     }
     /**
-     * @typedef {Object} efNavigationViewOptions
+     * @typedef {Object} NavigationViewOptions
      * @property {boolean} [horizontal = true]
      * @property {boolean} [fixed = false]
      */
@@ -7209,7 +7209,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: efNotificationView.ts                                              +
+     + Файл: NotificationView.ts                                            +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -7571,7 +7571,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: elyDeviceDetector.ts                                                 +
+     + Файл: DeviceDetector                                                 +
      + Файл изменен: 31.01.2019 00:49:47                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -7741,7 +7741,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: efApplication.ts                                           +
+     + Файл: Application.ts                                         +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -7908,14 +7908,14 @@
                         elyScreenController.default.present(config.contentController.defaultContentId);
                     });
                 config.navigationBar.items.forEach(value => {
-                    value.item = value.item || "efLinkTextView";
+                    value.item = value.item || "LinkTextView";
                     this.getApplicationNavigationView().addView(elyControl$1.fromObject(value));
                 });
                 // if (config.navigationBar.imageUrl) {
                 //     this.navigationView.navigationBarImage(config.navigationBar.imageUrl);
                 //     if (config.manifest.useContentController)
                 //         this.navigationView.imageView.addObserver("click", () => {
-                //             elyScreenController.default.present(config.contentController.defaultContentId);
+                //             ScreenController.default.present(config.contentController.defaultContentId);
                 //         });
                 // }
                 this.applicationColorManager.applyNavigationBarColor(config.getNavigationBarColor());
@@ -8121,7 +8121,7 @@
      +                                                                            +
      + Проект: ely.flat.application                                               +
      +                                                                            +
-     + Файл: elyFileWatcher.ts                                                    +
+     + Файл: AppFileWatcherher.ts                                                 +
      + Файл изменен: 23.11.2018 23:19:03                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -8947,7 +8947,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efButton.ts                                                          +
+     + Файл: Button.ts                                                        +
      + Файл изменен: 08.02.2019 02:22:02                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -8959,7 +8959,7 @@
     class efButton extends elyView {
         /**
          * Конструктор
-         * @param {efButtonOptions} options
+         * @param {ButtonOptions} options
          */
         constructor(options = {}) {
             super(options);
@@ -9028,7 +9028,7 @@
         }
         /**
          * Устанавливает размер кнопки во весь блок.
-         * Алиас выражения `efButton.buttonSize(Size.fill)`.
+         * Алиас выражения `Button.buttonSize(Size.fill)`.
          * @return {this}
          */
         fill() {
@@ -9095,7 +9095,7 @@
         }
     }
     /**
-     * @typedef {Object} efButtonOptions
+     * @typedef {Object} ButtonOptions
      * @property {String} [text = ""]
      * @property {Size|String} [buttonSize]
      * @property {Style|String} [buttonStyle]
@@ -9652,7 +9652,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efTextViewContainer.ts                                               +
+     + Файл: TextViewContainer.ts                                             +
      + Файл изменен: 09.02.2019 16:15:14                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -9704,7 +9704,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efPanelView.ts                                                       +
+     + Файл: PanelView.ts                                                     +
      + Файл изменен: 09.02.2019 16:11:48                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -9714,7 +9714,7 @@
     class efPanelView extends elyView {
         /**
          * Конструктор
-         * @param {efPanelViewOptions} options
+         * @param {PanelViewOptions} options
          */
         constructor(options = {}) {
             super(options);
@@ -9826,7 +9826,7 @@
         }
     }
     /**
-     * @typedef {Object} efPanelViewOptions - Опции панели
+     * @typedef {Object} PanelViewOptions - Опции панели
      * @property {string} [panelTitle]
      * @property {string} [panelActionText]
      * @property {boolean} [panelHover = true]
@@ -10163,35 +10163,35 @@
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
      * Создает {@link efTextView} элемент из строки
-     * @param {efTextViewOptions} options - опции {@link efTextViewOptions}
+     * @param {TextViewOptions} options - опции {@link TextViewOptions}
      */
     String.prototype.textView = function (options = {}) {
         return new efTextView(Object.assign({ text: this }, options));
     };
     /**
      * Создает {@link efHeaderTextView} элемент из строки
-     * @param {efHeaderTextViewOptions} options - опции {@link efHeaderTextViewOptions}
+     * @param {HeaderTextViewOptions} options - опции {@link HeaderTextViewOptions}
      */
     String.prototype.headerTextView = function (options = { headerLevel: 1 }) {
         return new efHeaderTextView(Object.assign({ text: this }, options));
     };
     /**
      * Создает {@link efButton} из строки
-     * @param {efButtonOptions} options - опции {@link efButtonOptions}
+     * @param {ButtonOptions} options - опции {@link ButtonOptions}
      */
     String.prototype.button = function (options) {
         return new efButton(Object.assign({ text: this }, options));
     };
     /**
      * Создает {@link efIconView} из строки
-     * @param {efIconViewOptions} options - опции {@link efIconViewOptions}
+     * @param {IconViewOptions} options - опции {@link IconViewOptions}
      */
     String.prototype.iconView = function (options) {
         return new efIconView(Object.assign({ iconName: this }, options));
     };
     /**
      * Содает {@link efListView} из массива строк или элементов
-     * @param options - опции {@link efListViewOptions}
+     * @param options - опции {@link ListViewOptions}
      * @return {efListView}
      */
     Array.prototype.listView = function (options) {
@@ -10715,7 +10715,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efSwitchField.ts                                                     +
+     + Файл: SwitchField.ts                                                   +
      + Файл изменен: 09.02.2019 15:38:01                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -10727,7 +10727,7 @@
     class efSwitchField extends efField {
         /**
          * Конструктор
-         * @param {efSwitchFieldOptions} options
+         * @param {SwitchFieldOptions} options
          */
         constructor(options = {}) {
             super(Object.assign({ tag: "label" }, options));
@@ -10851,7 +10851,7 @@
         }
     }
     /**
-     * @typedef {Object} efSwitchFieldOptions
+     * @typedef {Object} SwitchFieldOptions
      * @property {string|elyView} [title]
      * @property {string|elyView} [leftLabel]
      * @property {string|elyView} [rightLabel]
@@ -10880,7 +10880,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efContainerView.ts                                                   +
+     + Файл: ContainerView.ts                                                 +
      + Файл изменен: 09.02.2019 19:10:18                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -10934,7 +10934,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efTextField.ts                                                       +
+     + Файл: TextField.ts                                                     +
      + Файл изменен: 09.02.2019 19:08:52                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -10946,7 +10946,7 @@
     class efTextField extends efField {
         /**
          * Конструктор
-         * @param {efTextFieldOptions} options
+         * @param {TextFieldOptions} options
          */
         constructor(options = {}) {
             super(options);
@@ -11087,7 +11087,7 @@
         }
     }
     /**
-     * @typedef {Object} efTextFieldOptions
+     * @typedef {Object} TextFieldOptions
      * @property {TextFieldType|string} [fieldType]
      * @property {string} [value]
      * @property {boolean} [editable = true]
@@ -11187,7 +11187,7 @@
      +                                                                            +
      + Проект: ely.flat                                                           +
      +                                                                            +
-     + Файл: efLinkTextView.ts                                                    +
+     + Файл: LinkTextViews                                                    +
      + Файл изменен: 08.02.2019 00:48:47                                          +
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -11199,7 +11199,7 @@
     class efLinkTextView extends efTextView {
         /**
          * Конструктор
-         * @param {efLinkTextViewOptions} options
+         * @param {LinkTextViewOptions} options
          */
         constructor(options = { url: "#" }) {
             super(options);
@@ -11244,7 +11244,7 @@
         }
     }
     /**
-     * @typedef {efTextViewOptions} efLinkTextViewOptions
+     * @typedef {TextViewOptions} LinkTextViewOptions
      * @property {string} [url = "#"]
      */
 
@@ -11264,7 +11264,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: efImageView.ts                                                       +
+     + Файл: ImageViews                                                       +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -11277,7 +11277,7 @@
     class efImageView extends elyView {
         /**
          * Конструтор
-         * @param {efImageViewOptions} options - опции
+         * @param {ImageViewOptions} options - опции
          */
         constructor(options = {}) {
             super(Object.assign({ tag: "img" }, options));
@@ -11325,7 +11325,7 @@
         }
     }
     /**
-     * @typedef {Object} efImageViewOptions
+     * @typedef {Object} ImageViewOptions
      * @property {string} [url]
      */
 
@@ -11345,7 +11345,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: efModalView.ts                                                       +
+     + Файл: ModalView.ts                                                     +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**w
@@ -11357,7 +11357,7 @@
     class efModalView extends elyView {
         /**
          * Конструктор
-         * @param {efModalViewOptions} options - опции
+         * @param {ModalViewOptions} options - опции
          */
         constructor(options = {}) {
             super(options);
@@ -11568,7 +11568,7 @@
      */
     efModalView.queue = [];
     /**
-     * @typedef {Object} efModalViewOptions
+     * @typedef {Object} ModalViewOptions
      * @property {string} [title]
      * @property {elyView} [content]
      * @property {boolean} [closable = true]
@@ -12224,7 +12224,7 @@
      + Использование, изменение, копирование, распространение, обмен/продажа      +
      + могут выполняться исключительно в согласии с условиями файла COPYING.      +
      +                                                                            +
-     + Файл: elyTime.ts                                                           +
+     + Файл: Time                                                           +
      + Файл создан: 23.11.2018 23:03:37                                           +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
@@ -12392,7 +12392,7 @@
          * - Полученное значение может быть трансформировано через этот метод.
          *
          * @param {number }timeCode - врменной код
-         * @return {elyTimeDifferences}
+         * @return {TimeDifferences}
          */
         static timeCodeToVars(timeCode) {
             const source = timeCode;
@@ -12432,7 +12432,7 @@
         }
         /**
          * Возвращает количество дней в месяце для
-         * даты, указанной в elyTime.
+         * даты, указанной в Time.
          *
          * @return {number}
          */
@@ -12443,7 +12443,7 @@
          * Возвращает разницу времени
          * @param {elyTime} time - время сравнения
          *
-         * @return {elyTimeDifferences}
+         * @return {TimeDifferences}
          */
         getDifference(time) {
             return elyTime.timeCodeToVars(Math.abs(this.getTime() - time.getTime()));
@@ -12451,7 +12451,7 @@
         /**
          * Возвращает разницу времени
          *
-         * @return {elyTimeDifferences}
+         * @return {TimeDifferences}
          */
         getDifferenceNow() {
             return this.getDifference(elyTime.now());
@@ -12609,7 +12609,7 @@
         "Июл", "Авг", "Сен", "Окт", "Ноб", "Дек",
     ];
     /**
-     * @typedef {Object} elyTimeDifferences
+     * @typedef {Object} TimeDifferences
      * @property {number} days
      * @property {number} hours
      * @property {number} minutes
@@ -13744,7 +13744,7 @@
      +                                                                            +
      +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
     /**
-     * @interface elyViewOptions
+     * @interface ViewOptions
      */
     /**
      * @typedef {Object} IPosition
@@ -14121,7 +14121,7 @@
             super.viewDidLoad();
 
             // Установка заголовка и описания
-            // для контроллера типа elySimplePageViewController
+            // для контроллера типа SimplePageViewController
             this.title("ely.flat *{* Installer *}*");
             this.description("Настройка приложения");
 
@@ -14327,7 +14327,7 @@
          * + Данный метод выполняется один раз.
          *
          * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-         * понимания отрисовки элементов elyView.
+         * понимания отрисовки элементов View.
          */
         viewDidLoad() {
             // Вызов рдительского метода
@@ -14337,7 +14337,7 @@
 
 
             // Установка заголовка и описания
-            // для контроллера типа elySimplePageViewController
+            // для контроллера типа SimplePageViewController
             this.title("ely.flat *{* Installer *}*");
             this.description("Приложение для сборки и запуска приложения ely.flat.application");
 
@@ -14582,14 +14582,14 @@
          * + Данный метод выполняется один раз.
          *
          * Внимание! Рекомендуется изучить делегат elyViewWillDraw для полного
-         * понимания отрисовки элементов elyView.
+         * понимания отрисовки элементов View.
          */
         viewDidLoad() {
             // Вызов рдительского метода
             super.viewDidLoad();
 
             // Установка заголовка и описания
-            // для контроллера типа elySimplePageViewController
+            // для контроллера типа SimplePageViewController
             this.title("efX-app");
             this.description("Просмотр баз данных");
 

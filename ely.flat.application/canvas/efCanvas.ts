@@ -24,13 +24,13 @@
 
 import efCanvasLayer from "@cnv/efCanvasLayer";
 import efSize from "@cnv/objs/efSize";
-import elyView from "@core/controls/elyView";
-import elyObservableArray from "@core/observable/properties/elyObservableArray";
+import View from "@core/controls/View";
+import ObservableArray from "@core/observable/properties/ObservableArray";
 
 /**
  * Холст
  */
-export default class efCanvas extends elyView {
+export default class efCanvas extends View {
 
     /**
      * Размер холста
@@ -40,7 +40,7 @@ export default class efCanvas extends elyView {
     /**
      * Слои
      */
-    public readonly layers: elyObservableArray<efCanvasLayer> = new elyObservableArray<efCanvasLayer>();
+    public readonly layers: ObservableArray<efCanvasLayer> = new ObservableArray<efCanvasLayer>();
 
     /**
      * Конструктор

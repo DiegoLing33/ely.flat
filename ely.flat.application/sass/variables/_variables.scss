@@ -9,6 +9,8 @@
 //                                                                             +
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+$darkMode: true;
+
 $shadowStyle: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04) !default;
 
 // Стили
@@ -54,7 +56,7 @@ $weightsMap: (
 //
 $navigationBar: 800;
 $sliderButtonZIndex: 100;
-$loadingZIndex: 700;
+$loadingZIndex: 1700;
 
 //
 // Текст
@@ -75,6 +77,16 @@ $panelFooter_Hover_BackgroundColor: #f9fafc;
 
 $panelHeaderTextColor: #616161;
 
+//
+//  Экран загрузки
+//
+$loadingColor: rgba(255, 255, 255, 1);
+$loadingTextColor: rgba(0, 0, 0, 0.63);
+
+@if $darkMode{
+  $loadingColor: #131313;
+  $loadingTextColor: rgba(239, 239, 239, 0.63);
+}
 
 //
 //  Кнопки

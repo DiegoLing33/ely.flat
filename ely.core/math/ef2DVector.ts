@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import elyObservable from "@core/observable/Observable";
+import elyObservableProperty from "@core/observable/properties/ObservableProperty";
 import elyAxis from "@enums/elyAxis";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 

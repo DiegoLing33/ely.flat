@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
-import elyXLogger from "@core/utils/elyXLogger";
+import Observable from "@core/observable/Observable";
+import XLogger from "@core/utils/XLogger";
 
 /**
  * Изменение значения за время
@@ -31,9 +31,9 @@ import elyXLogger from "@core/utils/elyXLogger";
  * Данная утилита позволяет изменять состояния за период времени.
  *
  * @class efEntityTransition
- * @augments {elyObservable}
+ * @augments {Observable}
  */
-export default class efEntityTransition extends elyObservable {
+export default class efEntityTransition extends Observable {
 
     /**
      * Начальное значение
@@ -112,7 +112,7 @@ export default class efEntityTransition extends elyObservable {
         if (this.__inProgress) {
             if (this.__count > 0) {
                 this.__count -= 1;
-                elyXLogger.default.log(currentTime + ": пропущенный фрейм");
+                XLogger.default.log(currentTime + ": пропущенный фрейм");
             } else {
                 // Остаток времени до завршения
                 let dt = currentTime - this.__startTime!;

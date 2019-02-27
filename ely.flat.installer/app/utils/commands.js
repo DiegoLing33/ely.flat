@@ -1,5 +1,4 @@
-import {execRequest, processes, workingDirectoryField} from "./utils";
-import {efNotificationView, elyGetRequest, elyProgressNotificationView} from "../../build/ely.flat";
+import {NotificationView, elyProgressNotificationView} from "../../build/ely.flat";
 
 export let requestsInProcess = [];
 
@@ -18,12 +17,12 @@ export function makeAppRequest(method, data, callback, props = {}) {
         progressTitle: "Идёт выполнение команды..."
     });
     if (props.info) prog.present();
-    new elyGetRequest({url: "http://127.0.0.1:1583/" + method}).send(data, (resp) => {
+    new URLRequest({url: "http://127.0.0.1:1583/" + method, data}).send((resp, status) => {
         requestsInProcess.splice(requestsInProcess.indexOf(method), 1);
         if (props.info) prog.dismiss(true);
         if (props.ok && resp.response) new efNotificationView({title: "Готово", message: props.ok}).present();
         if (resp.error) new efNotificationView({title: "Ошибка", message: resp.error}).present();
-        callback(resp);
+        callback(resp, status);
     });
 }
 
@@ -32,8 +31,8 @@ export function makeAppRequest(method, data, callback, props = {}) {
  * @param callback
  */
 export function buildApplicationCommand(callback) {
-    makeAppRequest("compile", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("compile", {}, (resp, status) => {
+        callback(status, resp);
     }, {
         title: "Компиляция приложения",
         info: true,
@@ -46,8 +45,8 @@ export function buildApplicationCommand(callback) {
  * @param callback
  */
 export function initApplicationCommand(callback) {
-    makeAppRequest("init", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("init", {}, (resp, status) => {
+        callback(status, resp);
     }, {
         title: "Инициилизация приложения",
         info: true,
@@ -60,8 +59,8 @@ export function initApplicationCommand(callback) {
  * @param callback
  */
 export function getWorkingDirectoryCommand(callback) {
-    makeAppRequest("getWorkingDirectory", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("getWorkingDirectory", {}, (resp, status) => {
+        callback(status, resp);
     }, {title: "Получение рабочей директории", info: true});
 }
 
@@ -71,8 +70,8 @@ export function getWorkingDirectoryCommand(callback) {
  * @param callback
  */
 export function setWorkingDirectoryCommand(directory, callback) {
-    makeAppRequest("setWorkingDirectory", {directory}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("setWorkingDirectory", {directory}, (resp, status) => {
+        callback(status, resp);
     }, {
         title: "Установка рабочей директории",
         info: true,
@@ -85,8 +84,8 @@ export function setWorkingDirectoryCommand(directory, callback) {
  * @param callback
  */
 export function isLiveUpdateServerRunning(callback) {
-    makeAppRequest("isLiveUpdateServerRunning", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("isLiveUpdateServerRunning", {}, (resp, status) => {
+        callback(status, resp);
     });
 }
 
@@ -95,8 +94,8 @@ export function isLiveUpdateServerRunning(callback) {
  * @param callback
  */
 export function runLiveUpdateServer(callback) {
-    makeAppRequest("runLiveUpdateServer", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("runLiveUpdateServer", {}, (resp, status) => {
+        callback(status, resp);
     }, {
         title: "Запуск Live Update Server",
         info: true,
@@ -109,8 +108,8 @@ export function runLiveUpdateServer(callback) {
  * @param callback
  */
 export function stopLiveUpdateServer(callback) {
-    makeAppRequest("stopLiveUpdateServer", {}, (resp) => {
-        callback(resp.response, resp);
+    makeAppRequest("stopLiveUpdateServer", {}, (resp, status) => {
+        callback(status, resp);
     }, {
         title: "Остановка Live Update Server",
         info: true,
@@ -125,7 +124,7 @@ export function stopLiveUpdateServer(callback) {
 export function getConfigCommand(callback) {
     const req = new elyGetRequest({url: "http://127.0.0.1:1583/getConfig"});
     req.useJson = false;
-    req.send({}, (resp) => {
+    req.send({}, (resp, status) => {
         callback(JSON.parse(resp));
     });
 }
@@ -148,7 +147,7 @@ export function setConfigCommand(path, value, callback) {
  */
 export function getDBDItemsCommand(callback) {
     makeAppRequest("r/getDBItems", {}, resp => {
-        callback(resp.response, resp);
+        callback(status, resp);
     }, {
         title: "Получение данных базы",
         info: true
@@ -166,7 +165,7 @@ export function getDBDItemsCommand(callback) {
  */
 export function setDBDItemValueCommand(table, rowIndex, column, value, callback) {
     makeAppRequest("r/setDBItemValue", {table, rowIndex, column, value}, resp => {
-        callback(resp.response, resp);
+        callback(status, resp);
     }, {
         title: "Получение данных базы",
         info: true
@@ -181,7 +180,7 @@ export function setDBDItemValueCommand(table, rowIndex, column, value, callback)
  */
 export function getTableItemsCommand(table, callback) {
     makeAppRequest("r/getTableItems", {table}, resp => {
-        callback(resp.response, resp);
+        callback(status, resp);
     }, {
         title: "Получение данных таблицы " + table,
         info: true

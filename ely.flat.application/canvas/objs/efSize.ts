@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
-import elyObservableProperty from "@core/observable/properties/elyObservableProperty";
+import Observable from "@core/observable/Observable";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
 
 /**
  * Прослушиываемый размер
  */
-export default class efSize extends elyObservable {
+export default class efSize extends Observable {
 
     /**
      * Возвращает нулевой размер
@@ -41,12 +41,12 @@ export default class efSize extends elyObservable {
     /**
      * Свойство: ширина
      */
-    public readonly widthProperty: elyObservableProperty<number> = new elyObservableProperty<number>(0);
+    public readonly widthProperty: ObservableProperty<number> = new ObservableProperty<number>(0);
 
     /**
      * Свойство: высота
      */
-    public readonly heightProperty: elyObservableProperty<number> = new elyObservableProperty<number>(0);
+    public readonly heightProperty: ObservableProperty<number> = new ObservableProperty<number>(0);
 
     /**
      * Конструктор
@@ -85,7 +85,7 @@ export default class efSize extends elyObservable {
      * @returns {number|this|null}
      */
     public width(value?: number): number | null | efSize {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.widthProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.widthProperty);
     }
 
     /**
@@ -107,7 +107,7 @@ export default class efSize extends elyObservable {
      * @returns {number|this|null}
      */
     public height(value?: number): number | null | efSize {
-        return elyObservableProperty.simplePropertyAccess(this, value, this.heightProperty);
+        return ObservableProperty.simplePropertyAccess(this, value, this.heightProperty);
     }
 
     /**

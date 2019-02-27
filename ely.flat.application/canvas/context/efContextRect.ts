@@ -23,7 +23,7 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efContextElement from "@cnv/context/efContextElement";
-import elyColor from "@core/elyColor";
+import Color from "@core/Color";
 import ef2DRect from "@math/ef2DRect";
 
 /**
@@ -33,15 +33,15 @@ export default class efContextRect extends efContextElement {
 
     /**
      * Цвет заливки
-     * @type {elyColor?}
+     * @type {Color?}
      */
-    public fillColor?: elyColor;
+    public fillColor?: Color;
 
     /**
      * Цвет заливки обводки
-     * @type {elyColor?}
+     * @type {Color?}
      */
-    public strokeColor?: elyColor;
+    public strokeColor?: Color;
 
     /**
      * Толщина линии обводки
@@ -51,13 +51,13 @@ export default class efContextRect extends efContextElement {
 
     /**
      * Конструктор
-     * @param {{rect: ef2DRect, fillColor?: elyColor,
-     * strokeColor?: elyColor, strokeWidth?: number, angle?: number}} props - параметры
+     * @param {{rect: ef2DRect, fillColor?: Color,
+     * strokeColor?: Color, strokeWidth?: number, angle?: number}} props - параметры
      */
     public constructor(props: {
         rect: ef2DRect,
-        fillColor?: elyColor,
-        strokeColor?: elyColor,
+        fillColor?: Color,
+        strokeColor?: Color,
         strokeWidth?: number,
         angle?: number,
     }) {

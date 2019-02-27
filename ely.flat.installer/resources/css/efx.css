@@ -6622,14 +6622,14 @@ body {
 }
 
 .ef-loading {
-  background-color: rgba(255, 255, 255, 0.76);
+  background-color: #131313;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   transition: opacity 0.3s;
-  z-index: 700;
+  z-index: 1700;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -6643,17 +6643,17 @@ body {
   width: 100%;
   text-align: center;
   position: absolute;
-  z-index: 701;
+  z-index: 1701;
 }
 .ef-loading .--wrapper .ef-icon {
   font-size: 70px;
-  color: #409EFF;
+  color: #d9d1e5 !important;
   display: block;
   margin-bottom: 10px;
 }
 .ef-loading .--wrapper .--title {
   padding: 15px;
-  color: rgba(0, 0, 0, 0.63);
+  color: rgba(239, 239, 239, 0.63);
 }
 
 table {

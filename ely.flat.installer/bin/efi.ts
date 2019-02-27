@@ -24,17 +24,18 @@
 
 import * as fs from "fs";
 import * as rollup from "rollup";
-import elyXLogger from "../core/elyXLogger";
+import elyXLogger from "./core/elyXLogger";
 import {efiConst} from "./efiConst";
 import {efiLiveUpdateServer} from "./efiLiveUpdateServer";
+import {TErrorCallback} from "./efiTypes";
 import {efiUtils} from "./efiUtils";
+import {efiDatabase} from "./efxapp/db/efiDatabase";
 import {efxAppDatabase} from "./efxapp/efxAppDatabase";
 
 /**
  * Обработчик с результатом
  */
 export type TResultCallback = (result: boolean) => void;
-export type TErrorCallback = (error?: string) => void;
 export type TNextCallback = (result: boolean, data: any) => void;
 
 /**
@@ -57,6 +58,11 @@ export class efi {
      * Главный логгер
      */
     public static logger: elyXLogger = new elyXLogger({mainPrefix: "efi"});
+
+    /**
+     * База данных
+     */
+    public static db: efiDatabase;
 
     /**
      * Проверяет наличие ely.flat в директории

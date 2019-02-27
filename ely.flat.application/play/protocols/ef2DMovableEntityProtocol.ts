@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
+import Observable from "@core/observable/Observable";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import efGameSettings from "@play/efGameSettings";
@@ -30,9 +30,9 @@ import efGameSettings from "@play/efGameSettings";
 /**å
  * Протокол перемещаемых объектов в 2D Tiled
  * @class ef2DMovableEntityProtocol
- * @augments {elyObservable}
+ * @augments {Observable}
  */
-export default class ef2DMovableEntityProtocol extends elyObservable {
+export default class ef2DMovableEntityProtocol extends Observable {
     /**
      * Абсолютная позиция
      * @protected

@@ -23,10 +23,11 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import efSize from "@cnv/objs/efSize";
-import elyUtils from "@core/elyUtils";
-import elyObservable from "@core/observable/elyObservable";
-import elyXLogger from "@core/utils/elyXLogger";
-import elyGetRequest from "@core/web/request/elyGetRequest";
+import {safeJsonParse} from "@core/Guard";
+import Utils from "@core/Utils";
+import Observable from "@core/observable/Observable";
+import XLogger from "@core/utils/XLogger";
+import {URLRequest} from "@core/web/request/URLRequest";
 import ef2DVector from "@math/ef2DVector";
 import ef2DVectorValues from "@math/ef2DVectorValues";
 import ef2DGridButch from "@play/ef2DGridButch";
@@ -46,7 +47,7 @@ interface efGameWorld_worldData {
 /**
  * Игровой мир
  */
-export default class efGameWorld extends elyObservable {
+export default class efGameWorld extends Observable {
 
     /**
      * Размер мира в тайлах
@@ -170,7 +171,7 @@ export default class efGameWorld extends elyObservable {
             }
 
         } else {
-            elyXLogger.default.error("Сущность с id [" + entity.id + "] уже добавлена!");
+            XLogger.default.error("Сущность с id [" + entity.id + "] уже добавлена!");
         }
     }
 
@@ -184,7 +185,7 @@ export default class efGameWorld extends elyObservable {
             delete this.entities[entity.id];
             entity.entityDidRemoveFromGame(this);
         } else {
-            elyXLogger.default.error("Сущность с id [" + entity.id + "] не найдена!");
+            XLogger.default.error("Сущность с id [" + entity.id + "] не найдена!");
         }
     }
 
@@ -193,7 +194,7 @@ export default class efGameWorld extends elyObservable {
      * @param entity
      */
     public registerEntityPosition(entity: efEntity): void {
-        // elyXLogger.default.log(`Установка регистрации позиции для ${entity} (${entity.getGridPosition()})`);
+        // XLogger.default.log(`Установка регистрации позиции для ${entity} (${entity.getGridPosition()})`);
         this.entitiesGrid!.add(entity.getGridPosition(), entity);
         this.renderingGrid!.add(entity.getGridPosition(), entity);
         this.pathingGrid[entity.getGridPosition().y][entity.getGridPosition().x] = 0;
@@ -206,7 +207,7 @@ export default class efGameWorld extends elyObservable {
      * @param entity
      */
     public registerEntityDualPosition(entity: efEntity): void {
-        // elyXLogger.default.log(`Удаление регистрации позиции для ${entity} (${entity.getGridPosition()})`);
+        // XLogger.default.log(`Удаление регистрации позиции для ${entity} (${entity.getGridPosition()})`);
         this.entitiesGrid!.add(entity.getGridPosition(), entity);
         this.renderingGrid!.add(entity.getGridPosition(), entity);
 
@@ -255,9 +256,9 @@ export default class efGameWorld extends elyObservable {
     }
 
     public reload(): void {
-        elyXLogger.default.log(`Загрузка мира [${this.name}]...`);
+        XLogger.default.log(`Загрузка мира [${this.name}]...`);
         this.gameWorldShouldLoad(res => {
-            elyXLogger.default.log(`Загрузка мира [${this.name}]. Статус: [ ${res ? "OK" : "NO"} ]`);
+            XLogger.default.log(`Загрузка мира [${this.name}]. Статус: [ ${res ? "OK" : "NO"} ]`);
             this.__isLoaded = res;
             this.notificate("loaded", [this]);
         });
@@ -268,14 +269,16 @@ export default class efGameWorld extends elyObservable {
      * @param next
      */
     public gameWorldShouldLoad(next: (res: boolean) => void): void {
-        new elyGetRequest({url: `worlds/${this.name}.json`}).send({}, response => {
+
+        URLRequest.sendGET(`worlds/${this.name}.json`, response => {
+            response = safeJsonParse(response);
             if (response.name && response.name === this.name) {
                 this.worldData = response;
                 console.log(this.worldData);
                 this.game.spritesManager.addList(this.worldData!.sprites);
                 this.size.width(this.worldData!.size.width);
                 this.size.height(this.worldData!.size.height);
-                elyXLogger.default.log(`Размер мира: ${this.size.toString()}`);
+                XLogger.default.log(`Размер мира: ${this.size.toString()}`);
 
                 this.__initPathingGrid({size: this.size, worldCollision: this.worldData!.collision});
                 this.__initEntitiesGrid({size: this.size});
@@ -356,7 +359,7 @@ export default class efGameWorld extends elyObservable {
      * @param {{function(entity: efEntity, id: number)}} callback
      */
     public forEachEntity(callback: (entity: efEntity, id: number) => void): void {
-        elyUtils.forEach(this.entities, (index, value) => {
+        Utils.forEach(this.entities, (index, value) => {
             callback(value, index);
         });
     }
@@ -370,7 +373,7 @@ export default class efGameWorld extends elyObservable {
             if (!this.isOutOfBounds(grid)) {
                 const render = this.renderingGrid!.get(grid);
                 if (render) {
-                    elyUtils.forEach(render, (index, value) => {
+                    Utils.forEach(render, (index, value) => {
                         callback(value, index);
                     });
                 }
@@ -443,7 +446,7 @@ export default class efGameWorld extends elyObservable {
                 this.pathingGrid[i][j] = props.worldCollision[i][j];
             }
         }
-        elyXLogger.default.log(`Сетка перещемещения инициилизирована: ${props.size.toString()}`);
+        XLogger.default.log(`Сетка перещемещения инициилизирована: ${props.size.toString()}`);
     }
 
     /**
@@ -452,7 +455,7 @@ export default class efGameWorld extends elyObservable {
      */
     protected __initEntitiesGrid(props: { size: efSize }) {
         this.entitiesGrid = new ef2DGridButch<efEntity>({size: props.size});
-        elyXLogger.default.log(`Сетка сущностей инициилизирована: ${props.size.toString()}`);
+        XLogger.default.log(`Сетка сущностей инициилизирована: ${props.size.toString()}`);
     }
 
     /**
@@ -461,6 +464,6 @@ export default class efGameWorld extends elyObservable {
      */
     protected __initRenderingGrid(props: { size: efSize }) {
         this.renderingGrid = new ef2DGridButch<efEntity>({size: props.size});
-        elyXLogger.default.log(`Сетка отрисовки инициилизирована: ${props.size.toString()}`);
+        XLogger.default.log(`Сетка отрисовки инициилизирована: ${props.size.toString()}`);
     }
 }

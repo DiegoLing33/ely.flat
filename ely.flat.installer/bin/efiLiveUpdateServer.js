@@ -27,7 +27,7 @@ var bodyParser = require("body-parser");
 var express = require("express");
 // @ts-ignore
 var filewatcher = require("filewatcher");
-var elyXLogger_1 = require("../core/elyXLogger");
+var elyXLogger_1 = require("./core/elyXLogger");
 /**
  * Сервер живого обновления
  * @class efiLiveUpdateServer

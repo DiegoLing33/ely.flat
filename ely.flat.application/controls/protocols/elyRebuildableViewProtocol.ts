@@ -18,15 +18,14 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyView from "@core/controls/elyView";
-import elyViewOptions from "@core/controls/elyViewOptions";
+import View, {ViewOptions} from "@core/controls/View";
 
 /**
  * Элемент, который может быть перестроен
  * @class elyRebuildableViewProtocol
- * @augments {elyView}
+ * @augments {View}
  */
-export default abstract class elyRebuildableViewProtocol extends elyView {
+export default abstract class elyRebuildableViewProtocol extends View {
 
     /**
      * Флаг перестроения
@@ -38,7 +37,7 @@ export default abstract class elyRebuildableViewProtocol extends elyView {
      * Конструктор
      * @param options
      */
-    protected constructor(options: elyViewOptions) {
+    protected constructor(options: ViewOptions) {
         super(options);
         this.__denyRebuild = false;
     }

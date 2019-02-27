@@ -19,9 +19,9 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /* tslint:disable */
-import elyGuard from "@core/elyGuard";
-import elyUtils from "@core/elyUtils";
-import {elyColorUtils} from "@core/elyColorUtils";
+import Utils from "@core/Utils";
+import {ColorUtils} from "@core/ColorUtils";
+import {isSet} from "@core/Guard";
 
 (function (win, doc, NS) {
 
@@ -40,7 +40,7 @@ import {elyColorUtils} from "@core/elyColorUtils";
     }
 
     function HSV2RGB(a: number[]) {
-        const rgb = elyColorUtils.hsv2rgb({hue: +a[0], saturation: +a[1], value: +a[2]});
+        const rgb = ColorUtils.hsv2rgb({hue: +a[0], saturation: +a[1], value: +a[2]});
         return [Math.round(rgb.red * 255), Math.round(rgb.green * 255), Math.round(rgb.blue * 255)];
     }
 
@@ -49,12 +49,12 @@ import {elyColorUtils} from "@core/elyColorUtils";
     }
 
     function RGB2HSV(a: number[]) {
-        const res = elyColorUtils.rgb2hsv({red: +a[0], green: +a[1], blue: +a[2]});
+        const res = ColorUtils.rgb2hsv({red: +a[0], green: +a[1], blue: +a[2]});
         return [res.hue, res.saturation, res.value];
     }
 
     function RGB2HEX(a: any[]) {
-        return elyColorUtils.rgb2hex({red: +a[0], green: +a[1], blue: +a[2]});
+        return ColorUtils.rgb2hex({red: +a[0], green: +a[1], blue: +a[2]});
     }
 
     // rrggbb or rgb //ok
@@ -181,10 +181,10 @@ import {elyColorUtils} from "@core/elyColorUtils";
         }
 
         // store color picker instance to `CP.__instance__`
-        $$[instance][source.id || source.name || elyUtils.count($$[instance])] = $;
+        $$[instance][source.id || source.name || Utils.count($$[instance])] = $;
 
         // trigger color picker panel on click by default
-        if (!elyGuard.isSet(events) || events === true) {
+        if (!isSet(events) || events === true) {
             events = on_down;
         }
 
@@ -261,7 +261,7 @@ import {elyColorUtils} from "@core/elyColorUtils";
 
         // get color data
         function get_data(a: any) {
-            return _ || (elyGuard.isSet(a) ? a : false);
+            return _ || (isSet(a) ? a : false);
         }
 
         // set color data
@@ -271,22 +271,22 @@ import {elyColorUtils} from "@core/elyColorUtils";
 
         // add hook
         function add(ev: any, fn: any, id: any) {
-            if (!elyGuard.isSet(ev)) return hooks;
+            if (!isSet(ev)) return hooks;
             // @ts-ignore
-            if (!elyGuard.isSet(fn)) return hooks[ev];
+            if (!isSet(fn)) return hooks[ev];
             // @ts-ignore
-            if (!elyGuard.isSet(hooks[ev])) hooks[ev] = {};
+            if (!isSet(hooks[ev])) hooks[ev] = {};
             // @ts-ignore
-            if (!elyGuard.isSet(id)) id = elyUtils.count(hooks[ev]);
+            if (!isSet(id)) id = Utils.count(hooks[ev]);
             // @ts-ignore
             return hooks[ev][id] = fn, $;
         }
 
         // remove hook
         function remove(ev: any, id: any) {
-            if (!elyGuard.isSet(ev)) return hooks = {}, $;
+            if (!isSet(ev)) return hooks = {}, $;
             // @ts-ignore
-            if (!elyGuard.isSet(id)) return hooks[ev] = {}, $;
+            if (!isSet(id)) return hooks[ev] = {}, $;
             // @ts-ignore
             return delete hooks[ev][id], $;
         }
@@ -294,8 +294,8 @@ import {elyColorUtils} from "@core/elyColorUtils";
         // trigger hook
         function trigger(ev: any, a: any[], id: any) {
             // @ts-ignore
-            if (!elyGuard.isSet(hooks[ev])) return $;
-            if (!elyGuard.isSet(id)) {
+            if (!isSet(hooks[ev])) return $;
+            if (!isSet(id)) {
                 // @ts-ignore
                 for (var i in hooks[ev]) {
                     // @ts-ignore
@@ -303,7 +303,7 @@ import {elyColorUtils} from "@core/elyColorUtils";
                 }
             } else {
                 // @ts-ignore
-                if (elyGuard.isSet(hooks[ev][id])) {
+                if (isSet(hooks[ev][id])) {
                     // @ts-ignore
                     hooks[ev][id].apply($, a);
                 }
@@ -565,8 +565,8 @@ import {elyColorUtils} from "@core/elyColorUtils";
             left = to.l + ww.l;
             top = to.t + ww.t + size(source).h; // drop!
             if (typeof o === "object") {
-                elyGuard.isSet(o[0]) && (left = o[0]);
-                elyGuard.isSet(o[1]) && (top = o[1]);
+                isSet(o[0]) && (left = o[0]);
+                isSet(o[1]) && (top = o[1]);
             } else {
                 var min_x = ww.l,
                     min_y = ww.t,

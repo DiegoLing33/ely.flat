@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="D.TS" pattern="file:*.d.ts" />
+</component>

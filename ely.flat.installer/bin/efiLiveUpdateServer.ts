@@ -27,7 +27,7 @@ import express = require("express");
 // @ts-ignore
 import filewatcher = require("filewatcher");
 import * as http from "http";
-import elyXLogger from "../core/elyXLogger";
+import elyXLogger from "./core/elyXLogger";
 
 /**
  * Сервер живого обновления

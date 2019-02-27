@@ -22,14 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyObservable from "@core/observable/elyObservable";
-import elyXLogger from "@core/utils/elyXLogger";
-import elyGetRequest from "@core/web/request/elyGetRequest";
+import {safeJsonParse} from "@core/Guard";
+import Observable from "@core/observable/Observable";
+import XLogger from "@core/utils/XLogger";
+import {URLRequest} from "@core/web/request/URLRequest";
 
 /**
  * 2D Спрайт
  */
-export default class ef2DSprite extends elyObservable {
+export default class ef2DSprite extends Observable {
 
     /**
      * Путь до спрайтов
@@ -67,9 +68,9 @@ export default class ef2DSprite extends elyObservable {
      * Вызывает перезагрузку спрайта
      */
     public reload(): void {
-        elyXLogger.default.log(`Загрузка спрайта: [${this.name}]`);
+        XLogger.default.log(`Загрузка спрайта: [${this.name}]`);
         this.__loadImage(() => {
-            elyXLogger.default.log(`Спрайт [${this.name}] загружен: ${elyXLogger.getOkNoString(this.loaded())}`);
+            XLogger.default.log(`Спрайт [${this.name}] загружен: ${XLogger.getOkNoString(this.loaded())}`);
             this.notificate("loaded", [this.loaded()]);
         });
     }
@@ -106,8 +107,8 @@ export default class ef2DSprite extends elyObservable {
      * @private
      */
     protected __loadJSON(cb: () => void): void {
-        new elyGetRequest({url: `${ef2DSprite.spritesPath}/${this.name}.json`}).send({}, (res) => {
-            this.__raw = res;
+        URLRequest.sendGET(`${ef2DSprite.spritesPath}/${this.name}.json`, (response) => {
+            this.__raw = safeJsonParse(response);
             cb();
         });
     }
