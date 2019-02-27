@@ -1,6 +1,11 @@
 # ely.flat **{ }**
 
-## Модули библиотеки ely.core
+
+## Продукты:
+### efi &middot; [![GitHub license](https://img.shields.io/badge/license-Apache_2.0-green.svg)](https://github.com/DiegoLing33/efi/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/efi.svg?style=flat)](https://www.npmjs.com/package/efi)
+
+
+## Модули библиотеки ely.core:
 
 ### <a href="classes/Time.html">Time</a>
 Модуль для работы со временем

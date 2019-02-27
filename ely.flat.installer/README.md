@@ -1,7 +1,7 @@
 # efi &middot; [![GitHub license](https://img.shields.io/badge/license-Apache_2.0-green.svg)](https://github.com/DiegoLing33/efi/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/efi.svg?style=flat)](https://www.npmjs.com/package/efi)
 Менеджер установки и сборки ely.flat.
 
-<img src="https://i.ibb.co/gR42Yx0/efi.jpg" height="150">
+<img src="resources/icon/favicon-32x32.png" height="150">
 
 ## 1. Установка
 Платформа ely.flat использует технологию NodeJS, поэтому ely.flat.installer может быть установлен через менеджер
