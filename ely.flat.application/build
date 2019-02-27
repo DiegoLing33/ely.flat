@@ -129,7 +129,7 @@ if ${DOC_FLAG}; then
             console.log(elements);
         };
     "
-    compodoc -p ../tsconfig.json --disableSourceCode --disablePrivate
+    compodoc -p ../tsconfig.json --disableSourceCode --disablePrivate -d ../documentation
     doctext=$(cat "../documentation/js/compodoc.js")
     echo "${doctext} ${add}" > "../documentation/js/compodoc.js"
 fi

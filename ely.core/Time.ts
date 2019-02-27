@@ -215,7 +215,7 @@ export default class Time {
      * @return {string}
      *
      */
-    public static daysString(value: number, isUpperFirstChar: boolean = false): string {˚
+    public static daysString(value: number, isUpperFirstChar: boolean = false): string {
         return Time.__stringByLastNumber(value, [
             "дней",
             "день",
