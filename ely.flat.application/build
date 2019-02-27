@@ -119,5 +119,5 @@ fi
 
 if ${DOC_FLAG}; then
     cd ../
-    ${COMPODOC_PATH} -p tsconfig.json --disableSourceCode --disablePrivate -n "ely.flat { doc }" --language "ru-RU"
+    ${COMPODOC_PATH} -p tsconfig.json --disableSourceCode --disablePrivate -n "ely.flat { doc }" --language "ru-RU" -d "doc"
 fi
