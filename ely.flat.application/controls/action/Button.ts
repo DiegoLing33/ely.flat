@@ -35,8 +35,8 @@ import efSerializableProtocol from "@protocols/efSerializableProtocol";
  */
 export interface ButtonOptions extends ViewOptions {
     text?: string;
-    buttonStyle?: Style | string;
-    buttonSize?: Size | string;
+    buttonStyle?: Style;
+    buttonSize?: Size;
     buttonRounded?: boolean;
     click?: () => void;
     fill?: boolean;
@@ -48,13 +48,10 @@ export interface ButtonOptions extends ViewOptions {
  * @augments {Button}
  */
 export default class Button extends View implements efSerializableProtocol<Button> {
-    /**
-     * Десериализует объект
-     * @param {string} raw - сериализованный объект
-     * @return {TextView}
-     */
-    public static deserialize<T>(raw: string): Button | null {
-        return new Button(JSON.parse(raw));
+
+    public static willBeDeserialized(obj: any) {
+        if (typeof obj.buttonSize === "string") obj.buttonSize = Size.byName(obj.buttonSize);
+        if (typeof obj.buttonStyle === "string") obj.buttonStyle = Style.byName(obj.buttonStyle);
     }
 
     /**
@@ -232,20 +229,21 @@ export default class Button extends View implements efSerializableProtocol<Butto
      * @return {string}
      */
     public serialize(): string {
-        return JSON.stringify({
+        return {
+            ...super.serialize(),
             buttonRounded: this.buttonRounded(),
-            buttonSize: this.buttonSize().value,
-            buttonStyle: this.buttonStyle().value,
+            buttonSize: this.buttonSize().serialize(),
+            buttonStyle: this.buttonStyle().serialize(),
             text: this.text(),
-        });
+        };
     }
 }
 
 /**
  * @typedef {Object} ButtonOptions
  * @property {String} [text = ""]
- * @property {Size|String} [buttonSize]
- * @property {Style|String} [buttonStyle]
+ * @property {Size} [buttonSize]
+ * @property {Style} [buttonStyle]
  * @property {boolean} [buttonRounded = false]
  * @property {boolean} [fill = false]
  * @property {function()} [click]

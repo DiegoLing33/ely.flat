@@ -22,30 +22,135 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import XLogger from "@core/utils/XLogger";
 import {efProtocol} from "@protocols/efProtocol";
+
+/**
+ * Интерфейс сериализуемого типа
+ */
+export interface ISerializable<T> {
+
+    /**
+     * Десериализует объект
+     * @param raw
+     */
+    deserialize(raw: string): T | null;
+
+    /**
+     * Сериализует объект
+     */
+    serialize(): string;
+}
+
+/**
+ * Данные десериализации
+ * @class DeserializeData
+ */
+export class DeserializeData {
+
+    /**
+     * Идентификаторы
+     */
+    protected __ids: { [id: string]: any };
+
+    /**
+     * Конструктор
+     * @param props
+     */
+    public constructor(props: { ids: { [id: string]: any } }) {
+        this.__ids = props.ids;
+    }
+
+    /**
+     * Возвращает массив идетификаторов,
+     * найденных при десериализации
+     * @return {string[]}
+     */
+    public getIds(): string[] {
+        return Object.keys(this.__ids);
+    }
+
+    /**
+     * Возвращает объект по идентификатору
+     * @param {string} id
+     * @template T
+     * @return {T}
+     */
+    public getById<T>(id: string): T | null {
+        if (this.__ids.hasOwnProperty(id)) {
+            return this.__ids[id];
+        }
+        return null;
+    }
+
+}
+
+/**
+ * Десериализует объект
+ * @template T
+ * @param {*} rawData
+ * @return {T | null}
+ */
+export function deserializeWithData<T>(rawData: any): { object: T, data: DeserializeData } | null {
+    const ids: any = {};
+    const body = ((raw: { [name: string]: any; _item?: any; _id?: any; }) => {
+        if (raw && typeof raw._item === "string") {
+            const theObject = window.elyflatobjects[raw._item];
+            if (theObject) {
+                if (theObject.willBeDeserialized) theObject.willBeDeserialized(raw);
+                // const name = theObject.prototype.constructor.name;
+                const theId = raw._id;
+                Object.keys(raw).forEach(key => {
+                    if (key === "_item") return;
+                    const val = raw[key];
+                    if (val instanceof Array) {
+                        val.forEach((a, i) => {
+                            const res = body(a);
+                            raw[key][i] = res ? res : a;
+                        });
+                    } else {
+                        if (val._item) raw[key] = body(val);
+                    }
+                });
+                const obj = new theObject.prototype.constructor(raw);
+                if (theId) ids[theId] = obj;
+                return obj;
+            } else {
+                XLogger.default.error(`[Serialization]: Не найден класс ${raw._item}!`);
+            }
+        }
+        XLogger.default.error(`[Serialization]: Невозможно десериализовать объект! ${JSON.stringify(raw)}`);
+    });
+    const obj = body(rawData);
+    if (obj) return {object: obj, data: new DeserializeData({ids})};
+    return null;
+
+}
+
+/**
+ * Десериализует объект
+ * @template T
+ * @param {*} raw
+ * @param {*} raw
+ * @return {T | null}
+ */
+export function deserialize<T>(raw: any): T | null {
+    const result = deserializeWithData<T>(raw);
+    if (result) return result.object;
+    return null;
+}
 
 /**
  * Протокол сериализации
  * @class efSerializableProtocol
+ * @augments {efProtocol}
  * @template <T>
  */
-export default class efSerializableProtocol<T> extends efProtocol {
-
-    /**
-     * Десериализует объект
-     * @template <T>
-     * @param {string} raw - сериализованный объект
-     * @return {T}
-     */
-    public static deserialize<T>(raw: string): T | null {
-        return null;
-    }
+export default abstract class efSerializableProtocol<T> extends efProtocol {
 
     /**
      * Сериализует объект
-     * @return {string}
+     * @return {*}
      */
-    public serialize(): string {
-        return "";
-    }
+    public abstract serialize(): any;
 }

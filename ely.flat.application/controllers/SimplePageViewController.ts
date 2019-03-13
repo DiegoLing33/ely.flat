@@ -24,7 +24,9 @@
 
 import GridViewController from "@controllers/GridViewController";
 import Control from "@controls/action/Control";
+import GridLayoutView from "@controls/layout/GridLayoutView";
 import TextView from "@controls/text/TextView";
+import {variableAndSet} from "@core/Guard";
 import Size from "@enums/Size";
 import Weight from "@enums/Weight";
 
@@ -37,21 +39,24 @@ export default class SimplePageViewController extends GridViewController {
 
     /**
      * Основной заголовок
-     * @type {elyTextView}
+     * @type {TextView}
      */
     public readonly titleView: TextView = new TextView({class: "--title"});
 
     /**
      * Описание страницы
-     * @type {elyTextView}
+     * @type {TextView}
      */
     public readonly descriptionView: TextView = new TextView({class: "--description"});
 
     /**
      * Конструктор
+     * @param {} [props]
      */
-    public constructor() {
-        super();
+    public constructor(props: { title?: string, description?: string, controllerMainView?: GridLayoutView } = {}) {
+        super(props);
+        const rows = this.view.getRows().get();
+        this.view.getRows().clear();
         this.view.addClass("ef-simple-content");
 
         const headerView = new Control({class: "--content-header"});
@@ -62,6 +67,10 @@ export default class SimplePageViewController extends GridViewController {
         headerView.addSubView(this.titleView);
         headerView.addSubView(this.descriptionView);
         this.view.add(headerView);
+
+        variableAndSet(props.title, this.title, this);
+        variableAndSet(props.description, this.description, this);
+        rows.forEach(row => this.view.getRows().push(row));
     }
 
     /**
@@ -84,5 +93,16 @@ export default class SimplePageViewController extends GridViewController {
         if (value === undefined) return this.descriptionView.text();
         this.descriptionView.text(value);
         return this;
+    }
+
+    /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        const obj = super.serialize();
+        obj._item = "SimplePageViewController";
+        obj.title = this.title();
+        obj.description = this.description();
+        return obj;
     }
 }

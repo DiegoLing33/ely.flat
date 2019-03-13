@@ -34,22 +34,22 @@ export default class TextFieldType extends elyEnum<string> {
     /**
      * Текст
      */
-    public static readonly text = new TextFieldType("text");
+    public static readonly text = new TextFieldType({value: "text"});
 
     /**
      * Пароль
      */
-    public static readonly password = new TextFieldType("password");
+    public static readonly password = new TextFieldType({value: "password"});
 
     /**
      * Число
      */
-    public static readonly number = new TextFieldType("number");
+    public static readonly number = new TextFieldType({value: "number"});
 
     /**
      * Почта
      */
-    public static readonly mail = new TextFieldType("mail");
+    public static readonly mail = new TextFieldType({value: "mail"});
 
     /**
      * Тип по имени
@@ -57,7 +57,7 @@ export default class TextFieldType extends elyEnum<string> {
      */
     public static byName(value: string | number): TextFieldType {
         if (typeof value === "number") value = value.toString() + "px";
-        return new TextFieldType(value);
+        return new TextFieldType({value});
     }
 
     /**
@@ -75,9 +75,17 @@ export default class TextFieldType extends elyEnum<string> {
     /**
      * Конструктор
      * @ignore
-     * @param val
+     * @param {{value: string}} props
      */
-    protected constructor(val: string) {
-        super(val);
+    protected constructor(props: { value: string }) {
+        super(props);
+    }
+
+    /**
+     * Сериализует объект
+     * @return {*}
+     */
+    public serialize(): any {
+        return {_item: "TextFieldType", value: this.value};
     }
 }

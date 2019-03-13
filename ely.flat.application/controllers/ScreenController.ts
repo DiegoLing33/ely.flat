@@ -27,6 +27,7 @@ import ViewController from "@controllers/ViewController";
 import Control from "@controls/action/Control";
 import Observable from "@core/observable/Observable";
 import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import XLogger from "@core/utils/XLogger";
 
 class __elyScreenIndexViewController extends SimplePageViewController {
 
@@ -89,6 +90,7 @@ export default class ScreenController extends Observable {
      */
     public present(controller: ViewController | string, completion?: () => void): void {
         if (typeof controller === "string") {
+            XLogger.default.log(`[ScreenController]: Отображение контроллера id:${controller}`);
             if (this.items.hasOwnProperty(controller))
                 this.present(this.items[controller].controller, completion);
         } else {
@@ -117,6 +119,7 @@ export default class ScreenController extends Observable {
      * @param canOverwrite
      */
     public addControllerName(name: string, controller: ViewController, canOverwrite: boolean = false): void {
+        XLogger.default.log(`[ScreenController]: Добавлен контроллер: ${name} (${controller.constructor.name})`);
         if (this.items.hasOwnProperty(name)) {
             if (!this.items[name].canOverwrite) return;
             this.items[name].controller = controller;

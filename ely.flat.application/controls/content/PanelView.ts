@@ -34,8 +34,8 @@ export interface PanelViewOptions extends ViewOptions {
     panelTitle?: string;
     panelActionText?: string;
     panelHover?: boolean;
-    panelContent?: View;
     panelActionClick?: () => void;
+    panelContainer?: GridLayoutView;
 }
 
 /**
@@ -55,7 +55,7 @@ export default class PanelView extends View {
      * @protected
      * @ignore
      */
-    protected readonly __contentView: GridLayoutView = new GridLayoutView({class: "--content"});
+    protected __contentView: GridLayoutView = new GridLayoutView({class: "--content"});
 
     /**
      * Элемен отображения подвала
@@ -72,12 +72,14 @@ export default class PanelView extends View {
         super(options);
         this.addClass("ef-panel");
 
+        if (options.panelContainer)
+            this.__contentView = options.panelContainer.addClass("--content") as any;
+
         this.panelHover(true);
         variable<string>(options.panelTitle, (v) => this.panelTitle(v));
         variable<boolean>(options.panelHover, (v) => this.panelHover(v));
         variable<string>(options.panelActionText, (v) => this.panelActionText(v));
         variable<() => void>(options.panelActionClick, (v) => this.panelActionClick(v));
-        variable<View>(options.panelContent, (v) => this.getContentView().add(v));
         this.rebuild();
     }
 
@@ -202,6 +204,18 @@ export default class PanelView extends View {
         return this;
     }
 
+    /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        return {
+            ...super.serialize(),
+            panelActionText: this.panelActionText(),
+            panelContainer: this.getContentView().serialize(),
+            panelHover: this.panelHover(),
+            panelTitle: this.panelTitle(),
+        };
+    }
 }
 
 /**
@@ -209,6 +223,5 @@ export default class PanelView extends View {
  * @property {string} [panelTitle]
  * @property {string} [panelActionText]
  * @property {boolean} [panelHover = true]
- * @property {View} [panelContent]
  * @property {function()} [panelActionClick]
  */

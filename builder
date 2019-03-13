@@ -1,11 +1,14 @@
 #!/bin/bash
 
+##### Projects paths
+ELY_FLAT_APPLICATION_PATH="ely.flat.application"
+ELY_FLAT_INSTALLER_PATH="ely.flat.installer"
+
 ##### Directories
-APPLICATION_SASS_DIR="./sass"
-PRODUCTS_DIR="../products"
-INSTALLER_DIR="../ely.flat.installer"
-INSTALLER_BUILD_DIR="${INSTALLER_DIR}/build"
-INSTALLER_RES_DIR="${INSTALLER_DIR}/resources"
+APPLICATION_SASS_DIR="${ELY_FLAT_APPLICATION_PATH}/sass"
+PRODUCTS_DIR="products"
+INSTALLER_BUILD_DIR="${ELY_FLAT_INSTALLER_PATH}/build"
+INSTALLER_RES_DIR="${ELY_FLAT_INSTALLER_PATH}/resources"
 
 ##### Files names
 ELY_FLAT_FILE_NAME="ely.flat.js"
@@ -16,8 +19,10 @@ ELY_FLAT_STYLE_X_DIST_FILE_NAME="efx.css"
 ##### Paths
 ELY_FLAT_DIST_FILE_PATH="${PRODUCTS_DIR}/${ELY_FLAT_FILE_NAME}"
 ELY_FLAT_SINGLE_DIST_FILE_PATH="${PRODUCTS_DIR}/${ELY_FLAT_SINGLE_FILE_NAME}"
-ROLLUP_PATH="../node_modules/.bin/rollup"
-SASS_PATH="../node_modules/.bin/sass"
+
+##### Binary paths
+ROLLUP_PATH="node_modules/.bin/rollup"
+SASS_PATH="node_modules/.bin/sass"
 COMPODOC_PATH="node @compodoc/compodoc/bin/index-cli.js"
 
 ELY_FLAT_STYLE_X_SOURCE_FILE_PATH="${APPLICATION_SASS_DIR}/${ELY_FLAT_STYLE_X_SOURCE_FILE_NAME}"
@@ -65,7 +70,9 @@ if ${JS_FLAG}; then
 
     if ${BUILD_FLAG}; then
         echo "Building the ely.flat to the path: [${ELY_FLAT_DIST_FILE_PATH}]"
-        ${ROLLUP_PATH} -c
+        cd ${ELY_FLAT_APPLICATION_PATH}
+        ../${ROLLUP_PATH} -c
+        cd ../
         raw=$(sed -n "2p" ${BUILDS_NUMBERS_FILE_PATH})
         typeset -i build_number=${raw}
         build_number=build_number+1
@@ -105,7 +112,7 @@ if ${CSS_FLAG}; then
     if ! ${SAVE_MAPS_FLAG}; then
     echo "Removing style map data..."
         sed -i "" "\/\*\# sourceMappingURL/d" ${ELY_FLAT_STYLE_X_DIST_FILE_PATH}
-        rm ${PRODUCTS_DIR}/${ELY_FLAT_STYLE_X_DIST_FILE_PATH}.map
+        rm ${ELY_FLAT_STYLE_X_DIST_FILE_PATH}.map
     fi
 
     echo "Copying to the efi..."
@@ -118,6 +125,5 @@ if ${CSS_FLAG}; then
 fi
 
 if ${DOC_FLAG}; then
-    cd ../
-    ${COMPODOC_PATH} -p tsconfig.json --disableSourceCode --disablePrivate -n "ely.flat { doc }" --language "ru-RU" -d "doc"
+    ${COMPODOC_PATH} -p tsconfig.json --disableSourceCode --disablePrivate -n "ely.flat { doc }" --language "ru-RU" -d "docs"
 fi

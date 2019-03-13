@@ -1,0 +1,54 @@
+{
+  "_item": "SimplePageViewController",
+  "title": "My login form",
+  "description": "This is from json made",
+
+  "controllerMainView": {
+
+    "_item": "GridLayoutView",
+    "items": [
+      {
+        "_item": "RowLayoutView",
+        "items": [
+          {
+
+            "_item": "PanelView",
+            "_id": "the-panel",
+            "panelTitle": "The panel of the panels",
+            "panelRootGridView": {
+              "_item": "GridLayoutView",
+              "items": [
+                {
+                  "_item": "RowLayoutView",
+                  "items": [
+                    {
+                      "_item": "TextField",
+                      "_id": "login",
+                      "placeholder": "Type the login"
+                    },
+                    {
+                      "_item": "TextField",
+                      "placeholder": "Type the password",
+                      "fieldType": "password"
+                    }
+                  ]
+                },
+                {
+                  "_item": "RowLayoutView",
+                  "items": [
+                    {
+                      "_id": "btn",
+                      "_item": "Button",
+                      "text": "Go",
+                      "buttonSize": "fill"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

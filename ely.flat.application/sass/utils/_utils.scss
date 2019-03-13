@@ -21,7 +21,7 @@
   @include applyShadow($shadowStyle)
 }
 
-@function getPrimaryColor(){
+@function getPrimaryColor() {
   @return map-get($colorsMap, "primary");
 }
 
@@ -48,41 +48,51 @@
   @return $size;
 }
 
-.clickable{
-  opacity: 0.5;
+.--clickable {
+  opacity: 0.7;
   transition: opacity 0.6s;
-  &:hover{
+  cursor: pointer;
+
+  &:hover {
     cursor: pointer;
     opacity: 1;
   }
 }
 
-@mixin deny-selection(){
+@mixin deny-selection() {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
 }
 
+.--no-select {
+  @include deny-selection();
+}
+
+.--scrollView{
+  overflow: scroll;
+}
+
 @each $style in $stylesList {
-  .bg-n-bd-#{$style}{
+  .bg-n-bd-#{$style} {
     border-color: colorStyle($style) !important;
     background-color: colorStyle($style) !important;
   }
 
-  .bg-#{$style}{
+  .bg-#{$style} {
     background-color: colorStyle($style) !important;
   }
 
-  .bd-#{$style}{
+  .bd-#{$style} {
     border-color: colorStyle($style) !important;
   }
 
-  .stroke-#{$style}{
+  .stroke-#{$style} {
     stroke: colorStyle($style) !important;
   }
 }
 
-.--hidden{
+.--hidden {
   display: none;
 }
 

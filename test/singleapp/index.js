@@ -2,19 +2,16 @@
 
 function ef(config) {
 
-    config({
-        navigationBar: {
-            title: "Single app"
-        },
-        manifest:{
-            useDevelopMode: true,
-        },
-        develop:{
-            appFile: "index.js",
-        }
-    });
+    config({});
 
     return vc => {
+        setTimeout(()=>{
+            navigationBar().getProgressView().value(100);
+        }, 1000);
+
+        const prog = new CircularProgressBarView();
+        prog.value(20);
+        vc.view.add(prog);
 
     };
 }

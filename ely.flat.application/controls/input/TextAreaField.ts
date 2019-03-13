@@ -17,7 +17,7 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: TextArea.ts                                                      +
+ + Файл: TextAreaFieldField.ts                                                      +
  + Файл изменен: 09.02.2019 21:45:17                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
@@ -27,25 +27,25 @@ import Field, {FieldOptions} from "@controls/input/Field";
 import {variable} from "@core/Guard";
 
 /**
- * Опции {@link TextArea}
+ * Опции {@link TextAreaField}
  */
-export interface TextAreaOptions extends FieldOptions<string> {
+export interface TextAreaFieldOptions extends FieldOptions<string> {
     rowsCount?: number;
     readonly?: boolean;
 }
 
 /**
  * Поле воода многострочного текста
- * @class TextArea
+ * @class TextAreaField
  * @augments {TextField}
  */
-export default class TextArea extends Field<string> {
+export default class TextAreaField extends Field<string> {
 
     /**
      * Конструктор
-     * @param {TextAreaOptions} options - опции
+     * @param {TextAreaFieldOptions} options - опции
      */
-    public constructor(options: TextAreaOptions = {}) {
+    public constructor(options: TextAreaFieldOptions = {}) {
         super(options);
         this.addClass("ef-textarea");
         this.getAccessory().onchange = () => this.value(this.getAccessory().value);
@@ -77,14 +77,14 @@ export default class TextArea extends Field<string> {
      * @param {number} value - значение
      * @return {this}
      */
-    public rowsCount(value: number): TextArea;
+    public rowsCount(value: number): TextAreaField;
 
     /**
      * Возвращает и устанавливает количество строк
      * @param {number} [value] - значение
      * @returns {number|this|null}
      */
-    public rowsCount(value?: number): number | null | TextArea {
+    public rowsCount(value?: number): number | null | TextAreaField {
         if (value === undefined) return this.getAccessory().rows;
         this.getAccessory().rows = value;
         return this;
@@ -101,14 +101,14 @@ export default class TextArea extends Field<string> {
      * @param {boolean} value - значение
      * @return {this}
      */
-    public readonly(value: boolean): TextArea;
+    public readonly(value: boolean): TextAreaField;
 
     /**
      * Возвращает и устанавливает флаг разрешающий только чтение
      * @param {boolean} [value] - значение
      * @returns {boolean|this|null}
      */
-    public readonly(value?: boolean): boolean | null | TextArea {
+    public readonly(value?: boolean): boolean | null | TextAreaField {
         if (value === undefined) return this.getAccessory().readOnly;
         this.getAccessory().readOnly = value;
         return this;
@@ -121,7 +121,7 @@ export default class TextArea extends Field<string> {
      *
      * @param {function(value: string, e: Event)} o - наблюдатель
      */
-    public addInputObserver(o: (value: string, e: Event) => void): TextArea {
+    public addInputObserver(o: (value: string, e: Event) => void): TextAreaField {
         this.addObserver("input", o);
         return this;
     }
@@ -130,7 +130,7 @@ export default class TextArea extends Field<string> {
      * Пролистывает поле ввода многострочного текста до конца
      * @return {this}
      */
-    public scrollToBottom(): TextArea {
+    public scrollToBottom(): TextAreaField {
         this.getAccessory().scrollTop = this.getAccessory().scrollHeight;
         return this;
     }
@@ -146,7 +146,7 @@ export default class TextArea extends Field<string> {
 }
 
 /**
- * @typedef {TextFieldOptions} TextAreaOptions
+ * @typedef {TextFieldOptions} TextAreaFieldOptions
  * @property {number} [rowsCount = 5]
  * @property {string} [value]
  * @property {boolean} [editable = true]

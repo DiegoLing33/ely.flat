@@ -18,7 +18,6 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-
 import ObservableProperty from "./ObservableProperty";
 
 type ObservableArrayAddHandler<T> = (newItem: T, index: number) => void;
@@ -210,6 +209,18 @@ export default class ObservableArray<T> extends ObservableProperty<T[]> {
      */
     public items(): T[] {
         return this.value!;
+    }
+
+    /**
+     * Устанавливает элемент в индексе массива
+     * @param {T} item - элемент
+     * @param {number} index - индекс
+     * @deprecated Данный метод не рекомендуется к спользованию!
+     */
+    public setItemAtIndex(item: T, index: number): ObservableArray<T> {
+        this.value![index] = item;
+        this.notificate("change", [this.get()]);
+        return this;
     }
 
     /**

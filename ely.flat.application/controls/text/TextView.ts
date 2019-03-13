@@ -302,14 +302,16 @@ export default class TextView extends View implements efSerializableProtocol<Tex
      * Сериализует объект
      * @return {string}
      */
-    public serialize(): string {
-        return JSON.stringify({
+    public serialize(): any {
+        const obj = {
+            ...super.serialize(),
             text: this.text(),
             textCenter: this.textCenter(),
-            textSize: this.textSize().value,
-            textStyle: this.textStyle().value,
-            textWeight: this.textWeight().value,
-        });
+        };
+        if (this.textSize()) obj.textSize = this.textSize().serialize();
+        if (this.textStyle()) obj.textStyle = this.textStyle().serialize();
+        if (this.textWeight()) obj.textWeight = this.textWeight().serialize();
+        return obj;
     }
 
 }

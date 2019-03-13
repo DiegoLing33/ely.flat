@@ -102,7 +102,7 @@ export default class Application extends Observable {
             SingleApp.initApplication(vc => {
                 SingleApp.applicationInitFunction(cfg => {
                     Application.default.addReadyObserver(next => {
-                        SingleApp.applicationScreenController.addControllerName("index", vc);
+                        Application.default.getApplicationScreenController().addControllerName("index", vc);
                         next(true);
                     });
                     AppConfig.default.load({data: cfg});
@@ -317,13 +317,13 @@ export default class Application extends Observable {
                 value.item = value.item || "LinkTextView";
                 this.getApplicationNavigationView().addView(Control.fromObject(value));
             });
-            // if (config.navigationBar.imageUrl) {
-            //     this.navigationView.navigationBarImage(config.navigationBar.imageUrl);
-            //     if (config.manifest.useContentController)
-            //         this.navigationView.imageView.addObserver("click", () => {
-            //             ScreenController.default.present(config.contentController.defaultContentId);
-            //         });
-            // }
+            if (config.navigationBar.imageUrl) {
+                this.getApplicationNavigationView().imageUrl(config.navigationBar.imageUrl);
+                if (config.manifest.useContentController)
+                    this.getApplicationNavigationView().getImageView()!.addObserver("click", () => {
+                        this.getApplicationScreenController().present(config.contentController.defaultContentId);
+                    });
+            }
             this.applicationColorManager.applyNavigationBarColor(config.getNavigationBarColor());
         }
 

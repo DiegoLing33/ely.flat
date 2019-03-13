@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {NotificationViewOptions, NotificationView} from "@controls/notification/NotificationView";
-import elyIconView from "@controls/text/elyIconView";
-import elyTextView from "@controls/text/elyTextView";
-import elySize from "@enums/elySize";
+import NotificationView, {NotificationViewOptions} from "@controls/notification/NotificationView";
+import IconView from "@controls/text/IconView";
+import TextView from "@controls/text/TextView";
+import Size from "@enums/Size";
 
 /**
  * Опции
@@ -51,17 +51,17 @@ export default class elyProgressNotificationView extends NotificationView {
     /**
      * Заголовок
      */
-    public readonly progressTitleView: elyTextView;
+    public readonly progressTitleView: TextView;
 
     /**
      * Текст
      */
-    public readonly textView: elyTextView;
+    public readonly textView: TextView;
 
     /**
      * Иконка
      */
-    public readonly iconView: elyIconView;
+    public readonly iconView: IconView;
 
     /**
      * Индексация строки
@@ -79,11 +79,11 @@ export default class elyProgressNotificationView extends NotificationView {
         if (!options.strings || options.strings.length === 0)
             options.strings = ["Пожалуйста, полождите..."];
 
-        this.iconView          = new elyIconView({iconName: "refresh", iconSize: 60, iconSpinning: true});
-        this.progressTitleView = new elyTextView({
-            text: options.progressTitle || "Загрузка...", textSize: elySize.middle,
+        this.iconView          = new IconView({iconName: "refresh", iconSize: Size.xlarge, spinning: true});
+        this.progressTitleView = new TextView({
+            text: options.progressTitle || "Загрузка...", textSize: Size.custom(20),
         });
-        this.textView          = new elyTextView({text: options.strings[0]});
+        this.textView          = new TextView({text: options.strings[0]});
 
         const timer = setInterval(() => {
             if (this.__currentStringIndex === options.strings!.length) {

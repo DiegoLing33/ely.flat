@@ -14,6 +14,8 @@
 
 body{
   font-weight: 400;
+  padding: 0;
+  margin: 0;
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -24,6 +26,8 @@ body{
 
 .ef--wrapper {
   margin-top: $wrapperMarginTop;
+  margin-left: 15px;
+  margin-right: 15px;
 
   &.--with-fixed-nav {
     margin-top: $wrapperMarginTop + $navigationBarHeight;

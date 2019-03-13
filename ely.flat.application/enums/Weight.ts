@@ -35,31 +35,31 @@ export default class Weight extends elyEnum<string> {
      * Стандартная толщина ely.flat.application
      * @type {Weight}
      */
-    public static readonly default = new Weight("regular");
+    public static readonly default = new Weight({value: "regular"});
 
     /**
      * Толщина, используемая общими стандартами
      * @type {Weight}
      */
-    public static readonly normal = new Weight("standard");
+    public static readonly normal = new Weight({value: "standard"});
 
     /**
      * Высокая толщина
      * @type {Weight}
      */
-    public static readonly fat = new Weight("fat");
+    public static readonly fat = new Weight({value: "fat"});
 
     /**
      * Толщина меньше стандартной
      * @type {Weight}
      */
-    public static readonly light = new Weight("light");
+    public static readonly light = new Weight({value: "light"});
 
     /**
      * Предельно низкая толщина
      * @type {Weight}
      */
-    public static readonly thin = new Weight("thin");
+    public static readonly thin = new Weight({value: "thin"});
 
     /**
      * Свой размер
@@ -67,7 +67,7 @@ export default class Weight extends elyEnum<string> {
      * @return {Weight}
      */
     public static custom(value: number): Weight {
-        return new Weight(value, true);
+        return new Weight({value, custom: true});
     }
 
     /**
@@ -76,7 +76,7 @@ export default class Weight extends elyEnum<string> {
      * @return {Weight}
      */
     public static byName(value: string): Weight {
-        return new Weight(value);
+        return new Weight({value});
     }
 
     /**
@@ -100,11 +100,18 @@ export default class Weight extends elyEnum<string> {
     /**
      * Конструктор
      * @ignore
-     * @param val
-     * @param custom
+     * @param {value: string | number, custom: boolean} props
      */
-    protected constructor(val: string | number, custom: boolean = false) {
-        super(String(val));
-        this.custom = custom;
+    protected constructor(props: { value: string | number, custom?: boolean }) {
+        super({value: String(props.value)});
+        this.custom = props.custom || false;
+    }
+
+    /**
+     * Сериализует объект
+     * @return {*}
+     */
+    public serialize(): any {
+        return {_item: "Weight", value: this.value, custom: this.custom};
     }
 }

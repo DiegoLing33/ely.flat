@@ -18,12 +18,40 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import {
+    deserialize,
+    DeserializeData,
+    deserializeWithData,
+} from "../../ely.flat.application/protocols/efSerializableProtocol";
 import elyObject from "../elyObject";
 import elyOneActionEval from "../elyOneActionEval";
+import {safeJsonParse, variableAndSet} from "../Guard";
 import ObservableBoolean from "../observable/properties/ObservableBoolean";
 import ObservableProperty from "../observable/properties/ObservableProperty";
 import Utils from "../Utils";
+import URLRequest from "../web/request/URLRequest";
 import ViewCounter from "./viewCounter";
+
+/**
+ * Протокол сущности View
+ */
+export interface efViewEntityProtocol {
+
+    /**
+     * Элемент
+     */
+    item: string;
+
+    /**
+     * Линяя
+     */
+    line?: boolean;
+
+    /**
+     * Остальные ключи
+     */
+    [name: string]: any;
+}
 
 /**
  * Опции {@link View}
@@ -66,6 +94,9 @@ export interface ViewOptions {
      */
     opacity?: number;
 
+    styleClickable?: boolean;
+    styleNoSelect?: boolean;
+
     /**
      * Дополнительные опции
      */
@@ -101,6 +132,42 @@ export default class View extends elyObject {
      */
     public static breakLine(): View {
         return new View({tag: "br"});
+    }
+
+    /**
+     * Преобразует объект в элемент View
+     * @param {*} obj
+     * @return {View|null}
+     */
+    public static fromObject(obj: efViewEntityProtocol): View | null {
+        return deserialize<View>(obj);
+    }
+
+    /**
+     * Преобразует строку в элемент View
+     * @param {string} str
+     * @return {View|null}
+     */
+    public static fromString(str: string): View | null {
+        return View.fromObject(safeJsonParse(str));
+    }
+
+    /**
+     * Загружает View объект через URL
+     * @param {string} url - URL
+     * @param {function(view: View | null, data: DeserializeData | null)} callback
+     * @return {DeserializeData | null}
+     */
+    public static loadView(url: string, callback: (view: View | null, data: DeserializeData | null) => void) {
+        new URLRequest({url}).send((response, result) => {
+            if (result && response) {
+                const data = deserializeWithData<View>(safeJsonParse(response));
+                if (data) callback(data.object, data.data);
+                else callback(null, null);
+            } else {
+                callback(null, null);
+            }
+        });
     }
 
     /**
@@ -163,12 +230,71 @@ export default class View extends elyObject {
         if (options.opacity) this.opacity(options.opacity);
         if (options.disabled) this.disabled(options.disabled);
 
+        variableAndSet(options.styleClickable, this.styleClickable, this);
+        variableAndSet(options.styleNoSelect, this.styleNoSelect, this);
         const wait = setInterval(() => {
             if (this.getRect().width) {
                 clearInterval(wait);
                 this.notificate("viewWillDraw", [this]);
             }
         }, 10);
+    }
+
+    /**
+     * Возвращает флаг стиля невозможности выделения
+     * @return {boolean}
+     */
+    public styleNoSelect(): boolean;
+
+    /**
+     * Устанавливает флаг стиля невозможности выделения
+     * @param {boolean} value - значение
+     * @return {this}
+     */
+    public styleNoSelect(value: boolean): View;
+
+    /**
+     * Возвращает и устанавливает флаг стиля невозможности выделения
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    public styleNoSelect(value?: boolean): boolean | null | View {
+        if (value === undefined) return this.hasClass("--no-select");
+        if (value) this.addClass("--no-select");
+        else this.removeClass("--no-select");
+        return this;
+    }
+
+    /**
+     * Возвращает флаг стиля "возможности нажатия"
+     * @return {boolean}
+     */
+    public styleClickable(): boolean;
+
+    /**
+     * Устанавливает флаг стиля "возможности нажатия"
+     * @param {boolean} value - значение
+     * @return {this}
+     */
+    public styleClickable(value: boolean): View;
+
+    /**
+     * Возвращает и устанавливает флаг стиля "возможности нажатия"
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    public styleClickable(value?: boolean): boolean | null | View {
+        if (value === undefined) return this.hasClass("--clickable");
+        if (value) this.addClass("--clickable");
+        else this.removeClass("--clickable");
+        return this;
+    }
+
+    public serialize(): any {
+        const obj: any = {};
+        if (this.styleClickable()) obj.styleClickable = this.styleClickable();
+        if (this.styleNoSelect()) obj.styleNoSelect = this.styleNoSelect();
+        return {_item: this.constructor.name, ...obj};
     }
 
     /**
@@ -647,4 +773,6 @@ export default class View extends elyObject {
  * @typedef {boolean} [hidden]
  * @typedef {boolean} [disabled]
  * @typedef {number} [opacity]
+ * @typedef {boolean} [styleClickable]
+ * @typedef {boolean} [styleNoSelect]
  */

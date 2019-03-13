@@ -43,7 +43,7 @@ export default class ImageView extends View {
      * @protected
      */
     protected readonly __urlProperty: ObservableProperty<string>
-        = new ObservableProperty<string>().change((newValue) => this.getDocument().src = newValue);
+        = new ObservableProperty<string>("").change((newValue) => this.getDocument().src = newValue);
 
     /**
      * Конструтор
@@ -51,6 +51,7 @@ export default class ImageView extends View {
      */
     public constructor(options: ImageViewOptions = {}) {
         super({tag: "img", ...options});
+        this.addClass("ef-image");
         this.getDocument().onload = (e: any) => this.notificate("loaded", [e]);
         if (options.url) this.url(options.url);
     }
@@ -102,6 +103,15 @@ export default class ImageView extends View {
      */
     public getDocument(): HTMLImageElement {
         return this.__view as HTMLImageElement;
+    }
+
+    public serialize(): any {
+        const obj: any = {};
+        if (this.url()) obj.url = this.url();
+        return {
+            ...super.serialize(),
+            ...obj,
+        };
     }
 }
 

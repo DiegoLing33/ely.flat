@@ -1,0 +1,37 @@
+{
+  "_item": "SimplePageViewController",
+  "controllerMainView": {
+    "_item": "GridLayoutView",
+    "items": [
+      {
+        "_item": "RowLayoutView",
+        "items": [
+          {
+            "_item": "Control"
+          }
+        ]
+      },
+      {
+        "_item": "RowLayoutView",
+        "items": [
+          {
+            "_item": "Button",
+            "buttonRounded": false,
+            "buttonSize": {
+              "_item": "Size",
+              "custom": false,
+              "value": "fill"
+            },
+            "buttonStyle": {
+              "_item": "Style",
+              "value": "primary"
+            },
+            "text": "GO LOGIN"
+          }
+        ]
+      }
+    ]
+  },
+  "title": "New screen",
+  "description": "Простейшее приложение ely.flat"
+}

@@ -17,20 +17,51 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efiDataCell.ts                                                       +
- + Файл изменен: 25.02.2019 23:03:42                                          +
+ + Файл: NavigationViewProgressBar.ts                                         +
+ + Файл изменен: 02.03.2019 02:43:04                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {efiDataCellType} from "./efiDataCellType";
+import ProgressBarView, {ProgressBarViewOptions} from "@controls/action/ProgressBarView";
+import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import Style from "@enums/Style";
 
 /**
- * Ячейка строки данных
+ * Панель загрузки навигации
+ * @class NavigationViewProgressBar
+ * @augments {ProgressBarView}
  */
-export class efiDataCell {
+export default class NavigationViewProgressBar extends ProgressBarView {
 
-    public getCellType(): efiDataCellType {
-        return efiDataCellType.boolean;
+    /**
+     * Свойство: стиль полосы бара
+     * @ignore
+     * @protected
+     */
+    protected readonly __progressBarStyleProperty: ObservableProperty<Style>
+        = new ObservableProperty<Style>()
+        .change((value, oldVal) => {
+            if (oldVal) this.removeClass(`bg-${oldVal.value}`);
+            this.addClass(`bg-${value.value}`);
+        });
+
+    /**
+     * Конструктор
+     * @param {ProgressBarViewOptions} [options = {}] - опции
+     */
+    public constructor(options: ProgressBarViewOptions = {}) {
+        super(options);
+        this.removeViewContent();
+        this.addClass("--progress-line");
     }
 
+    /**
+     * Обновляет бар
+     * @ignore
+     * @private
+     */
+    protected __update(): void {
+        this.notificate("changed", [this.value(), this.maxValue(), this.minValue()]);
+        this.getStyle().width = this.getPercentage() + "%";
+    }
 }

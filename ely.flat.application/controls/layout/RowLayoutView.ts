@@ -23,19 +23,17 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import Control from "@controls/action/Control";
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import View, {ViewOptions} from "@core/controls/View";
+import ViewLayout, {ViewLayoutOptions} from "@controls/layout/ViewLayout";
+import View from "@core/controls/View";
 import {variable} from "@core/Guard";
-import ObservableArray from "@core/observable/properties/ObservableArray";
 import ObservableProperty from "@core/observable/properties/ObservableProperty";
 
 /**
  * Опции {@link RowLayoutView}
  */
-export interface RowLayoutViewOptions extends ViewOptions {
+export interface RowLayoutViewOptions extends ViewLayoutOptions {
     rowLength?: number;
     rowItemsStaticSize?: boolean;
-    items?: View[];
 }
 
 /**
@@ -43,14 +41,7 @@ export interface RowLayoutViewOptions extends ViewOptions {
  * @class efGridLayoutRowView
  * @augments {View}
  */
-export default class RowLayoutView extends elyRebuildableViewProtocol {
-
-    /**
-     * Элементы отображения
-     * @ignore
-     * @protected
-     */
-    protected __views: ObservableArray<View> = new ObservableArray<View>();
+export default class RowLayoutView extends ViewLayout {
 
     /**
      * Свойство: количество элементов в динамической строке
@@ -80,10 +71,9 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
      * @param options
      */
     public constructor(options: RowLayoutViewOptions = {}) {
-        super(options);
+        super({...options, nobuild: true});
         this.addClass("ef-row");
 
-        this.__views.change(() => this.rebuild());
         this.__rowLengthProperty.change(() => this.rebuild());
         this.__rowItemsStaticSizeProperty.change(() => this.rebuild());
 
@@ -94,7 +84,6 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
 
         variable<number>(options.rowLength, () => this.rowLength(options.rowLength!));
         variable<number>(options.rowItemsStaticSize, () => this.rowItemsStaticSize(options.rowItemsStaticSize!));
-        variable<View[]>(options.items, () => this.add(...options.items!));
 
         this.denyRebuild(false);
         this.rebuild();
@@ -145,29 +134,12 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
     }
 
     /**
-     * Возвращает массив элементов отображения
-     * @return {ObservableArray<View>}
-     */
-    public getViews(): ObservableArray<View> {
-        return this.__views;
-    }
-
-    /**
-     * Добавляет элемент[ы] в строку
-     * @param {...View} view
-     */
-    public add(...view: View[]): RowLayoutView {
-        view.forEach(value => this.getViews().push(value));
-        return this;
-    }
-
-    /**
      * Вставляет элементы в нужную позицию
      * @param index
      * @param view
      */
     public insert(index: number, ...view: View[]): RowLayoutView {
-        this.getViews().insert(index, ...view);
+        this.getItemsProperty().insert(index, ...view);
         return this;
     }
 
@@ -177,7 +149,7 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
      * @return {number}
      */
     public indexOf(view: View): number {
-        return this.getViews().indexOf(view);
+        return this.getItemsProperty().indexOf(view);
     }
 
     /**
@@ -204,7 +176,7 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
      * @return {this}
      */
     public removeIndex(index: number): RowLayoutView {
-        this.getViews().remove(index);
+        this.getItemsProperty().remove(index);
         return this;
     }
 
@@ -231,7 +203,7 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
      * @return {View}
      */
     public viewAt(index: number): View | null {
-        if (this.getViews().hasIndex(index)) return this.getViews().item(index);
+        if (this.getItemsProperty().hasIndex(index)) return this.getItemsProperty().item(index);
         return null;
     }
 
@@ -243,8 +215,17 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
      * @return {View}
      */
     public columnAt(index: number): View | null {
-        if (this.getViews().hasIndex(index)) return this.__containers[index];
+        if (this.getItemsProperty().hasIndex(index)) return this.__containers[index];
         return null;
+    }
+
+    /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        const _items: any[] = [];
+        this.getItemsProperty().forEach(view => _items.push(view.serialize()));
+        return {...super.serialize(), items: _items};
     }
 
     /**
@@ -255,11 +236,11 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
     protected __rebuild(): RowLayoutView {
         this.removeViewContent();
         this.__containers = [];
-        this.getViews().forEach(item => {
+        this.getItemsProperty().forEach(item => {
             const container = new Control({class: "ef-col"});
             let containerSize = (1 / this.rowLength()) * 100;
             if (!this.rowItemsStaticSize())
-                containerSize = 100 / (this.rowLength() / (this.rowLength() / this.getViews().length()));
+                containerSize = 100 / (this.rowLength() / (this.rowLength() / this.getItemsProperty().length()));
             container.getStyle().width = containerSize + "%";
             container.addSubView(item);
             this.__containers.push(container);
@@ -268,12 +249,10 @@ export default class RowLayoutView extends elyRebuildableViewProtocol {
         });
         return this;
     }
-
 }
 
 /**
- * @typedef {Object} RowLayoutViewOptions
+ * @typedef {ViewLayoutOptions} RowLayoutViewOptions
  * @property {number} [rowLength = 24]
  * @property {boolean} [rowItemsStaticSize = false]
- * @property {View[]} [items]
  */

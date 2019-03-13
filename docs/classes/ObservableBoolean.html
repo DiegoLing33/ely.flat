@@ -98,6 +98,10 @@
                                     <span class="modifier">Protected</span>
                                 <a href="#value">value</a>
                             </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#observers">observers</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -149,6 +153,22 @@
                             <li>
                                     <span class="modifier">Public</span>
                                 <a href="#toString">toString</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#addObserver">addObserver</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#notificate">notificate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#removeAllObservers">removeAllObservers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#removeObserver">removeObserver</a>
                             </li>
                         </ul>
                     </td>
@@ -240,6 +260,34 @@
 </div>
                     </td>
                 </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="observers"></a>
+                        <span class="name">
+                            <b>
+                                <span class="modifier">Protected</span>
+                            observers</b>
+                            <a href="#observers"><span class="icon ion-ios-link"></span></a>
+                        </span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>Тип данных : </i>    <code>literal type</code>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <i>По умолчанию : </i><code>{}</code>
+                        </td>
+                    </tr>
+
 
             </tbody>
         </table>
@@ -878,6 +926,334 @@ console.log( prop.get() ); // Tom</p>
                     </div>
                     <div class="io-description">
                         <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addObserver"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            addObserver
+                        </b>
+                        <a href="#addObserver"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addObserver(event: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, observer: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Добавляет наблюдатель</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                    <td>Описание</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>событие</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>observer</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>наблюдатель</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Observable.html" target="_self" >Observable</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="notificate"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Protected</span>
+                            notificate
+                        </b>
+                        <a href="#notificate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>notificate(event: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, args?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Сообщает о событие всех наблюдателей</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>args</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        Да
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeAllObservers"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            removeAllObservers
+                        </b>
+                        <a href="#removeAllObservers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeAllObservers(event?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Удаляет все обработчики события или событий</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                    <td>Описание</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Да
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>Событие</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Observable.html" target="_self" >Observable</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeObserver"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            removeObserver
+                        </b>
+                        <a href="#removeObserver"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeObserver(event: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, observer: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Удаляет обработчик</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>event</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                </tr>
+                                <tr>
+                                    <td>observer</td>
+                                    <td>
+                                                <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Observable.html" target="_self" >Observable</a></code>
 
                     </div>
                     <div class="io-description">

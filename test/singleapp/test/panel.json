@@ -1,0 +1,35 @@
+{
+  "_item": "PanelView",
+  "_id": "the-panel",
+  "panelTitle": "The panel of the panels",
+  "panelRootGridView": {
+    "_item": "GridLayoutView",
+    "items": [
+      {
+        "_item": "RowLayoutView",
+        "items": [
+          {
+            "_item": "TextField",
+            "placeholder": "Type the login"
+          },
+          {
+            "_item": "TextField",
+            "placeholder": "Type the password",
+            "fieldType": "password"
+          }
+        ]
+      },
+      {
+        "_item": "RowLayoutView",
+        "items": [
+          {
+            "_id": "the-btn-go",
+            "_item": "Button",
+            "text": "Go",
+            "buttonSize": "fill"
+          }
+        ]
+      }
+    ]
+  }
+}

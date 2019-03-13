@@ -28,7 +28,6 @@ import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import Size from "@enums/Size";
 import Style from "@enums/Style";
 import Weight from "@enums/Weight";
-import efSerializableProtocol from "@protocols/efSerializableProtocol";
 
 /**
  * Опции отображения иконки {@link IconView}
@@ -46,7 +45,7 @@ export interface IconViewOptions extends ViewOptions {
  * @class IconView
  * @augments {View}
  */
-export default class IconView extends View implements efSerializableProtocol<IconView> {
+export default class IconView extends View {
 
     /**
      * Десериализует объект
@@ -221,7 +220,7 @@ export default class IconView extends View implements efSerializableProtocol<Ico
      * Возвращает свойство: стиль иконки
      * @return {ObservableProperty<Style>}
      */
-    public geticonStyleProperty(): ObservableProperty<Style> {
+    public getIconStyleProperty(): ObservableProperty<Style> {
         return this.__iconStyleProperty;
     }
 
@@ -268,20 +267,24 @@ export default class IconView extends View implements efSerializableProtocol<Ico
     public spinning(value?: boolean): boolean | null | IconView {
         if (value === undefined) return this.hasClass("fa-spin");
         if (value) this.addClass("fa-spin");
-        this.removeClass("fa-spin");
+        else this.removeClass("fa-spin");
         return this;
     }
 
     /**
      * Сериализует объект
      */
-    public serialize(): string {
-        return JSON.stringify({
+    public serialize(): any {
+        const obj: any = {};
+        if (this.iconSize()) obj.iconSize = this.iconSize().serialize();
+        if (this.iconWeight()) obj.iconWeight = this.iconWeight().serialize();
+        if (this.iconSize()) obj.iconStyle = this.iconStyle().serialize();
+        if (this.spinning()) obj.spinning = this.spinning();
+        return {
+            ...super.serialize(),
+            ...obj,
             iconName: this.iconName(),
-            iconSize: this.iconSize().value,
-            iconStyle: this.iconStyle().value,
-            iconWeight: this.iconWeight().value,
-        });
+        };
     }
 }
 

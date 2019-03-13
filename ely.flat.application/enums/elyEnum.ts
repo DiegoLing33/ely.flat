@@ -38,10 +38,10 @@ export default abstract class elyEnum<T> {
 
     /**
      * Конструктор
-     * @param {T} value
+     * @param {{value: T}} props
      */
-    protected constructor(value: T) {
-        this.value = value;
+    protected constructor(props: { value: T }) {
+        this.value = props.value;
     }
 
     /**

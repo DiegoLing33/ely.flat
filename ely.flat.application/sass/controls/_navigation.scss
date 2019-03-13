@@ -29,6 +29,10 @@
   z-index: $navigationBar;
   @include deny-selection();
 
+  .ef-text{
+    line-height: inherit;
+  }
+
   &.--fixed {
     position: fixed;
     top: 0;
@@ -72,6 +76,20 @@
     white-space: nowrap;
     vertical-align: middle;
 
+    &.--image {
+      opacity: 0.7;
+
+      .ef-image {
+        padding-top: 7px;
+        height: $navigationBarHeight - 14;
+      }
+
+      &:hover {
+        opacity: 1;
+        background-color: transparent;
+      }
+    }
+
     &.logo {
       font-size: 20px;
       transition: opacity .7s;
@@ -103,6 +121,7 @@
     color: white;
     opacity: 0.45;
     transition: 0.9s;
+
     &:hover {
       opacity: 1;
       cursor: pointer;
@@ -126,8 +145,11 @@
     text-align: center;
     padding: 0 !important;
 
-    .--item {
+    .--item:not(.--image){
       float: none !important;
+    }
+
+    .--item {
       height: $navigationBarHeight__mobile !important;
       line-height: $navigationBarHeight__mobile !important;
       opacity: 1 !important;
@@ -136,10 +158,18 @@
         font-size: 25px !important;
         margin: 0 60px;
       }
+
+      &.--image{
+        float: left !important;
+        .ef-image{
+          padding-top: 16px;
+          height: $navigationBarHeight__mobile - 32 !important;
+        }
+      }
     }
 
     &.--open {
-      .--item:not(.logo) {
+      .--item:not(.logo):not(.--image) {
         display: block;
         text-align: left;
         background-color: rgba(0, 0, 0, 0.31);
@@ -150,7 +180,7 @@
       }
     }
 
-    .--item:not(.logo){
+    .--item:not(.logo):not(.--image) {
       display: none;
     }
 

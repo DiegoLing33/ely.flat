@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import TextArea from "@controls/input/TextArea";
+import TextAreaField from "@controls/input/TextAreaField";
 import HeaderTextView from "@controls/text/HeaderTextView";
 import View, {ViewOptions} from "@core/controls/View";
 
@@ -52,7 +52,7 @@ export default class AppDevelopConsole extends View {
     /**
      * Текст
      */
-    protected __textArea = new TextArea({readonly: true});
+    protected __textArea = new TextAreaField({readonly: true});
 
     /**
      * Перекрывает консоль

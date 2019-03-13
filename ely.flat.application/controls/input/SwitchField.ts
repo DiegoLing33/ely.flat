@@ -29,6 +29,7 @@ import View from "@core/controls/View";
 import {variable} from "@core/Guard";
 import ObservableProperty from "@core/observable/properties/ObservableProperty";
 import Style from "@enums/Style";
+import {text} from "figlet";
 
 /**
  * Опции {@link SwitchField}
@@ -120,9 +121,7 @@ export default class SwitchField extends Field<boolean> {
      * @return {this}
      */
     public setLeftLabel(view: View | string): SwitchField {
-        if (typeof view === "string") view = new TextView({text: view});
-        this.__leftLabel.set(view);
-        return this;
+        return this.__setLabel(this.__leftLabel, view);
     }
 
     /**
@@ -131,9 +130,7 @@ export default class SwitchField extends Field<boolean> {
      * @return {this}
      */
     public setRightLabel(view: View | string): SwitchField {
-        if (typeof view === "string") view = new TextView({text: view});
-        this.__rightLabel.set(view);
-        return this;
+        return this.__setLabel(this.__rightLabel, view);
     }
 
     /**
@@ -158,6 +155,62 @@ export default class SwitchField extends Field<boolean> {
      */
     public getToggleView(): View {
         return this.__core;
+    }
+
+    /**
+     * Возвращает левый заголовок
+     * @return {string}
+     */
+    public leftLabel(): string;
+
+    /**
+     * Устанавливает левый заголовок
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public leftLabel(value: string): SwitchField;
+
+    /**
+     * Возвращает и устанавливает левый заголовок
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public leftLabel(value?: string): string | null | SwitchField {
+        if (value === undefined) {
+            if (this.getLeftLabel())
+                return this.getLeftLabel()!.getDocument().innerText;
+            return null;
+        }
+        this.setLeftLabel(value);
+        return this;
+    }
+
+    /**
+     * Возвращает правый заголовок
+     * @return {string}
+     */
+    public rightLabel(): string;
+
+    /**
+     * Устанавливает правый заголовок
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public rightLabel(value: string): SwitchField;
+
+    /**
+     * Возвращает и устанавливает правый заголовок
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public rightLabel(value?: string): string | null | SwitchField {
+        if (value === undefined) {
+            if (this.getRightLabel())
+                return this.getRightLabel()!.getDocument().innerText;
+            return null;
+        }
+        this.setRightLabel(value);
+        return this;
     }
 
     /**
@@ -194,6 +247,36 @@ export default class SwitchField extends Field<boolean> {
     public switchStyle(value?: Style | string): Style | null | SwitchField {
         if (typeof value === "string") value = Style.byName(value);
         return ObservableProperty.simplePropertyAccess(this, value, this.switchStyleProperty);
+    }
+
+    public serialize(): any {
+        const obj: any = {};
+        if (this.leftLabel()) obj.leftLabel = this.leftLabel();
+        if (this.rightLabel()) obj.rightLabel = this.rightLabel();
+        if (this.switchStyle()) obj.switchStyle = this.switchStyle();
+        return {
+            ...super.serialize(),
+            ...obj,
+        };
+    }
+
+    /**
+     * Устанавливает заголовок переключателья
+     * @param label
+     * @param value
+     * @private
+     */
+    protected __setLabel(label: ObservableProperty<View>, value: any) {
+        if (typeof value === "string") {
+            if (value === "") label.set(null as any);
+            else {
+                value = new TextView({text: value});
+                label.set(value);
+            }
+        } else {
+            label.set(value);
+        }
+        return this;
     }
 }
 

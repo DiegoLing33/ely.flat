@@ -37,12 +37,20 @@ export default class GridViewController extends ViewController {
      * Элемент отображения
      * @type {GridLayoutView|View}
      */
-    public readonly view: GridLayoutView & View = new GridLayoutView();
+    public readonly view: GridLayoutView & View;
 
     /**
      * Конструктор
      */
-    public constructor() {
+    public constructor(props: { controllerMainView?: GridLayoutView }) {
         super();
+        this.view = props.controllerMainView || new GridLayoutView();
+    }
+
+    /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        return {_item: "GridViewController", controllerMainView: this.view.serialize()};
     }
 }

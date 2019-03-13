@@ -36,42 +36,42 @@ export default class Style extends elyEnum<string> {
      *
      * Элементарный сброс стиля
      */
-    public static readonly default = new Style("default");
+    public static readonly default = new Style({value: "default"});
 
     /**
      * Главный стиль
      *
      * Основной стиль подходит для важных элементов.
      */
-    public static readonly primary = new Style("primary");
+    public static readonly primary = new Style({value: "primary"});
 
     /**
      * Информативный стиль
      *
      * Основной стиль подходит для отображения информации, которая должна выделяться.
      */
-    public static readonly info = new Style("info");
+    public static readonly info = new Style({value: "info"});
 
     /**
      * Стиль предупреждения
      *
      * Стиль, особо концентрирующий внимание пользователя.
      */
-    public static readonly warning = new Style("warning");
+    public static readonly warning = new Style({value: "warning"});
 
     /**
      * Успешный стиль
      *
      * Стиль, говорящий об успешном завершении действия.
      */
-    public static readonly success = new Style("success");
+    public static readonly success = new Style({value: "success"});
 
     /**
      * Опасный стиль
      *
      * Стиль, ярко бросающийся в глаза. Подойдет для отметки ошибок.
      */
-    public static readonly danger = new Style("danger");
+    public static readonly danger = new Style({value: "danger"});
 
     /**
      * Список
@@ -92,7 +92,7 @@ export default class Style extends elyEnum<string> {
      * @param name
      */
     public static custom(name: string): Style {
-        return new Style(name);
+        return new Style({value: name});
     }
 
     /**
@@ -100,15 +100,24 @@ export default class Style extends elyEnum<string> {
      * @param name
      */
     public static byName(name: string): Style {
-        return new Style(name);
+        return new Style({value: name});
     }
+
 
     /**
      * Конструктор
      * @ignore
-     * @param val
+     * @param props
      */
-    protected constructor(val: string) {
-        super(val);
+    protected constructor(props: { value: string }) {
+        super(props);
+    }
+
+    /**
+     * Сериализует объект
+     * @return {*}
+     */
+    public serialize(): any {
+        return {_item: "Style", value: this.value};
     }
 }

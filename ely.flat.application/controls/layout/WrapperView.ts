@@ -1,4 +1,3 @@
-"use strict";
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
  + ,--. o                   |    o                                            +
@@ -18,20 +17,27 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efiDataCellType.ts                                                   +
- + Файл изменен: 26.02.2019 00:19:06                                          +
+ + Файл: WrapperView.ts                                                       +
+ + Файл изменен: 08.03.2019 00:50:11                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-exports.__esModule = true;
+
+import View, {ViewOptions} from "@core/controls/View";
+
 /**
- * Типы ячеек
+ * Элемент отображения: Разметка
+ * @class WrapperView
+ * @augments {View}
  */
-var efiDataCellType;
-(function (efiDataCellType) {
-    efiDataCellType["boolean"] = "boolean";
-    efiDataCellType["number"] = "number";
-    efiDataCellType["string"] = "string";
-    efiDataCellType["array"] = "array";
-    efiDataCellType["object"] = "object";
-    efiDataCellType["id"] = "id";
-})(efiDataCellType = exports.efiDataCellType || (exports.efiDataCellType = {}));
+export default class WrapperView extends View {
+
+    /**
+     * Конструктор
+     * @param {ViewOptions} options - опции
+     */
+    public constructor(options: ViewOptions = {}) {
+        super(options);
+        this.addClass("--wrapper");
+    }
+
+}

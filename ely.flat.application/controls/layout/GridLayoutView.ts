@@ -29,12 +29,16 @@ import {variable, variableAndSet} from "@core/Guard";
 import ObservableArray from "@core/observable/properties/ObservableArray";
 import ObservableProperty from "@core/observable/properties/ObservableProperty";
 
+export interface TGridSize {
+    columns: number;
+    rows: number;
+}
+
 /**
  * Опции {@link GridLayoutView}
  */
 export interface GridLayoutViewOptions extends ViewOptions {
     rowsLength?: number;
-    staticGrid?: boolean;
     items?: View[][] | RowLayoutView[];
 }
 
@@ -62,14 +66,6 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
         = new ObservableArray<RowLayoutView>();
 
     /**
-     * Свойство: использование статистических размеров элементов
-     * @ignore
-     * @protected
-     */
-    protected readonly __staticGridProperty: ObservableProperty<boolean>
-        = new ObservableProperty<boolean>(false);
-
-    /**
      * Конструктор
      * @param options
      */
@@ -77,7 +73,6 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
         super(options);
 
         this.__rowsLengthProperty.change((val) => this.getRows().forEach(item => item.rowLength(val)));
-        this.__staticGridProperty.change(value => this.getRows().forEach(item => item.rowItemsStaticSize(value)));
         this.__rows.change(() => this.rebuild());
         this.denyRebuild(true);
 
@@ -90,35 +85,9 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
                     this.add(...items);
         });
         this.rowsLength(24);
-        this.staticGrid(false);
         variableAndSet<number>(options.rowsLength, this.rowsLength, this);
-        variableAndSet<number>(options.staticGrid, this.staticGrid, this);
         this.denyRebuild(false);
         this.rebuild();
-    }
-
-    /**
-     * Возвращает использование статистических размеров элементов
-     * @returns {boolean}
-     */
-    public staticGrid(): boolean;
-
-    /**
-     * Устанавливает использование статистических размеров элементов
-     * @param {boolean} value - значение
-     * @returns {this}
-     */
-    public staticGrid(value: boolean): GridLayoutView;
-
-    /**
-     * Возвращает и устанавливает использование статистических размеров элементов
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     *
-     * Внимание! После установки данного значения, значения во всех строках будут изменены!
-     */
-    public staticGrid(value?: boolean): boolean | null | GridLayoutView {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__staticGridProperty);
     }
 
     /**
@@ -203,6 +172,20 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
     }
 
     /**
+     * Серализует объект
+     */
+    public serialize(): any {
+        const _items: any[] = [];
+        this.getRows().forEach(row => {
+            _items.push(row.serialize());
+        });
+        return {
+            ...super.serialize(),
+            items: _items,
+        };
+    }
+
+    /**
      * Перестроение
      * @ignore
      * @private
@@ -222,4 +205,10 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
  * @property {number} [rowsLength = 24]
  * @property {boolean} [staticGrid = false]
  * @property {View[][] | RowLayoutView[]} [items]
+ */
+
+/**
+ * @typedef {Object} TGridSize
+ * @property {number} columns
+ * @property {number} rows
  */

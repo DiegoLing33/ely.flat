@@ -45,6 +45,10 @@ export interface TextFieldOptions extends FieldOptions<string> {
  */
 export default class TextField extends Field<string> {
 
+    public static willBeDeserialized(obj: any) {
+        if (typeof obj.fieldType === "string") obj.fieldType = TextFieldType.byName(obj.fieldType);
+    }
+
     /**
      * Правая иконка
      * @protected
@@ -160,6 +164,64 @@ export default class TextField extends Field<string> {
     }
 
     /**
+     * Возвращает имя правой иконки
+     * @return {string}
+     */
+    public rightIconName(): string;
+
+    /**
+     * Устанавливает имя правой иконки
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public rightIconName(value: string): TextField;
+
+    /**
+     * Возвращает и устанавливает имя правой иконки
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public rightIconName(value?: string): string | null | TextField {
+        if (value === undefined) {
+            if (this.getRightIconView())
+                return this.getRightIconView()!.getView().iconName();
+            return null;
+        }
+        if (value === "") this.removeRightIcon();
+        else this.setRightIcon(value);
+        return this;
+    }
+
+    /**
+     * Возвращает имя левой иконки
+     * @return {string}
+     */
+    public leftIconName(): string;
+
+    /**
+     * Устанавливает имя левой иконки
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public leftIconName(value: string): TextField;
+
+    /**
+     * Возвращает и устанавливает имя левой иконки
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public leftIconName(value?: string): string | null | TextField {
+        if (value === undefined) {
+            if (this.getLeftIconView())
+                return this.getLeftIconView()!.getView().iconName();
+            return null;
+        }
+        if (value === "") this.removeLeftIcon();
+        else this.setLeftIcon(value);
+        return this;
+    }
+
+    /**
      * Удаляет левую иконку
      * @return {this}
      */
@@ -193,6 +255,21 @@ export default class TextField extends Field<string> {
      */
     public isEmpty(): boolean {
         return super.isEmpty() || this.value()!.trim() === "";
+    }
+
+    /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        const obj: any = {};
+        if (this.getRightIconView()) obj.rightIconName = this.getRightIconView()!.getView().iconName();
+        if (this.getLeftIconView()) obj.leftIconName = this.getLeftIconView()!.getView().iconName();
+
+        return {
+            ...super.serialize(),
+            ...obj,
+            fieldType: this.fieldType().serialize(),
+        };
     }
 
     /**

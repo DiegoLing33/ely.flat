@@ -24,9 +24,11 @@
 
 import Control from "@controls/action/Control";
 import ListView, {ListViewOptions} from "@controls/list/ListView";
+import NavigationViewProgressBar from "@controls/navigation/NavigationViewProgressBar";
 import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
 import IconView from "@controls/text/IconView";
 import TextView from "@controls/text/TextView";
+import ImageView from "@controls/view/ImageView";
 
 /**
  * Опции {@link NavigationView}
@@ -52,6 +54,13 @@ export interface NavigationViewOptions extends ListViewOptions {
 export default class NavigationView extends ListView {
 
     /**
+     * Изображение
+     * @protected
+     * @ignore
+     */
+    protected __imageView: ImageView | null = null;
+
+    /**
      * Элемент отображения заголовка
      * @protected
      * @ignore
@@ -64,6 +73,14 @@ export default class NavigationView extends ListView {
      * @ignore
      */
     protected readonly __toggleIconView: IconView = new IconView({tag: "li", iconName: "navicon"});
+
+    /**
+     * Элемент загрузки
+     * @protected
+     * @ignore
+     */
+    protected readonly __progressView: NavigationViewProgressBar
+        = new NavigationViewProgressBar();
 
     /**
      * Конструктор
@@ -86,6 +103,52 @@ export default class NavigationView extends ListView {
         });
 
         this.rebuild();
+    }
+
+    /**
+     * Изображение
+     * @return {ImageView}
+     */
+    public getImageView(): ImageView | null {
+        return this.__imageView;
+    }
+
+    /**
+     * Возвращает путь до изображения в навигации
+     * @return {string}
+     */
+    public imageUrl(): string;
+
+    /**
+     * Устанавливает путь до изображения в навигации
+     * @param {string} value - значение
+     * @return {this}
+     */
+    public imageUrl(value: string): NavigationView;
+
+    /**
+     * Возвращает и устанавливает путь до изображения в навигации
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    public imageUrl(value?: string): string | null | NavigationView {
+        if (value === undefined) {
+            return this.getImageView() ? this.getImageView()!.url() : null;
+        }
+        if (value) {
+            this.__imageView = new ImageView({url: value});
+        } else {
+            this.__imageView = null;
+        }
+        return this.rebuild();
+    }
+
+    /**
+     * Возвращает панель прогресса в панели навигации
+     * @return {NavigationViewProgressBar|ProgressBarView}
+     */
+    public getProgressView(): NavigationViewProgressBar {
+        return this.__progressView;
     }
 
     /**
@@ -163,6 +226,12 @@ export default class NavigationView extends ListView {
     protected __rebuild(): NavigationView {
         this.removeViewContent();
         this.getDocument().append(this.getToggleIconView().getDocument());
+        if (this.getImageView()) {
+            const view = new Control({tag: "li", class: "--item"});
+            view.addClass("--image");
+            view.getDocument().append(this.getImageView()!.getDocument());
+            this.getDocument().append(view.getDocument());
+        }
         this.getDocument().append(this.getTitleView().getDocument());
         this.getItems().forEach(item => {
             const view = new Control({tag: "li", class: "--item"});
@@ -170,6 +239,7 @@ export default class NavigationView extends ListView {
             this.notificate("itemWillAdd", [item, view]);
             this.getDocument().append(view.getDocument());
         });
+        this.getDocument().append(this.getProgressView().getDocument());
 
         return this;
     }

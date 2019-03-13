@@ -232,6 +232,20 @@ export default class Field<T> extends View implements efValueProtocol<T>, efEdit
     }
 
     /**
+     * Сериализует объект
+     */
+    public serialize(): any {
+        const obj: any = {};
+        if (this.placeholder()) obj.placeholder = this.placeholder();
+        if (this.value()) obj.value = this.value();
+        return {
+            ...super.serialize(),
+            ...obj,
+            editable: this.editable(),
+        };
+    }
+
+    /**
      * Фабрикует элемент доступа
      * @private
      * @ignore

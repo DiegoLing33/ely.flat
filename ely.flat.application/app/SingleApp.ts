@@ -25,7 +25,7 @@
 import AppConfig from "@app/config/AppConfig";
 import SimplePageViewController from "@controllers/SimplePageViewController";
 import Observable from "@core/observable/Observable";
-import ScreenController from "@controllers/ScreenController";
+import XLogger from "@core/utils/XLogger";
 
 export type TConfigFunction = (cfg: AppConfig) => void;
 export type TResultFunction = (result: boolean) => void;
@@ -43,8 +43,6 @@ export default class SingleApp extends Observable {
      */
     public static applicationInitFunction: TefSingleInit;
 
-    public static applicationScreenController = new ScreenController();
-
     /**
      * Приложение, испольщзующее single
      */
@@ -53,6 +51,7 @@ export default class SingleApp extends Observable {
     }
 
     public static initApplication(callback: TRenderFunction) {
+        XLogger.default.log("[SingleApp] Инициилизация single app контроллера");
         const vc = new SimplePageViewController();
         vc.title("efSingle App");
         vc.description("Простейшее приложение ely.flat");

@@ -25,6 +25,7 @@
 import Application from "@app/app/Application";
 import AppStylesheet from "@app/AppStylesheet";
 import Color from "@core/Color";
+import XLogger from "@core/utils/XLogger";
 
 /**
  * Менеджер цветов приложения
@@ -112,6 +113,8 @@ export default class AppColorManager {
      * @param color
      */
     public applyNavigationBarColor(color: Color): void {
+        XLogger.default.log(`[AppColorManager]: Смена цвета навигации: ${color.toString()}. ` +
+            `Темынй: ${color.isDarker() ? "YES" : "NO"}`);
         const isDarkerColor = color.isDarker();
         const borderColor = isDarkerColor ? color.getLighterColor(0.3) : color.getDarkerColor(0.05);
         const textColor = isDarkerColor ? Color.white() : new Color({hex: "#555555"});

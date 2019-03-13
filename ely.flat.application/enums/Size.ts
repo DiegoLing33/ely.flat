@@ -23,61 +23,62 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import elyEnum from "@enums/elyEnum";
+import efSerializableProtocol from "@protocols/efSerializableProtocol";
 
 /**
  * Размеры ely.flat.application
  * @class Size
  * @augments {elyEnum<string>}
  */
-export default class Size extends elyEnum<string> {
+export default class Size extends elyEnum<string> implements efSerializableProtocol<Size> {
 
     /**
      * Стандартный размер
      * @type {Size}
      */
-    public static readonly default = new Size("normal");
+    public static readonly default = new Size({value: "normal"});
 
     /**
      * Основной размер, используемый в ely.flat
      * @type {Size}
      */
-    public static readonly normal = new Size("regular");
+    public static readonly normal = new Size({value: "regular"});
 
     /**
      * Размер во весь блок
      * @type {Size}
      */
-    public static readonly fill = new Size("fill");
+    public static readonly fill = new Size({value: "fill"});
 
     /**
      * Маленький размер
      * @type {Size}
      */
-    public static readonly small = new Size("small");
+    public static readonly small = new Size({value: "small"});
 
     /**
      * Очень маленький размер
      * @type {Size}
      */
-    public static readonly xsmall = new Size("xsmall");
+    public static readonly xsmall = new Size({value: "xsmall"});
 
     /**
      * Большой размер
      * @type {Size}
      */
-    public static readonly large = new Size("large");
+    public static readonly large = new Size({value: "large"});
 
     /**
      * Очень большой размер
      * @type {Size}
      */
-    public static readonly xlarge = new Size("xlarge");
+    public static readonly xlarge = new Size({value: "xlarge"});
 
     /**
      * Огромный размер
      * @type {Size}
      */
-    public static readonly xxlarge = new Size("xxlarge");
+    public static readonly xxlarge = new Size({value: "xxlarge"});
 
     /**
      * Свой размер
@@ -86,7 +87,7 @@ export default class Size extends elyEnum<string> {
      */
     public static custom(value: string | number): Size {
         if (typeof value === "number") value = value.toString() + "px";
-        return new Size(value, true);
+        return new Size({value, custom: true});
     }
 
     /**
@@ -95,7 +96,7 @@ export default class Size extends elyEnum<string> {
      * @return {Size}
      */
     public static byName(name: string): Size {
-        return new Size(name);
+        return new Size({value: name});
     }
 
     /**
@@ -124,11 +125,18 @@ export default class Size extends elyEnum<string> {
     /**
      * Конструктор
      * @ignore
-     * @param {string} val
-     * @param {boolean} custom
+     * @param {{value: string, custom?: boolean}} props
      */
-    protected constructor(val: string, custom: boolean = false) {
-        super(val);
-        this.custom = custom;
+    protected constructor(props: { value: string, custom?: boolean }) {
+        super(props);
+        this.custom = props.custom || false;
+    }
+
+    /**
+     * Сериализует объект
+     * @return {string}
+     */
+    public serialize(): any {
+        return {_item: "Size", custom: this.custom, value: this.value};
     }
 }
