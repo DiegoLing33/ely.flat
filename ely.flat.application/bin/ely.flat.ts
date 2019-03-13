@@ -38,9 +38,9 @@ import Field from "@controls/input/Field";
 import SwitchField from "@controls/input/SwitchField";
 import TextField from "@controls/input/TextField";
 import GridLayoutView from "@controls/layout/GridLayoutView";
-import RowLayoutView from "@controls/layout/rowLayoutView";
+import RowLayoutView from "@controls/layout/RowLayoutView";
 import ListView from "@controls/list/ListView";
-import NavigationView from "@controls/navigation/navigationView";
+import NavigationView from "@controls/navigation/NavigationView";
 import HeaderTextView from "@controls/text/HeaderTextView";
 import IconView from "@controls/text/IconView";
 import LinkTextView from "@controls/text/LinkTextView";
@@ -63,7 +63,7 @@ import Time from "@core/Time";
 import Timer from "@core/Timer";
 import Utils from "@core/Utils";
 import SendFileRequest from "@core/web/request/SendFileRequest";
-import SendJsonRequest from "@core/web/request/sendJsonRequest";
+import SendJsonRequest from "@core/web/request/SendJsonRequest";
 import URLRequest, {URLRequestHeaderName, URLRequestMethod} from "@core/web/request/URLRequest";
 import {efxApp} from "@efxApp/efxApp";
 import Size from "@enums/Size";
@@ -71,8 +71,19 @@ import Style from "@enums/Style";
 import TextFieldType from "@enums/TextFieldType";
 import Weight from "@enums/Weight";
 import XLogger from "@core/utils/XLogger";
-import AppDevelopConsole from "@app/develop/appDevelopConsole";
-import NotificationView from "@controls/notification/notificationView";
+import AppDevelopConsole from "@app/develop/AppDevelopConsole";
+import NotificationView from "@controls/notification/NotificationView";
+import {deserialize} from "@protocols/efSerializableProtocol";
+import ProgressBarView from "@controls/action/ProgressBarView";
+import CircularProgressBarView from "@controls/action/CircularProgressBarView";
+import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
+import TextAreaField from "@controls/input/TextAreaField";
+import StaticGridLayoutView from "@controls/layout/StaticGridLayoutView";
+import TabsPanelView from "@controls/content/TabsPanelView";
+import BoxView from "@controls/content/BoxView";
+import BoxHeaderView from "@controls/content/BoxHeaderView";
+import YouTubePlayer from "@controls/media/YouTubePlayer";
+import VideoPlayer from "@controls/media/VideoPlayer";
 
 /**
  *
@@ -112,7 +123,7 @@ const screenController = (): ScreenController => {
  * Возвращает навигацию
  * @return {NavigationView}
  */
-const navigation = (): NavigationView => {
+const navigationBar = (): NavigationView => {
     return app().getApplicationNavigationView();
 };
 
@@ -147,9 +158,10 @@ window.elyflatobjects = {
     addController,
     app,
     elyOnReady,
-    navigation,
+    navigationBar,
     screenController,
 
+    deserialize,
     AppDevelopConsole,
     efxApp,
 
@@ -215,19 +227,31 @@ window.elyflatobjects = {
 
     Field,
     TextField,
+    TextAreaField,
     SwitchField,
 
     RowLayoutView,
     GridLayoutView,
+    StaticGridLayoutView,
+
+    BoxView,
+    BoxHeaderView,
 
     PanelView,
+    TabsPanelView,
     ImageView,
 
     NavigationView,
     ModalView,
     NotificationView,
+    elyProgressNotificationView,
+    ProgressBarView,
+    CircularProgressBarView,
 
     PreloaderView,
+
+    YouTubePlayer,
+    VideoPlayer,
 };
 
 // @ts-ignore
@@ -235,10 +259,12 @@ window.elyflatobjects = {
 export {
     // Types
     app,
-    navigation,
+    navigationBar,
     elyOnReady,
     addController,
     screenController,
+
+    deserialize,
 
     efxApp,
     AppDevelopConsole,
@@ -304,17 +330,29 @@ export {
 
     Field,
     TextField,
+    TextAreaField,
     SwitchField,
 
     RowLayoutView,
     GridLayoutView,
+    StaticGridLayoutView,
+
+    BoxView,
+    BoxHeaderView,
 
     PanelView,
+    TabsPanelView,
     ImageView,
 
     NavigationView,
     ModalView,
     NotificationView,
+    elyProgressNotificationView,
+    ProgressBarView,
+    CircularProgressBarView,
 
     PreloaderView,
+
+    YouTubePlayer,
+    VideoPlayer,
 };
