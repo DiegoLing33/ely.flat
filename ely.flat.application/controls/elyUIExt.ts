@@ -28,6 +28,7 @@ import NotificationView from "@controls/notification/NotificationView";
 import HeaderTextView, {HeaderTextViewOptions} from "@controls/text/HeaderTextView";
 import IconView, {IconViewOptions} from "@controls/text/IconView";
 import TextView, {TextViewOptions} from "@controls/text/TextView";
+import View from "@core/controls/View";
 import SendFileRequest from "@core/web/request/SendFileRequest";
 import SendJsonRequest from "@core/web/request/SendJsonRequest";
 import URLRequest, {URLRequestMethod} from "@core/web/request/URLRequest";
