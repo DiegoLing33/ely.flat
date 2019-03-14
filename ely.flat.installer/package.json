@@ -7,10 +7,13 @@
   "keywords": [
     "ely.flat"
   ],
-  "main": "index.js",
+  "main": "bin/index.js",
   "scripts": {
-    "start": "node index.js",
-    "efi --rebuild-app": "rollup app/app.js --file app/index.js --format iife"
+    "start": "node bin/index.js",
+    "efi --rebuild app": "rollup app/app.js --file app/index.js --format iife",
+    "build": "tsc",
+    "test": "tsc && electron bin/index.js gui test",
+    "publish": "npm publish"
   },
   "author": {
     "name": "Diego Ling",
@@ -20,7 +23,7 @@
     "*"
   ],
   "bin": {
-    "efi": "./index.js"
+    "efi": "src/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,20 +31,21 @@
   },
   "dependencies": {
     "boxen": "latest",
+    "electron": "5.0.0-beta.1",
+    "express": "latest",
     "figlet": "latest",
     "filewatcher": "^3.0.1",
-    "prompt": "latest",
-    "rollup": "^0.67.4",
-    "express": "latest",
-    "electron": "5.0.0-beta.1",
+    "md5": "latest",
     "ncp": "latest",
-    "md5": "latest"
+    "prompt": "latest",
+    "rollup": "^0.67.4"
   },
   "devDependencies": {
     "@types/boxen": "^2.1.0",
     "@types/electron": "1.6.10",
     "@types/express": "^4.16.1",
     "@types/md5": "^2.1.33",
-    "@types/ncp": "^2.0.1"
+    "@types/ncp": "^2.0.1",
+    "typescript": "3.4.0-dev.20190227"
   }
 }

@@ -1,9 +1,9 @@
 import {
-    efButton,
-    efPanelView,
-    efSwitchField,
-    elyControl,
-    elySimplePageViewController,
+    Button,
+    PanelView,
+    SwitchField,
+    Control,
+    SimplePageViewController,
 } from "../../build/ely.flat";
 import {addHomeButton, serverWindow} from "../utils/utils";
 import {isLiveUpdateServerRunning, runLiveUpdateServer, stopLiveUpdateServer} from "../utils/commands";
@@ -11,7 +11,7 @@ import {isLiveUpdateServerRunning, runLiveUpdateServer, stopLiveUpdateServer} fr
 /**
  * Контроллер отображения: Запуск сервера
  */
-export class ServerViewController extends elySimplePageViewController {
+export class ServerViewController extends SimplePageViewController {
 
 
     viewDidLoad() {
@@ -21,14 +21,14 @@ export class ServerViewController extends elySimplePageViewController {
         this.description("Live Update Server");
 
         addHomeButton(this.view);
-        this.view.add(new elyControl({tag: "br"}));
+        this.view.add(new Control({tag: "br"}));
 
-        this.infoPanel = new efPanelView({panelTitle: "Информация"});
-        this.stateServer = new efSwitchField({title: "Состояние сервера"});
+        this.infoPanel = new PanelView({panelTitle: "Информация"});
+        this.stateServer = new SwitchField({title: "Состояние сервера"});
 
         this.infoPanel.getContentView().add(this.stateServer);
 
-        let button = new efButton({text: "Открыть приложение", fill: true});
+        let button = new Button({text: "Открыть приложение", fill: true});
         this.infoPanel.getContentView().add(button);
         this.infoPanel.getContentView().rowAt(1).hidden(true);
 

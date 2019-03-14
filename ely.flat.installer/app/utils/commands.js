@@ -1,4 +1,4 @@
-import {NotificationView, elyProgressNotificationView} from "../../build/ely.flat";
+import {NotificationView, elyProgressNotificationView, URLRequest, safeJsonParse} from "../../build/ely.flat";
 
 export let requestsInProcess = [];
 
@@ -18,10 +18,11 @@ export function makeAppRequest(method, data, callback, props = {}) {
     });
     if (props.info) prog.present();
     new URLRequest({url: "http://127.0.0.1:1583/" + method, data}).send((resp, status) => {
+        resp = safeJsonParse(resp);
         requestsInProcess.splice(requestsInProcess.indexOf(method), 1);
         if (props.info) prog.dismiss(true);
-        if (props.ok && resp.response) new efNotificationView({title: "Готово", message: props.ok}).present();
-        if (resp.error) new efNotificationView({title: "Ошибка", message: resp.error}).present();
+        if (props.ok && resp.response) new NotificationView({title: "Готово", message: props.ok}).present();
+        if (resp.error) new NotificationView({title: "Ошибка", message: resp.error}).present();
         callback(resp, status);
     });
 }
@@ -122,9 +123,8 @@ export function stopLiveUpdateServer(callback) {
  * @param callback
  */
 export function getConfigCommand(callback) {
-    const req = new elyGetRequest({url: "http://127.0.0.1:1583/getConfig"});
-    req.useJson = false;
-    req.send({}, (resp, status) => {
+    const req = new URLRequest({url: "http://127.0.0.1:1583/getConfig"});
+    req.send((resp, status) => {
         callback(JSON.parse(resp));
     });
 }

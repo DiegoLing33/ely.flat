@@ -1,13 +1,13 @@
 import {
-    efGridLayoutView, efHeaderTextView,
-    efPanelView,
-    efSwitchField,
-    efTextField,
-    elyControl,
+    GridLayoutView, HeaderTextView,
+    PanelView,
+    SwitchField,
+    TextField,
+    Control,
     Size,
-    elyColor,
-    elyColorPickerField,
-    elySimplePageViewController, Style
+    Color,
+    // elyColorPickerField,
+    SimplePageViewController, Style
 } from "../../build/ely.flat";
 import {addHomeButton, serverWindow} from "../utils/utils";
 import {getConfigCommand, setConfigCommand} from "../utils/commands";
@@ -17,7 +17,7 @@ let __cfg;
 /**
  * Контроллер отображения: Экран конфигурации
  */
-export class ConfigViewController extends elySimplePageViewController {
+export class ConfigViewController extends SimplePageViewController {
     viewDidLoad() {
         super.viewDidLoad();
 
@@ -27,7 +27,7 @@ export class ConfigViewController extends elySimplePageViewController {
         this.description("Настройка приложения");
 
         addHomeButton(this.view);
-        this.view.add(new elyControl({tag: "br"}));
+        this.view.add(new Control({tag: "br"}));
 
         getConfigCommand((cfg) => {
             __cfg = cfg;
@@ -39,7 +39,7 @@ export class ConfigViewController extends elySimplePageViewController {
                         "Название приложения",
                         "Название Вашего приложения будет отображено в title тэге, а также при добавлении на " +
                         "домашний экран смартфона.",
-                        new efTextField({value: cfg.app.title}),
+                        new TextField({value: cfg.app.title}),
                         "app.title"
                     ]
                 ]
@@ -52,14 +52,14 @@ export class ConfigViewController extends elySimplePageViewController {
                         "Текст на панели навигации",
                         "Название Вашего приложения. Отображается в левом углу навигации или в центре, если приложение " +
                         "запущено с мобильного устройства.",
-                        new efTextField({value: cfg.navigationBar.title}),
+                        new TextField({value: cfg.navigationBar.title}),
                         "navigationBar.title"
                     ],
                     [
                         "Цвет панели навигации",
                         "Основной цвет верхней панели навигации.",
-                        new elyColorPickerField({value: new elyColor({hex: cfg.navigationBar.color})}),
-                        "navigationBar.color"
+                        new TextField({value: cfg.navigationBar.color}),
+                        "navigationBar.Color"
                     ]
                 ]
             };
@@ -71,26 +71,26 @@ export class ConfigViewController extends elySimplePageViewController {
                         "Максимальная ширина контейнера",
                         "Максимальная ширина контейнера приложения, которая возможна. Вы можете установить 100% " +
                         "или указать значение в пикислях.",
-                        new efTextField({value: cfg.template.maxContainerWidth}),
+                        new TextField({value: cfg.template.maxContainerWidth}),
                         "template.maxContainerWidth"
                     ],
                     [
                         "Основной цвет приложения",
-                        "Основной цвет приложения или primary color. В соответсвии с ним будут установлены другие цвета.",
-                        new elyColorPickerField({value: new elyColor({hex: cfg.template.color})}),
-                        "template.color"
+                        "Основной цвет приложения или primary Color. В соответсвии с ним будут установлены другие цвета.",
+                        new TextField({value: cfg.navigationBar.color}),
+                        "template.Color"
                     ],
                     ["Подвал"],
                     [
                         "Основной текст",
                         "Основной текст имеет более яркий окрас и большой размер.",
-                        new efTextField({value: cfg.template.footer.title}),
+                        new TextField({value: cfg.template.footer.title}),
                         "template.footer.title"
                     ],
                     [
                         "Дополнительный текст",
                         "Дополнительный текст распологается под основным и менее заметен.",
-                        new efTextField({value: cfg.template.footer.subtitle}),
+                        new TextField({value: cfg.template.footer.subtitle}),
                         "template.footer.subtitle"
                     ],
                 ]
@@ -103,13 +103,13 @@ export class ConfigViewController extends elySimplePageViewController {
                     [
                         "Кодировка приложения",
                         "Кодировка символов в приложении. Устанавливается в мета заголовок.",
-                        new efTextField({value: cfg.meta.charset}),
+                        new TextField({value: cfg.meta.charset}),
                         "meta.charset"
                     ],
                     [
                         "Путь до иконок",
                         "Путь до иконок приложения. Необходимо для манифеста *useApplicationIcon*",
-                        new efTextField({value: cfg.meta.iconPath}),
+                        new TextField({value: cfg.meta.iconPath}),
                         "meta.iconPath"
                     ]
                 ]
@@ -121,44 +121,44 @@ export class ConfigViewController extends elySimplePageViewController {
                     [
                         "Использование панели навигации",
                         "Панель навигации отображается в верху приложения.",
-                        new efSwitchField({value: cfg.manifest.useNavigationBar}),
+                        new SwitchField({value: cfg.manifest.useNavigationBar}),
                         "manifest.useNavigationBar"
                     ],
                     [
                         "Использование мета заголовков",
                         "В мета заголовков хранится название Вашего приложения и кодировка UTF-8.",
-                        new efSwitchField({value: cfg.manifest.useMeta}),
+                        new SwitchField({value: cfg.manifest.useMeta}),
                         "manifest.useMeta"
                     ],
                     [
                         "Использование иконки приложения",
                         "Иконки приложения будут добавлены в мета заголовки.",
-                        new efSwitchField({value: cfg.manifest.useApplicationIcon}),
+                        new SwitchField({value: cfg.manifest.useApplicationIcon}),
                         "manifest.useApplicationIcon"
                     ],
                     [
                         "Использование адаптации дисплея",
                         "В мета заголовки будет добавлен корректный тег viewport.",
-                        new efSwitchField({value: cfg.manifest.useViewPort}),
+                        new SwitchField({value: cfg.manifest.useViewPort}),
                         "manifest.useViewPort"
                     ],
                     [
                         "Разрешает использование standalone",
                         "Ваше приложение сможет быть добавлено на домашний экран смартфона, после чего " +
                         "оно будет работать как полноценное приложение.",
-                        new efSwitchField({value: cfg.manifest.allowStandaloneMode}),
+                        new SwitchField({value: cfg.manifest.allowStandaloneMode}),
                         "manifest.allowStandaloneMode"
                     ],
                     [
                         "Использование iPhone X view fix",
                         "Некоторые элементы приложения будут адаптированы под iPhone X. Например, полоса навигации.",
-                        new efSwitchField({value: cfg.manifest.useIPhoneXStandaloneFix}),
+                        new SwitchField({value: cfg.manifest.useIPhoneXStandaloneFix}),
                         "manifest.useIPhoneXStandaloneFix"
                     ],
                     [
                         "Использование режима разработчика",
                         "Режим разработчика необходим для работы с Live update server в программе efi.",
-                        new efSwitchField({value: cfg.manifest.useDevelopMode}),
+                        new SwitchField({value: cfg.manifest.useDevelopMode}),
                         "manifest.useDevelopMode"
                     ]
                 ]
@@ -170,14 +170,14 @@ export class ConfigViewController extends elySimplePageViewController {
             this.view.add(this.settingsPanel(navigationSettings));
             this.view.add(this.settingsPanel(metaSettings));
             this.view.add(this.settingsPanel(manifestSettings));
-            this.view.add(new elyControl({tag: "br"}));
+            this.view.add(new Control({tag: "br"}));
             addHomeButton(this.view);
         });
 
     }
 
     settingsPanel(data) {
-        let efPanel = new efPanelView({
+        let efPanel = new PanelView({
             panelTitle: data.name
         });
         data.options.forEach(value =>
@@ -189,8 +189,8 @@ export class ConfigViewController extends elySimplePageViewController {
         if (data.length === 1) {
             return String(data[0]).headerTextView({headerLevel: 1});
         } else {
-            let grid = new efGridLayoutView();
-            let header = new efHeaderTextView({text: data[0], headerLevel: 2});
+            let grid = new GridLayoutView();
+            let header = new HeaderTextView({text: data[0], headerLevel: 2});
             grid.add(header);
             grid.add(data[2]);
             data[2].placeholder(data[0]);

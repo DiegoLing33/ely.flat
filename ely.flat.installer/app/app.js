@@ -6,7 +6,7 @@
  */
 import {
     addController,
-    elyOnReady,
+    elyOnReady, screenController,
 } from "../build/ely.flat";
 import {ConfigViewController} from "./controllers/ConfigViewController";
 import {IndexViewController} from "./controllers/IndexViewController";
@@ -14,6 +14,7 @@ import {workingDirectoryField} from "./utils/utils";
 import {getWorkingDirectoryCommand} from "./utils/commands";
 import {ServerViewController} from "./controllers/ServerViewController";
 import {DatabaseViewController} from "./controllers/efxapp/DatabaseViewController";
+import BuilderViewController from "./ViewBuilder/BuilderViewController";
 
 
 //
@@ -28,6 +29,9 @@ elyOnReady(next => {
 
     //efx-app
     addController("dbview", new DatabaseViewController());
+
+    // View Builder
+    addController("index", new BuilderViewController());
 
     // Сообщает приложению, что все успешно запустилось.
     // Попробуйте раскомментировать строку ниже для примера и понимания.

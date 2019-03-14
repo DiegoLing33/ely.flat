@@ -1,12 +1,12 @@
 
 import {addHomeButton, workingDirectoryField} from "../../utils/utils";
 import {getDBDItemsCommand, getTableItemsCommand, setDBDItemValueCommand} from "../../utils/commands";
-import {app, GridLayoutView, PanelView, View, Weight} from "../../../build/ely.flat";
+import {app, GridLayoutView, PanelView, SimplePageViewController, View, Weight} from "../../../build/ely.flat";
 
 /**
  * Контроллер отображения: Просмотр баз данных
  */
-export class DatabaseViewController extends elySimplePageViewController {
+export class DatabaseViewController extends SimplePageViewController {
 
     /**
      * Данный метод выполняется после загрузки экрана

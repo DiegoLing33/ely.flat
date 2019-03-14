@@ -1,0 +1,13 @@
+{
+  "_item": "Panel",
+  "style": {
+    "height": "250px"
+  },
+  "panelRootGridView":{
+    "items": [
+      {
+        "_item": "Row"
+      }
+    ]
+  }
+}

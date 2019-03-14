@@ -13,7 +13,7 @@
     "useContentController": true,
     "useContentRouter": true,
     "useIPhoneXStandaloneFix": true,
-    "useDevelopMode": true
+    "useDevelopMode": false
   },
   "contentController": {
     "defaultContentId": "index",
@@ -26,13 +26,8 @@
       "subtitle": "ely.flat { Installer } - 2019"
     }
   },
-  "sideNavigationBar": {
-    "allowMouseEvents": true,
-    "items": [
-      {
-        "text": "Home"
-      }
-    ]
+  "develop": {
+    "appFile": "./index.js"
   },
   "navigationBar": {
     "title": "ely.flat *{* Installer *}*",
