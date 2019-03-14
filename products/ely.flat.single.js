@@ -2643,6 +2643,8 @@ class View extends elyObject {
      * Возвращает и устанавливает скрытие элемента
      */
     hidden(value) {
+        if (isSet(value))
+            this.notificate("hidden", [value]);
         return ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
     }
     /**
@@ -2922,6 +2924,17 @@ class View extends elyObject {
      */
     addMouseLeaveObserver(o) {
         this.addObserver("mouseLeave", o);
+        return this;
+    }
+    /**
+     * Добавляет далюдатель: скрытие элемента
+     *
+     * Имя обсервера: hidden
+     *
+     * @param {function(hidden: boolean)} o - наблюдатель
+     */
+    addHiddenChangeObserver(o) {
+        this.addObserver("hidden", o);
         return this;
     }
     elyViewWillDraw(o) {
@@ -3728,6 +3741,19 @@ class Style extends elyEnum {
             primary: Style.primary.value,
             success: Style.success.value,
             warning: Style.warning.value,
+        };
+    }
+    /**
+     * Список
+     */
+    static list() {
+        return {
+            danger: Style.danger,
+            default: Style.default,
+            info: Style.info,
+            primary: Style.primary,
+            success: Style.success,
+            warning: Style.warning,
         };
     }
     /**
@@ -5788,6 +5814,22 @@ class Size extends elyEnum {
         };
     }
     /**
+     * Список
+     * @return {*}
+     */
+    static list() {
+        return {
+            default: Size.default,
+            fill: Size.fill,
+            large: Size.large,
+            normal: Size.normal,
+            small: Size.small,
+            xlarge: Size.xlarge,
+            xsmall: Size.xsmall,
+            xxlarge: Size.xxlarge,
+        };
+    }
+    /**
      * Сериализует объект
      * @return {string}
      */
@@ -5900,6 +5942,18 @@ class Weight extends elyEnum {
             light: Weight.light.value,
             normal: Weight.normal.value,
             thin: Weight.thin.value,
+        };
+    }
+    /**
+     * Список
+     */
+    static list() {
+        return {
+            default: Weight.default,
+            fat: Weight.fat,
+            light: Weight.light,
+            normal: Weight.normal,
+            thin: Weight.thin,
         };
     }
     /**
@@ -8669,6 +8723,17 @@ class TextFieldType extends elyEnum {
         };
     }
     /**
+     * Список
+     */
+    static list() {
+        return {
+            mail: TextFieldType.mail,
+            number: TextFieldType.number,
+            password: TextFieldType.password,
+            text: TextFieldType.text,
+        };
+    }
+    /**
      * Сериализует объект
      * @return {*}
      */
@@ -10898,6 +10963,299 @@ class VideoPlayer extends View {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
+ + Файл: SelectField.ts                                                       +
+ + Файл изменен: 14.03.2019 01:36:41                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент подсказок
+ */
+class SelectFieldHintView extends BoxView {
+    /**
+     * Конструктор
+     * @param field
+     */
+    constructor(field) {
+        super({ boxHover: false, styleNoSelect: true });
+        this.__field = field;
+        this.addClass("--hint");
+        this.hidden(true);
+        this.getField().getAccessory().onfocus = () => this.addClass("--focus");
+        this.getField().getAccessory().onblur = () => this.removeClass("--focus");
+    }
+    /**
+     * Обновляет элемент
+     * @param {string} q - введенное значение для фильтра подсказок
+     * @return {string[]} - результаты поиска
+     */
+    update(q) {
+        q = q || "";
+        const results = [];
+        this.width(this.getField().getRect().width - 2);
+        this.getContainerView().getRows().clear();
+        this.getField().forEachItem((key, value, index) => {
+            if (index > this.getField().maxHintsCount())
+                return;
+            if (key.toLowerCase().indexOf(q.toLowerCase()) === -1)
+                return;
+            const textView = key.textView();
+            this.getContainerView().add(textView);
+            this.getContainerView().getRows().last().addClickObserver(() => {
+                this.getField().value(value);
+            });
+            results.push(key);
+        });
+        return results;
+    }
+    /**
+     * Возвращает поле подсказки
+     * @return {SelectField<*>}
+     */
+    getField() {
+        return this.__field;
+    }
+}
+/**
+ * Элемент отображения
+ * @class SelectField
+ * @template {T}
+ * @augments {Field<T>}
+ */
+class SelectField extends Field {
+    /**
+     * Конструктор
+     * @param {SelectFieldOptions} [options] - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Свойство: элементы выбора
+         * @ignore
+         * @protected
+         */
+        this.__itemsProperty = new ObservableDictionary();
+        /**
+         * Элемент иконки
+         * @ignore
+         */
+        this.__iconContainer = new ContainerView(new IconView({ iconName: "search" }));
+        /**
+         * Свойство: максимальное количество подсказок
+         * @ignore
+         * @protected
+         */
+        this.__maxHintsCount = 7;
+        this.addClass("ef-input", "ef-selection", "with-suffix");
+        this.__hintView = new SelectFieldHintView(this);
+        this.getIconViewContainer().addClass("ef-input-suffix");
+        this.getIconViewContainer().styleClickable(true);
+        this.getIconViewContainer().addClickObserver(() => {
+            this.__editableLogic();
+        });
+        this.getHintView().addHiddenChangeObserver(hidden => {
+            if (!hidden)
+                this.addClass("--with-hint");
+            else
+                this.removeClass("--with-hint");
+        });
+        this.editable(false);
+        this.getAccessory().ondblclick = () => {
+            this.__editableLogic();
+        };
+        this.getAccessory().oninput = (e) => {
+            this.search(this.getAccessory().value, true);
+        };
+        this.valueProperty.change((value, oldVal) => {
+            const key = this.getKeyForValue(value);
+            if (isSet(key)) {
+                this.getAccessory().value = key;
+                this.__disableLogic();
+            }
+        });
+        this.getDocument().append(this.getIconViewContainer().getDocument());
+        this.getDocument().append(this.getHintView().getDocument());
+        variable(options.value, () => this.value(options.value));
+        variableAndSet(options.items, this.items, this);
+        variableAndSet(options.maxHintsCount, this.maxHintsCount, this, 7);
+    }
+    /**
+     * Устанавливает элементы из массива
+     * @param {T[]} arr
+     */
+    setItemsByArray(arr) {
+        const obj = {};
+        arr.forEach((value, index) => obj[value] = index);
+        return this.items(obj);
+    }
+    /**
+     * Возвращает и устанавливает максимальное количество подсказок
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    maxHintsCount(value) {
+        if (value === undefined)
+            return this.__maxHintsCount;
+        this.__maxHintsCount = value;
+        return this;
+    }
+    /**
+     * Выполняет поиск
+     *
+     * @param {string} str
+     * @param {boolean} [complete = true]
+     * @return {SelectField<T>>}
+     */
+    search(str, complete = true) {
+        this.getHintView().hidden(false);
+        const results = this.getHintView().update(str);
+        if (complete && results.length === 1) {
+            this.trySelectByKey(results[0]);
+        }
+        else if (complete) {
+            for (const resKey of results)
+                if (str.toLowerCase() === resKey.toLowerCase())
+                    this.trySelectByKey(resKey);
+        }
+        return this;
+    }
+    /**
+     * Устанавливает элемент по его ключу и возвращает результат
+     * @param {string} key
+     * @return {boolean}
+     */
+    trySelectByKey(key) {
+        const val = this.getValueForKey(key);
+        if (isSet(val)) {
+            this.value(val);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Возвращает элемент отображения подсказок
+     * @return {SelectFieldHintView}
+     */
+    getHintView() {
+        return this.__hintView;
+    }
+    /**
+     * Возвращает контейнер с иконки
+     * @return {ContainerView<IconView>}
+     */
+    getIconViewContainer() {
+        return this.__iconContainer;
+    }
+    /**
+     * Возвращает свойство: элементы выбора
+     * @return {ObservableDictionary<T>}
+     */
+    getItemsProperty() {
+        return this.__itemsProperty;
+    }
+    /**
+     * Возвращает и устанавливает элементы выбора
+     * @param {T} [value] - значение
+     * @returns {{T}}|this|null}
+     */
+    items(value) {
+        if (value && value instanceof Array)
+            return this.setItemsByArray(value);
+        return ObservableProperty.simplePropertyAccess(this, value, this.__itemsProperty);
+    }
+    /**
+     * Добавляет элемент
+     * @param {string} key
+     * @param {T} value
+     * @return {SelectField<T>}
+     */
+    addItem(key, value) {
+        this.getItemsProperty().add(key, value);
+        return this;
+    }
+    /**
+     * Цикл по элемента
+     * @param {function(key: string, value: T, index: number)} closure
+     * @return {SelectField<T>}
+     */
+    forEachItem(closure) {
+        this.getItemsProperty().getSorted((a, b) => a[0] > b[0] ? 1 : -1).forEach(closure);
+        return this;
+    }
+    /**
+     * Возвращает ключ для значения
+     * @param {T} value
+     * @return {string|null}
+     */
+    getKeyForValue(value) {
+        const key = this.getItemsProperty().keyOf(value);
+        return isSet(key) ? key : null;
+    }
+    /**
+     * Возвращает значение для ключа
+     * @param {string} key
+     * @return {T|null}
+     */
+    getValueForKey(key) {
+        const val = this.getItemsProperty().item(key);
+        return isSet(val) ? val : null;
+    }
+    /**
+     * Логика отключения поля
+     * @ignore
+     * @private
+     */
+    __disableLogic() {
+        this.editable(false);
+        this.getHintView().hidden(true);
+        this.getIconViewContainer().getView().iconName("search");
+    }
+    /**
+     * Логика редактирования
+     * @ignore
+     * @private
+     */
+    __editableLogic() {
+        if (this.getHintView().hidden()) {
+            this.getAccessory().value = "";
+            this.editable(true);
+            this.getAccessory().focus();
+            this.search(this.getAccessory().value);
+            this.getIconViewContainer().getView().iconName("times");
+        }
+        else {
+            this.__disableLogic();
+        }
+    }
+}
+/**
+ * @typedef {FieldOptions} SelectFieldOptions
+ * @template {T}
+ * @property {T} [value]
+ * @property {string} [placeholder]
+ * @property {string} [selectedKey]
+ * @property {number} [maxHintsCount]
+ * @property {T[]|{{}}} [items]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
  + Файл: ely.flat.ts                                                          +
  + Файл изменен: 02.01.2019 14:04:43                                          +
  +                                                                            +
@@ -11014,6 +11372,7 @@ window.elyflatobjects = {
     TextField,
     TextAreaField,
     SwitchField,
+    SelectField,
     RowLayoutView,
     GridLayoutView,
     StaticGridLayoutView,
