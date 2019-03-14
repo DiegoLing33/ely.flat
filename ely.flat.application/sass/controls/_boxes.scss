@@ -82,6 +82,10 @@
     font-size: 14px;
     margin: 0;
 
+    .ef-text{
+      line-height: 40px;
+    }
+
     &.--tabs {
       padding: 0;
       @include deny-selection();
