@@ -88,6 +88,20 @@ export default class Style extends elyEnum<string> {
     }
 
     /**
+     * Список
+     */
+    public static list() {
+        return {
+            danger: Style.danger,
+            default: Style.default,
+            info: Style.info,
+            primary: Style.primary,
+            success: Style.success,
+            warning: Style.warning,
+        };
+    }
+
+    /**
      * Свой стиль
      * @param name
      */
@@ -102,7 +116,6 @@ export default class Style extends elyEnum<string> {
     public static byName(name: string): Style {
         return new Style({value: name});
     }
-
 
     /**
      * Конструктор

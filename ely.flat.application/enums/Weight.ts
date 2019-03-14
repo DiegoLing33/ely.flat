@@ -93,6 +93,19 @@ export default class Weight extends elyEnum<string> {
     }
 
     /**
+     * Список
+     */
+    public static list() {
+        return {
+            default: Weight.default,
+            fat: Weight.fat,
+            light: Weight.light,
+            normal: Weight.normal,
+            thin: Weight.thin,
+        };
+    }
+
+    /**
      * Флаг кастомного значения
      */
     public custom: boolean;

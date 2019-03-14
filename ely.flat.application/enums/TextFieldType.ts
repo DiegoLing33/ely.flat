@@ -73,6 +73,18 @@ export default class TextFieldType extends elyEnum<string> {
     }
 
     /**
+     * Список
+     */
+    public static list() {
+        return {
+            mail: TextFieldType.mail,
+            number: TextFieldType.number,
+            password: TextFieldType.password,
+            text: TextFieldType.text,
+        };
+    }
+
+    /**
      * Конструктор
      * @ignore
      * @param {{value: string}} props

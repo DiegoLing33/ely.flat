@@ -117,6 +117,23 @@ export default class Size extends elyEnum<string> implements efSerializableProto
     }
 
     /**
+     * Список
+     * @return {*}
+     */
+    public static list() {
+        return {
+            default: Size.default,
+            fill: Size.fill,
+            large: Size.large,
+            normal: Size.normal,
+            small: Size.small,
+            xlarge: Size.xlarge,
+            xsmall: Size.xsmall,
+            xxlarge: Size.xxlarge,
+        };
+    }
+
+    /**
      * Кастомный размер
      * @ignore
      */
