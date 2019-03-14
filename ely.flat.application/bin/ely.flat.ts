@@ -84,6 +84,7 @@ import BoxView from "@controls/content/BoxView";
 import BoxHeaderView from "@controls/content/BoxHeaderView";
 import YouTubePlayer from "@controls/media/YouTubePlayer";
 import VideoPlayer from "@controls/media/VideoPlayer";
+import SelectField from "@controls/input/SelectField";
 
 /**
  *
@@ -229,6 +230,7 @@ window.elyflatobjects = {
     TextField,
     TextAreaField,
     SwitchField,
+    SelectField,
 
     RowLayoutView,
     GridLayoutView,
@@ -332,6 +334,7 @@ export {
     TextField,
     TextAreaField,
     SwitchField,
+    SelectField,
 
     RowLayoutView,
     GridLayoutView,
