@@ -25,7 +25,7 @@ import {
 } from "../../ely.flat.application/protocols/efSerializableProtocol";
 import elyObject from "../elyObject";
 import elyOneActionEval from "../elyOneActionEval";
-import {safeJsonParse, variableAndSet} from "../Guard";
+import {isSet, safeJsonParse, variableAndSet} from "../Guard";
 import ObservableBoolean from "../observable/properties/ObservableBoolean";
 import ObservableProperty from "../observable/properties/ObservableProperty";
 import Utils from "../Utils";
@@ -431,6 +431,7 @@ export default class View extends elyObject {
      * Возвращает и устанавливает скрытие элемента
      */
     public hidden(value?: boolean): boolean | null | View {
+        if (isSet(value)) this.notificate("hidden", [value]);
         return ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
     }
 
@@ -758,6 +759,18 @@ export default class View extends elyObject {
      */
     public addMouseLeaveObserver(o: (e: MouseEvent) => void): View {
         this.addObserver("mouseLeave", o);
+        return this;
+    }
+
+    /**
+     * Добавляет далюдатель: скрытие элемента
+     *
+     * Имя обсервера: hidden
+     *
+     * @param {function(hidden: boolean)} o - наблюдатель
+     */
+    public addHiddenChangeObserver(o: (hidden: boolean) => void): View {
+        this.addObserver("hidden", o);
         return this;
     }
 
