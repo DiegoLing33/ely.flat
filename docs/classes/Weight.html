@@ -149,7 +149,15 @@
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
+                                <a href="#list">list</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
                                 <a href="#rawList">rawList</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -222,7 +230,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Weight(&quot;regular&quot;)</code>
+                            <i>По умолчанию : </i><code>new Weight({value: &quot;regular&quot;})</code>
                         </td>
                     </tr>
 
@@ -251,7 +259,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Weight(&quot;fat&quot;)</code>
+                            <i>По умолчанию : </i><code>new Weight({value: &quot;fat&quot;})</code>
                         </td>
                     </tr>
 
@@ -280,7 +288,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Weight(&quot;light&quot;)</code>
+                            <i>По умолчанию : </i><code>new Weight({value: &quot;light&quot;})</code>
                         </td>
                     </tr>
 
@@ -309,7 +317,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Weight(&quot;standard&quot;)</code>
+                            <i>По умолчанию : </i><code>new Weight({value: &quot;standard&quot;})</code>
                         </td>
                     </tr>
 
@@ -338,7 +346,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Weight(&quot;thin&quot;)</code>
+                            <i>По умолчанию : </i><code>new Weight({value: &quot;thin&quot;})</code>
                         </td>
                     </tr>
 
@@ -527,6 +535,43 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="list"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Static</span>
+                            list
+                        </b>
+                        <a href="#list"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>list()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Список</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Weight.html" target="_self" >{ default: Weight; fat: Weight; light: Weight; normal: Weight; thin: Weight; }</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="rawList"></a>
                     <span class="name">
                         <b>
@@ -555,6 +600,48 @@
                     <div class="io-description">
                         <b>Возвращает : </b>    <code>{ default: any; fat: any; light: any; normal: any; thin: any; }</code>
 
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serialize"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            serialize
+                        </b>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>serialize()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Сериализует объект</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>

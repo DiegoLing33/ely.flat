@@ -72,7 +72,7 @@
                 <h3>Наследует</h3>
             </p>
             <p class="comment">
-                        <code><a href="../classes/elyRebuildableViewProtocol.html" target="_self" >elyRebuildableViewProtocol</a></code>
+                        <code><a href="../classes/ViewLayout.html" target="_self" >ViewLayout</a></code>
             </p>
 
 
@@ -97,10 +97,6 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Public</span>
-                                <a href="#add">add</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Public</span>
                                 <a href="#addItemWillAddObserver">addItemWillAddObserver</a>
                             </li>
                             <li>
@@ -110,10 +106,6 @@
                             <li>
                                     <span class="modifier">Public</span>
                                 <a href="#contains">contains</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#getViews">getViews</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -157,19 +149,39 @@
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
                                 <a href="#viewAt">viewAt</a>
                             </li>
                             <li>
-                                    <span class="modifier">Public</span>
-                                <a href="#addRebuiltObserver">addRebuiltObserver</a>
+                                    <span class="modifier">Protected</span>
+                                <a href="#__rebuild">__rebuild</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
-                                <a href="#denyRebuild">denyRebuild</a>
+                                <a href="#add">add</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
-                                <a href="#rebuild">rebuild</a>
+                                <a href="#getItemsProperty">getItemsProperty</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#items">items</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#items">items</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#items">items</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
                             </li>
                         </ul>
                     </td>
@@ -236,74 +248,6 @@
     <h3 id="methods">
         Методы
     </h3>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="add"></a>
-                    <span class="name">
-                        <b>
-                            <span class="modifier">Public</span>
-                            add
-                        </b>
-                        <a href="#add"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>add(view: <a href="../classes/View.html">View[]</a>)</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Добавляет элемент[ы] в строку</p>
-</div>
-
-                    <div class="io-description">
-                        <b>Параметры :</b>
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Название</td>
-                                    <td>Тип данных</td>
-                                    <td>Опционально</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>view</td>
-                                    <td>
-                                                <code><a href="../classes/View.html" target="_self" >View[]</a></code>
-                                    </td>
-
-                                    <td>
-                                        Нет
-                                    </td>
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../classes/RowLayoutView.html" target="_self" >RowLayoutView</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>
@@ -513,48 +457,6 @@
                     </div>
                     <div class="io-description">
                         <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-
-                    </div>
-                    <div class="io-description">
-                        
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="getViews"></a>
-                    <span class="name">
-                        <b>
-                            <span class="modifier">Public</span>
-                            getViews
-                        </b>
-                        <a href="#getViews"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                    <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>getViews()</code>
-                </td>
-            </tr>
-
-
-
-
-            <tr>
-                <td class="col-md-4">
-                    <div class="io-description"><p>Возвращает массив элементов отображения</p>
-</div>
-
-                    <div>
-                    </div>
-                    <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../interfaces/Array.html" target="_self" >ObservableArray&lt;View&gt;</a></code>
 
                     </div>
                     <div class="io-description">
@@ -872,7 +774,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>rowItemsStaticSize(value?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                    <code>rowItemsStaticSize()</code>
                 </td>
             </tr>
 
@@ -881,46 +783,13 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Возвращает и устанавливает использование статичного размера элементов в строке</p>
+                    <div class="io-description"><p>Возвращает использование статичного размера элементов в строке</p>
 </div>
 
-                    <div class="io-description">
-                        <b>Параметры :</b>
-                        <table class="params">
-                            <thead>
-                                <tr>
-                                    <td>Название</td>
-                                    <td>Тип данных</td>
-                                    <td>Опционально</td>
-                                    <td>Описание</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>value</td>
-                                    <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
-                                    </td>
-
-                                    <td>
-                                        Да
-                                    </td>
-
-
-                                    <td>
-                                        <ul>
-<li>значение</li>
-</ul>
-
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >boolean | null | RowLayoutView</a></code>
+                        <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
 
                     </div>
                     <div class="io-description">
@@ -1022,7 +891,7 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>rowItemsStaticSize()</code>
+                    <code>rowItemsStaticSize(value?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
                 </td>
             </tr>
 
@@ -1031,13 +900,46 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Возвращает использование статичного размера элементов в строке</p>
+                    <div class="io-description"><p>Возвращает и устанавливает использование статичного размера элементов в строке</p>
 </div>
 
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                    <td>Описание</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>value</td>
+                                    <td>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                    </td>
+
+                                    <td>
+                                        Да
+                                    </td>
+
+
+                                    <td>
+                                        <ul>
+<li>значение</li>
+</ul>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >boolean | null | RowLayoutView</a></code>
 
                     </div>
                     <div class="io-description">
@@ -1139,6 +1041,48 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>rowLength()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Возвращает количество элементов в динамической строке</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="rowLength"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            rowLength
+                        </b>
+                        <a href="#rowLength"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
                     <code>rowLength(value?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
                 </td>
             </tr>
@@ -1201,20 +1145,20 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="rowLength"></a>
+                    <a name="serialize"></a>
                     <span class="name">
                         <b>
                             <span class="modifier">Public</span>
-                            rowLength
+                            serialize
                         </b>
-                        <a href="#rowLength"><span class="icon ion-ios-link"></span></a>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>rowLength()</code>
+                    <code>serialize()</code>
                 </td>
             </tr>
 
@@ -1223,17 +1167,12 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Возвращает количество элементов в динамической строке</p>
+                    <div class="io-description"><p>Сериализует объект</p>
 </div>
 
-                    <div>
-                    </div>
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
-                    </div>
-                    <div class="io-description">
-                        
                     </div>
                 </td>
             </tr>
@@ -1311,20 +1250,20 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="addRebuiltObserver"></a>
+                    <a name="__rebuild"></a>
                     <span class="name">
                         <b>
-                            <span class="modifier">Public</span>
-                            addRebuiltObserver
+                            <span class="modifier">Protected</span>
+                            __rebuild
                         </b>
-                        <a href="#addRebuiltObserver"><span class="icon ion-ios-link"></span></a>
+                        <a href="#__rebuild"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>addRebuiltObserver(o: () => void)</code>
+                    <code>__rebuild()</code>
                 </td>
             </tr>
 
@@ -1333,8 +1272,201 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Добавляет наблюдатель: элемент был перестроен</p>
-<p>Имя обсервера: rebuilt</p>
+                    <div class="io-description"><p>Выполняет перестроение</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >elyRebuildableViewProtocol | any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="add"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            add
+                        </b>
+                        <a href="#add"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>add(items: <a href="../classes/View.html">View[]</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Добавляет элементы</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Параметры :</b>
+                        <table class="params">
+                            <thead>
+                                <tr>
+                                    <td>Название</td>
+                                    <td>Тип данных</td>
+                                    <td>Опционально</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>items</td>
+                                    <td>
+                                                <code><a href="../classes/View.html" target="_self" >View[]</a></code>
+                                    </td>
+
+                                    <td>
+                                        Нет
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/ViewLayout.html" target="_self" >ViewLayout</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getItemsProperty"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            getItemsProperty
+                        </b>
+                        <a href="#getItemsProperty"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getItemsProperty()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Возвращает свойство: элементы отображения</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../interfaces/Array.html" target="_self" >ObservableArray&lt;View&gt;</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="items"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            items
+                        </b>
+                        <a href="#items"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>items()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Возвращает элементы отображения</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >View[]</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="items"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            items
+                        </b>
+                        <a href="#items"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>items(value: <a href="../classes/View.html">View[]</a>)</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Устанавливает элементы отображения</p>
 </div>
 
                     <div class="io-description">
@@ -1350,9 +1482,9 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>o</td>
+                                    <td>value</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+                                                <code><a href="../classes/View.html" target="_self" >View[]</a></code>
                                     </td>
 
                                     <td>
@@ -1362,7 +1494,7 @@
 
                                     <td>
                                         <ul>
-<li>наблюдатель</li>
+<li>значение</li>
 </ul>
 
                                     </td>
@@ -1373,7 +1505,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >elyRebuildableViewProtocol | any</a></code>
+                        <b>Возвращает : </b>        <code><a href="../classes/ViewLayout.html" target="_self" >ViewLayout</a></code>
 
                     </div>
                     <div class="io-description">
@@ -1387,20 +1519,20 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="denyRebuild"></a>
+                    <a name="items"></a>
                     <span class="name">
                         <b>
                             <span class="modifier">Public</span>
-                            denyRebuild
+                            items
                         </b>
-                        <a href="#denyRebuild"><span class="icon ion-ios-link"></span></a>
+                        <a href="#items"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>denyRebuild(deny: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                    <code>items(value?: <a href="../classes/View.html">View[]</a>)</code>
                 </td>
             </tr>
 
@@ -1409,7 +1541,7 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Запрещает или отменяет запрет перестроения</p>
+                    <div class="io-description"><p>Возвращает и устанавливает элементы отображения</p>
 </div>
 
                     <div class="io-description">
@@ -1420,20 +1552,27 @@
                                     <td>Название</td>
                                     <td>Тип данных</td>
                                     <td>Опционально</td>
+                                    <td>Описание</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>deny</td>
+                                    <td>value</td>
                                     <td>
-                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                                <code><a href="../classes/View.html" target="_self" >View[]</a></code>
                                     </td>
 
                                     <td>
-                                        Нет
+                                        Да
                                     </td>
 
 
+                                    <td>
+                                        <ul>
+<li>значение</li>
+</ul>
+
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1441,7 +1580,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >elyRebuildableViewProtocol | any</a></code>
+                        <b>Возвращает : </b>        <code><a href="../classes/ViewLayout.html" target="_self" >[] | null | ViewLayout</a></code>
 
                     </div>
                     <div class="io-description">
@@ -1455,20 +1594,20 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="rebuild"></a>
+                    <a name="serialize"></a>
                     <span class="name">
                         <b>
                             <span class="modifier">Public</span>
-                            rebuild
+                            serialize
                         </b>
-                        <a href="#rebuild"><span class="icon ion-ios-link"></span></a>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>rebuild()</code>
+                    <code>serialize()</code>
                 </td>
             </tr>
 
@@ -1477,11 +1616,11 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-description"><p>Выполняет перестроени элемента</p>
+                    <div class="io-description"><p>Сериализует объект</p>
 </div>
 
                     <div class="io-description">
-                        <b>Возвращает : </b>        <code><a href="../classes/View.html" target="_self" >elyRebuildableViewProtocol | any</a></code>
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                 </td>

@@ -118,6 +118,10 @@
                         <ul class="index-list">
                             <li>
                                     <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
                                 <a href="#viewDidAppear">viewDidAppear</a>
                             </li>
                             <li>
@@ -147,7 +151,7 @@
                 <tr>
                     <td class="col-md-4">
                                 <span class="modifier">Public</span>
-                        <code>constructor()</code>
+                        <code>constructor(props: literal type)</code>
                     </td>
                 </tr>
 
@@ -155,6 +159,32 @@
                     <td class="col-md-4">
                             <div class="io-description"><p>Конструктор</p>
 </div>
+                            <div>
+                                    <b>Параметры :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Название</td>
+                                                    <td>Тип данных</td>
+                                                <td>Опционально</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>props</td>
+                                                  
+                                                        <td>
+                                                                    <code>literal type</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            Нет
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
                     </td>
                 </tr>
             </tbody>
@@ -180,11 +210,6 @@
                         </span>
                     </td>
                 </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new GridLayoutView()</code>
-                        </td>
-                    </tr>
 
                 <tr>
                     <td class="col-md-4">
@@ -237,6 +262,43 @@
     <h3 id="methods">
         Методы
     </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serialize"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            serialize
+                        </b>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>serialize()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Сериализует объект</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <table class="table table-sm table-bordered">
         <tbody>
             <tr>

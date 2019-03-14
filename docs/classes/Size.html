@@ -75,6 +75,12 @@
                         <code><a href="../classes/elyEnum.html" target="_self" >elyEnum</a></code>
             </p>
 
+            <p class="comment">
+                <h3>Реализует</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/efSerializableProtocol.html" target="_self" >efSerializableProtocol</a></code>
+            </p>
 
             <p class="comment">
                 <h3>Пример</h3>
@@ -160,7 +166,15 @@
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
+                                <a href="#list">list</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
                                 <a href="#rawList">rawList</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -204,7 +218,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;normal&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;normal&quot;})</code>
                         </td>
                     </tr>
 
@@ -233,7 +247,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;fill&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;fill&quot;})</code>
                         </td>
                     </tr>
 
@@ -262,7 +276,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;large&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;large&quot;})</code>
                         </td>
                     </tr>
 
@@ -291,7 +305,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;regular&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;regular&quot;})</code>
                         </td>
                     </tr>
 
@@ -320,7 +334,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;small&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;small&quot;})</code>
                         </td>
                     </tr>
 
@@ -349,7 +363,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;xlarge&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;xlarge&quot;})</code>
                         </td>
                     </tr>
 
@@ -378,7 +392,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;xsmall&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;xsmall&quot;})</code>
                         </td>
                     </tr>
 
@@ -407,7 +421,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Size(&quot;xxlarge&quot;)</code>
+                            <i>По умолчанию : </i><code>new Size({value: &quot;xxlarge&quot;})</code>
                         </td>
                     </tr>
 
@@ -596,6 +610,48 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="list"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Static</span>
+                            list
+                        </b>
+                        <a href="#list"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>list()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Список</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Size.html" target="_self" >{ default: Size; fill: Size; large: Size; normal: Size; small: Size; xlarge: Size; xsmall: Size; ...</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="rawList"></a>
                     <span class="name">
                         <b>
@@ -625,6 +681,48 @@
                     </div>
                     <div class="io-description">
                         <b>Возвращает : </b>    <code>{ default: any; fill: any; large: any; normal: any; small: any; xlarge: any; xsmall: any; xxlarge...</code>
+
+                    </div>
+                    <div class="io-description">
+                        
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serialize"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            serialize
+                        </b>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>serialize()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Сериализует объект</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
 
                     </div>
                     <div class="io-description">

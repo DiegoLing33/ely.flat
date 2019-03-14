@@ -150,7 +150,15 @@
                             </li>
                             <li>
                                     <span class="modifier">Static</span>
+                                <a href="#list">list</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
                                 <a href="#rawList">rawList</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#serialize">serialize</a>
                             </li>
                             <li>
                                     <span class="modifier">Public</span>
@@ -194,7 +202,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;danger&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;danger&quot;})</code>
                         </td>
                     </tr>
 
@@ -224,7 +232,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;default&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;default&quot;})</code>
                         </td>
                     </tr>
 
@@ -254,7 +262,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;info&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;info&quot;})</code>
                         </td>
                     </tr>
 
@@ -284,7 +292,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;primary&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;primary&quot;})</code>
                         </td>
                     </tr>
 
@@ -314,7 +322,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;success&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;success&quot;})</code>
                         </td>
                     </tr>
 
@@ -344,7 +352,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                            <i>По умолчанию : </i><code>new Style(&quot;warning&quot;)</code>
+                            <i>По умолчанию : </i><code>new Style({value: &quot;warning&quot;})</code>
                         </td>
                     </tr>
 
@@ -534,6 +542,43 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="list"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Static</span>
+                            list
+                        </b>
+                        <a href="#list"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>list()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Список</p>
+</div>
+
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="../classes/Style.html" target="_self" >{ danger: Style; default: Style; info: Style; primary: Style; success: Style; warning: Style; }</a></code>
+
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="rawList"></a>
                     <span class="name">
                         <b>
@@ -562,6 +607,48 @@
                     <div class="io-description">
                         <b>Возвращает : </b>    <code>{ danger: any; default: any; info: any; primary: any; success: any; warning: any; }</code>
 
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="serialize"></a>
+                    <span class="name">
+                        <b>
+                            <span class="modifier">Public</span>
+                            serialize
+                        </b>
+                        <a href="#serialize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>serialize()</code>
+                </td>
+            </tr>
+
+
+
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Сериализует объект</p>
+</div>
+
+                    <div>
+                    </div>
+                    <div class="io-description">
+                        <b>Возвращает : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                    </div>
+                    <div class="io-description">
+                        
                     </div>
                 </td>
             </tr>
