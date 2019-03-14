@@ -11208,6 +11208,10 @@ class SelectField extends Field {
         this.editable(false);
         this.getHintView().hidden(true);
         this.getIconViewContainer().getView().iconName("search");
+        if (isSet(this.value()))
+            this.getAccessory().value = this.getKeyForValue(this.value());
+        else
+            this.getAccessory().value = "";
     }
     /**
      * Логика редактирования
