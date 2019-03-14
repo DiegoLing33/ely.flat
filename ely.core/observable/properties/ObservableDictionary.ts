@@ -177,7 +177,7 @@ export default class ObservableDictionary<T> extends ObservableProperty<elyObser
      *
      *
      */
-    public forEach(iterator: (key: string, value: T, iteration?: number) => void): ObservableDictionary<T> {
+    public forEach(iterator: (key: string, value: T, iteration: number) => void): ObservableDictionary<T> {
         Utils.forEach(this.value, iterator);
         return this;
     }
