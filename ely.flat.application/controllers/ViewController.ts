@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ScreenController from "@controllers/ScreenController";
-import Control from "@controls/action/Control";
-import View from "@core/controls/View";
-import Observable from "@core/observable/Observable";
+import Observable from "ely.core/dist/observable/Observable";
+import Control from "../controls/action/Control";
+import View from "../core/controls/View";
+import ScreenController from "./ScreenController";
 
 /**
  * Контроллер элемента отображения

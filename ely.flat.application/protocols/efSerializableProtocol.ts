@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import XLogger from "@core/utils/XLogger";
-import {efProtocol} from "@protocols/efProtocol";
+import {XLogger} from "ely.core";
+import {efProtocol} from "./efProtocol";
 
 /**
  * Интерфейс сериализуемого типа

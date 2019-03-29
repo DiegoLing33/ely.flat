@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import TextView, {TextViewOptions} from "@controls/text/TextView";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import efSerializableProtocol from "@protocols/efSerializableProtocol";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import efSerializableProtocol from "../../protocols/efSerializableProtocol";
+import TextView, {TextViewOptions} from "./TextView";
 
 /**
  * Опции {@link TextView}

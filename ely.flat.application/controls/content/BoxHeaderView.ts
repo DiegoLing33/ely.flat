@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import BoxView, {BoxViewOptions} from "@controls/content/BoxView";
-import TextViewContainer from "@controls/text/TextViewContainer";
-import {variableAndSet} from "@core/Guard";
+import {Guard} from "ely.core";
+import TextViewContainer from "../text/TextViewContainer";
+import BoxView, {BoxViewOptions} from "./BoxView";
 
 /**
  * Опции {@link BoxHeaderView}
@@ -59,7 +59,7 @@ export default class BoxHeaderView extends BoxView {
         this.removeViewContent();
         this.getDocument().append(this.getHeaderView().getDocument());
         this.getDocument().append(this.getContainerView().getDocument());
-        variableAndSet(options.boxTitle, this.boxTitle, this);
+        Guard.variableAndSet(options.boxTitle, this.boxTitle, this);
     }
 
     /**

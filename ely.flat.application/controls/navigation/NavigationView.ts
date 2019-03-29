@@ -22,13 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import ListView, {ListViewOptions} from "@controls/list/ListView";
-import NavigationViewProgressBar from "@controls/navigation/NavigationViewProgressBar";
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import ImageView from "@controls/view/ImageView";
+import Control from "../action/Control";
+import ListView, {ListViewOptions} from "../list/ListView";
+import IconView from "../text/IconView";
+import TextView from "../text/TextView";
+import ImageView from "../view/ImageView";
+import NavigationViewProgressBar from "./NavigationViewProgressBar";
 
 /**
  * Опции {@link NavigationView}

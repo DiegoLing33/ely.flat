@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import View, {ViewOptions} from "@core/controls/View";
-import {variable} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import Style from "../../enums/Style";
+import Control from "../action/Control";
+import IconView from "../text/IconView";
+import TextView from "../text/TextView";
 
 /**
  * Опции {@link PreloaderView}
@@ -92,8 +92,8 @@ export default class PreloaderView extends View {
                 .addSubView(this.getTitleTextView());
             this.title(options.title || "Пожалуйста, подождите...");
 
-            variable<boolean>(options.fixedPosition, value => this.fixedPosition(value));
-            variable<Style>(options.preloaderStyle, value => this.preloaderStyle(value));
+            Guard.variable<boolean>(options.fixedPosition, value => this.fixedPosition(value));
+            Guard.variable<Style>(options.preloaderStyle, value => this.preloaderStyle(value));
         }
     }
 

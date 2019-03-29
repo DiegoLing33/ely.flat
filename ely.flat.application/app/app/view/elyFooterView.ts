@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import TextView from "@controls/text/TextView";
+import Control from "../../../controls/action/Control";
+import TextView from "../../../controls/text/TextView";
 
 /**
  * Подвал приложения

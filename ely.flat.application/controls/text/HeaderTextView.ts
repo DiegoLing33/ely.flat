@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import TextView, {TextViewOptions} from "@controls/text/TextView";
+import TextView, {TextViewOptions} from "./TextView";
 
 /**
  * Опции {@link HeaderTextViewOptions}

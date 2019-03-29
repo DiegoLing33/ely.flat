@@ -22,16 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Button, {ButtonOptions} from "@controls/action/Button";
-import ListView, {ListViewOptions} from "@controls/list/ListView";
-import NotificationView from "@controls/notification/NotificationView";
-import HeaderTextView, {HeaderTextViewOptions} from "@controls/text/HeaderTextView";
-import IconView, {IconViewOptions} from "@controls/text/IconView";
-import TextView, {TextViewOptions} from "@controls/text/TextView";
-import View from "@core/controls/View";
-import SendFileRequest from "@core/web/request/SendFileRequest";
-import SendJsonRequest from "@core/web/request/SendJsonRequest";
-import URLRequest, {URLRequestMethod} from "@core/web/request/URLRequest";
+import SendFileRequest from "ely.core/dist/web/request/SendFileRequest";
+import SendJsonRequest from "ely.core/dist/web/request/SendJsonRequest";
+import URLRequest, {URLRequestMethod} from "ely.core/dist/web/request/URLRequest";
+import Button, {ButtonOptions} from "./action/Button";
+import ListView, {ListViewOptions} from "./list/ListView";
+import NotificationView from "./notification/NotificationView";
+import HeaderTextView, {HeaderTextViewOptions} from "./text/HeaderTextView";
+import IconView, {IconViewOptions} from "./text/IconView";
+import TextView, {TextViewOptions} from "./text/TextView";
 
 declare global {
 

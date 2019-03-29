@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import GridLayoutView from "@controls/layout/GridLayoutView";
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
+import {Guard} from "ely.core";
+import View, {ViewOptions} from "../../core/controls/View";
+import GridLayoutView from "../layout/GridLayoutView";
 
 /**
  * Опции {@link BoxView}
@@ -59,7 +59,7 @@ export default class BoxView extends View {
 
         this.getContainerView().addClass("--container");
         this.getDocument().append(this.getContainerView().getDocument());
-        variableAndSet(options.boxHover, this.boxHover, this, true);
+        Guard.variableAndSet(options.boxHover, this.boxHover, this, true);
     }
 
     /**

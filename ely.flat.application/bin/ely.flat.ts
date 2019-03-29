@@ -22,69 +22,65 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Application from "@app/app/Application";
-import AppFileWatcher from "@app/app/AppFileWatcher";
-import SingleApp, {TefSingleInit} from "@app/SingleApp";
-import GridViewController from "@controllers/GridViewController";
-import ScreenController from "@controllers/ScreenController";
-import SimplePageViewController from "@controllers/SimplePageViewController";
-import ViewController from "@controllers/ViewController";
-import Button from "@controls/action/Button";
-import Control from "@controls/action/Control";
-import AppStylesheet from "@app/AppStylesheet";
-import PanelView from "@controls/content/PanelView";
-import "@controls/elyUIExt";
-import Field from "@controls/input/Field";
-import SwitchField from "@controls/input/SwitchField";
-import TextField from "@controls/input/TextField";
-import GridLayoutView from "@controls/layout/GridLayoutView";
-import RowLayoutView from "@controls/layout/RowLayoutView";
-import ListView from "@controls/list/ListView";
-import NavigationView from "@controls/navigation/NavigationView";
-import HeaderTextView from "@controls/text/HeaderTextView";
-import IconView from "@controls/text/IconView";
-import LinkTextView from "@controls/text/LinkTextView";
-import TextView from "@controls/text/TextView";
-import ImageView from "@controls/view/ImageView";
-import ModalView from "@controls/view/ModalView";
-import PreloaderView from "@controls/view/PreloaderView";
-import Color from "@core/Color";
-import {ColorUtils} from "@core/ColorUtils";
-import View from "@core/controls/View";
-import Cookies from "@core/Cookies";
-import DeviceDetector from "@core/DeviceDetector";
-import {isNone, isSet, safeJsonParse, variable, variableAndSet} from "@core/Guard";
-import Observable from "@core/observable/Observable";
-import ObservableArray from "@core/observable/properties/ObservableArray";
-import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
-import ObservableDictionary from "@core/observable/properties/ObservableDictionary";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Time from "@core/Time";
-import Timer from "@core/Timer";
-import Utils from "@core/Utils";
-import SendFileRequest from "@core/web/request/SendFileRequest";
-import SendJsonRequest from "@core/web/request/SendJsonRequest";
-import URLRequest, {URLRequestHeaderName, URLRequestMethod} from "@core/web/request/URLRequest";
-import {efxApp} from "@efxApp/efxApp";
-import Size from "@enums/Size";
-import Style from "@enums/Style";
-import TextFieldType from "@enums/TextFieldType";
-import Weight from "@enums/Weight";
-import XLogger from "@core/utils/XLogger";
-import AppDevelopConsole from "@app/develop/AppDevelopConsole";
-import NotificationView from "@controls/notification/NotificationView";
-import {deserialize} from "@protocols/efSerializableProtocol";
-import ProgressBarView from "@controls/action/ProgressBarView";
-import CircularProgressBarView from "@controls/action/CircularProgressBarView";
-import elyProgressNotificationView from "@controls/notification/elyProgressNotificationView";
-import TextAreaField from "@controls/input/TextAreaField";
-import StaticGridLayoutView from "@controls/layout/StaticGridLayoutView";
-import TabsPanelView from "@controls/content/TabsPanelView";
-import BoxView from "@controls/content/BoxView";
-import BoxHeaderView from "@controls/content/BoxHeaderView";
-import YouTubePlayer from "@controls/media/YouTubePlayer";
-import VideoPlayer from "@controls/media/VideoPlayer";
-import SelectField from "@controls/input/SelectField";
+import "../controls/elyUIExt"
+import {Time, Guard, XLogger, DeviceDetector, Color, Timer, Utils, ColorUtils} from "ely.core";
+import Application from "../app/app/Application";
+import ViewController from "../controllers/ViewController";
+import ScreenController from "../controllers/ScreenController";
+import NavigationView from "../controls/navigation/NavigationView";
+import SingleApp, {TefSingleInit} from "../app/SingleApp";
+import {deserialize} from "../protocols/efSerializableProtocol";
+import {efxApp} from "../efxApp/efxApp";
+import AppDevelopConsole from "../app/develop/AppDevelopConsole";
+import {isNone, isSet, safeJsonParse, variableAndSet, variable} from "ely.core/dist/utils/Guard";
+import Observable from "ely.core/dist/observable/Observable";
+import ObservableArray from "ely.core/dist/observable/properties/ObservableArray";
+import ObservableBoolean from "ely.core/dist/observable/properties/ObservableBoolean";
+import ObservableDictionary from "ely.core/dist/observable/properties/ObservableDictionary";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import URLRequest, {URLRequestHeaderName, URLRequestMethod} from "ely.core/dist/web/request/URLRequest";
+import SendFileRequest from "ely.core/dist/web/request/SendFileRequest";
+import SendJsonRequest from "ely.core/dist/web/request/SendJsonRequest";
+import AppStylesheet from "../app/AppStylesheet";
+import LocalStorage from "ely.core/dist/user/LocalStorage";
+import AppFileWatcher from "../app/app/AppFileWatcher";
+import Control from "../controls/action/Control";
+import View from "../core/controls/View";
+import SimplePageViewController from "../controllers/SimplePageViewController";
+import GridViewController from "../controllers/GridViewController";
+import Style from "../enums/Style";
+import Size from "../enums/Size";
+import Weight from "../enums/Weight";
+import TextFieldType from "../enums/TextFieldType";
+import TextView from "../controls/text/TextView";
+import LinkTextView from "../controls/text/LinkTextView";
+import IconView from "../controls/text/IconView";
+import HeaderTextView from "../controls/text/HeaderTextView";
+import Button from "../controls/action/Button";
+import ListView from "../controls/list/ListView";
+import Field from "../controls/input/Field";
+import TextField from "../controls/input/TextField";
+import TextAreaField from "../controls/input/TextAreaField";
+import SwitchField from "../controls/input/SwitchField";
+import GroupedDataField from "../controls/input/data/GroupedDataField";
+import SelectField from "../controls/input/SelectField";
+import DictionaryDataField from "../controls/input/data/DictionaryDataField";
+import RowLayoutView from "../controls/layout/RowLayoutView";
+import GridLayoutView from "../controls/layout/GridLayoutView";
+import StaticGridLayoutView from "../controls/layout/StaticGridLayoutView";
+import BoxView from "../controls/content/BoxView";
+import BoxHeaderView from "../controls/content/BoxHeaderView";
+import PanelView from "../controls/content/PanelView";
+import TabsPanelView from "../controls/content/TabsPanelView";
+import ImageView from "../controls/view/ImageView";
+import ModalView from "../controls/view/ModalView";
+import NotificationView from "../controls/notification/NotificationView";
+import elyProgressNotificationView from "../controls/notification/elyProgressNotificationView";
+import ProgressBarView from "../controls/action/ProgressBarView";
+import CircularProgressBarView from "../controls/action/CircularProgressBarView";
+import PreloaderView from "../controls/view/PreloaderView";
+import YouTubePlayer from "../controls/media/YouTubePlayer";
+import VideoPlayer from "../controls/media/VideoPlayer";
 
 /**
  *
@@ -167,6 +163,7 @@ window.elyflatobjects = {
     efxApp,
 
     // elyGuard
+    Guard,
 
     isNone,
     isSet,
@@ -196,16 +193,17 @@ window.elyflatobjects = {
     Color,
     Time,
     Timer,
-    Cookies,
+
+    LocalStorage,
 
     XLogger,
     Utils,
     ColorUtils,
     AppFileWatcher,
 
-    View,
-
     Control,
+
+    View,
 
     ScreenController,
     ViewController,
@@ -231,6 +229,9 @@ window.elyflatobjects = {
     TextAreaField,
     SwitchField,
     SelectField,
+
+    GroupedDataField,
+    DictionaryDataField,
 
     RowLayoutView,
     GridLayoutView,
@@ -300,7 +301,6 @@ export {
     DeviceDetector,
     Color,
     Timer,
-    Cookies,
 
     XLogger,
     Utils,
@@ -335,6 +335,9 @@ export {
     TextAreaField,
     SwitchField,
     SelectField,
+
+    GroupedDataField,
+    DictionaryDataField,
 
     RowLayoutView,
     GridLayoutView,

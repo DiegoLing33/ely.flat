@@ -19,13 +19,11 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 import "@devMods/elyColorPicker.elymod/color.picker";
-
-import Control from "@controls/action/Control";
-import Field, {FieldOptions} from "@controls/input/Field";
-import ContainerView from "@controls/layout/ContainerView";
-import IconView from "@controls/text/IconView";
-import Color from "@core/Color";
-import {designable, elyDesignableFieldState} from "@core/elyDesignable";
+import {Color} from "ely.core";
+import Control from "../../controls/action/Control";
+import Field, {FieldOptions} from "../../controls/input/Field";
+import ContainerView from "../../controls/layout/ContainerView";
+import IconView from "../../controls/text/IconView";
 
 /**
  * @class elyColorPickerField
@@ -42,8 +40,6 @@ import {designable, elyDesignableFieldState} from "@core/elyDesignable";
  *
  *
  */
-@designable("value", elyDesignableFieldState.DENY)
-@designable("placeholder", elyDesignableFieldState.DENY)
 export default class elyColorPickerField extends Field<Color> {
 
     /**

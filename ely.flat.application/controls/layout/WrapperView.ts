@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
+import View, {ViewOptions} from "../../core/controls/View";
 
 /**
  * Элемент отображения: Разметка

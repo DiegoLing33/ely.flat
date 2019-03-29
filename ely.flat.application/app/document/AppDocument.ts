@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import AppDocumentBody from "@app/document/AppDocumentBody";
-import appDocumentHead from "@app/document/AppDocumentHead";
+import AppDocumentBody from "./AppDocumentBody";
+import AppDocumentHead from "./AppDocumentHead";
 
 /**
  * Документ приложения
@@ -34,7 +34,7 @@ export default class AppDocument {
     /**
      * Заголовок
      */
-    protected readonly __head: appDocumentHead = new appDocumentHead();
+    protected readonly __head: AppDocumentHead = new AppDocumentHead();
 
     /**
      * Тело документа
@@ -51,9 +51,9 @@ export default class AppDocument {
 
     /**
      * Возвращает заголовок документа
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
-    public getHead(): appDocumentHead {
+    public getHead(): AppDocumentHead {
         return this.__head;
     }
 }

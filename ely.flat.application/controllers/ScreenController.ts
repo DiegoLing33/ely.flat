@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import SimplePageViewController from "@controllers/SimplePageViewController";
-import ViewController from "@controllers/ViewController";
-import Control from "@controls/action/Control";
-import Observable from "@core/observable/Observable";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import XLogger from "@core/utils/XLogger";
+import {XLogger} from "ely.core";
+import Observable from "ely.core/dist/observable/Observable";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import Control from "../controls/action/Control";
+import SimplePageViewController from "./SimplePageViewController";
+import ViewController from "./ViewController";
 
 class __elyScreenIndexViewController extends SimplePageViewController {
 

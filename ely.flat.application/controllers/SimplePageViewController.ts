@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import GridViewController from "@controllers/GridViewController";
-import Control from "@controls/action/Control";
-import GridLayoutView from "@controls/layout/GridLayoutView";
-import TextView from "@controls/text/TextView";
-import {variableAndSet} from "@core/Guard";
-import Size from "@enums/Size";
-import Weight from "@enums/Weight";
+import {Guard} from "ely.core";
+import Control from "../controls/action/Control";
+import GridLayoutView from "../controls/layout/GridLayoutView";
+import TextView from "../controls/text/TextView";
+import Size from "../enums/Size";
+import Weight from "../enums/Weight";
+import GridViewController from "./GridViewController";
 
 /**
  * Контроллер с шаблоном макета приложения
@@ -68,9 +68,9 @@ export default class SimplePageViewController extends GridViewController {
         headerView.addSubView(this.descriptionView);
         this.view.add(headerView);
 
-        variableAndSet(props.title, this.title, this);
-        variableAndSet(props.description, this.description, this);
-        rows.forEach(row => this.view.getRows().push(row));
+        Guard.variableAndSet(props.title, this.title, this);
+        Guard.variableAndSet(props.description, this.description, this);
+        rows.forEach((row: any) => this.view.getRows().push(row));
     }
 
     /**

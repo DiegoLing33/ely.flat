@@ -18,14 +18,14 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyFlatServer from "@app/app/ely.server/elyFlatServer";
-import {Button} from "@controls/action/Button";
-import Control from "@controls/action/Control";
-import TextField from "@controls/input/TextField";
-import {ImageView} from "@controls/view/ImageView";
-import {ModalView} from "@controls/view/ModalView";
-import elyEncrypt from "@core/secure/elyEncrypt";
-import {NotificationView} from "@controls/notification/NotificationView";
+import {Encrypt} from "ely.core";
+import Button from "../../../controls/action/Button";
+import Control from "../../../controls/action/Control";
+import TextField from "../../../controls/input/TextField";
+import NotificationView from "../../../controls/notification/NotificationView";
+import ImageView from "../../../controls/view/ImageView";
+import ModalView from "../../../controls/view/ModalView";
+import elyFlatServer from "./elyFlatServer";
 
 /**
  * Тест каптчи
@@ -89,7 +89,7 @@ export default class elyFlatServerCaptcha {
      * Генерирует и возвращает соль для проверки каптчи
      */
     public static generateSaltHash(): string {
-        return elyEncrypt.encodeString(new Date().getTime().toString() + (Math.random() % 10).toString());
+        return Encrypt.encodeString(new Date().getTime().toString() + (Math.random() % 10).toString());
     }
 
     /**

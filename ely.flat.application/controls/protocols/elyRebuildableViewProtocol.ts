@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
+import View, {ViewOptions} from "../../core/controls/View";
 
 /**
  * Элемент, который может быть перестроен

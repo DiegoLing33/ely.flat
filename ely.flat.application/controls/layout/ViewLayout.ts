@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import View, {ViewOptions} from "@core/controls/View";
-import ObservableArray from "@core/observable/properties/ObservableArray";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import ObservableArray from "ely.core/dist/observable/properties/ObservableArray";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
 
 /**
  * Опции {@link ViewLayout}

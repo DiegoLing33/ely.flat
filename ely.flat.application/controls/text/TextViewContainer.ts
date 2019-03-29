@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import TextView from "@controls/text/TextView";
-import View, {ViewOptions} from "@core/controls/View";
+import View, {ViewOptions} from "../../core/controls/View";
+import TextView from "./TextView";
 
 /**
  * элемент отображения контейнера с текстом

@@ -10,47 +10,6 @@
     "strict": true,
     "noEmit": true,
     "baseUrl": "./",
-    "paths": {
-      "@app/*": [
-        "./app/*"
-      ],
-      "@core/*": [
-        "../ely.core/*"
-      ],
-      "@efxApp/*": [
-        "./efxApp/*"
-      ],
-      "@controls/*": [
-        "./controls/*"
-      ],
-      "@options/*": [
-        "./controls/options/*"
-      ],
-      "@controllers/*": [
-        "./controllers/*"
-      ],
-      "@devMods/*": [
-        "./modules/*"
-      ],
-      "@enums/*": [
-        "./enums/*"
-      ],
-      "@cnv/*": [
-        "./canvas/*"
-      ],
-      "@play/*": [
-        "./play/*"
-      ],
-      "@math/*": [
-        "../ely.core/math/*"
-      ],
-      "@protocols/*": [
-        "./protocols/*"
-      ],
-      "@fields/*": [
-        "./ely.flat.fields/src/*"
-      ]
-    },
     "experimentalDecorators": true,
     "declaration": true,
     "declarationDir": "ely.d.types"

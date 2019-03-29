@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import {efProtocol} from "@protocols/efProtocol";
+import ObservableBoolean from "ely.core/dist/observable/properties/ObservableBoolean";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import {efProtocol} from "./efProtocol";
 
 /**
  * Протокол редактируемого объекта

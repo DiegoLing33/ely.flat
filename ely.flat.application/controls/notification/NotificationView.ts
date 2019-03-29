@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Application from "@app/app/Application";
-import Control from "@controls/action/Control";
-import TextView from "@controls/text/TextView";
-import View, {ViewOptions} from "@core/controls/View";
+import Application from "../../app/app/Application";
+import View, {ViewOptions} from "../../core/controls/View";
+import Control from "../action/Control";
+import TextView from "../text/TextView";
 
 /**
  * Опции: {@link NotificationView}

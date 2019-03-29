@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
 
 /**
  * Опции {@link YouTubePlayer}
@@ -56,7 +56,7 @@ export default class YouTubePlayer extends View {
      */
     public constructor(options: YouTubePlayerOptions = {}) {
         super({...options, tag: "iframe"});
-        variableAndSet(options.videoId, this.videoId, this);
+        Guard.variableAndSet(options.videoId, this.videoId, this);
         this.attribute("frameborder", "0");
         this.attribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
         this.attribute("allowfullscreen", "allowfullscreen");

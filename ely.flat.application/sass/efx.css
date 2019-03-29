@@ -8008,7 +8008,6 @@ table {
   width: 25px;
   text-align: center;
   transition: all 0.3s;
-  line-height: 43px;
 }
 .ef-input .ef-icon::after {
   content: "";
@@ -8091,6 +8090,8 @@ table {
 .ef-input-group > input:not(:last-child):not(:first-child),
 .ef-input-group > div:not(:last-child):not(:first-child) {
   border-radius: 0;
+  padding-left: 16px;
+  margin-left: -1px;
 }
 
 .ef-input-group > div:first-child {
@@ -8483,6 +8484,28 @@ table {
 }
 .ef-selection .--hint .--container .ef-row + .ef-row {
   border-top: 1px solid #dcdfe6;
+}
+
+.ef-dictionary-input .ef-input-group * {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+.ef-dictionary-input .ef-input-group + .ef-input-group {
+  margin-top: -1px;
+}
+.ef-dictionary-input .ef-input-group + .ef-input-group * {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+.ef-dictionary-input .button, .ef-dictionary-input .button-text {
+  margin-top: -1px;
+  border: 1px solid #dcdfe6 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+.ef-dictionary-input .button.--default, .ef-dictionary-input .--default.button-text {
+  background-color: #363636 !important;
+  color: #eeeeee !important;
 }
 
 .--clickable {

@@ -18,7 +18,7 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyColorPickerField from "@devMods/elyColorPicker.elymod/elyColorPickerField";
+import elyColorPickerField from "./elyColorPickerField";
 
 declare global {
     interface Window {

@@ -17,20 +17,20 @@
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: AppDocumentHead.ts                                               +
+ + Файл: AppDocumentHead.ts                                                   +
  + Файл изменен: 30.01.2019 01:54:59                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import AppStylesheet from "@app/AppStylesheet";
-import View from "@core/controls/View";
+import View from "../../core/controls/View";
+import AppStylesheet from "../AppStylesheet";
 
 /**
  * Документ: Заголовок
- * @class appDocumentHead
+ * @class AppDocumentHead
  * @augments {View}
  */
-export default class appDocumentHead extends View {
+export default class AppDocumentHead extends View {
 
     /**
      * Свойство: заголовок
@@ -67,14 +67,14 @@ export default class appDocumentHead extends View {
      * @param {string} value - значение
      * @return {this}
      */
-    public title(value: string): appDocumentHead;
+    public title(value: string): AppDocumentHead;
 
     /**
      * Возвращает и устанавливает заголовок
      * @param {string} [value] - значение
      * @returns {string|this|null}
      */
-    public title(value?: string): string | null | appDocumentHead {
+    public title(value?: string): string | null | AppDocumentHead {
         if (value === undefined) return this.__titleElement.innerText;
         this.__titleElement.innerText = value;
         document.title = value;
@@ -92,9 +92,9 @@ export default class appDocumentHead extends View {
     /**
      * Добавляет мета значение
      * @param {{ name: string, content: string }} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
-    public addMetaValue(props: { name: string, content: string }): appDocumentHead {
+    public addMetaValue(props: { name: string, content: string }): AppDocumentHead {
         const metaElement: HTMLMetaElement = document.createElement("meta");
         metaElement.content = props.content;
         metaElement.name = props.name;
@@ -106,11 +106,11 @@ export default class appDocumentHead extends View {
      * Добавляет viewport
      * @param {{fit?: string, initialScale?: number, maximumScale?: number,
      * userScalable?: string, width?: string}} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     public addViewPort(props: {
         fit?: string, initialScale?: number, maximumScale?: number, userScalable?: string, width?: string,
-    }): appDocumentHead {
+    }): AppDocumentHead {
         const a = [];
         if (props.fit) a.push(`viewport-fit=${props.fit}`);
         if (props.width) a.push(`width=${props.width}`);
@@ -123,9 +123,9 @@ export default class appDocumentHead extends View {
     /**
      * Устанавливает кодировку
      * @param {string} charset
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
-    public setCharset(charset: string): appDocumentHead {
+    public setCharset(charset: string): AppDocumentHead {
         const metaElement = document.createElement("meta");
         metaElement.setAttribute("charset", charset);
         this.getDocument().append(metaElement);
@@ -135,9 +135,9 @@ export default class appDocumentHead extends View {
     /**
      * Добавляет ссылку
      * @param {{ rel: string, href: string}|*} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
-    public addLink(props: { rel: string, href: string, [key: string]: string }): appDocumentHead {
+    public addLink(props: { rel: string, href: string, [key: string]: string }): AppDocumentHead {
         const lnk = document.createElement("link");
         for (const key in props)
             if (props.hasOwnProperty(key))

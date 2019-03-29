@@ -22,10 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Application from "@app/app/Application";
-import AppStylesheet from "@app/AppStylesheet";
-import Color from "@core/Color";
-import XLogger from "@core/utils/XLogger";
+import {Color, XLogger} from "ely.core";
+import AppStylesheet from "../AppStylesheet";
+import Application from "./Application";
 
 /**
  * Менеджер цветов приложения

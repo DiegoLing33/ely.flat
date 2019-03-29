@@ -22,14 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import BoxView from "@controls/content/BoxView";
-import Field, {FieldOptions} from "@controls/input/Field";
-import ContainerView from "@controls/layout/ContainerView";
-import IconView from "@controls/text/IconView";
-import {isSet, variable, variableAndSet} from "@core/Guard";
-import ObservableDictionary from "@core/observable/properties/ObservableDictionary";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableDictionary from "ely.core/dist/observable/properties/ObservableDictionary";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import BoxView from "../content/BoxView";
+import ContainerView from "../layout/ContainerView";
+import IconView from "../text/IconView";
+import Field, {FieldOptions} from "./Field";
 
 /**
  * Опции {@link SelectField}
@@ -165,7 +164,7 @@ export default class SelectField<T> extends Field<T> {
 
         this.valueProperty.change((value, oldVal) => {
             const key = this.getKeyForValue(value);
-            if (isSet(key)) {
+            if (Guard.isSet(key)) {
                 this.getAccessory().value = key!;
                 this.__disableLogic();
             }
@@ -174,9 +173,9 @@ export default class SelectField<T> extends Field<T> {
         this.getDocument().append(this.getIconViewContainer().getDocument());
         this.getDocument().append(this.getHintView().getDocument());
 
-        variable(options.value, () => this.value(options.value!));
-        variableAndSet(options.items, this.items, this);
-        variableAndSet(options.maxHintsCount, this.maxHintsCount, this, 7);
+        Guard.variable(options.value, () => this.value(options.value!));
+        Guard.variableAndSet(options.items, this.items, this);
+        Guard. variableAndSet(options.maxHintsCount, this.maxHintsCount, this, 7);
     }
 
     /**
@@ -240,7 +239,7 @@ export default class SelectField<T> extends Field<T> {
      */
     public trySelectByKey(key: string): boolean {
         const val = this.getValueForKey(key);
-        if (isSet(val)) {
+        if (Guard.isSet(val)) {
             this.value(val);
             return true;
         }
@@ -322,7 +321,7 @@ export default class SelectField<T> extends Field<T> {
      */
     public getKeyForValue(value: T): string | null {
         const key = this.getItemsProperty().keyOf(value);
-        return isSet(key) ? key : null;
+        return Guard.isSet(key) ? key : null;
     }
 
     /**
@@ -332,7 +331,7 @@ export default class SelectField<T> extends Field<T> {
      */
     public getValueForKey(key: string): T | null {
         const val = this.getItemsProperty().item(key);
-        return isSet(val) ? val : null;
+        return Guard.isSet(val) ? val : null;
     }
 
     /**
@@ -344,7 +343,7 @@ export default class SelectField<T> extends Field<T> {
         this.editable(false);
         this.getHintView().hidden(true);
         this.getIconViewContainer().getView().iconName("search");
-        if (isSet(this.value())) this.getAccessory().value = this.getKeyForValue(this.value()!)!;
+        if (Guard.isSet(this.value())) this.getAccessory().value = this.getKeyForValue(this.value()!)!;
         else this.getAccessory().value = "";
     }
 

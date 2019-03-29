@@ -22,12 +22,11 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Field, {FieldOptions} from "@controls/input/Field";
-import ContainerView from "@controls/layout/ContainerView";
-import IconView from "@controls/text/IconView";
-import View from "@core/controls/View";
-import {variable} from "@core/Guard";
-import TextFieldType from "@enums/TextFieldType";
+import {Guard} from "ely.core";
+import TextFieldType from "../../enums/TextFieldType";
+import ContainerView from "../layout/ContainerView";
+import IconView from "../text/IconView";
+import Field, {FieldOptions} from "./Field";
 
 /**
  * Опции {@link TextField}
@@ -82,10 +81,10 @@ export default class TextField extends Field<string> {
             this.getAccessory().value = value;
         });
 
-        variable(options.value, () => this.value(options.value!));
-        variable(options.fieldType, () => this.fieldType(options.fieldType!));
-        variable<string>(options.rightIconName, (v) => this.setRightIcon(v));
-        variable<string>(options.leftIconName, (v) => this.setLeftIcon(v));
+        Guard.variable(options.value, () => this.value(options.value!));
+        Guard.variable(options.fieldType, () => this.fieldType(options.fieldType!));
+        Guard.variable<string>(options.rightIconName, (v) => this.setRightIcon(v));
+        Guard.variable<string>(options.leftIconName, (v) => this.setLeftIcon(v));
     }
 
     /**

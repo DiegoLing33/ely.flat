@@ -18,23 +18,24 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import AppColorManager from "@app/app/AppColorManager";
-import AppFileWatcher from "@app/app/AppFileWatcher";
-import AppPreloaderView from "@app/app/AppPreloaderView";
-import elyFooterView from "@app/app/view/elyFooterView";
-import AppStylesheet from "@app/AppStylesheet";
-import AppConfig from "@app/config/AppConfig";
-import AppDevelopConsole from "@app/develop/AppDevelopConsole";
-import AppDocument from "@app/document/AppDocument";
-import SingleApp from "@app/SingleApp";
-import ScreenController from "@controllers/ScreenController";
-import Control from "@controls/action/Control";
-import NavigationView from "@controls/navigation/NavigationView";
-import PreloaderView from "@controls/view/PreloaderView";
-import DeviceDetector from "@core/DeviceDetector";
-import elyOneActionEval from "@core/elyOneActionEval";
-import Observable from "@core/observable/Observable";
-import XLogger from "@core/utils/XLogger";
+import {XLogger} from "ely.core";
+import Observable from "ely.core/dist/observable/Observable";
+import DeviceDetector from "ely.core/dist/utils/DeviceDetector";
+import ScreenController from "../../controllers/ScreenController";
+import Control from "../../controls/action/Control";
+import NavigationView from "../../controls/navigation/NavigationView";
+import elyViewEntityProtocol from "../../controls/protocols/elyViewEntityProtocol";
+import PreloaderView from "../../controls/view/PreloaderView";
+import elyOneActionEval from "../../core/elyOneActionEval";
+import AppStylesheet from "../AppStylesheet";
+import AppConfig from "../config/AppConfig";
+import AppDevelopConsole from "../develop/AppDevelopConsole";
+import AppDocument from "../document/AppDocument";
+import SingleApp from "../SingleApp";
+import AppColorManager from "./AppColorManager";
+import AppFileWatcher from "./AppFileWatcher";
+import AppPreloaderView from "./AppPreloaderView";
+import elyFooterView from "./view/elyFooterView";
 
 /**
  * Наблюдатель за завершением загрузки приложения
@@ -86,7 +87,7 @@ export default class Application extends Observable {
      */
     public static loadApplication(closure: () => void): void {
         XLogger.default.log("Загрузка приложения...");
-        AppConfig.default.addLoadedObserver((result, cfg) => {
+        AppConfig.default.addLoadedObserver((result: any, cfg: any) => {
             console.log(cfg);
             if (!result) XLogger.default.error("Файл конфигурации не найден. " +
                 "Будет использована стандратная конфигурация.");
@@ -99,8 +100,8 @@ export default class Application extends Observable {
 
         if (SingleApp.isUsesSingle()) {
             XLogger.default.log("Загрузка single версии приложения...");
-            SingleApp.initApplication(vc => {
-                SingleApp.applicationInitFunction(cfg => {
+            SingleApp.initApplication((vc: any) => {
+                SingleApp.applicationInitFunction((cfg: AppConfig) => {
                     Application.default.addReadyObserver(next => {
                         Application.default.getApplicationScreenController().addControllerName("index", vc);
                         next(true);
@@ -313,7 +314,7 @@ export default class Application extends Observable {
                 this.getApplicationNavigationView().getTitleView().addObserver("click", () => {
                     this.getApplicationScreenController().present(config.contentController.defaultContentId);
                 });
-            config.navigationBar.items.forEach(value => {
+            config.navigationBar.items.forEach((value: elyViewEntityProtocol) => {
                 value.item = value.item || "LinkTextView";
                 this.getApplicationNavigationView().addView(Control.fromObject(value));
             });
@@ -403,7 +404,7 @@ export default class Application extends Observable {
 }
 
 function __applyElyOneActions(app: Application) {
-    elyOneActionEval.default.actionsRules.content = (arg) => {
+    elyOneActionEval.default.actionsRules.content = (arg: any) => {
         switch (arg) {
             case "back":
                 // cc.back();

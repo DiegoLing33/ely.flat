@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import PreloaderView from "@controls/view/PreloaderView";
+import Control from "../../controls/action/Control";
+import IconView from "../../controls/text/IconView";
+import TextView from "../../controls/text/TextView";
+import PreloaderView from "../../controls/view/PreloaderView";
 
 /**
  * Элемент отображения - экран загрузки приложения

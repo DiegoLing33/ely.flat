@@ -22,11 +22,11 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import ProgressBarView, {ProgressBarViewOptions} from "@controls/action/ProgressBarView";
-import View from "@core/controls/View";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View from "../../core/controls/View";
+import Style from "../../enums/Style";
+import Control from "./Control";
+import ProgressBarView, {IProgressBarViewOptions} from "./ProgressBarView";
 
 /**
  * Круговой бар загрузки
@@ -44,9 +44,9 @@ export default class CircularProgressBarView extends ProgressBarView {
 
     /**
      * Конструктор
-     * @param {ProgressBarViewOptions} [options = {}] - опции
+     * @param {IProgressBarViewOptions} [options = {}] - опции
      */
-    public constructor(options: ProgressBarViewOptions = {}) {
+    public constructor(options: IProgressBarViewOptions = {}) {
         super(options);
         this.addClass("--circular");
         this.getBodyView().removeClass("ef-progress-bar")

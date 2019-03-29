@@ -18,10 +18,10 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import NotificationView, {NotificationViewOptions} from "@controls/notification/NotificationView";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import Size from "@enums/Size";
+import Size from "../../enums/Size";
+import IconView from "../text/IconView";
+import TextView from "../text/TextView";
+import NotificationView, {NotificationViewOptions} from "./NotificationView";
 
 /**
  * Опции

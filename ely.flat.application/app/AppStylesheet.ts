@@ -22,8 +22,6 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ObservableDictionary from "@core/observable/properties/ObservableDictionary";
-
 /*
  *
  *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -53,6 +51,8 @@ import ObservableDictionary from "@core/observable/properties/ObservableDictiona
 /**
  * Типы стиля
  */
+import ObservableDictionary from "ely.core/dist/observable/properties/ObservableDictionary";
+
 enum StylesheetItemType {
     class, tag, id,
 }
@@ -166,7 +166,7 @@ export default class AppStylesheet {
      */
     public rebuild(): AppStylesheet {
         this.getDocument().innerHTML = "";
-        this.classes.forEach((key, value) => {
+        this.classes.forEach((key: any, value: any) => {
             const tempNode = document.createElement("div");
             for (const name in value.style) if (value.style.hasOwnProperty(name))
                 (tempNode.style as any)[name] = (value.style as any)[name];

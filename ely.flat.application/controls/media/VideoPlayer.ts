@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
 
 /**
  * Опции {@link VideoPlayer}
@@ -56,7 +56,7 @@ export default class VideoPlayer extends View {
      */
     public constructor(options: VideoPlayerOptions = {}) {
         super({...options, tag: "video"});
-        variableAndSet(options.url, this.url, this);
+        Guard.variableAndSet(options.url, this.url, this);
         this.attribute("controls", "true");
         this.attribute("type", "video/mp4");
         this.attribute("controlsList", "nodownload");

@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {efProtocol} from "@protocols/efProtocol";
+import {efProtocol} from "./efProtocol";
 
 /**
  * Протокол валидации данных

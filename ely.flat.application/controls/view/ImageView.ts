@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
 
 /**
  * Опции {@link ImageView}
@@ -105,6 +105,9 @@ export default class ImageView extends View {
         return this.__view as HTMLImageElement;
     }
 
+    /**
+     * Сериализует объект
+     */
     public serialize(): any {
         const obj: any = {};
         if (this.url()) obj.url = this.url();

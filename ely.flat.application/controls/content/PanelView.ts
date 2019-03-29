@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import GridLayoutView from "@controls/layout/GridLayoutView";
-import TextViewContainer from "@controls/text/TextViewContainer";
-import View, {ViewOptions} from "@core/controls/View";
-import {variable} from "@core/Guard";
+import {Guard} from "ely.core";
+import View, {ViewOptions} from "../../core/controls/View";
+import GridLayoutView from "../layout/GridLayoutView";
+import TextViewContainer from "../text/TextViewContainer";
 
 /**
  * Опции {@link PanelView}
@@ -76,10 +76,10 @@ export default class PanelView extends View {
             this.__contentView = options.panelContainer.addClass("--content") as any;
 
         this.panelHover(true);
-        variable<string>(options.panelTitle, (v) => this.panelTitle(v));
-        variable<boolean>(options.panelHover, (v) => this.panelHover(v));
-        variable<string>(options.panelActionText, (v) => this.panelActionText(v));
-        variable<() => void>(options.panelActionClick, (v) => this.panelActionClick(v));
+        Guard.variable<string>(options.panelTitle, (v) => this.panelTitle(v));
+        Guard.variable<boolean>(options.panelHover, (v) => this.panelHover(v));
+        Guard.variable<string>(options.panelActionText, (v) => this.panelActionText(v));
+        Guard.variable<() => void>(options.panelActionClick, (v) => this.panelActionClick(v));
         this.rebuild();
     }
 

@@ -19,9 +19,8 @@
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 /* tslint:disable */
-import Utils from "@core/Utils";
-import {ColorUtils} from "@core/ColorUtils";
-import {isSet} from "@core/Guard";
+
+import {ColorUtils, Guard, Utils} from "ely.core";
 
 (function (win, doc, NS) {
 
@@ -184,7 +183,7 @@ import {isSet} from "@core/Guard";
         $$[instance][source.id || source.name || Utils.count($$[instance])] = $;
 
         // trigger color picker panel on click by default
-        if (!isSet(events) || events === true) {
+        if (!Guard.isSet(events) || events === true) {
             events = on_down;
         }
 
@@ -261,7 +260,7 @@ import {isSet} from "@core/Guard";
 
         // get color data
         function get_data(a: any) {
-            return _ || (isSet(a) ? a : false);
+            return _ || (Guard.isSet(a) ? a : false);
         }
 
         // set color data
@@ -271,7 +270,7 @@ import {isSet} from "@core/Guard";
 
         // add hook
         function add(ev: any, fn: any, id: any) {
-            if (!isSet(ev)) return hooks;
+            if (!Guard.isSet(ev)) return hooks;
             // @ts-ignore
             if (!isSet(fn)) return hooks[ev];
             // @ts-ignore
@@ -284,7 +283,7 @@ import {isSet} from "@core/Guard";
 
         // remove hook
         function remove(ev: any, id: any) {
-            if (!isSet(ev)) return hooks = {}, $;
+            if (!Guard.isSet(ev)) return hooks = {}, $;
             // @ts-ignore
             if (!isSet(id)) return hooks[ev] = {}, $;
             // @ts-ignore
@@ -295,7 +294,7 @@ import {isSet} from "@core/Guard";
         function trigger(ev: any, a: any[], id: any) {
             // @ts-ignore
             if (!isSet(hooks[ev])) return $;
-            if (!isSet(id)) {
+            if (!Guard.isSet(id)) {
                 // @ts-ignore
                 for (var i in hooks[ev]) {
                     // @ts-ignore
@@ -565,8 +564,8 @@ import {isSet} from "@core/Guard";
             left = to.l + ww.l;
             top = to.t + ww.t + size(source).h; // drop!
             if (typeof o === "object") {
-                isSet(o[0]) && (left = o[0]);
-                isSet(o[1]) && (top = o[1]);
+                Guard.isSet(o[0]) && (left = o[0]);
+                Guard.isSet(o[1]) && (top = o[1]);
             } else {
                 var min_x = ww.l,
                     min_y = ww.t,

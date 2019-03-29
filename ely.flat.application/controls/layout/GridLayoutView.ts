@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import RowLayoutView from "@controls/layout/RowLayoutView";
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import View, {ViewOptions} from "@core/controls/View";
-import {variable, variableAndSet} from "@core/Guard";
-import ObservableArray from "@core/observable/properties/ObservableArray";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableArray from "ely.core/dist/observable/properties/ObservableArray";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
+import RowLayoutView from "./RowLayoutView";
 
 export interface TGridSize {
     columns: number;
@@ -76,7 +76,7 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
         this.__rows.change(() => this.rebuild());
         this.denyRebuild(true);
 
-        variable<View[][] | RowLayoutView[]>(options.items, (value) => {
+        Guard.variable<View[][] | RowLayoutView[]>(options.items, (value) => {
             if (value[0] && value[0] instanceof RowLayoutView)
                 for (const row of value as RowLayoutView[])
                     this.getRows().push(row);
@@ -85,7 +85,7 @@ export default class GridLayoutView extends elyRebuildableViewProtocol {
                     this.add(...items);
         });
         this.rowsLength(24);
-        variableAndSet<number>(options.rowsLength, this.rowsLength, this);
+        Guard.variableAndSet<number>(options.rowsLength, this.rowsLength, this);
         this.denyRebuild(false);
         this.rebuild();
     }

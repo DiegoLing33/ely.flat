@@ -22,14 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import Field, {FieldOptions} from "@controls/input/Field";
-import TextView from "@controls/text/TextView";
-import View from "@core/controls/View";
-import {variable} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
-import {text} from "figlet";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View from "../../core/controls/View";
+import Style from "../../enums/Style";
+import Control from "../action/Control";
+import TextView from "../text/TextView";
+import Field, {FieldOptions} from "./Field";
 
 /**
  * Опции {@link SwitchField}
@@ -99,11 +98,11 @@ export default class SwitchField extends Field<boolean> {
 
         this.valueProperty.change(value => this.getAccessory().checked = value);
 
-        variable(options.leftLabel, () => this.setLeftLabel(options.leftLabel!));
-        variable(options.rightLabel, () => this.setRightLabel(options.rightLabel!));
-        variable(options.title, () => this.setLeftLabel(options.title!));
-        variable(options.value, () => this.value(options.value!));
-        variable(options.switchStyle, () => this.switchStyle(options.switchStyle!));
+        Guard.variable(options.leftLabel, () => this.setLeftLabel(options.leftLabel!));
+        Guard.variable(options.rightLabel, () => this.setRightLabel(options.rightLabel!));
+        Guard.variable(options.title, () => this.setLeftLabel(options.title!));
+        Guard.variable(options.value, () => this.value(options.value!));
+        Guard.variable(options.switchStyle, () => this.switchStyle(options.switchStyle!));
     }
 
     /**

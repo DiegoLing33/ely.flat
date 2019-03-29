@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import WrapperView from "@controls/layout/WrapperView";
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import View, {ViewOptions} from "@core/controls/View";
-import {isSet, variableAndSet} from "@core/Guard";
-import ObservableArray from "@core/observable/properties/ObservableArray";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableArray from "ely.core/dist/observable/properties/ObservableArray";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import Control from "../action/Control";
+import WrapperView from "../layout/WrapperView";
+import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
 
 /**
  * Опции {@link TabsPanelView}
@@ -165,9 +165,9 @@ export default class TabsPanelView extends elyRebuildableViewProtocol {
         super(options);
         this.addClass("box");
         this.denyRebuild(true);
-        variableAndSet(options.tabs, this.tabs, this);
-        variableAndSet(options.selectedTabIndex, this.selectedTabIndex, this);
-        variableAndSet(options.panelHover, this.panelHover, this, true);
+        Guard.variableAndSet(options.tabs, this.tabs, this);
+        Guard.variableAndSet(options.selectedTabIndex, this.selectedTabIndex, this);
+        Guard.variableAndSet(options.panelHover, this.panelHover, this, true);
 
         this.getDocument().append(this.getHeaderView().getDocument());
         this.getDocument().append(this.getContainerView().getDocument());
@@ -337,7 +337,7 @@ export default class TabsPanelView extends elyRebuildableViewProtocol {
             }
             wrapper.getDocument().append(view.getDocument());
         });
-        if (isSet(this.selectedTabIndex())) {
+        if (Guard.isSet(this.selectedTabIndex())) {
             if (this.getTabsBodyViewsProperty().hasIndex(this.selectedTabIndex())) {
                 this.getContainerView().getDocument()
                     .append(this.getTabsBodyViewsProperty().item(this.selectedTabIndex()).getDocument());

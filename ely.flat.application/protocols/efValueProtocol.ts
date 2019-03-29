@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import {efProtocol} from "@protocols/efProtocol";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import {efProtocol} from "./efProtocol";
 
 /**
  * Протокол элемента ввода

@@ -18,15 +18,14 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Application from "@app/app/Application";
-import Control from "@controls/action/Control";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import TextViewContainer from "@controls/text/TextViewContainer";
-import View, {ViewOptions} from "@core/controls/View";
-import {variable} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import Application from "../../app/app/Application";
+import View, {ViewOptions} from "../../core/controls/View";
+import Style from "../../enums/Style";
+import Control from "../action/Control";
+import IconView from "../text/IconView";
+import TextViewContainer from "../text/TextViewContainer";
 
 /**
  * Опции {@link ModalView}
@@ -169,10 +168,10 @@ export default class ModalView extends View {
         this.getDocument().append(this.getContainerView().getDocument());
 
         // Set
-        variable<View>(options.content, value => this.content(value), Control.empty());
-        variable<string>(options.title, value => this.title(value), "Modal");
-        variable<boolean>(options.closable, value => this.closable(value), true);
-        variable<Style>(options.modalStyle, value => this.modalStyle(value), Style.byName("default"));
+        Guard.variable<View>(options.content, value => this.content(value), Control.empty());
+        Guard.variable<string>(options.title, value => this.title(value), "Modal");
+        Guard.variable<boolean>(options.closable, value => this.closable(value), true);
+        Guard.variable<Style>(options.modalStyle, value => this.modalStyle(value), Style.byName("default"));
     }
 
     /**

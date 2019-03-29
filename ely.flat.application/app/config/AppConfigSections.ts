@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyViewEntityProtocol from "@controls/protocols/elyViewEntityProtocol";
+import elyViewEntityProtocol from "../../controls/protocols/elyViewEntityProtocol";
 
 /**
  * Секция конфигурации приложения: приложение

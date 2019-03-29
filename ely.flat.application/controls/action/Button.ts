@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import TextView from "@controls/text/TextView";
-import View, {ViewOptions} from "@core/controls/View";
-import {isSet, variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Size from "@enums/Size";
-import Style from "@enums/Style";
-import efSerializableProtocol from "@protocols/efSerializableProtocol";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import Size from "../../enums/Size";
+import Style from "../../enums/Style";
+import efSerializableProtocol from "../../protocols/efSerializableProtocol";
+import TextView from "../text/TextView";
 
 /**
  * Опции для {@link Button}
@@ -98,10 +98,10 @@ export default class Button extends View implements efSerializableProtocol<Butto
             this.addClass(`--${value.value}`);
         });
 
-        variableAndSet<Size>(options.buttonSize, this.buttonSize, this);
-        variableAndSet<Style>(options.buttonStyle, this.buttonStyle, this, Style.primary);
-        variableAndSet<boolean>(options.buttonRounded, this.buttonRounded, this);
-        if (isSet(options.click)) this.click(() => {
+        Guard.variableAndSet<Size>(options.buttonSize, this.buttonSize, this);
+        Guard.variableAndSet<Style>(options.buttonStyle, this.buttonStyle, this, Style.primary);
+        Guard.variableAndSet<boolean>(options.buttonRounded, this.buttonRounded, this);
+        if (Guard.isSet(options.click)) this.click(() => {
             options.click!();
         });
         if (options.fill) this.fill();

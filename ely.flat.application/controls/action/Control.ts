@@ -18,10 +18,9 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyViewEntityProtocol from "@controls/protocols/elyViewEntityProtocol";
-import View, {ViewOptions} from "@core/controls/View";
-import Utils from "@core/Utils";
-import XLogger from "@core/utils/XLogger";
+import {Utils, XLogger} from "ely.core";
+import View, {ViewOptions} from "../../core/controls/View";
+import elyViewEntityProtocol from "../protocols/elyViewEntityProtocol";
 
 /**
  * Опции {@link Control}

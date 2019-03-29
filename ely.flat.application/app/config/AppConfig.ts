@@ -22,6 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
+import {Color, Guard, Utils, Web, XLogger} from "ely.core";
+import Observable from "ely.core/dist/observable/Observable";
 import {
     AppConfigInterface,
     ConfigSection_app,
@@ -31,13 +33,7 @@ import {
     ConfigSection_navigationBar,
     ConfigSection_sideNavigationBar,
     ConfigSection_template,
-} from "@app/config/AppConfigSections";
-import Color from "@core/Color";
-import {isSet, safeJsonParse} from "@core/Guard";
-import Observable from "@core/observable/Observable";
-import Utils from "@core/Utils";
-import XLogger from "@core/utils/XLogger";
-import URLRequest from "@core/web/request/URLRequest";
+} from "./AppConfigSections";
 
 /**
  * Конфигурация приложения
@@ -165,19 +161,19 @@ export default class AppConfig extends Observable implements AppConfigInterface 
      * @param {{file?: string, data?: *}} props
      */
     public load(props: { file?: string, data?: any }): void {
-        if (isSet(props.file)) {
+        if (Guard.isSet(props.file)) {
             XLogger.default.log("[AppConfig]: Загрузка конфигурации через URL...");
-            URLRequest.sendGET(props.file!, {}, (response, status) => {
+            Web.Requests.URLRequest.sendGET(props.file!, {}, (response: any, status: any) => {
                 if (status) {
-                    Utils.mergeDeep(this, safeJsonParse(response));
+                    Utils.mergeDeep(this, Guard.safeJsonParse(response));
                 }
-                this.notificate("loaded", [status, this]);
+                this.notify("loaded", status, this);
             });
         } else {
             if (props.data) {
                 XLogger.default.log("[AppConfig]: Загрузка конфигурации из данных...");
                 Utils.mergeDeep(this, props.data);
-                this.notificate("loaded", [true, this]);
+                this.notify("loaded", true, this);
             }
         }
     }

@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyEnum from "@enums/elyEnum";
-import efSerializableProtocol from "@protocols/efSerializableProtocol";
+import efSerializableProtocol from "../protocols/efSerializableProtocol";
+import elyEnum from "./elyEnum";
 
 /**
  * Размеры ely.flat.application

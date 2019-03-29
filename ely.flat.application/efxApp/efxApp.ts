@@ -22,8 +22,8 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Observable from "@core/observable/Observable";
-import URLRequest from "@core/web/request/URLRequest";
+import {Web} from "ely.core";
+import Observable from "ely.core/dist/observable/Observable";
 
 /**
  * Приложение efX-app
@@ -129,7 +129,7 @@ export class efxApp extends Observable {
     }
 
     public sendRaw(method: string, data: any, callback: (response: any) => void): void {
-        URLRequest.sendGET(this.getHost() + ":" + this.getPort() + "/db/" + method, data, response => {
+        Web.Requests.URLRequest.sendGET(this.getHost() + ":" + this.getPort() + "/db/" + method, data, response => {
            callback(response);
         });
     }

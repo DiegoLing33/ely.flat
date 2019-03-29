@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import elyEnum from "@enums/elyEnum";
+import elyEnum from "./elyEnum";
 
 /**
  * Толщина ely.flat.application

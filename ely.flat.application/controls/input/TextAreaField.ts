@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import Field, {FieldOptions} from "@controls/input/Field";
-import {variable} from "@core/Guard";
+import {Guard} from "ely.core";
+import Control from "../action/Control";
+import Field, {FieldOptions} from "./Field";
 
 /**
  * Опции {@link TextAreaField}
@@ -54,9 +54,9 @@ export default class TextAreaField extends Field<string> {
         this.valueProperty.change((value) => this.getAccessory().value = value);
 
         this.rowsCount(5);
-        variable<string>(options.value, (v) => this.value(v));
-        variable<number>(options.rowsCount, (v) => this.rowsCount(v));
-        variable<boolean>(options.readonly, (v) => this.readonly(v));
+        Guard.variable<string>(options.value, (v) => this.value(v));
+        Guard.variable<number>(options.rowsCount, (v) => this.rowsCount(v));
+        Guard.variable<boolean>(options.readonly, (v) => this.readonly(v));
     }
 
     /**

@@ -22,7 +22,7 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Observable from "@core/observable/Observable";
+import Observable from "ely.core/dist/observable/Observable";
 
 /**
  * Опции {@link efiDatabaseClient}

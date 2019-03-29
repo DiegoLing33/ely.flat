@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Size from "@enums/Size";
-import Style from "@enums/Style";
-import Weight from "@enums/Weight";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import {variableAndSet} from "ely.core/dist/utils/Guard";
+import View, {ViewOptions} from "../../core/controls/View";
+import Size from "../../enums/Size";
+import Style from "../../enums/Style";
+import Weight from "../../enums/Weight";
 
 /**
  * Опции отображения иконки {@link IconView}

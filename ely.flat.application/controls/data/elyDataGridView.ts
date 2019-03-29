@@ -22,11 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import TextView from "@controls/text/TextView";
-import View, {ViewOptions} from "@core/controls/View";
-import {designable, elyDesignableFieldState} from "@core/elyDesignable";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import Control from "../action/Control";
+import TextView from "../text/TextView";
 
 /**
  * Опции для {@link elyDataGridViewOptions}
@@ -89,10 +88,6 @@ type elyDataGridViewAllowEditDelegate = (rowIndex: number, colIndex: number) => 
  */
 type elyDataGridViewShouldSaveDelegate = (rowIndex: number, colIndex: number, value: string,
                                           result: (res: boolean) => void) => void;
-
-@designable("title", elyDesignableFieldState.GETSET, "string")
-@designable("rowsCount", elyDesignableFieldState.GETSET, "number")
-@designable("colsCount", elyDesignableFieldState.GETSET, "number")
 /**
  * Элемент отображения: Таблица элементов
  *

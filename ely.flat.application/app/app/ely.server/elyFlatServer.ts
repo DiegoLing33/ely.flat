@@ -18,8 +18,8 @@
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {NotificationView} from "@controls/notification/NotificationView";
-import {URLRequest} from "@core/web/request/URLRequest";
+import {Web} from "ely.core";
+import NotificationView from "../../../controls/notification/NotificationView";
 
 export default class elyFlatServer {
 
@@ -38,7 +38,7 @@ export default class elyFlatServer {
      */
     public static getRequest(apiClass: string, aliMethod: string, options: {},
                              callback?: (response: any, status: any) => void, autoErrors: boolean | number[] = true) {
-        new URLRequest({url: `${elyFlatServer.url}/${apiClass}.${aliMethod}`, ...options}).send(
+        new Web.Requests.URLRequest({url: `${elyFlatServer.url}/${apiClass}.${aliMethod}`, ...options}).send(
             (response: any, status: boolean) => {
                 if (autoErrors && response.error) {
                     const error = response.error;

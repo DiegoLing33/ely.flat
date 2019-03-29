@@ -1,38 +1,24 @@
-import json from 'rollup-plugin-json';
-import typescript from 'rollup-plugin-typescript3';
-import alias from 'rollup-plugin-alias';
-import path from 'path';
-import nodeResolve from 'rollup-plugin-node-resolve';
-
+import json from "rollup-plugin-json";
+import typescript from "rollup-plugin-typescript3";
+import path from "path";
+import nodeResolve from "rollup-plugin-node-resolve";
+import cjs from "rollup-plugin-commonjs";
+import globals from "rollup-plugin-node-globals";
 
 export default {
-    input: 'bin/ely.flat.ts',
+    input: "bin/ely.flat.ts",
     output: {
-        file: '../products/ely.flat.js', format: 'es', sourcemap: true
+        file: "../products/ely.flat.js", format: "es", sourcemap: true,
     },
     plugins: [
         nodeResolve({
+            browser: true,
             jsnext: true,
             main: true,
-            browser: true,
+            preferBuiltins: false,
         }),
+        cjs(),
         json(),
-        alias({
-            resolve: ['.ts'],
-            "@app": path.resolve('./app'),
-            "@core": path.resolve('../ely.core'),
-            "@efxApp": path.resolve('./efxApp'),
-            "@controls": path.resolve('./controls'),
-            "@options": path.resolve('./controls/options'),
-            "@controllers": path.resolve('./controllers'),
-            "@devMods": path.resolve('./modules'),
-            "@enums": path.resolve('./enums'),
-            "@cnv": path.resolve('./canvas'),
-            "@play": path.resolve('./play'),
-            "@math": path.resolve('../ely.core/math'),
-            "@protocols": path.resolve('./protocols'),
-            "@fields": path.resolve('./ely.flat.fields/src'),
-        }),
-        typescript({tsConfigDirectory: path.resolve('./')}),
-    ]
-}
+        typescript({tsConfigDirectory: path.resolve("./")}),
+    ],
+};

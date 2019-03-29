@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ProgressBarView, {ProgressBarViewOptions} from "@controls/action/ProgressBarView";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import Style from "../../enums/Style";
+import ProgressBarView, {IProgressBarViewOptions} from "../action/ProgressBarView";
 
 /**
  * Панель загрузки навигации
@@ -47,9 +47,9 @@ export default class NavigationViewProgressBar extends ProgressBarView {
 
     /**
      * Конструктор
-     * @param {ProgressBarViewOptions} [options = {}] - опции
+     * @param {IProgressBarViewOptions} [options = {}] - опции
      */
-    public constructor(options: ProgressBarViewOptions = {}) {
+    public constructor(options: IProgressBarViewOptions = {}) {
         super(options);
         this.removeViewContent();
         this.addClass("--progress-line");

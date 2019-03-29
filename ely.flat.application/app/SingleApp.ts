@@ -22,10 +22,10 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import AppConfig from "@app/config/AppConfig";
-import SimplePageViewController from "@controllers/SimplePageViewController";
-import Observable from "@core/observable/Observable";
-import XLogger from "@core/utils/XLogger";
+import {XLogger} from "ely.core";
+import Observable from "ely.core/dist/observable/Observable";
+import SimplePageViewController from "../controllers/SimplePageViewController";
+import AppConfig from "./config/AppConfig";
 
 export type TConfigFunction = (cfg: AppConfig) => void;
 export type TResultFunction = (result: boolean) => void;

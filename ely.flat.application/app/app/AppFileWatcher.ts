@@ -22,15 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import IconView from "@controls/text/IconView";
-import TextView from "@controls/text/TextView";
-import Observable from "@core/observable/Observable";
+import {Observers} from "ely.core";
+import Control from "../../controls/action/Control";
+import IconView from "../../controls/text/IconView";
+import TextView from "../../controls/text/TextView";
 
 /**
  * Отслеживание изменения файла
  */
-export default class AppFileWatcher extends Observable {
+export default class AppFileWatcher extends Observers.Observable {
 
     /**
      * Путь до файла

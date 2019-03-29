@@ -22,12 +22,12 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import RowLayoutView from "@controls/layout/RowLayoutView";
-import ViewLayout, {ViewLayoutOptions} from "@controls/layout/ViewLayout";
-import elyRebuildableViewProtocol from "@controls/protocols/elyRebuildableViewProtocol";
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View from "../../core/controls/View";
+import elyRebuildableViewProtocol from "../protocols/elyRebuildableViewProtocol";
+import RowLayoutView from "./RowLayoutView";
+import ViewLayout, {ViewLayoutOptions} from "./ViewLayout";
 
 /**
  * Опции {@link StaticGridLayoutView}
@@ -70,7 +70,7 @@ export default class StaticGridLayoutView extends ViewLayout {
         this.rows(options.rows);
         this.columns(options.columns);
 
-        variableAndSet(options.items, this.items, this, []);
+        Guard.variableAndSet(options.items, this.items, this, []);
         this.denyRebuild(false);
         this.rebuild();
     }

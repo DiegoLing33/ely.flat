@@ -22,11 +22,11 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import ViewLayout, {ViewLayoutOptions} from "@controls/layout/ViewLayout";
-import View from "@core/controls/View";
-import {variable} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
+import {Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View from "../../core/controls/View";
+import Control from "../action/Control";
+import ViewLayout, {ViewLayoutOptions} from "./ViewLayout";
 
 /**
  * Опции {@link RowLayoutView}
@@ -82,8 +82,8 @@ export default class RowLayoutView extends ViewLayout {
         this.rowLength(24);
         this.rowItemsStaticSize(false);
 
-        variable<number>(options.rowLength, () => this.rowLength(options.rowLength!));
-        variable<number>(options.rowItemsStaticSize, () => this.rowItemsStaticSize(options.rowItemsStaticSize!));
+        Guard.variable<number>(options.rowLength, () => this.rowLength(options.rowLength!));
+        Guard.variable<number>(options.rowItemsStaticSize, () => this.rowItemsStaticSize(options.rowItemsStaticSize!));
 
         this.denyRebuild(false);
         this.rebuild();
@@ -236,7 +236,7 @@ export default class RowLayoutView extends ViewLayout {
     protected __rebuild(): RowLayoutView {
         this.removeViewContent();
         this.__containers = [];
-        this.getItemsProperty().forEach(item => {
+        this.getItemsProperty().forEach((item: View) => {
             const container = new Control({class: "ef-col"});
             let containerSize = (1 / this.rowLength()) * 100;
             if (!this.rowItemsStaticSize())
@@ -244,7 +244,7 @@ export default class RowLayoutView extends ViewLayout {
             container.getStyle().width = containerSize + "%";
             container.addSubView(item);
             this.__containers.push(container);
-            this.notificate("itemWillAdd", [item, container]);
+            this.notify("itemWillAdd", item, container);
             this.getDocument().append(container.getDocument());
         });
         return this;

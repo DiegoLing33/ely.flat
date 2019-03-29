@@ -22,9 +22,9 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import ViewController from "@controllers/ViewController";
-import GridLayoutView from "@controls/layout/GridLayoutView";
-import View from "@core/controls/View";
+import GridLayoutView from "../controls/layout/GridLayoutView";
+import View from "../core/controls/View";
+import ViewController from "./ViewController";
 
 /**
  * Контроллер с сеткой в основании
@@ -37,7 +37,7 @@ export default class GridViewController extends ViewController {
      * Элемент отображения
      * @type {GridLayoutView|View}
      */
-    public readonly view: GridLayoutView & View;
+    public readonly view: GridLayoutView & View | any;
 
     /**
      * Конструктор

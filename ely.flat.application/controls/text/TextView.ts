@@ -22,13 +22,13 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import View, {ViewOptions} from "@core/controls/View";
-import {variable} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Size from "@enums/Size";
-import Style from "@enums/Style";
-import Weight from "@enums/Weight";
-import efSerializableProtocol from "@protocols/efSerializableProtocol";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import {variable} from "ely.core/dist/utils/Guard";
+import View, {ViewOptions} from "../../core/controls/View";
+import Size from "../../enums/Size";
+import Style from "../../enums/Style";
+import Weight from "../../enums/Weight";
+import efSerializableProtocol from "../../protocols/efSerializableProtocol";
 
 /**
  * Опции {@link TextView}

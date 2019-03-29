@@ -22,15 +22,15 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import View, {ViewOptions} from "@core/controls/View";
-import {variableAndSet} from "@core/Guard";
-import ObservableBoolean from "@core/observable/properties/ObservableBoolean";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import {efEditableProtocol} from "@protocols/efEditableProtocol";
-import {efErrorDisplayProtocol} from "@protocols/efErrorDisplayProtocol";
-import {efValidatableProtocol} from "@protocols/efValidatableProtocol";
-import {efValueProtocol} from "@protocols/efValueProtocol";
+import {Guard} from "ely.core";
+import ObservableBoolean from "ely.core/dist/observable/properties/ObservableBoolean";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import {efEditableProtocol} from "../../protocols/efEditableProtocol";
+import {efErrorDisplayProtocol} from "../../protocols/efErrorDisplayProtocol";
+import {efValidatableProtocol} from "../../protocols/efValidatableProtocol";
+import {efValueProtocol} from "../../protocols/efValueProtocol";
+import Control from "../action/Control";
 
 /**
  * Опции {@link Field}
@@ -93,8 +93,8 @@ export default class Field<T> extends View implements efValueProtocol<T>, efEdit
             this.getAccessory().disabled = !value;
         });
 
-        variableAndSet(options.editable, this.editable, this);
-        variableAndSet(options.placeholder, this.placeholder, this);
+        Guard.variableAndSet(options.editable, this.editable, this);
+        Guard.variableAndSet(options.placeholder, this.placeholder, this);
     }
 
     /**

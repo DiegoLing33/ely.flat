@@ -1,4 +1,5 @@
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -14,22 +15,18 @@
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: View.ts                                                        +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: View.ts                                                              +
+ + Файл изменен: 29.03.2019 23:18:14                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import {
-    deserialize,
-    DeserializeData,
-    deserializeWithData,
-} from "../../ely.flat.application/protocols/efSerializableProtocol";
+import {Guard, Observers, Utils, Web} from "ely.core";
+import ObservableBoolean from "ely.core/dist/observable/properties/ObservableBoolean";
+import {deserialize, DeserializeData, deserializeWithData} from "../../protocols/efSerializableProtocol";
 import elyObject from "../elyObject";
 import elyOneActionEval from "../elyOneActionEval";
-import {isSet, safeJsonParse, variableAndSet} from "../Guard";
-import ObservableBoolean from "../observable/properties/ObservableBoolean";
-import ObservableProperty from "../observable/properties/ObservableProperty";
-import Utils from "../Utils";
-import URLRequest from "../web/request/URLRequest";
 import ViewCounter from "./viewCounter";
 
 /**
@@ -149,7 +146,7 @@ export default class View extends elyObject {
      * @return {View|null}
      */
     public static fromString(str: string): View | null {
-        return View.fromObject(safeJsonParse(str));
+        return View.fromObject(Guard.safeJsonParse(str));
     }
 
     /**
@@ -159,9 +156,9 @@ export default class View extends elyObject {
      * @return {DeserializeData | null}
      */
     public static loadView(url: string, callback: (view: View | null, data: DeserializeData | null) => void) {
-        new URLRequest({url}).send((response, result) => {
+        new Web.Requests.URLRequest({url}).send((response, result) => {
             if (result && response) {
-                const data = deserializeWithData<View>(safeJsonParse(response));
+                const data = deserializeWithData<View>(Guard.safeJsonParse(response));
                 if (data) callback(data.object, data.data);
                 else callback(null, null);
             } else {
@@ -218,7 +215,7 @@ export default class View extends elyObject {
         this.addObserver("click", () => {
             if (this.__actionString !== "") elyOneActionEval.default.go(this.__actionString);
         });
-        this.hiddenProperty = new ObservableBoolean(false);
+        this.hiddenProperty = new Observers.ObservableBoolean(false);
         this.hiddenProperty.change(value => {
             if (this.getStyle().display && this.getStyle().display !== "none") {
                 this.getDocument().hidden = value;
@@ -230,8 +227,8 @@ export default class View extends elyObject {
         if (options.opacity) this.opacity(options.opacity);
         if (options.disabled) this.disabled(options.disabled);
 
-        variableAndSet(options.styleClickable, this.styleClickable, this);
-        variableAndSet(options.styleNoSelect, this.styleNoSelect, this);
+        Guard.variableAndSet(options.styleClickable, this.styleClickable, this);
+        Guard.variableAndSet(options.styleNoSelect, this.styleNoSelect, this);
         const wait = setInterval(() => {
             if (this.getRect().width) {
                 clearInterval(wait);
@@ -431,8 +428,8 @@ export default class View extends elyObject {
      * Возвращает и устанавливает скрытие элемента
      */
     public hidden(value?: boolean): boolean | null | View {
-        if (isSet(value)) this.notificate("hidden", [value]);
-        return ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
+        if (Guard.isSet(value)) this.notificate("hidden", [value]);
+        return Observers.ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
     }
 
     /**
@@ -441,15 +438,17 @@ export default class View extends elyObject {
      */
     public css(style: { [key: string]: any }): View {
         Utils.forEach(style, (k, v) => {
-            const pattern = /([+-]=)?(.+)(px|%|rem)/;
-            const res = pattern.exec(v.toString());
-            if (res && res[1]) {
-                if (res[1] === "+=") {
-                    v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")![1])
-                        + parseFloat(res[2]) + res[3];
-                } else if (res[1] === "-=") {
-                    v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")![1])
-                        - parseFloat(res[2]) + res[3];
+            if (Guard.isSet(v) && v !== null) {
+                const pattern = /([+-]=)?(.+)(px|%|rem)/;
+                const res = pattern.exec(v.toString());
+                if (res && res[1]) {
+                    if (res[1] === "+=") {
+                        v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")![1])
+                            + parseFloat(res[2]) + res[3];
+                    } else if (res[1] === "-=") {
+                        v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")![1])
+                            - parseFloat(res[2]) + res[3];
+                    }
                 }
             }
             this.getDocument().style[k] = v;

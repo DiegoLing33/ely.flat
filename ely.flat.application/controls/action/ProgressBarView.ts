@@ -22,18 +22,17 @@
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-import Control from "@controls/action/Control";
-import ContainerView from "@controls/layout/ContainerView";
-import View, {ViewOptions} from "@core/controls/View";
-import elyMath from "@core/elyMath";
-import {variableAndSet} from "@core/Guard";
-import ObservableProperty from "@core/observable/properties/ObservableProperty";
-import Style from "@enums/Style";
+import {EFMath, Guard} from "ely.core";
+import ObservableProperty from "ely.core/dist/observable/properties/ObservableProperty";
+import View, {ViewOptions} from "../../core/controls/View";
+import Style from "../../enums/Style";
+import ContainerView from "../layout/ContainerView";
+import Control from "./Control";
 
 /**
  * Опции {@link ProgressBarView}
  */
-export interface ProgressBarViewOptions extends ViewOptions {
+export interface IProgressBarViewOptions extends ViewOptions {
     progressBarStyle?: Style;
     maxValue?: number;
     minValue?: number;
@@ -116,16 +115,16 @@ export default class ProgressBarView extends View {
 
     /**
      * Конструктор
-     * @param {ProgressBarViewOptions} options - опции
+     * @param {IProgressBarViewOptions} options - опции
      */
-    public constructor(options: ProgressBarViewOptions = {}) {
+    public constructor(options: IProgressBarViewOptions = {}) {
         super(options);
         this.addClass("ef-progress");
         this.getDocument().append(this.getBodyView().getDocument());
         this.getBodyView().getDocument().append(this.getLineViewContainer().getDocument());
-        variableAndSet(options.minValue, this.minValue, this, 0);
-        variableAndSet(options.maxValue, this.maxValue, this, 100);
-        variableAndSet(options.value, this.value, this, 0);
+        Guard.variableAndSet(options.minValue, this.minValue, this, 0);
+        Guard.variableAndSet(options.maxValue, this.maxValue, this, 100);
+        Guard.variableAndSet(options.value, this.value, this, 0);
     }
 
     /**
@@ -269,7 +268,7 @@ export default class ProgressBarView extends View {
      * @return {number}
      */
     public getPercentage(): number {
-        return elyMath.map(this.value(), this.minValue(), this.maxValue(), 0, 100);
+        return EFMath.map(this.value(), this.minValue(), this.maxValue(), 0, 100);
     }
 
     /**
@@ -308,7 +307,7 @@ export default class ProgressBarView extends View {
 }
 
 /**
- * @typedef {Object} ProgressBarViewOptions
+ * @typedef {Object} IProgressBarViewOptions
  * @property {Style} [progressBarStyle]
  * @property {number} [maxValue]
  * @property {number} [minValue]
