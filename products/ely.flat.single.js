@@ -1,3 +1,112 @@
+function unwrapExports (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x.default : x;
+}
+
+function createCommonjsModule(fn, module) {
+}
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: Observable.ts                                                        *
+ * Файл изменен: 27.02.2019 01:18:10                                          *
+ *                                                                            *
+ ******************************************************************************/
+/**
+ * Прослушиваемый протокол
+ * @class Observable
+ */
+class Observable {
+    constructor() {
+        /**
+         * Слушатели
+         * @protected
+         * @ignore
+         */
+        this.observers = {};
+    }
+    /**
+     * Добавляет наблюдатель
+     * @param {String} event - событие
+     * @param {Function} observer - наблюдатель
+     */
+    addObserver(event, observer) {
+        if (!this.observers.hasOwnProperty(event))
+            this.observers[event] = [];
+        this.observers[event].push(observer);
+        return this;
+    }
+    /**
+     * Удаляет обработчик
+     * @param {string} event - событие
+     * @param {Function} observer - обработчик
+     */
+    removeObserver(event, observer) {
+        if (this.observers.hasOwnProperty(event)) {
+            this.observers[event].splice(this.observers[event].indexOf(observer), 1);
+        }
+        return this;
+    }
+    /**
+     * Удаляет все обработчики события или событий
+     * @param {String} [event] - Событие
+     */
+    removeAllObservers(event) {
+        if (event !== undefined) {
+            if (this.observers.hasOwnProperty(event)) {
+                this.observers[event] = [];
+            }
+        }
+        else {
+            this.observers = {};
+        }
+        return this;
+    }
+    /**
+     * Оповещает всех наблюдателей о совершении события
+     *
+     * @param {string} event - событие
+     * @param {...*} args - аргументы события
+     */
+    notify(event, ...args) {
+        if (event in this.observers)
+            this.observers[event].forEach((func) => func.apply(this, args || []));
+        return this;
+    }
+    /**
+     * Сообщает о событие всем наблюдателям
+     * @param {String} event - событие
+     * @param {*[]} args - массив аргументов
+     *
+     * @deprecated {@link Observable.notify}
+     */
+    notificate(event, args) {
+        if (this.observers.hasOwnProperty(event)) {
+            for (const observer of this.observers[event])
+                observer.apply(this, args);
+        }
+    }
+}
+});
+
+var Observable = unwrapExports(Observable_1);
+
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -134,6 +243,862 @@ function safeJsonParse(jsonString, opt = {}) {
         return opt;
     }
 }
+});
+
+unwrapExports(Guard);
+var Guard_1 = Guard.variable;
+var Guard_2 = Guard.variableAndSet;
+var Guard_3 = Guard.isSet;
+var Guard_4 = Guard.isNone;
+var Guard_5 = Guard.safeJsonParse;
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: URLRequest.ts                                                        *
+ * Файл изменен: 27.02.2019 03:07:17                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+
+/**
+ * Методы передачи параметров
+ * @enum
+ */
+var URLRequestMethod;
+(function (URLRequestMethod) {
+    URLRequestMethod["GET"] = "GET";
+    URLRequestMethod["POST"] = "POST";
+/**
+ * Названия заголовков запроса
+ * @enum
+ */
+var URLRequestHeaderName;
+(function (URLRequestHeaderName) {
+    URLRequestHeaderName["contentType"] = "Content-type";
+/**
+ * URL запрос
+ * @class URLRequest
+ * @augments {Observable}
+ */
+class URLRequest extends Observable_1.default {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options) {
+        super();
+        /**
+         * @ignore
+         */
+        this.__async = true;
+        this.__url = options.url;
+        this.__xhr = new XMLHttpRequest();
+        this.__method = options.method || URLRequestMethod.GET;
+        this.__data = options.data || {};
+        Guard.variable(options.async, value => this.__async = value, true);
+    }
+    /**
+     * Отправляет GET запрос
+     *
+     * @param {string} url
+     * @param {* | TURLCallback} data
+     * @param {TURLCallback} callback
+     */
+    static sendGET(url, data, callback) {
+        if (typeof data === "function")
+            new URLRequest({ url }).send(data);
+        else
+            new URLRequest({ url, data }).send(callback);
+    }
+    /**
+     * Возвращает URL запроса
+     * @return {string}
+     */
+    getURL() {
+        return this.__url;
+    }
+    /**
+     * Возвращает данные запроса
+     * @return {*}
+     */
+    getData() {
+        return this.__data;
+    }
+    /**
+     * Возвращает true, если запрос асинхронный
+     * @return {boolean}
+     */
+    isAsync() {
+        return this.__async;
+    }
+    /**
+     * Возвращает метод
+     * @return URLRequestMethod
+     */
+    getMethod() {
+        return this.__method;
+    }
+    /**
+     * Устанавливает данные
+     * @param name
+     * @param value
+     */
+    setData(name, value) {
+        this.__data[name] = value;
+        return this;
+    }
+    /**
+     * Выполняет запрос
+     * @param {TURLCallback} callback
+     * @return URLRequest
+     */
+    send(callback) {
+        this.__prepareXMLHttpRequestCore(callback);
+        this.getXMLHttpRequest().send();
+    }
+    /**
+     * Устанавливает заголовок
+     *
+     * @param {string|URLRequestHeaderName} name - имя заголовка
+     * @param {string} value - значение заголовка
+     * @return {this}
+     */
+    setHeader(name, value) {
+        this.getXMLHttpRequest().setRequestHeader(name, value);
+        return this;
+    }
+    /**
+     * Возвращает ядро запроса
+     * @return {XMLHttpRequest}
+     */
+    getXMLHttpRequest() {
+        return this.__xhr;
+    }
+    /**
+     * Добавляет наблюдатель: изменение прогресса
+     *
+     * Имя обсервера: progressChanged
+     *
+     * @param o - наблюдатель
+     */
+    addProgressChangedObserver(o) {
+        this.addObserver("progressChanged", o);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: завершения выполнения запроса
+     *
+     * Имя обсервера: ready
+     *
+     * @param o - наблюдатель
+     */
+    addReadyObserver(o) {
+        this.addObserver("ready", o);
+        return this;
+    }
+    /**
+     * Возвращает строку параметров
+     * @private
+     */
+    __getParametersString() {
+        return Object
+            .keys(this.getData())
+            .map((key) => {
+            return key + "=" + encodeURIComponent(this.getData()[key]);
+        })
+            .join("&");
+    }
+    __prepareXMLHttpRequestCore(callback) {
+        this.getXMLHttpRequest().open(this.getMethod(), this.getURL() + "?" +
+            this.__getParametersString(), this.isAsync());
+        this.getXMLHttpRequest().onprogress = ev => {
+            this.notificate("progressChanged", [ev.loaded, ev.total]);
+        };
+        this.getXMLHttpRequest().onreadystatechange = () => {
+            if (this.getXMLHttpRequest().readyState === 4) {
+                if (this.getXMLHttpRequest().status === 200) {
+                    if (callback)
+                        callback(this.getXMLHttpRequest().responseText, true);
+                    this.notificate("ready", [this.getXMLHttpRequest().responseText, true]);
+                }
+                else {
+                    if (callback)
+                        callback(null, false);
+                    this.notificate("ready", [null, false]);
+                }
+            }
+        };
+    }
+}
+/**
+ * @typedef {Object} IURLRequestOptions
+ * @property {string} url
+ * @property {URLRequestMethod} [method]
+ * @property {boolean} [async]
+ * @property {*} data
+ */
+/**
+ * Прогресс изменен
+ * @callback TURLProgressChangedCallback
+ * @param {number} loadedBytes - отпарвлено
+ * @param {number} totalBytes - необходимо отправить
+ */
+/**
+ * Ответ запроса
+ * @callback TURLCallback
+ * @param {*} response - ответ
+ * @param {boolean} status - статус ответа
+ */
+});
+
+var URLRequest = unwrapExports(URLRequest_1);
+var URLRequest_2 = URLRequest_1.URLRequestMethod;
+var URLRequest_3 = URLRequest_1.URLRequestHeaderName;
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: SendFileRequest.ts                                             +
+ + Файл изменен: 27.02.2019 00:18:04                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+/**
+ * Запрос отправки файла
+ * @class SendFileRequest
+ * @augments {URLRequest}
+ */
+class SendFileRequest extends URLRequest_1.default {
+    /**
+     * Выполняет отправку файлов
+     *
+     * @param {string} url - адрес
+     * @param {*} files - объект для передачи
+     * @param {TURLCallback} callback - обработчик результата
+     * @return SendFileRequest
+     */
+    static send(url, files, callback) {
+        new SendFileRequest({ url, files }).send(callback);
+    }
+    /**
+     * Конструктор
+     * @param {ISendFileRequestOptions} options
+     */
+    constructor(options) {
+        super(options);
+        this.__files = options.files || [];
+    }
+    /**
+     * Выполняет запрос
+     *
+     * @param {TURLCallback} callback
+     */
+    send(callback) {
+        this.__method = URLRequest_1.URLRequestMethod.POST;
+        this.__prepareXMLHttpRequestCore(callback);
+        const theFormData = new FormData();
+        this.getFiles().forEach(file => {
+            theFormData.append("file", file);
+        });
+        this.getXMLHttpRequest().send(theFormData);
+    }
+    /**
+     * Добавляет файлы
+     * @param {...File} files - файлы
+     * @return SendFileRequest
+     */
+    addFiles(...files) {
+        this.__files.push(...files);
+        return this;
+    }
+    /**
+     * Возвращает файлы
+     */
+    getFiles() {
+        return this.__files;
+    }
+}
+/**
+ * @typedef {Object} ISendFileRequestOptions
+ * @property {string} url
+ * @property {boolean} [async]
+ * @property {*} [data]
+ * @property {File[]} [files]
+ */
+});
+
+var SendFileRequest = unwrapExports(SendFileRequest_1);
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: SendJsonRequest.ts                                             +
+ + Файл изменен: 26.02.2019 23:45:06                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+/**
+ * SendJsonRequest позволяет передавать JSON данные через POST запрос.
+ *
+ * JSON данные передаются в теле запроса. Отправка данных производится методом POST.
+ *
+ * Заголовки:
+ * - Content-type: application/json; charset=utf-8
+ *
+ * @class SendJsonRequest
+ * @augments {URLRequest}
+ */
+class SendJsonRequest extends URLRequest_1.default {
+    /**
+     * Выполняет отправку JSON данных
+     *
+     * @param {string} url - адрес
+     * @param {*} object - объект для передачи
+     * @param {TURLCallback} callback - обработчик результата
+     */
+    static send(url, object, callback) {
+        new SendJsonRequest({ url, object }).send(callback);
+    }
+    /**
+     * Конструктор
+     * @param {ISendJsonRequestOptions} options
+     */
+    constructor(options) {
+        super(options);
+        this.__object = options.object;
+    }
+    /**
+     * Выполняет запрос
+     * @param {TURLCallback} callback
+     */
+    send(callback) {
+        this.__method = URLRequest_1.URLRequestMethod.POST;
+        this.__prepareXMLHttpRequestCore(callback);
+        this.getXMLHttpRequest().send(JSON.stringify(this.getObject()));
+    }
+    /**
+     * Устаналивает объект для передачи
+     * @param {*} obj
+     * @return {this}
+     */
+    setObject(obj) {
+        this.__object = obj;
+        return this;
+    }
+    /**
+     * Возвращает объект для передачи
+     * @return {*}
+     */
+    getObject() {
+        return this.__object;
+    }
+}
+/**
+ * @typedef {Object} ISendJsonRequestOptions
+ * @property {string} url
+ * @property {boolean} [async]
+ * @property {*} [data]
+ * @property {*} [object]
+ */
+});
+
+var SendJsonRequest = unwrapExports(SendJsonRequest_1);
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: ObservableProperty                                             +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+/**
+ * Обрабатываемое значение
+ * @class ObservableProperty
+ * @template T
+ * @augments Observable
+ */
+class ObservableProperty extends Observable_1.default {
+    /**
+     * Конструктор
+     * @param {T|null} defaultValue
+     */
+    constructor(defaultValue = null) {
+        super();
+        /**
+         * Флаг защиты от перезаписи
+         * @ignore
+         * @protected
+         * @type {boolean}
+         */
+        this.isOverwriteProtected = false;
+        /**
+         * @protected
+         * @type {T}
+         */
+        this.value = defaultValue || null;
+    }
+    /**
+     * Простое автоматизированное свойство
+     * @param context
+     * @param value
+     * @param prop
+     */
+    static simplePropertyAccess(context, value, prop) {
+        if (!Guard.isSet(value))
+            return prop.get(null);
+        prop.set(value);
+        return context;
+    }
+    /**
+     * Возвращает значение или guard если значение null.
+     *
+     * Данный метод никогда не возвращает значение null. В случае, если значение
+     * прослушиваемого параметра null или undefined, возвращает `guard` значение.
+     *
+     * @param {T} [guard]
+     * @return {T}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new ObservableProperty<string>();
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get( "test" ) ); // test
+     *
+     *
+     */
+    get(guard) {
+        if (this.isNull() && guard !== null)
+            return guard;
+        else if (this.isNull())
+            return null;
+        return this.value;
+    }
+    /**
+     * Устанавливает флаг защиты от перезаписи.
+     *
+     * @param {boolean} flag
+     * @return {this}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new ObservableProperty<string>();
+     *     prop.set( "Tom" );
+     *
+     *     // Запрещаем перезапись
+     *     prop.overwrite(false);
+     *
+     *     prop.set( "John" );
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get() ); // Tom
+     *
+     *
+     */
+    overwrite(flag) {
+        this.isOverwriteProtected = flag;
+        return this;
+    }
+    /**
+     * Устанавливает значение и вызывает оповещение `change`, прослушиваемое
+     * методом {@link ObservableProperty.change}.
+     *
+     * @param {T} value
+     * @return {this}
+     *
+     *
+     *     // Создаем прослушиваемый параметр
+     *     let prop = new ObservableProperty<string>();
+     *     prop.set( "Tom" );
+     *
+     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
+     *     console.log( prop.get() ); // Tom
+     *
+     *
+     */
+    set(value) {
+        if (this.isOverwriteProtected)
+            return this;
+        const old = this.value;
+        /**
+         * @type {T}
+         * @protected
+         */
+        this.value = value;
+        this.notificate("change", [old, value]);
+        return this;
+    }
+    /**
+     * Возвращает true, если объект null или undefined.
+     * @return {boolean}
+     */
+    isNull() {
+        return Guard.isNone(this.value);
+    }
+    /**
+     * Добавляет наблюдатель за изменением значения
+     * @param {{function(value:T, oldValue:T?)}} observer - наблюдатель
+     *
+     *
+     *
+     *     // Создание свойства
+     *     let observableString = new ObservableProperty<string>();
+     *
+     *     observableString.change( value => {
+     *          console.log("Set to: " + value);
+     *     });
+     *
+     *     observableString.set("123");
+     *     observableString.set("abc");
+     *
+     *     // Вывод:
+     *     // Set to: 123
+     *     // Set to: abc
+     *
+     *
+     *
+     */
+    change(observer) {
+        this.addObserver("change", (old, nw) => {
+            observer(nw, old);
+        });
+        return this;
+    }
+    /**
+     * Преобразует объект в строку
+     * @return {string}
+     */
+    toString() {
+        return this.get() + "";
+    }
+}
+});
+
+var ObservableProperty = unwrapExports(ObservableProperty_1);
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: ObservableArray.ts                                             +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+/**
+ * Массив
+ * @template T
+ * @class ObservableArray
+ * @augments ObservableProperty.<T[]>
+ */
+class ObservableArray extends ObservableProperty_1.default {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super([]);
+    }
+    /**
+     * Возвращает массив
+     * @return {T[]}
+     */
+    get() {
+        return this.value || [];
+    }
+    /**
+     * Регистрирует слушатель добавления нового элемента в массив
+     * @param {function(newItem: {T}, index: number)} observer - слушатель
+     */
+    addNewItemObserver(observer) {
+        return this.addObserver("add", observer);
+    }
+    /**
+     * Регистрирует слушатель изменения элементов массива
+     * @param observer - слушатель
+     */
+    addChangeItemsObserver(observer) {
+        return this.addObserver("change", observer);
+    }
+    /**
+     * Регистрирует слушатель очищения массива
+     * @param observer - слушатель
+     */
+    addClearObserver(observer) {
+        return this.addObserver("clear", observer);
+    }
+    /**
+     * Регистрирует слушатель удаления элемента массива
+     * @param observer - слушатель
+     */
+    addRemoveObserver(observer) {
+        return this.addObserver("remove", observer);
+    }
+    /**
+     * Добавляет элемент в массив
+     * @param item
+     */
+    push(item) {
+        this.value.push(item);
+        this.notificate("change", [this.get()]);
+        this.notificate("add", [item, this.value.length - 1]);
+        return this;
+    }
+    /**
+     * Добавляет элемент в массив по индексу
+     * @param {number} index
+     * @param {...T} items
+     */
+    insert(index, ...items) {
+        this.value.splice(index, 0, ...items);
+        this.notificate("change", [this.get()]);
+        this.notificate("add", [index, ...items]);
+        return this;
+    }
+    /**
+     * Добавляет элемент в массив
+     * @param {number} index
+     * @return {this}
+     */
+    remove(index) {
+        const item = this.item(index);
+        this.value.splice(index, 1);
+        this.notificate("change", [this.get()]);
+        this.notificate("remove", [item]);
+        return this;
+    }
+    /**
+     * Удаляет элемент из массива
+     * @param {T} item - элемент массива
+     * @return {this}
+     */
+    removeItem(item) {
+        const index = this.indexOf(item);
+        this.remove(index);
+        return this;
+    }
+    /**
+     * Возвращает элемент массива
+     * @param {number} index
+     */
+    item(index) {
+        return this.value[index];
+    }
+    /**
+     * Возвращает последний элемент
+     * @return {T}
+     */
+    last() {
+        return this.value[this.value.length - 1];
+    }
+    /**
+     * Возвращает последний элемент и удаляет его из массива
+     * @return {T}
+     */
+    pop() {
+        const val = this.items().pop();
+        return val === undefined ? null : val;
+    }
+    /**
+     * Возвращает длину массива
+     * @return {number}
+     */
+    length() {
+        return this.value.length;
+    }
+    /**
+     * Возвращает true, если существует индекс
+     * @param {number} index
+     */
+    hasIndex(index) {
+        return !!this.value[index];
+    }
+    /**
+     * Возвращает индекс элемента в массиве или -1, если
+     * элемент не найден
+     * @param {T} item
+     */
+    indexOf(item) {
+        return this.value.indexOf(item);
+    }
+    /**
+     * Возвращает true, если массив содержит item
+     * @param {T} item
+     */
+    hasItem(item) {
+        return this.indexOf(item) > -1;
+    }
+    /**
+     * Очищает массив
+     * @return {this}
+     */
+    clear() {
+        this.value = [];
+        this.notificate("change", [this.get()]);
+        this.notificate("clear", []);
+        return this;
+    }
+    /**
+     * Возвращает true, если массив пустой
+     * @return {boolean}
+     */
+    isEmpty() {
+        return this.length() === 0;
+    }
+    /**
+     * Элементы
+     * @return {T[]}
+     */
+    items() {
+        return this.value;
+    }
+    /**
+     * Устанавливает элемент в индексе массива
+     * @param {T} item - элемент
+     * @param {number} index - индекс
+     * @deprecated Данный метод не рекомендуется к спользованию!
+     */
+    setItemAtIndex(item, index) {
+        this.value[index] = item;
+        this.notificate("change", [this.get()]);
+        return this;
+    }
+    /**
+     * Цикл по элементам массива
+     * @param {function(item: T, index: number, items: T[])} callbackfn - обработчик
+     */
+    forEach(callbackfn) {
+        this.items().forEach((value, index, array) => callbackfn(value, index, array));
+        return this;
+    }
+}
+});
+
+var ObservableArray = unwrapExports(ObservableArray_1);
+
+/*
+ *
+ *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ *   ,--. o                   |    o
+ *   |   |.,---.,---.,---.    |    .,---.,---.
+ *   |   |||---'|   ||   |    |    ||   ||   |
+ *   `--' ``---'`---|`---'    `---'``   '`---|
+ *              `---'                    `---'
+ *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
+ * Mail: <diegoling33@gmail.com>
+ *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле
+ * COPYING, который Вы должны были получить в рамках распространения ПО.
+ *
+ * Использование, изменение, копирование, распространение, обмен/продажа
+ * могут выполняться исключительно в согласии с условиями файла COPYING.
+ *
+ * Файл: ObservableBoolean
+ * Файл создан: 28.11.2018 01:03:35
+ * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ */
+
+/**
+ * Прослушиваемый булевый тип
+ * @class ObservableBoolean
+ * @augments {ObservableProperty<boolean>}
+ */
+class ObservableBoolean extends ObservableProperty_1.default {
+    /**
+     * Конструктор
+     * @param {boolean} [defaultValue = false]
+     */
+    constructor(defaultValue = false) {
+        super(defaultValue);
+    }
+    /**
+     * Переключает значение
+     * @return {ObservableBoolean}
+     */
+    toggle() {
+        this.set(!this.value);
+        return this;
+    }
+}
+});
+
+var ObservableBoolean = unwrapExports(ObservableBoolean_1);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -156,6 +1121,8 @@ function safeJsonParse(jsonString, opt = {}) {
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Утилиты
+ *
+ * @version 2.0 Рефракторинг и обновление утилит
  */
 class Utils {
     /**
@@ -272,7 +1239,7 @@ class Utils {
      */
     static sortAlphabetic(obj) {
         const ordered = {};
-        Object.keys(obj).sort().forEach(function (key) {
+        Object.keys(obj).sort().forEach(key => {
             ordered[key] = obj[key];
         });
         return ordered;
@@ -292,12 +1259,14 @@ class Utils {
      * Удаляет выделение
      */
     static removeSelection() {
-        if (window.getSelection) {
-            if (window.getSelection().empty) { // Chrome
-                window.getSelection().empty();
-            }
-            else if (window.getSelection().removeAllRanges) { // Firefox
-                window.getSelection().removeAllRanges();
+        if (window) {
+            if (window.getSelection) {
+                if (window.getSelection().empty) { // Chrome
+                    window.getSelection().empty();
+                }
+                else if (window.getSelection().removeAllRanges) { // Firefox
+                    window.getSelection().removeAllRanges();
+                }
             }
         }
     }
@@ -407,267 +1376,9 @@ class Utils {
     }
 }
 Utils.BREAK_FLAG = "ely_for_loop_break_312441edq2jhd78q2df67q";
+});
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: Observable.ts                                                  +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Прослушиваемый протокол
- * @class Observable
- */
-class Observable {
-    constructor() {
-        /**
-         * @protected
-         */
-        this.observers = {};
-    }
-    /**
-     * Добавляет наблюдатель
-     * @param {String} event - событие
-     * @param {Function} observer - наблюдатель
-     */
-    addObserver(event, observer) {
-        if (!this.observers.hasOwnProperty(event))
-            this.observers[event] = [];
-        this.observers[event].push(observer);
-        return this;
-    }
-    /**
-     * Удаляет обработчик
-     * @param event
-     * @param observer
-     */
-    removeObserver(event, observer) {
-        if (this.observers.hasOwnProperty(event)) {
-            this.observers[event].splice(this.observers[event].indexOf(observer), 1);
-        }
-        return this;
-    }
-    /**
-     * Удаляет все обработчики события или событий
-     * @param {String} [event] - Событие
-     */
-    removeAllObservers(event) {
-        if (event !== undefined) {
-            if (this.observers.hasOwnProperty(event)) {
-                this.observers[event] = [];
-            }
-        }
-        else {
-            this.observers = {};
-        }
-        return this;
-    }
-    /**
-     * Сообщает о событие всех наблюдателей
-     * @param {String} event
-     * @param {*} args
-     */
-    notificate(event, args) {
-        if (this.observers.hasOwnProperty(event)) {
-            for (const observer of this.observers[event])
-                observer.apply(this, args);
-        }
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: ObservableProperty                                             +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Обрабатываемое значение
- * @class ObservableProperty
- * @template T
- * @augments Observable
- */
-class ObservableProperty extends Observable {
-    /**
-     * Конструктор
-     * @param {T|null} defaultValue
-     */
-    constructor(defaultValue = null) {
-        super();
-        /**
-         * Флаг защиты от перезаписи
-         * @ignore
-         * @protected
-         * @type {boolean}
-         */
-        this.isOverwriteProtected = false;
-        /**
-         * @protected
-         * @type {T}
-         */
-        this.value = defaultValue || null;
-    }
-    /**
-     * Простое автоматизированное свойство
-     * @param context
-     * @param value
-     * @param prop
-     */
-    static simplePropertyAccess(context, value, prop) {
-        if (!isSet(value))
-            return prop.get(null);
-        prop.set(value);
-        return context;
-    }
-    /**
-     * Возвращает значение или guard если значение null.
-     *
-     * Данный метод никогда не возвращает значение null. В случае, если значение
-     * прослушиваемого параметра null или undefined, возвращает `guard` значение.
-     *
-     * @param {T} [guard]
-     * @return {T}
-     *
-     *
-     *     // Создаем прослушиваемый параметр
-     *     let prop = new ObservableProperty<string>();
-     *
-     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
-     *     console.log( prop.get( "test" ) ); // test
-     *
-     *
-     */
-    get(guard) {
-        if (this.isNull() && guard !== null)
-            return guard;
-        else if (this.isNull())
-            return null;
-        return this.value;
-    }
-    /**
-     * Устанавливает флаг защиты от перезаписи.
-     *
-     * @param {boolean} flag
-     * @return {this}
-     *
-     *
-     *     // Создаем прослушиваемый параметр
-     *     let prop = new ObservableProperty<string>();
-     *     prop.set( "Tom" );
-     *
-     *     // Запрещаем перезапись
-     *     prop.overwrite(false);
-     *
-     *     prop.set( "John" );
-     *
-     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
-     *     console.log( prop.get() ); // Tom
-     *
-     *
-     */
-    overwrite(flag) {
-        this.isOverwriteProtected = flag;
-        return this;
-    }
-    /**
-     * Устанавливает значение и вызывает оповещение `change`, прослушиваемое
-     * методом {@link ObservableProperty.change}.
-     *
-     * @param {T} value
-     * @return {this}
-     *
-     *
-     *     // Создаем прослушиваемый параметр
-     *     let prop = new ObservableProperty<string>();
-     *     prop.set( "Tom" );
-     *
-     *     // Отображаем в консоль "защищенное" значение (с флагом guard)
-     *     console.log( prop.get() ); // Tom
-     *
-     *
-     */
-    set(value) {
-        if (this.isOverwriteProtected)
-            return this;
-        const old = this.value;
-        /**
-         * @type {T}
-         * @protected
-         */
-        this.value = value;
-        this.notificate("change", [old, value]);
-        return this;
-    }
-    /**
-     * Возвращает true, если объект null или undefined.
-     * @return {boolean}
-     */
-    isNull() {
-        return isNone(this.value);
-    }
-    /**
-     * Добавляет наблюдатель за изменением значения
-     * @param {{function(value:T, oldValue:T?)}} observer - наблюдатель
-     *
-     *
-     *
-     *     // Создание свойства
-     *     let observableString = new ObservableProperty<string>();
-     *
-     *     observableString.change( value => {
-     *          console.log("Set to: " + value);
-     *     });
-     *
-     *     observableString.set("123");
-     *     observableString.set("abc");
-     *
-     *     // Вывод:
-     *     // Set to: 123
-     *     // Set to: abc
-     *
-     *
-     *
-     */
-    change(observer) {
-        this.addObserver("change", (old, nw) => {
-            observer(nw, old);
-        });
-        return this;
-    }
-    /**
-     * Преобразует объект в строку
-     * @return {string}
-     */
-    toString() {
-        return this.get() + "";
-    }
-}
+unwrapExports(Utils_1);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -688,12 +1399,15 @@ class ObservableProperty extends Observable {
  + Файл: ObservableDictionary                                           +
  + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+
+
 /**
  * Свойство словаря
  * @class ObservableDictionary
  * @template T
  */
-class ObservableDictionary extends ObservableProperty {
+class ObservableDictionary extends ObservableProperty_1.default {
     /**
      * Конструктор
      * @param defaultValue
@@ -736,7 +1450,7 @@ class ObservableDictionary extends ObservableProperty {
      */
     item(key) {
         const val = (this.value || {})[key];
-        return isNone(val) ? null : val;
+        return Guard.isNone(val) ? null : val;
     }
     /**
      * Возвращает элемент по индексу
@@ -798,7 +1512,7 @@ class ObservableDictionary extends ObservableProperty {
      */
     count() {
         let count = 0;
-        Utils.forEach(this.value, () => count++);
+        Utils_1.default.forEach(this.value, () => count++);
         return count;
     }
     /**
@@ -825,7 +1539,7 @@ class ObservableDictionary extends ObservableProperty {
      *
      */
     forEach(iterator) {
-        Utils.forEach(this.value, iterator);
+        Utils_1.default.forEach(this.value, iterator);
         return this;
     }
     /**
@@ -844,18 +1558,20 @@ class ObservableDictionary extends ObservableProperty {
      */
     keyOf(value) {
         let searched = null;
-        Utils.forEach(this.value, (index, value1) => {
+        Utils_1.default.forEach(this.value, (index, value1) => {
             if (value1 === value) {
                 searched = index;
-                return Utils.BREAK_FLAG;
+                return Utils_1.default.BREAK_FLAG;
             }
         });
         return searched;
     }
 }
+});
+
+var ObservableDictionary = unwrapExports(ObservableDictionary_1);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -871,131 +1587,611 @@ class ObservableDictionary extends ObservableProperty {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: AppStylesheet.ts                                                     +
- + Файл изменен: 27.02.2019 01:47:53                                          +
- +                                                                            +
+ + Файл: Time.ts                                                              +
+ + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/*
- *
- *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *   ,--. o                   |    o
- *   |   |.,---.,---.,---.    |    .,---.,---.
- *   |   |||---'|   ||   |    |    ||   ||   |
- *   `--' ``---'`---|`---'    `---'``   '`---|
- *              `---'                    `---'
- *
- * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
- * Mail: <diegoling33@gmail.com>
- *
- * Это программное обеспечение имеет лицензию, как это сказано в файле
- * COPYING, который Вы должны были получить в рамках распространения ПО.
- *
- * Использование, изменение, копирование, распространение, обмен/продажа
- * могут выполняться исключительно в согласии с условиями файла COPYING.
- *
- * Файл: AppStylesheet.ts
- * Файл создан: 19.11.2018 20:56:39
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *
- */
 /**
- * Типы стиля
+ * Модуль elyFlat для работы со временем
+ * @class Time
  */
-var StylesheetItemType;
-(function (StylesheetItemType) {
-    StylesheetItemType[StylesheetItemType["class"] = 0] = "class";
-    StylesheetItemType[StylesheetItemType["tag"] = 1] = "tag";
-    StylesheetItemType[StylesheetItemType["id"] = 2] = "id";
-})(StylesheetItemType || (StylesheetItemType = {}));
-/**
- * Таблица стилей
- *
- */
-class AppStylesheet {
+class Time {
     /**
-     * Конструктор
-     * @param sheet
+     * Конструткор
+     * @param {{date?: Date}} options - опции
+     */
+    constructor(options = { date: new Date() }) {
+        this.date = options.date;
+    }
+    /**
+     * Создает объект времени по дате
+     * @param {number} [day] - день
+     * @param {number} [month] - месяц
+     * @param {number} [year] - год
+     * @param {number} [hour] - час
+     * @param {number} [minute] - минута
+     * @param {number} [second] - секунда
+     *
+     * @return {Time}
+     */
+    static byDate(day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0) {
+        return new Time({ date: new Date(year, month - 1, day, hour, minute, second) });
+    }
+    /**
+     * Возвращает объект текущего времени
+     * @return {Time}
+     */
+    static now() {
+        return new Time({ date: new Date() });
+    }
+    /**
+     * Возвращает количество часов со склонением
+     *
+     * ```typescript
+     *
+     * Time.hoursString(5); // 5 часов
+     * Time.hoursString(2); // 2 часа
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     * @return {string}
      *
      */
-    constructor(sheet) {
-        this.__view = document.createElement("style");
-        this.stylesheet = sheet || (this.__view.sheet || {});
-        this.classes = new ObservableDictionary();
+    static hoursString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "часов",
+            "час",
+            "часа",
+        ], isUpperFirstChar);
     }
     /**
-     * Возвращает документ
+     * Возвращает количество минут со склонением
+     *
+     * ```typescript
+     *
+     * Time.minutesString(5); // 5 минут
+     * Time.minutesString(2); // 2 минуты
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     * @return {string}
+     *
      */
-    getDocument() {
-        return this.__view;
+    static minutesString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "минут",
+            "минута",
+            "минуты",
+        ], isUpperFirstChar);
     }
-    addItem(name, type, style) {
-        if (this.classes.contains(name) && this.classes.item(name).type === type) {
-            this.classes.item(name).style = Object.assign({}, (this.classes.item(name).style || {}), style);
+    /**
+     * Возвращает количество секунд со склонением
+     *
+     * ```typescript
+     *
+     * Time.secondsString(5); // 5 секунд
+     * Time.secondsString(2); // 2 секунды
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     *
+     * @return {string}
+     *
+     */
+    static secondsString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "секунд",
+            "секунда",
+            "секунды",
+        ], isUpperFirstChar);
+    }
+    /**
+     * Возвращает количество дней со склонением
+     *
+     * ```typescript
+     *
+     * Time.daysString(5); // 5 дней
+     * Time.daysString(2); // 2 дня
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     * @return {string}
+     *
+     */
+    static daysString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "дней",
+            "день",
+            "дня",
+        ], isUpperFirstChar);
+    }
+    /**
+     * Возвращает количество месяцев со склонением
+     *
+     * ```typescript
+     *
+     * Time.monthsString(5); // 5 месяцев
+     * Time.monthsString(2); // 2 месяца
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     *
+     * @return {string}
+     */
+    static monthsString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "месяцев",
+            "месяц",
+            "месяца",
+        ], isUpperFirstChar);
+    }
+    /**
+     * Возвращает количество лет со склонением
+     *
+     * ```typescript
+     *
+     * Time.yearsString(5); // 5 лет
+     * Time.yearsString(2); // 2 года
+     * ```
+     *
+     * @param {number} value - значение
+     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
+     * величины закловной
+     *
+     * @return {string}
+     */
+    static yearsString(value, isUpperFirstChar = false) {
+        return Time.__stringByLastNumber(value, [
+            "лет",
+            "год",
+            "года",
+        ], isUpperFirstChar);
+    }
+    /**
+     * Преобразует временной код в части: дни, часы, минуты, секунды.
+     * Такая технология может быть полезна для создания таймеров.
+     *
+     * Использование:
+     * - Сначала необходимо получить разницу веремни, например, используя вычитание;
+     * - Полученное значение может быть трансформировано через этот метод.
+     *
+     * @param {number }timeCode - врменной код
+     * @return {ITimeDifferences}
+     */
+    static timeCodeToVars(timeCode) {
+        const source = timeCode;
+        timeCode /= 1000;
+        const _days = Math.floor(timeCode / 86400);
+        timeCode -= _days * 86400;
+        const _hours = Math.floor(timeCode / 3600) % 24;
+        timeCode -= _hours * 3600;
+        const _minutes = Math.floor(timeCode / 60) % 60;
+        timeCode -= _minutes * 60;
+        const _seconds = Math.floor(timeCode % 60);
+        return { days: _days, hours: _hours, minutes: _minutes, seconds: _seconds, source };
+    }
+    static __stringByLastNumber(num, list, isUpperFirstChar) {
+        const str = list[Time.__lastNumberChar(num)];
+        return num + " " + (isUpperFirstChar ? (str[0].toUpperCase() + str.substr(1)) : str);
+    }
+    static __lastNumberChar(num) {
+        const d100 = num % 100;
+        if (d100 > 10 && d100 < 15)
+            return 0;
+        const d10 = num % 10;
+        if (d10 === 0 || d10 > 4)
+            return 0;
+        if (d10 === 1)
+            return 1;
+        if (d10 > 1 && d10 < 5)
+            return 2;
+        return 0;
+    }
+    /**
+     * Возвращает timestamp
+     * @return {number}
+     */
+    getTime() {
+        return this.date.getTime();
+    }
+    /**
+     * Возвращает количество дней в месяце для
+     * даты, указанной в Time.
+     *
+     * @return {number}
+     */
+    getDaysInMonth() {
+        return 32 - new Date(this.date.getFullYear(), this.date.getMonth(), 32).getDate();
+    }
+    /**
+     * Возвращает разницу времени
+     * @param {Time} time - время сравнения
+     *
+     * @return {ITimeDifferences}
+     *
+     *
+     * ```ts
+     *
+     * const d1 = Time.byDate(10, 1, 2019);
+     * const d2 = Time.byDate(15, 1, 2019);
+     *
+     * const diff = d1.getDifference(d2);
+     * const daysString = Time.daysString(diff.days); // 5 дней
+     * ```
+     */
+    getDifference(time) {
+        return Time.timeCodeToVars(Math.abs(this.getTime() - time.getTime()));
+    }
+    /**
+     * Возвращает разницу времени
+     *
+     * @return {ITimeDifferences}
+     */
+    getDifferenceNow() {
+        return this.getDifference(Time.now());
+    }
+    /**
+     * Возвращает true, елси текущее время позже, чем время,
+     * указанное в аршументе.
+     * @param {Time} time - время сравнения
+     *
+     * @return {boolean}
+     */
+    isLaterThen(time) {
+        return this.getDifference(time).source > 0;
+    }
+    /**
+     * Возвращает строку времени
+     * @param {boolean} withTime - если установлено true, в строке будет отображено
+     * время в формате HH:MM:SS
+     *
+     * @return {string}
+     */
+    getString(withTime = false) {
+        const dateString = this.formatZero(this.date.getDate()) + "." +
+            this.formatZero(this.date.getMonth() + 1) + "." + this.date.getFullYear();
+        if (!withTime)
+            return dateString;
+        const timeString = this.formatZero(this.date.getHours()) + ":" +
+            this.formatZero(this.date.getMinutes()) + ":" + this.formatZero(this.date.getSeconds());
+        return `${dateString} ${timeString}`;
+    }
+    /**
+     * Возвращает строку времени
+     * @param withSeconds - флаг секунд. Добавляет или убирает SS из формата.
+     *
+     * @return {string}
+     */
+    getTimeString(withSeconds = true) {
+        let ts = this.formatZero(this.date.getHours()) + ":" +
+            this.formatZero(this.date.getMinutes());
+        if (withSeconds)
+            ts += ":" + this.formatZero(this.date.getSeconds());
+        return ts;
+    }
+    /**
+     * Возвращает дату
+     * @return {{date: number, month: number, year: number}}
+     */
+    getDate() {
+        return { date: this.date.getDate(), month: this.date.getMonth() + 1, year: this.date.getFullYear() };
+    }
+    /**
+     * Возвращает время
+     * @return {{hours: number, milliseconds: number, minutes: number, seconds: number}}
+     */
+    getDateTime() {
+        return {
+            hours: this.date.getHours(),
+            milliseconds: this.date.getMilliseconds(),
+            minutes: this.date.getMinutes(),
+            seconds: this.date.getSeconds(),
+        };
+    }
+    /**
+     * Возвращает индекс дня недели
+     * @return {number}
+     */
+    getWeekDayIndex() {
+        switch (this.date.getDay()) {
+            case 0:
+                return 6;
+            case 1:
+                return 0;
+            case 2:
+                return 1;
+            case 3:
+                return 2;
+            case 4:
+                return 3;
+            case 5:
+                return 4;
+            case 6:
+                return 5;
+            default:
+                return 0;
         }
-        else {
-            this.classes.add(name, { name, type, style });
+    }
+    /**
+     * Возвращает название дня недели
+     * @param {boolean} isShort
+     * @return {string}
+     */
+    getWeekDayName(isShort = false) {
+        return isShort ? Time.weekDaysShortList[this.getWeekDayIndex()] :
+            Time.weekDaysList[this.getWeekDayIndex()];
+    }
+    /**
+     * Возвращает строку времени
+     * @return {string}
+     */
+    toString() {
+        return this.getString(true);
+    }
+    formatZero(str) {
+        if (str % 10 === str) {
+            return "0" + str;
         }
-        return this.rebuild();
-    }
-    /**
-     * Добавляет класс стилей
-     * @param className
-     * @param style
-     */
-    addClass(className, style) {
-        return this.addItem(className, StylesheetItemType.class, style);
-    }
-    /**
-     * Добавляет ID стилей
-     * @param id
-     * @param style
-     */
-    addID(id, style) {
-        return this.addItem(id, StylesheetItemType.id, style);
-    }
-    /**
-     * Добавляет стили
-     * @param name
-     * @param style
-     */
-    add(name, style) {
-        return this.addItem(name, StylesheetItemType.tag, style);
-    }
-    /**
-     * Перестроение таблицы стилей
-     */
-    rebuild() {
-        this.getDocument().innerHTML = "";
-        this.classes.forEach((key, value) => {
-            const tempNode = document.createElement("div");
-            for (const name in value.style)
-                if (value.style.hasOwnProperty(name))
-                    tempNode.style[name] = value.style[name];
-            let name = value.name;
-            switch (value.type) {
-                case StylesheetItemType.class:
-                    name = `.${name}`;
-                    break;
-                case StylesheetItemType.tag:
-                    name = `${name}`;
-                    break;
-                case StylesheetItemType.id:
-                    name = `#${name}`;
-                    break;
-            }
-            this.getDocument().appendChild(document.createTextNode(`${name}{${tempNode.getAttribute("style").replace(/;/g, " !important;")}}`));
-        });
-        return this;
+        return String(str);
     }
 }
 /**
- * Глобавльные стили
+ * Список дней ндели
+ *
+ * - "Понедельник"
+ * - "Вторник"
+ * - "Среда"
+ * - "Четверг"
+ * - "Пятница"
+ * - "Суббота"
+ * - "Воскресение"
+ *
+ * @type {string[]}
  */
-AppStylesheet.global = new AppStylesheet();
+Time.weekDaysList = [
+    "Понедельник", "Вторник", "Среда",
+    "Четверг", "Пятница", "Суббота", "Воскресение",
+];
+/**
+ * Список коротких названий дней недели
+ *
+ * - "Пн"
+ * - "Вт"
+ * - "Ср"
+ * - "Чт"
+ * - "Пт"
+ * - "Сб"
+ * - "Вс"
+ *
+ * @type {string[]}
+ */
+Time.weekDaysShortList = [
+    "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс",
+];
+/**
+ * Список названий мясяцев
+ * @type {string[]}
+ */
+Time.monthsList = [
+    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
+];
+/**
+ * Список названий коротких названий мясяцев
+ * @type {string[]}
+ */
+Time.monthsShortList = [
+    "Янв", "Фев", "Мрт", "Апр", "Май", "Июн",
+    "Июл", "Авг", "Сен", "Окт", "Ноб", "Дек",
+];
+/**
+ * @typedef {Object} ITimeDifferences
+ * @property {number} days
+ * @property {number} hours
+ * @property {number} minutes
+ * @property {number} seconds
+ * @property {number} source
+ */
+});
+
+unwrapExports(Time_1);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: Timer.ts                                                             *
+ * Файл изменен: 27.02.2019 05:10:21                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ * Таймер
+ *
+ * ```ts
+ *
+ * const timer = new Timer({duration: 10 * 1000}); // Таймер на 10 сек
+ *
+ * // Добавляем наблюдатель начала работы таймера
+ * timer.addStartObserver( () => {
+ *    console.log( "Go!" );
+ * });
+ *
+ * // Добавляем наблюдатель окончания работы таймера
+ * timer.addEndObserver( () => {
+ *    console.log( "Time is up!" );
+ * });
+ *
+ * // Запускаем таймер
+ * timer.start();
+ * ```
+ *
+ * @class {Timer}
+ * @augments {Observable}
+ */
+class Timer extends Observable_1.default {
+    /**
+     * Конструктор
+     * @param {{ duration: number, loop: boolean | undefined }} props - свойства
+     */
+    constructor(props) {
+        super();
+        /**
+         * Циклический таймер
+         * @type {boolean}
+         * @ignore
+         * @protected
+         */
+        this.__loop = false;
+        /**
+         * @protected
+         */
+        this.__duration = props.duration;
+        /**
+         * @protected
+         */
+        this.__loop = props.loop || false;
+    }
+    /**
+     * Добавляет наблюдатель: окончание таймера
+     *
+     * Если таймер циклический, данный метод будет вызван каждый цикл
+     *
+     * Имя обсервера: addEndObserver
+     *
+     * @param {function} o - наблюдатель
+     */
+    addEndObserver(o) {
+        this.addObserver("endTimer", o);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: запускт таймера
+     *
+     * Имя обсервера: startTimer
+     *
+     * @param {function} o - наблюдатель
+     */
+    addStartObserver(o) {
+        this.addObserver("startTimer", o);
+        return this;
+    }
+    /**
+     * Запускает таймер
+     */
+    start() {
+        if (this.__thread !== null)
+            return;
+        this.notify("startTimer");
+        if (this.__loop)
+            this.__thread = setInterval(() => {
+                this.stop(true);
+            }, this.__duration);
+        else {
+            this.__thread = setTimeout(() => {
+                this.stop(true);
+            }, this.__duration);
+        }
+    }
+    /**
+     * Перезапускает таймер
+     */
+    restart() {
+        this.stop(false);
+        this.start();
+    }
+    /**
+     * Останавливает таймер
+     * @param {boolean} [notificate = true] - если установлено значение true,
+     * после выполнения метода, будет вызвано событие `endTimer`.
+     * {@link Timer.addEndObserver}
+     */
+    stop(notificate = true) {
+        if (this.__loop)
+            clearInterval(this.__thread);
+        else
+            clearTimeout(this.__thread);
+        if (notificate)
+            this.notify("endTimer");
+        this.__thread = null;
+    }
+}
+});
+
+unwrapExports(Timer_1);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: EFMath.ts                                                            *
+ * Файл изменен: 06.01.2019 05:18:48                                          *
+ *                                                                            *
+ ******************************************************************************/
+/**
+ * Библиотека математики
+ */
+class EFMath {
+    /**
+     * Преобразовывает значение переменной X из одного диапазона в другой.
+     *
+     * @param x
+     * @param inMin
+     * @param inMax
+     * @param outMin
+     * @param outMax
+     */
+    static map(x, inMin, inMax, outMin, outMax) {
+        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+}
+});
+
+unwrapExports(EFMath_1);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -1152,67 +2348,36 @@ ColorUtils.whiteNumber = 16777215;
  * Код черного цвета
  */
 ColorUtils.blackNumber = 0;
+});
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyMath.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Библиотека математики
- */
-class elyMath {
-    /**
-     * Преобразовывает значение переменной X из одного диапазона в другой.
-     *
-     * @param x
-     * @param inMin
-     * @param inMax
-     * @param outMin
-     * @param outMax
-     */
-    static map(x, inMin, inMax, outMin, outMax) {
-        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-}
+unwrapExports(ColorUtils_1);
+var ColorUtils_2 = ColorUtils_1.ColorUtils;
 
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: Color.ts                                                       +
- + Файл изменен: 31.01.2019 02:40:23                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: Color.ts                                                             *
+ * Файл изменен: 27.02.2019 01:00:30                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+
 /**
  * Цвет
  * @class Color
@@ -1220,7 +2385,7 @@ class elyMath {
 class Color {
     /**
      * Конструктор
-     * @param {{ __hex?: string, rgb?: ColorRGB, hsv?: ColorHSV }} props - параметры
+     * @param {{ __hex?: string, rgb?: IColorRGB, hsv?: IColorHSV }} props - параметры
      */
     constructor(props = {}) {
         /**
@@ -1232,9 +2397,9 @@ class Color {
         if (props.hex)
             this.__hex = String(props.hex).startsWith("#") ? props.hex.substr(1) : props.hex;
         else if (props.rgb)
-            this.__hex = ColorUtils.rgb2hex(props.rgb);
+            this.__hex = ColorUtils_1.ColorUtils.rgb2hex(props.rgb);
         else if (props.hsv)
-            this.__hex = ColorUtils.hsv2hex(props.hsv);
+            this.__hex = ColorUtils_1.ColorUtils.hsv2hex(props.hsv);
         else
             this.__hex = Color.black().getHexString().substr(1);
     }
@@ -1293,11 +2458,11 @@ class Color {
      * @return {boolean}
      */
     isDarker() {
-        return this.getByte() < (ColorUtils.whiteNumber / 1.8);
+        return this.getByte() < (ColorUtils_1.ColorUtils.whiteNumber / 1.8);
     }
     /**
      * Возвращает байты цветов
-     * @return {ColorRGB}
+     * @return {IColorRGB}
      */
     getRGBBytes() {
         return {
@@ -1309,7 +2474,7 @@ class Color {
     /**
      * Устанавливает RGB цвета
      *
-     * @param {{ColorRGB}} props
+     * @param {{IColorRGB}} props
      */
     setRGBBytes(props) {
         if (props.rgb.red > 255)
@@ -1337,10 +2502,10 @@ class Color {
         const rgb = this.getRGBBytes();
         percentage = 1 - percentage;
         const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 255));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 255));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 255));
-        return new Color({ hex: "#" + ColorUtils.rgb2hex(rgb) });
+        rgb.red = Math.round(EFMath_1.default.map(val, 0, 255, rgb.red, 255));
+        rgb.green = Math.round(EFMath_1.default.map(val, 0, 255, rgb.green, 255));
+        rgb.blue = Math.round(EFMath_1.default.map(val, 0, 255, rgb.blue, 255));
+        return new Color({ hex: "#" + ColorUtils_1.ColorUtils.rgb2hex(rgb) });
     }
     /**
      * Возвращает цвет тмнее
@@ -1351,10 +2516,10 @@ class Color {
         const rgb = this.getRGBBytes();
         percentage = 1 - percentage;
         const val = Math.round(255 - (255 * percentage));
-        rgb.red = Math.round(elyMath.map(val, 0, 255, rgb.red, 0));
-        rgb.green = Math.round(elyMath.map(val, 0, 255, rgb.green, 0));
-        rgb.blue = Math.round(elyMath.map(val, 0, 255, rgb.blue, 0));
-        return new Color({ hex: "#" + ColorUtils.rgb2hex(rgb) });
+        rgb.red = Math.round(EFMath_1.default.map(val, 0, 255, rgb.red, 0));
+        rgb.green = Math.round(EFMath_1.default.map(val, 0, 255, rgb.green, 0));
+        rgb.blue = Math.round(EFMath_1.default.map(val, 0, 255, rgb.blue, 0));
+        return new Color({ hex: "#" + ColorUtils_1.ColorUtils.rgb2hex(rgb) });
     }
     /**
      * Возвращает HEX с символом # в начале
@@ -1371,6 +2536,844 @@ class Color {
         return this.getHexString();
     }
 }
+});
+
+unwrapExports(Color_1);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: SizeValue.ts                                                         *
+ * Файл изменен: 27.03.2019 18:59:07                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ * Неизменяемый размер
+ * @class {SizeConstValue}
+ */
+class SizeConstValue {
+    /**
+     * Конструктор
+     * @param {ISizeValueProps} props
+     * @constructor
+     */
+    constructor(props = {}) {
+        /**
+         * @ignore
+         * @protected
+         */
+        this.__width = 0;
+        /**
+         * @ignore
+         * @protected
+         */
+        this.__height = 0;
+        if (props.d) {
+            this.__height = this.__width = 0;
+        }
+        else {
+            this.__height = props.height || 0;
+            this.__width = props.width || 0;
+        }
+    }
+    /**
+     * Возвращает значение ширины
+     * @return {number}
+     */
+    width() {
+        return this.__width;
+    }
+    /**
+     * Возвращает значение высоты
+     * @return {number}
+     */
+    height() {
+        return this.__height;
+    }
+    /**
+     * Создает значения
+     * @return {SizeValue}
+     */
+    getValue() {
+        return new SizeValue({ width: this.width(), height: this.height() });
+    }
+}
+/**
+ * Размер
+ * @class {SizeValue}
+ */
+class SizeValue extends SizeConstValue {
+    /**
+     * Конструктор
+     * @param {ISizeValueProps} props
+     * @constructor
+     */
+    constructor(props = {}) {
+        super(props);
+        this.__width = 0;
+        this.__height = 0;
+    }
+    /**
+     * Возвращает сумму размеров
+     * @param {...SizeConstValue} s
+     * @return {SizeConstValue}
+     */
+    static getSum(...s) {
+        const size = new SizeValue();
+        s.forEach(sz => size.add({ s: sz }));
+        return size.getConstValue();
+    }
+    /**
+     * Устанавливает размер по диагонали
+     * @param {number} d - значение диагонали
+     */
+    setDiagonal(d) {
+        this.width(d);
+        this.height(d);
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает значение ширины
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    width(value) {
+        if (value === undefined)
+            return this.__width;
+        this.__width = value;
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает значение высоты
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    height(value) {
+        if (value === undefined)
+            return this.__height;
+        this.__height = value;
+        return this;
+    }
+    /**
+     * Прибавляет значение к размеру
+     * @param {{ width?: number, height?: number, s: SizeConstValue | SizeValue}} props - значения
+     * @return {SizeValue}
+     */
+    add(props) {
+        if (props.s) {
+            this.width(this.height() + props.s.width());
+            this.height(this.height() + props.s.height());
+        }
+        else {
+            this.width(this.width() + (props.width || 0));
+            this.height(this.height() + (props.height || 0));
+        }
+        return this;
+    }
+    /**
+     * Умножает размеры и значения
+     * @param {{ width?: number, height?: number, s: SizeConstValue | SizeValue}} props - значения
+     * @return {SizeValue}
+     */
+    mul(props = {}) {
+        if (props.s) {
+            this.width(this.width() * props.s.width());
+            this.height(this.height() * props.s.height());
+        }
+        else {
+            Guard.variable(props.width, v => this.width(this.width() * v));
+            Guard.variable(props.height, v => this.height(this.height() * v));
+        }
+        return this;
+    }
+    /**
+     * Делит размеры и значения
+     * @param {{ width?: number, height?: number, s: SizeConstValue | SizeValue}} props - значения
+     * @return {SizeValue}
+     */
+    subdivide(props = {}) {
+        if (props.s) {
+            this.width(this.width() / props.s.width());
+            this.height(this.height() / props.s.height());
+        }
+        else {
+            Guard.variable(props.width, v => this.width(this.width() / v));
+            Guard.variable(props.height, v => this.height(this.height() / v));
+        }
+        return this;
+    }
+    /**
+     * Возвращает константный объект разницы
+     * @param {VectorValue|VectorConstValue} s - вектор сравнения
+     * @param {boolean} [abs = false] - абсолютные значения
+     * @return {SizeConstValue}
+     */
+    getDiffs(s, abs = false) {
+        if (abs)
+            return new SizeConstValue({
+                height: Math.abs(this.height() - s.height()),
+                width: Math.abs(this.width() - s.width()),
+            });
+        return new SizeConstValue({ width: this.width() - s.width(), height: this.height() - s.height() });
+    }
+    /**
+     * Возвращает true, если объекты идентичны
+     * @param {SizeConstValue|SizeValue} s - вектор
+     * @return {boolean}
+     */
+    equals(s) {
+        return this.width() === s.width() && this.height() === s.height();
+    }
+    /**
+     * Создает постоянные значения
+     * @return {SizeConstValue}
+     */
+    getConstValue() {
+        return new SizeConstValue({ width: this.width(), height: this.height() });
+    }
+}
+/**
+ * @typedef {Object} ISizeValueProps
+ * @property {number} [width = 0] - ширина
+ * @property {number} [height = 0] - высота
+ * @property {number} [d = 0] - диагональ
+ */
+});
+
+unwrapExports(SizeValue_1);
+var SizeValue_2 = SizeValue_1.SizeConstValue;
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: VectorValue.ts                                                     *
+ * Файл изменен: 27.03.2019 19:04:31                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+/**
+ * Вектор с постоянными значениями
+ * @class VectorConstValue
+ */
+class VectorConstValue {
+    /**
+     * Конструктор
+     * @param {IVectorValueProps} [props = {}]
+     */
+    constructor(props = {}) {
+        /**
+         * @ignore
+         * @protected
+         */
+        this.__x = 0;
+        /**
+         * @ignore
+         * @protected
+         */
+        this.__y = 0;
+        /**
+         * @ignore
+         * @protected
+         */
+        this.__z = 0;
+        this.__x = props.x || 0;
+        this.__y = props.y || 0;
+        this.__z = props.z || 0;
+    }
+    /**
+     * Возвращает значение по оси X
+     * @return {number}
+     */
+    x() {
+        return this.__x;
+    }
+    /**
+     * Возвращает значение по оси Y
+     * @return {number}
+     */
+    y() {
+        return this.__y;
+    }
+    /**
+     * Возвращает значение по оси Z
+     * @return {number}
+     */
+    z() {
+        return this.__z;
+    }
+    /**
+     * Создает векторные значения
+     * @return {VectorValue}
+     */
+    getValue() {
+        return new VectorValue({ x: this.x(), y: this.y(), z: this.z() });
+    }
+}
+/**
+ * Значения вектора
+ * @class VectorValue
+ */
+class VectorValue extends VectorConstValue {
+    /**
+     * Возвращает сумму векторов
+     * @param {...VectorConstValue} v
+     * @return {VectorConstValue}
+     */
+    static getSum(...v) {
+        const vec = new VectorValue();
+        v.forEach(vc => vec.add({ v: vc }));
+        return vec.getConstValue();
+    }
+    /**
+     * Конструктор
+     * @param {IVectorValueProps} [props = {}]
+     */
+    constructor(props = {}) {
+        super(props);
+    }
+    /**
+     * Возвращает и устанавливает значение по оси X
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    x(value) {
+        if (value === undefined)
+            return this.__x;
+        this.__x = value;
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает значение по оси Y
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    y(value) {
+        if (value === undefined)
+            return this.__y;
+        this.__y = value;
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает значение по оси Z
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    z(value) {
+        if (value === undefined)
+            return this.__z;
+        this.__z = value;
+        return this;
+    }
+    /**
+     * Прибавляет значение к вектору
+     * @param {{ x?: number, y?: number, z?: number, v?: VectorValue | VectorConstValue }} props - значения
+     * @return {VectorValue}
+     */
+    add(props = {}) {
+        if (props.v) {
+            this.x(this.x() + props.v.x());
+            this.y(this.y() + props.v.y());
+            this.z(this.z() + props.v.z());
+        }
+        else {
+            this.x(this.x() + (props.x || 0));
+            this.x(this.y() + (props.y || 0));
+            this.x(this.z() + (props.y || 0));
+        }
+        return this;
+    }
+    /**
+     * Умножает векторы и значения
+     * @param {{ x?: number, y?: number, z?: number, v?: VectorValue | VectorConstValue }} props - значения
+     * @return {VectorValue}
+     */
+    mul(props = {}) {
+        if (props.v) {
+            this.x(this.x() * props.v.x());
+            this.y(this.y() * props.v.y());
+            this.z(this.z() * props.v.z());
+        }
+        else {
+            Guard.variable(props.x, v => this.x(this.x() * v));
+            Guard.variable(props.y, v => this.y(this.y() * v));
+            Guard.variable(props.z, v => this.z(this.z() * v));
+        }
+        return this;
+    }
+    /**
+     * Делит векторы и значения
+     * @param {{ x?: number, y?: number, z?: number, v?: VectorValue | VectorConstValue }} props - значения
+     * @return {VectorValue}
+     */
+    subdivide(props = {}) {
+        if (props.v) {
+            this.x(this.x() / props.v.x());
+            this.y(this.y() / props.v.y());
+            this.z(this.z() / props.v.z());
+        }
+        else {
+            Guard.variable(props.x, v => this.x(this.x() / v));
+            Guard.variable(props.y, v => this.y(this.y() / v));
+            Guard.variable(props.z, v => this.z(this.z() / v));
+        }
+        return this;
+    }
+    /**
+     * Возвращает константный объект разницы
+     * @param {VectorValue|VectorConstValue} v - вектор сравнения
+     * @param {boolean} [abs = false] - абсолютные значения
+     * @return {VectorConstValue}
+     */
+    getDiffs(v, abs = false) {
+        if (abs)
+            return new VectorConstValue({
+                x: Math.abs(this.x() - v.x()),
+                y: Math.abs(this.y() - v.y()),
+                z: Math.abs(this.z() - v.z()),
+            });
+        return new VectorConstValue({ x: this.x() - v.x(), y: this.y() - v.y(), z: this.z() - v.z() });
+    }
+    /**
+     * Возвращает true, если объекты идентичны
+     * @param {VectorValue|VectorConstValue} v - вектор
+     * @return {boolean}
+     */
+    equals(v) {
+        return this.x() === v.x() && this.y() === v.y();
+    }
+    /**
+     * Создает постоянные векторные значения
+     * @return {VectorConstValue}
+     */
+    getConstValue() {
+        return new VectorConstValue({ x: this.x(), y: this.y(), z: this.z() });
+    }
+}
+/**
+ * @typedef {Object} IVectorValueProps
+ * @property {number} [x = 0]
+ * @property {number} [y = 0]
+ * @property {number} [z = 0]
+ */
+});
+
+unwrapExports(VectorValue_1);
+var VectorValue_2 = VectorValue_1.VectorConstValue;
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: EFMath.ts                                                            *
+ * Файл изменен: 06.01.2019 05:18:48                                          *
+ *                                                                            *
+ ******************************************************************************/
+/**
+ * Библиотека математики
+ */
+class EFMath {
+    /**
+     * Преобразовывает значение переменной X из одного диапазона в другой.
+     *
+     * @param x
+     * @param inMin
+     * @param inMax
+     * @param outMin
+     * @param outMax
+     */
+    static map(x, inMin, inMax, outMin, outMax) {
+        return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+}
+});
+
+unwrapExports(efMath);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: Cookies.ts                                                           *
+ * Файл изменен: 27.02.2019 01:01:19                                          *
+ *                                                                            *
+ ******************************************************************************/
+/**
+ * Печеньки
+ *
+ * @deprecated Используйте {@link LocalStorage}
+ */
+class Cookies {
+    /**
+     * Возвращает данные cookie
+     * @param name
+     */
+    static get(name) {
+        const matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"));
+        const val = matches ? decodeURIComponent(matches[1]) : null;
+        if (val && (val === "undefined" || val === "null"))
+            return null;
+        return val;
+    }
+    /**
+     * Устанавливает cookie
+     * @param name
+     * @param value
+     * @param options
+     */
+    static set(name, value, options) {
+        options = options || {};
+        let expires = options.expires;
+        if (typeof expires === "number" && expires) {
+            const d = new Date();
+            d.setTime(d.getTime() + expires);
+            expires = options.expires = d;
+        }
+        if (expires && expires.toUTCString) {
+            options.expires = expires.toUTCString();
+        }
+        value = encodeURIComponent(value);
+        let updatedCookie = name + "=" + value;
+        for (const propName in options) {
+            if (!options.hasOwnProperty(propName))
+                continue;
+            updatedCookie += "; " + propName;
+            const propValue = options[propName];
+            if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+            }
+        }
+        document.cookie = updatedCookie;
+    }
+}
+});
+
+unwrapExports(Cookies_1);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: LocalStorage.ts                                                      *
+ * Файл изменен: 27.03.2019 18:56:06                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+
+
+/**
+ * Локальное хранилище
+ * @class LocalStorage
+ */
+class LocalStorage {
+    /**
+     * Создает локальное хранилище
+     * @param {{ name: string }} props
+     */
+    constructor(props) {
+        this.__name = props.name;
+    }
+    /**
+     * Возвращает имя хранилища
+     * @return {string}
+     */
+    getName() {
+        return this.__name;
+    }
+    /**
+     * Устанавливает значение локального хранилища
+     * @param {string} name - имя переменной
+     * @param {*} value - значение
+     * @param {Time|number} [time] - срок хранения
+     */
+    set(name, value, time) {
+        name = `${this.getName()}-${name}`;
+        if (time && time instanceof Time_1.default)
+            time = time.getTime();
+        Cookies_1.default.set(name, JSON.stringify(value), { expires: time || 1000 * 60 * 60 * 24 * 356 });
+        return this;
+    }
+    /**
+     * Возвращает значение хранилища
+     * @param {string} name
+     * @return {*}
+     */
+    get(name) {
+        name = `${this.getName()}-${name}`;
+        return Guard.safeJsonParse(Cookies_1.default.get(name) || "", null);
+    }
+    /**
+     * Удаляет переменную из локального хранилища
+     * @param name
+     */
+    remove(name) {
+        return this.set(name, null, -1);
+    }
+}
+/**
+ * Стандартное локальное хранилище
+ * @type {LocalStorage}
+ */
+LocalStorage.default = new LocalStorage({ name: "ef" });
+});
+
+var LocalStorage = unwrapExports(LocalStorage_1);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: DeviceDetector.ts                                                    *
+ * Файл изменен: 27.02.2019 02:27:21                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+
+/**
+ * Детектор устройств и системы
+ * @class DeviceDetector
+ */
+class DeviceDetector extends Observable_1.default {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Данные
+         * @ignore
+         * @protected
+         */
+        this.__data = {
+            browser: null,
+            os: null,
+        };
+    }
+    /**
+     * Добавляет наблюдатель: распознавание закончено
+     *
+     * Имя обсервера: detected
+     *
+     * @param o - наблюдатель
+     */
+    addDetectedObserver(o) {
+        this.addObserver("detected", o);
+        return this;
+    }
+    /**
+     * Выполняет детектинг
+     */
+    detect() {
+        for (const os of DeviceDetector.__osNames)
+            if (navigator.userAgent.indexOf(os.value) > -1) {
+                this.__data.os = os.name;
+                break;
+            }
+        for (const browser of DeviceDetector.__browsers)
+            if (navigator.userAgent.indexOf(browser.value) > -1) {
+                this.__data.browser = browser.name;
+                break;
+            }
+        this.notificate("detected");
+    }
+    /**
+     * Возвращает имя системы
+     * @return {string}
+     */
+    getOSName() {
+        return this.__data.os || "Undetected";
+    }
+    /**
+     * Возвращает имя браузера
+     * @return {string}
+     */
+    getBrowserName() {
+        return this.__data.browser || "Undefined";
+    }
+    /**
+     * Возвращает true, если приложение запущено отдельным приложением**
+     * @return {boolean}
+     */
+    isStandalone() {
+        // @ts-ignore
+        return window.navigator.standalone || false;
+    }
+    /**
+     * Возвращает true, если система iOS
+     * @return {boolean}
+     */
+    isIOS() {
+        return /iPad|iPhone|iPod/.test(this.__data.os);
+    }
+    /**
+     * Возвращает соотнощение сторон
+     * @return {number}
+     */
+    getRatio() {
+        return window.devicePixelRatio || 1;
+    }
+    /**
+     * Возвращает реальный размер жкрана
+     * @return {SizeConstValue}
+     */
+    getScreenSize() {
+        return new SizeValue_1.SizeConstValue({
+            height: window.screen.height * this.getRatio(),
+            width: window.screen.width * this.getRatio(),
+        });
+    }
+    /**
+     * Возвращает true, если устройство - iPhone X
+     * @return {boolean}
+     */
+    isIPhoneX() {
+        const size = this.getScreenSize();
+        return this.isIOS() && size.width() === 1125 && size.height() === 2436;
+    }
+}
+/**
+ * Стандартный детектор
+ */
+DeviceDetector.default = new DeviceDetector();
+/**
+ * Имена операционных систем
+ * @protected
+ * @ignore
+ */
+DeviceDetector.__osNames = [
+    { name: "Windows Phone", value: "Windows Phone", version: "OS" },
+    { name: "Windows", value: "Win", version: "NT" },
+    { name: "iPhone", value: "iPhone", version: "OS" },
+    { name: "iPad", value: "iPad", version: "OS" },
+    { name: "iPod", value: "iPod", version: "OS" },
+    { name: "Kindle", value: "Silk", version: "Silk" },
+    { name: "Android", value: "Android", version: "Android" },
+    { name: "PlayBook", value: "PlayBook", version: "OS" },
+    { name: "BlackBerry", value: "BlackBerry", version: "/" },
+    { name: "MacOS", value: "Mac", version: "OS X" },
+    { name: "Linux", value: "Linux", version: "rv" },
+    { name: "Palm", value: "Palm", version: "PalmOS" },
+];
+/**
+ * Браузеры
+ * @protected
+ * @ignore
+ */
+DeviceDetector.__browsers = [
+    { name: "Chrome", value: "Chrome", version: "Chrome" },
+    { name: "Firefox", value: "Firefox", version: "Firefox" },
+    { name: "Safari", value: "Safari", version: "Version" },
+    { name: "Internet Explorer", value: "MSIE", version: "MSIE" },
+    { name: "Opera", value: "Opera", version: "Opera" },
+    { name: "BlackBerry", value: "CLDC", version: "CLDC" },
+    { name: "Mozilla", value: "Mozilla", version: "Mozilla" },
+];
+/**
+ * Заголовки
+ * @protected
+ * @ignore
+ */
+DeviceDetector.__headers = [
+    navigator.platform,
+    navigator.userAgent,
+    navigator.appVersion,
+    navigator.vendor,
+];
+});
+
+var DeviceDetector = unwrapExports(DeviceDetector_1);
 
 /*
  *
@@ -1452,22 +3455,10 @@ class XLogger {
         return msg;
     }
     static __log(...obj) {
-        if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-            && window.elyflatobjects.efAppDevelopConsole.shared && XLogger.autoLogger) {
-            window.elyflatobjects.efAppDevelopConsole.shared.print(...obj);
-        }
-        else {
-            console.log(...obj);
-        }
+        console.log(...obj);
     }
     static __error(...obj) {
-        if (window && window.elyflatobjects && window.elyflatobjects.efAppDevelopConsole
-            && window.elyflatobjects.efAppDevelopConsole.shared && XLogger.autoLogger) {
-            window.elyflatobjects.efAppDevelopConsole.shared.error(...obj);
-        }
-        else {
-            console.error(...obj);
-        }
+        console.error(...obj);
     }
     /**
      * Отображает сообщение в консоль
@@ -1707,13 +3698,11 @@ XLogger.styles = {
      */
     bgWhite: "\x1b[47m",
 };
-/**
- * Определение логирования косоль ely.flat/window
- */
-XLogger.autoLogger = false;
+});
+
+unwrapExports(XLogger_1);
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -1729,112 +3718,182 @@ XLogger.autoLogger = false;
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: AppColorManagers                                                 +
- + Файл изменен: 30.01.2019 01:44:27                                          +
- +                                                                            +
+ + Файл: encrypt.ts                                                     +
+ + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Менеджер цветов приложения
- * @class AppColorManager
- */
-class AppColorManager {
+class Encrypt {
     /**
-     * Конструктор
-     * @param props
+     * Кодирует строку ключем или общим ключем Encrypt.sharedKey
+     *
+     * @param str
+     * @param decodeKey
      */
-    constructor(props) {
-        /**
-         * Цвет приложения
-         * @protected
-         * @ignore
-         */
-        this.__appColor = Color.black();
-        /**
-         * Цвет навигации
-         * @protected
-         * @ignore
-         */
-        this.__navigationBarColor = Color.black();
-        this.__app = props.app;
+    static encodeString(str, decodeKey) {
+        decodeKey = decodeKey || Encrypt.sharedKey;
+        let enc = "";
+        for (let i = 0; i < str.length; i++) {
+            const a = str.charCodeAt(i);
+            const b = a ^ decodeKey.charAt(i % decodeKey.length);
+            enc = enc + String.fromCharCode(b);
+        }
+        return Encrypt.b64EncodeUnicode(enc);
     }
     /**
-     * Изменяет цветовую гамму приложения
-     * @param color
+     * Декодирует строку ключем или общим ключем Encrypt.sharedKey
+     *
+     * @param str
+     * @param decodeKey
      */
-    applyApplicationColor(color) {
-        const darker = color.getDarkerColor(0.1);
-        const lighter = color.getLighterColor(0.18);
-        // AppStylesheet.global.addClass("bg-primary", {
-        //     backgroundColor: color.toString(),
-        //     color: color.isDarker() ? "white" : "black",
-        // });
-        // AppStylesheet.global.addClass("brd-primary", {
-        //     borderColor: color.toString(),
-        // });
-        //
-        // AppStylesheet.global.addClass("text-primary", {
-        //     color: color.toString(),
-        // });
-        //
-        // AppStylesheet.global.addClass("bg-info", {
-        //     backgroundColor: lighter.toString(),
-        //     color: lighter.isDarker() ? "white" : "black",
-        // });
-        // AppStylesheet.global.addClass("brd-info", {
-        //     borderColor: lighter.toString(),
-        // });
-        //
-        // AppStylesheet.global.addClass("text-info", {
-        //     color: lighter.toString(),
-        // });
-        AppStylesheet.global.add("::-webkit-scrollbar-track", {
-            borderColor: "#c2c2c2",
-        });
-        AppStylesheet.global.add("::-webkit-scrollbar", {
-            borderColor: "#c2c2c2",
-            width: "5px",
-        });
-        AppStylesheet.global.add("::-webkit-scrollbar-thumb", {
-            backgroundColor: darker.toString(),
-        });
-        this.__appColor = color;
+    static decodeString(str, decodeKey) {
+        decodeKey = decodeKey || Encrypt.sharedKey;
+        const decode = Encrypt.b64DecodeUnicode(str);
+        if (decode === null)
+            return null;
+        str = decode;
+        // str = Encrypt.b64DecodeUnicode(str);
+        let dec = "";
+        for (let i = 0; i < str.length; i++) {
+            const a = str.charCodeAt(i);
+            const b = a ^ decodeKey.charAt(i % decodeKey.length);
+            dec = dec + String.fromCharCode(b);
+        }
+        return dec;
     }
     /**
-     * Изменяет цвет панели нацигации
-     * @param color
+     * Кодирует строку в base64
+     * @param str
      */
-    applyNavigationBarColor(color) {
-        XLogger.default.log(`[AppColorManager]: Смена цвета навигации: ${color.toString()}. ` +
-            `Темынй: ${color.isDarker() ? "YES" : "NO"}`);
-        const isDarkerColor = color.isDarker();
-        const borderColor = isDarkerColor ? color.getLighterColor(0.3) : color.getDarkerColor(0.05);
-        const textColor = isDarkerColor ? Color.white() : new Color({ hex: "#555555" });
-        AppStylesheet.global.addClass("ef-navigation", {
-            backgroundColor: color.toString(),
-            borderBottomColor: borderColor.toString(),
-        });
-        AppStylesheet.global.addClass("ef-navigation li", {
-            color: textColor.toString(),
-        });
-        this.__navigationBarColor = color;
+    static b64EncodeUnicode(str) {
+        // first we use encodeURIComponent to get percent-encoded UTF-8,
+        // then we convert the percent encodings into raw bytes which
+        // can be fed into btoa.
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
+            // @ts-ignore
+            return String.fromCharCode("0x" + p1);
+        }));
     }
     /**
-     * Возвращает текущий цвет приложения
-     * @return {Color}
+     * Декодирует base64 строку или возвращает null при неудаче
+     * @param str
      */
-    getApplicationColor() {
-        return this.__appColor;
-    }
-    /**
-     * Возвращает текущий цвет панели навигации
-     * @return {Color}
-     */
-    getNavigatonBarColor() {
-        return this.__navigationBarColor;
+    static b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        try {
+            return decodeURIComponent(atob(str).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
+        }
+        catch (e) {
+            return null;
+        }
     }
 }
+/**
+ * Ключ шифрования общего назначения.
+ *
+ * Ключ используется как стандартное значение для Encrypt.encodeString
+ */
+Encrypt.sharedKey = "el292ySHa28r5edK5ey2XX2ToEn6cr22e4qyp5t";
+});
+
+unwrapExports(encrypt);
+
+/******************************************************************************
+ *                                                                            *
+ * ,--. o                   |    o                                            *
+ * |   |.,---.,---.,---.    |    .,---.,---.                                  *
+ * |   |||---'|   ||   |    |    ||   ||   |                                  *
+ * `--' ``---'`---|`---'    `---'``   '`---|                                  *
+ *            `---'                    `---'                                  *
+ *                                                                            *
+ * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          *
+ * Mail: <diegoling33@gmail.com>                                              *
+ *                                                                            *
+ * Это программное обеспечение имеет лицензию, как это сказано в файле        *
+ * COPYING, который Вы должны были получить в рамках распространения ПО.      *
+ *                                                                            *
+ * Использование, изменение, копирование, распространение, обмен/продажа      *
+ * могут выполняться исключительно в согласии с условиями файла COPYING.      *
+ *                                                                            *
+ * Проект: ely.core                                                           *
+ *                                                                            *
+ * Файл: index.ts                                                             *
+ * Файл изменен: 27.03.2019 18:32:29                                          *
+ *                                                                            *
+ ******************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Наблюдатели
+ */
+const Observers = {
+    Observable: Observable_1.default,
+    ObservableArray: ObservableArray_1.default,
+    ObservableBoolean: ObservableBoolean_1.default,
+    ObservableDictionary: ObservableDictionary_1.default,
+    ObservableProperty: ObservableProperty_1.default,
+};
+/**
+ * Значения
+ */
+const Values = {
+    SizeValue: SizeValue_1.default,
+    VectorValue: VectorValue_1.default,
+};
+/**
+ * Запросы
+ */
+const Requests = {
+    SendFileRequest: SendFileRequest_1.default,
+    SendJsonRequest: SendJsonRequest_1.default,
+    URLRequest: URLRequest_1.default,
+};
+/**
+ * Пользователь
+ */
+const User = {
+    LocalStorage: LocalStorage_1.default,
+};
+/**
+ * Запросы
+ */
+const Web = {
+    Requests,
+};
+});
+
+unwrapExports(bin);
+var bin_1 = bin.Guard;
+var bin_2 = bin.Time;
+var bin_3 = bin.Timer;
+var bin_4 = bin.Color;
+var bin_5 = bin.ColorUtils;
+var bin_6 = bin.EFMath;
+var bin_7 = bin.DeviceDetector;
+var bin_8 = bin.Utils;
+var bin_9 = bin.XLogger;
+var bin_10 = bin.Encrypt;
+var bin_11 = bin.Observers;
+var bin_12 = bin.Values;
+var bin_13 = bin.User;
+var bin_14 = bin.Web;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -1953,10 +4012,10 @@ function deserializeWithData(rawData) {
                 return obj;
             }
             else {
-                XLogger.default.error(`[Serialization]: Не найден класс ${raw._item}!`);
+                bin_9.default.error(`[Serialization]: Не найден класс ${raw._item}!`);
             }
         }
-        XLogger.default.error(`[Serialization]: Невозможно десериализовать объект! ${JSON.stringify(raw)}`);
+        bin_9.default.error(`[Serialization]: Невозможно десериализовать объект! ${JSON.stringify(raw)}`);
     });
     const obj = body(rawData);
     if (obj)
@@ -2001,12 +4060,12 @@ function deserialize(raw) {
  * @class elyObject
  * @abstract
  */
-class elyObject extends Observable {
+class elyObject extends bin_11.Observable {
     constructor() {
         super();
     }
     describe() {
-        return Object.getOwnPropertyNames(this).filter((value, index) => {
+        return Object.getOwnPropertyNames(this).filter((value, index$$1) => {
             return !value.startsWith("__");
         });
     }
@@ -2071,268 +4130,6 @@ class elyOneActionEval {
  */
 elyOneActionEval.default = new elyOneActionEval();
 
-/*
- *
- *  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- *   ,--. o                   |    o
- *   |   |.,---.,---.,---.    |    .,---.,---.
- *   |   |||---'|   ||   |    |    ||   ||   |
- *   `--' ``---'`---|`---'    `---'``   '`---|
- *              `---'                    `---'
- *
- * Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)
- * Mail: <diegoling33@gmail.com>
- *
- * Это программное обеспечение имеет лицензию, как это сказано в файле
- * COPYING, который Вы должны были получить в рамках распространения ПО.
- *
- * Использование, изменение, копирование, распространение, обмен/продажа
- * могут выполняться исключительно в согласии с условиями файла COPYING.
- *
- * Файл: ObservableBoolean
- * Файл создан: 28.11.2018 01:03:35
- * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- *
- */
-/**
- * Прослушиваемый булевый тип
- * @class ObservableBoolean
- * @augments {ObservableProperty<boolean>}
- */
-class ObservableBoolean extends ObservableProperty {
-    /**
-     * Конструктор
-     * @param {boolean} [defaultValue = false]
-     */
-    constructor(defaultValue = false) {
-        super(defaultValue);
-    }
-    /**
-     * Переключает значение
-     * @return {ObservableBoolean}
-     */
-    toggle() {
-        this.set(!this.value);
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: URLRequest.ts                                                  +
- + Файл изменен: 26.02.2019 03:39:55                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Методы передачи параметров
- * @enum
- */
-var URLRequestMethod;
-(function (URLRequestMethod) {
-    URLRequestMethod["GET"] = "GET";
-    URLRequestMethod["POST"] = "POST";
-})(URLRequestMethod || (URLRequestMethod = {}));
-/**
- * Названия заголовков запроса
- * @enum
- */
-var URLRequestHeaderName;
-(function (URLRequestHeaderName) {
-    URLRequestHeaderName["contentType"] = "Content-type";
-})(URLRequestHeaderName || (URLRequestHeaderName = {}));
-/**
- * URL запрос
- * @class URLRequest
- * @augments {Observable}
- */
-class URLRequest extends Observable {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options) {
-        super();
-        /**
-         * @ignore
-         */
-        this.__async = true;
-        this.__url = options.url;
-        this.__xhr = new XMLHttpRequest();
-        this.__method = options.method || URLRequestMethod.GET;
-        this.__data = options.data || {};
-        variable(options.async, value => this.__async = value, true);
-    }
-    /**
-     * Отправляет GET запрос
-     *
-     * @param {string} url
-     * @param {* | TURLCallback} data
-     * @param {TURLCallback} callback
-     */
-    static sendGET(url, data, callback) {
-        if (typeof data === "function")
-            new URLRequest({ url }).send(data);
-        else
-            new URLRequest({ url, data }).send(callback);
-    }
-    /**
-     * Возвращает URL запроса
-     * @return {string}
-     */
-    getURL() {
-        return this.__url;
-    }
-    /**
-     * Возвращает данные запроса
-     * @return {*}
-     */
-    getData() {
-        return this.__data;
-    }
-    /**
-     * Возвращает true, если запрос асинхронный
-     * @return {boolean}
-     */
-    isAsync() {
-        return this.__async;
-    }
-    /**
-     * Возвращает метод
-     * @return URLRequestMethod
-     */
-    getMethod() {
-        return this.__method;
-    }
-    /**
-     * Устанавливает данные
-     * @param name
-     * @param value
-     */
-    setData(name, value) {
-        this.__data[name] = value;
-        return this;
-    }
-    /**
-     * Выполняет запрос
-     * @param {TURLCallback} callback
-     * @return URLRequest
-     */
-    send(callback) {
-        this.__prepareXMLHttpRequestCore(callback);
-        this.getXMLHttpRequest().send();
-    }
-    /**
-     * Устанавливает заголовок
-     *
-     * @param {string|URLRequestHeaderName} name - имя заголовка
-     * @param {string} value - значение заголовка
-     * @return {this}
-     */
-    setHeader(name, value) {
-        this.getXMLHttpRequest().setRequestHeader(name, value);
-        return this;
-    }
-    /**
-     * Возвращает ядро запроса
-     * @return {XMLHttpRequest}
-     */
-    getXMLHttpRequest() {
-        return this.__xhr;
-    }
-    /**
-     * Добавляет наблюдатель: изменение прогресса
-     *
-     * Имя обсервера: progressChanged
-     *
-     * @param o - наблюдатель
-     */
-    addProgressChangedObserver(o) {
-        this.addObserver("progressChanged", o);
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: завершения выполнения запроса
-     *
-     * Имя обсервера: ready
-     *
-     * @param o - наблюдатель
-     */
-    addReadyObserver(o) {
-        this.addObserver("ready", o);
-        return this;
-    }
-    /**
-     * Возвращает строку параметров
-     * @private
-     */
-    __getParametersString() {
-        return Object
-            .keys(this.getData())
-            .map((key) => {
-            return key + "=" + encodeURIComponent(this.getData()[key]);
-        })
-            .join("&");
-    }
-    __prepareXMLHttpRequestCore(callback) {
-        this.getXMLHttpRequest().open(this.getMethod(), this.getURL() + "?" +
-            this.__getParametersString(), this.isAsync());
-        this.getXMLHttpRequest().onprogress = ev => {
-            this.notificate("progressChanged", [ev.loaded, ev.total]);
-        };
-        this.getXMLHttpRequest().onreadystatechange = () => {
-            if (this.getXMLHttpRequest().readyState === 4) {
-                if (this.getXMLHttpRequest().status === 200) {
-                    if (callback)
-                        callback(this.getXMLHttpRequest().responseText, true);
-                    this.notificate("ready", [this.getXMLHttpRequest().responseText, true]);
-                }
-                else {
-                    if (callback)
-                        callback(null, false);
-                    this.notificate("ready", [null, false]);
-                }
-            }
-        };
-    }
-}
-/**
- * @typedef {Object} URLRequestOptions
- * @property {string} url
- * @property {URLRequestMethod} [method]
- * @property {boolean} [async]
- * @property {*} data
- */
-/**
- * Прогресс изменен
- * @callback TURLProgressChangedCallback
- * @param {number} loadedBytes - отпарвлено
- * @param {number} totalBytes - необходимо отправить
- */
-/**
- * Ответ запроса
- * @callback TURLCallback
- * @param {*} response - ответ
- * @param {boolean} status - статус ответа
- */
-
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
@@ -2370,6 +4167,7 @@ class ViewCounter {
 ViewCounter.__count = 0;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -2385,8 +4183,11 @@ ViewCounter.__count = 0;
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: View.ts                                                        +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: View.ts                                                              +
+ + Файл изменен: 29.03.2019 23:18:14                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Объект отображения
@@ -2432,7 +4233,7 @@ class View extends elyObject {
             if (this.__actionString !== "")
                 elyOneActionEval.default.go(this.__actionString);
         });
-        this.hiddenProperty = new ObservableBoolean(false);
+        this.hiddenProperty = new bin_11.ObservableBoolean(false);
         this.hiddenProperty.change(value => {
             if (this.getStyle().display && this.getStyle().display !== "none") {
                 this.getDocument().hidden = value;
@@ -2446,8 +4247,8 @@ class View extends elyObject {
             this.opacity(options.opacity);
         if (options.disabled)
             this.disabled(options.disabled);
-        variableAndSet(options.styleClickable, this.styleClickable, this);
-        variableAndSet(options.styleNoSelect, this.styleNoSelect, this);
+        bin_1.variableAndSet(options.styleClickable, this.styleClickable, this);
+        bin_1.variableAndSet(options.styleNoSelect, this.styleNoSelect, this);
         const wait = setInterval(() => {
             if (this.getRect().width) {
                 clearInterval(wait);
@@ -2490,7 +4291,7 @@ class View extends elyObject {
      * @return {View|null}
      */
     static fromString(str) {
-        return View.fromObject(safeJsonParse(str));
+        return View.fromObject(bin_1.safeJsonParse(str));
     }
     /**
      * Загружает View объект через URL
@@ -2499,9 +4300,9 @@ class View extends elyObject {
      * @return {DeserializeData | null}
      */
     static loadView(url, callback) {
-        new URLRequest({ url }).send((response, result) => {
+        new bin_14.Requests.URLRequest({ url }).send((response, result) => {
             if (result && response) {
-                const data = deserializeWithData(safeJsonParse(response));
+                const data = deserializeWithData(bin_1.safeJsonParse(response));
                 if (data)
                     callback(data.object, data.data);
                 else
@@ -2643,26 +4444,28 @@ class View extends elyObject {
      * Возвращает и устанавливает скрытие элемента
      */
     hidden(value) {
-        if (isSet(value))
+        if (bin_1.isSet(value))
             this.notificate("hidden", [value]);
-        return ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
+        return bin_11.ObservableProperty.simplePropertyAccess(this, value, this.hiddenProperty);
     }
     /**
      * Устанавливает css значение
      * @param style
      */
     css(style) {
-        Utils.forEach(style, (k, v) => {
-            const pattern = /([+-]=)?(.+)(px|%|rem)/;
-            const res = pattern.exec(v.toString());
-            if (res && res[1]) {
-                if (res[1] === "+=") {
-                    v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")[1])
-                        + parseFloat(res[2]) + res[3];
-                }
-                else if (res[1] === "-=") {
-                    v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")[1])
-                        - parseFloat(res[2]) + res[3];
+        bin_8.forEach(style, (k, v) => {
+            if (bin_1.isSet(v) && v !== null) {
+                const pattern = /([+-]=)?(.+)(px|%|rem)/;
+                const res = pattern.exec(v.toString());
+                if (res && res[1]) {
+                    if (res[1] === "+=") {
+                        v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")[1])
+                            + parseFloat(res[2]) + res[3];
+                    }
+                    else if (res[1] === "-=") {
+                        v = parseFloat(/(.+)(px|%)/.exec(this.getDocument().style[k] || "0")[1])
+                            - parseFloat(res[2]) + res[3];
+                    }
                 }
             }
             this.getDocument().style[k] = v;
@@ -2953,6 +4756,7 @@ class View extends elyObject {
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -2968,134 +4772,42 @@ class View extends elyObject {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: Control.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: elyEnum.ts                                                           +
+ + Файл изменен: 06.01.2019 04:55:09                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Основная единица графического элемента
- * @class Control
- * @augments View
+ * Перечисление
+ * @class elyEnum
+ * @template T
+ * @abstract
  */
-class Control extends View {
+class elyEnum {
     /**
      * Конструктор
-     * @param options
+     * @param {{value: T}} props
      */
-    constructor(options = {}) {
-        super(options);
-        this.__subviews = [];
-        if (options.subviews)
-            this.addSubView(...options.subviews);
+    constructor(props) {
+        this.value = props.value;
     }
     /**
-     * Создает Control или объект elyControlObjectProtocol
-     * @param obj
+     * Преобразование в строку
+     * @return {string}
      */
-    static fromObject(obj) {
-        if (obj.line)
-            return Control.line();
-        const item = obj.item;
-        if (item && window.elyflatobjects.hasOwnProperty(item)) {
-            const opts = Utils.filter(obj, (k) => {
-                return ["item"].indexOf(k) === -1;
-            });
-            const inst = new window.elyflatobjects[item](opts);
-            if (inst instanceof View || typeof inst.getView === "function")
-                return inst;
-        }
-        return Control.empty();
+    toString() {
+        return String(this.value);
     }
     /**
-     * Создает Control или объект elyControlObjectProtocol из JSON строки
-     * @param json
+     * Возвращает true, если объекты одинаковые
+     * @param {elyEnum} obj
+     * @return {boolean}
      */
-    static fromJSON(json) {
-        return Control.fromObject(JSON.parse(json));
-    }
-    /**
-     * Выполняет попытку мутировать obj в объект View.
-     * Иначе возвращает пустой элемент.
-     *
-     *
-     *     let obj = "Тест";
-     *     let view = Control.tryMutateToView(obj);
-     *
-     *     typeOf view; // elyTextView
-     *     view.text(); // "Тест"
-     *
-     *
-     *
-     * @param obj
-     */
-    static tryMutateToView(obj) {
-        try {
-            if (obj instanceof View)
-                return obj;
-            return String(obj).textView();
-        }
-        catch (e) {
-            return Control.empty();
-        }
-    }
-    /**
-     * Возвращает дочерние элементы
-     */
-    getSubViews() {
-        return this.__subviews;
-    }
-    /**
-     * Добавляет элемент в элемент
-     * @param views
-     */
-    addSubView(...views) {
-        views.forEach((view) => {
-            if (view instanceof View) {
-                this.__subviews.push(view);
-                view.superview = this;
-                this.notificate("addview", [view]);
-                this.getDocument().appendChild(view.getDocument());
-            }
-            else {
-                XLogger.default.error("В объект Control может быть добавлен только элемент " +
-                    "реализующий протокол elyContentProtocol!");
-            }
-        });
-        return this;
-    }
-    /**
-     * Удаляет дочений элемент
-     * @param view
-     */
-    removeSubView(view) {
-        const index = this.__subviews.indexOf(view);
-        if (index > -1) {
-            const sub = this.__subviews[index];
-            this.getDocument().removeChild(sub.getDocument());
-            this.__subviews.splice(this.__subviews.indexOf(view), 1);
-        }
-        return this;
-    }
-    /**
-     * Полностью очищает графический элемент
-     */
-    clearView() {
-        this.__subviews.splice(0, this.__subviews.length);
-        this.__view.innerHTML = "";
-        return this;
-    }
-    removeViewContent() {
-        this.__subviews.splice(0, this.__subviews.length);
-        return super.removeViewContent();
+    equals(obj) {
+        return this.value === obj.value;
     }
 }
-/**
- * Горизонтальная линяя
- */
-Control.line = () => new Control({ tag: "hr" });
-/**
- * Пустой объект Control
- */
-Control.empty = () => new Control();
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -3116,187 +4828,245 @@ Control.empty = () => new Control();
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: IconView.ts                                                      +
- + Файл изменен: 08.02.2019 00:19:40                                          +
+ + Файл: Size.ts                                                              +
+ + Файл изменен: 08.02.2019 01:19:15                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Элемент отображения иконки
- * @class IconView
- * @augments {View}
+ * Размеры ely.flat.application
+ * @class Size
+ * @augments {elyEnum<string>}
  */
-class IconView extends View {
+class Size extends elyEnum {
     /**
-     * Конструткор
-     * @param {IconViewOptions} options
+     * Конструктор
+     * @ignore
+     * @param {{value: string, custom?: boolean}} props
      */
-    constructor(options) {
-        super(Object.assign({ tag: "span" }, options));
-        /**
-         * Свойство: размер иконки
-         * @ignore
-         * @protected
-         */
-        this.__iconSizeProperty = new ObservableProperty().change((value, oldVal) => {
-            this.getStyle().fontSize = null;
-            if (oldVal && !oldVal.custom)
-                this.removeClass(`--${oldVal.value}`);
-            if (value.custom) {
-                this.getStyle().fontSize = value.value;
-            }
-            else {
-                this.addClass(`--${value.value}`);
-            }
-        });
-        /**
-         * Свойство: толщина иконки
-         * @ignore
-         * @protected
-         */
-        this.__iconWeightProperty = new ObservableProperty().change((value, oldVal) => {
-            this.getStyle().fontWeight = null;
-            if (oldVal && !oldVal.custom)
-                this.removeClass(`--${oldVal.value}`);
-            if (value.custom) {
-                this.getStyle().fontSize = value.value;
-            }
-            else {
-                this.addClass(`--${value.value}`);
-            }
-        });
-        /**
-         * Свойство: стиль иконки
-         * @ignore
-         * @protected
-         */
-        this.__iconStyleProperty = new ObservableProperty().change((value, oldVal) => {
-            if (oldVal)
-                this.removeClass(`--${oldVal.value}`);
-            this.addClass(`--${value.value}`);
-        });
-        /**
-         * Свойство: имя иконки
-         * @ignore
-         * @protected
-         */
-        this.__iconNameProperty = new ObservableProperty().change((value, oldVal) => {
-            if (oldVal)
-                this.removeClass(`fa-${oldVal}`);
-            this.addClass(`fa-${value}`);
-        });
-        this.addClass("ef-icon");
-        this.addClass("fa");
-        variableAndSet(options.iconName, this.iconName, this, "refresh");
-        variableAndSet(options.iconSize, this.iconSize, this);
-        variableAndSet(options.iconStyle, this.iconStyle, this);
-        variableAndSet(options.iconWeight, this.iconWeight, this);
-        variableAndSet(options.spinning, this.spinning, this);
+    constructor(props) {
+        super(props);
+        this.custom = props.custom || false;
     }
     /**
-     * Десериализует объект
-     * @param {string} raw - сериализованный объект
-     * @return {IconView}
+     * Свой размер
+     * @param {string|number} value
+     * @type {Size}
      */
-    static deserialize(raw) {
-        return new IconView(JSON.parse(raw));
+    static custom(value) {
+        if (typeof value === "number")
+            value = value.toString() + "px";
+        return new Size({ value, custom: true });
     }
     /**
-     * Возвращает свойство: имя иконки
-     * @return {ObservableProperty<string>}
+     * Возвращает размер по его названию
+     * @param {string} name
+     * @return {Size}
      */
-    getIconNameProperty() {
-        return this.__iconNameProperty;
+    static byName(name) {
+        return new Size({ value: name });
     }
     /**
-     * Возвращает и устанавливает имя иконки
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
+     * Список
+     * @return {*}
      */
-    iconName(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__iconNameProperty);
+    static rawList() {
+        return {
+            default: Size.default.value,
+            fill: Size.fill.value,
+            large: Size.large.value,
+            normal: Size.normal.value,
+            small: Size.small.value,
+            xlarge: Size.xlarge.value,
+            xsmall: Size.xsmall.value,
+            xxlarge: Size.xxlarge.value,
+        };
     }
     /**
-     * Возвращает свойство: размер иконки
-     * @return {ObservableProperty<Size>}
+     * Список
+     * @return {*}
      */
-    getIconSizeProperty() {
-        return this.__iconSizeProperty;
-    }
-    /**
-     * Возвращает и устанавливает размер иконки
-     * @param {Size} [value] - значение
-     * @returns {Size|this|null}
-     */
-    iconSize(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__iconSizeProperty);
-    }
-    /**
-     * Возвращает свойство: толщина иконки
-     * @return {ObservableProperty<Weight>}
-     */
-    getIconWeightProperty() {
-        return this.__iconWeightProperty;
-    }
-    /**
-     * Возвращает и устанавливает толщина иконки
-     * @param {Weight} [value] - значение
-     * @returns {Weight|this|null}
-     */
-    iconWeight(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__iconWeightProperty);
-    }
-    /**
-     * Возвращает свойство: стиль иконки
-     * @return {ObservableProperty<Style>}
-     */
-    getIconStyleProperty() {
-        return this.__iconStyleProperty;
-    }
-    /**
-     * Возвращает и устанавливает стиль иконки
-     * @param {Style} [value] - значение
-     * @returns {Style|this|null}
-     */
-    iconStyle(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__iconStyleProperty);
-    }
-    /**
-     * Возвращает и устанавливает флаг анимации вращения элемента
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    spinning(value) {
-        if (value === undefined)
-            return this.hasClass("fa-spin");
-        if (value)
-            this.addClass("fa-spin");
-        else
-            this.removeClass("fa-spin");
-        return this;
+    static list() {
+        return {
+            default: Size.default,
+            fill: Size.fill,
+            large: Size.large,
+            normal: Size.normal,
+            small: Size.small,
+            xlarge: Size.xlarge,
+            xsmall: Size.xsmall,
+            xxlarge: Size.xxlarge,
+        };
     }
     /**
      * Сериализует объект
+     * @return {string}
      */
     serialize() {
-        const obj = {};
-        if (this.iconSize())
-            obj.iconSize = this.iconSize().serialize();
-        if (this.iconWeight())
-            obj.iconWeight = this.iconWeight().serialize();
-        if (this.iconSize())
-            obj.iconStyle = this.iconStyle().serialize();
-        if (this.spinning())
-            obj.spinning = this.spinning();
-        return Object.assign({}, super.serialize(), obj, { iconName: this.iconName() });
+        return { _item: "Size", custom: this.custom, value: this.value };
     }
 }
 /**
- * @typedef {Object} IconViewOptions
- * @property {string} [iconName]
- * @property {Size|string|number} [iconSize]
- * @property {Weight|string|number} [iconWeight]
- * @property {Style|string|number} [iconStyle]
+ * Стандартный размер
+ * @type {Size}
  */
+Size.default = new Size({ value: "normal" });
+/**
+ * Основной размер, используемый в ely.flat
+ * @type {Size}
+ */
+Size.normal = new Size({ value: "regular" });
+/**
+ * Размер во весь блок
+ * @type {Size}
+ */
+Size.fill = new Size({ value: "fill" });
+/**
+ * Маленький размер
+ * @type {Size}
+ */
+Size.small = new Size({ value: "small" });
+/**
+ * Очень маленький размер
+ * @type {Size}
+ */
+Size.xsmall = new Size({ value: "xsmall" });
+/**
+ * Большой размер
+ * @type {Size}
+ */
+Size.large = new Size({ value: "large" });
+/**
+ * Очень большой размер
+ * @type {Size}
+ */
+Size.xlarge = new Size({ value: "xlarge" });
+/**
+ * Огромный размер
+ * @type {Size}
+ */
+Size.xxlarge = new Size({ value: "xxlarge" });
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: Style.ts                                                             +
+ + Файл изменен: 08.02.2019 01:22:49                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Стили ely.flat.application
+ * @class Style
+ * @augments {elyEnum}
+ */
+class Style extends elyEnum {
+    /**
+     * Конструктор
+     * @ignore
+     * @param props
+     */
+    constructor(props) {
+        super(props);
+    }
+    /**
+     * Список
+     */
+    static rawList() {
+        return {
+            danger: Style.danger.value,
+            default: Style.default.value,
+            info: Style.info.value,
+            primary: Style.primary.value,
+            success: Style.success.value,
+            warning: Style.warning.value,
+        };
+    }
+    /**
+     * Список
+     */
+    static list() {
+        return {
+            danger: Style.danger,
+            default: Style.default,
+            info: Style.info,
+            primary: Style.primary,
+            success: Style.success,
+            warning: Style.warning,
+        };
+    }
+    /**
+     * Свой стиль
+     * @param name
+     */
+    static custom(name) {
+        return new Style({ value: name });
+    }
+    /**
+     * Возвраща стиль по имени
+     * @param name
+     */
+    static byName(name) {
+        return new Style({ value: name });
+    }
+    /**
+     * Сериализует объект
+     * @return {*}
+     */
+    serialize() {
+        return { _item: "Style", value: this.value };
+    }
+}
+/**
+ * Стандартный стиль
+ *
+ * Элементарный сброс стиля
+ */
+Style.default = new Style({ value: "default" });
+/**
+ * Главный стиль
+ *
+ * Основной стиль подходит для важных элементов.
+ */
+Style.primary = new Style({ value: "primary" });
+/**
+ * Информативный стиль
+ *
+ * Основной стиль подходит для отображения информации, которая должна выделяться.
+ */
+Style.info = new Style({ value: "info" });
+/**
+ * Стиль предупреждения
+ *
+ * Стиль, особо концентрирующий внимание пользователя.
+ */
+Style.warning = new Style({ value: "warning" });
+/**
+ * Успешный стиль
+ *
+ * Стиль, говорящий об успешном завершении действия.
+ */
+Style.success = new Style({ value: "success" });
+/**
+ * Опасный стиль
+ *
+ * Стиль, ярко бросающийся в глаза. Подойдет для отметки ошибок.
+ */
+Style.danger = new Style({ value: "danger" });
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -3392,10 +5162,10 @@ class TextView extends View {
         });
         this.addClass("ef-text");
         this.text(options.text || "");
-        variable(options.textSize, value => this.textSize(value));
-        variable(options.textStyle, value => this.textStyle(value));
-        variable(options.textWeight, value => this.textWeight(value));
-        variable(options.textCenter, value => this.textCenter(value));
+        Guard_1(options.textSize, value => this.textSize(value));
+        Guard_1(options.textStyle, value => this.textStyle(value));
+        Guard_1(options.textWeight, value => this.textWeight(value));
+        Guard_1(options.textCenter, value => this.textCenter(value));
     }
     /**
      * Десериализует объект
@@ -3540,101 +5310,358 @@ class TextView extends View {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat.application                                               +
+ + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: AppFileWatcher.ts                                                    +
- + Файл изменен: 23.11.2018 23:19:03                                          +
+ + Файл: Button.ts                                                        +
+ + Файл изменен: 08.02.2019 02:22:02                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Отслеживание изменения файла
+ * Элемент отображения кнопка
+ * @class Button
+ * @augments {Button}
  */
-class AppFileWatcher extends Observable {
+class Button extends View {
+    /**
+     * Конструктор
+     * @param {ButtonOptions} options
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Свойство: текст на кнопке
+         * @ignore
+         */
+        this.textProperty = new ObservableProperty("");
+        /**
+         * Свойство: стиль кнопки
+         * @ignore
+         */
+        this.buttonStyleProperty = new ObservableProperty(Style.primary);
+        /**
+         * Свойство: размер кнопки
+         * @ignore
+         */
+        this.buttonSizeProperty = new ObservableProperty(Size.default);
+        this.addClass("button");
+        this.textProperty.change(value => {
+            this.getDocument().innerHTML = TextView.filterString(value);
+        });
+        this.text(options.text || "");
+        this.buttonSizeProperty.change((value, oldVal) => {
+            this.getStyle().fontSize = null;
+            if (oldVal && !oldVal.custom)
+                this.removeClass(`--${oldVal.value}`);
+            this.addClass(`--${value.value}`);
+        });
+        this.buttonStyleProperty.change((value, oldVal) => {
+            if (oldVal)
+                this.removeClass(`--${oldVal.value}`);
+            this.addClass(`--${value.value}`);
+        });
+        bin_1.variableAndSet(options.buttonSize, this.buttonSize, this);
+        bin_1.variableAndSet(options.buttonStyle, this.buttonStyle, this, Style.primary);
+        bin_1.variableAndSet(options.buttonRounded, this.buttonRounded, this);
+        if (bin_1.isSet(options.click))
+            this.click(() => {
+                options.click();
+            });
+        if (options.fill)
+            this.fill();
+    }
+    static willBeDeserialized(obj) {
+        if (typeof obj.buttonSize === "string")
+            obj.buttonSize = Size.byName(obj.buttonSize);
+        if (typeof obj.buttonStyle === "string")
+            obj.buttonStyle = Style.byName(obj.buttonStyle);
+    }
+    /**
+     * Возвращает и устанавливает размер кнопки
+     * @param {Size} [value] - значение
+     * @returns {Size|this|null}
+     */
+    buttonSize(value) {
+        if (value !== undefined && typeof value === "string")
+            value = Size.byName(value);
+        return ObservableProperty.simplePropertyAccess(this, value, this.buttonSizeProperty);
+    }
+    /**
+     * Устанавливает размер кнопки во весь блок.
+     * Алиас выражения `Button.buttonSize(Size.fill)`.
+     * @return {this}
+     */
+    fill() {
+        return this.buttonSize(Size.fill);
+    }
+    /**
+     * Возвращает и устанавливает стиль кнопки
+     * @param {Style|string} [value] - значение
+     * @returns {Style|this|null}
+     */
+    buttonStyle(value) {
+        if (value !== undefined && typeof value === "string")
+            value = Style.byName(value);
+        return ObservableProperty.simplePropertyAccess(this, value, this.buttonStyleProperty);
+    }
+    /**
+     * Возвращает и устанавливает текст на кнопке
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    text(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.textProperty);
+    }
+    /**
+     * Устанавливает слушатель нажатия или нажимает на кнопку
+     *
+     * @param {Function} [callback = null]
+     * @returns {Button}
+     */
+    click(callback) {
+        if (callback === undefined) {
+            this.getDocument().click();
+        }
+        else {
+            this.addObserver("click", callback);
+        }
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает флаг закругления углов кнопки
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    buttonRounded(value) {
+        if (value === undefined)
+            return this.hasClass("--rounded");
+        if (value)
+            this.addClass("--rounded");
+        else
+            this.removeClass("--rounded");
+        return this;
+    }
+    /**
+     * Сериализует объект
+     * @return {string}
+     */
+    serialize() {
+        return Object.assign({}, super.serialize(), { buttonRounded: this.buttonRounded(), buttonSize: this.buttonSize().serialize(), buttonStyle: this.buttonStyle().serialize(), text: this.text() });
+    }
+}
+/**
+ * @typedef {Object} ButtonOptions
+ * @property {String} [text = ""]
+ * @property {Size} [buttonSize]
+ * @property {Style} [buttonStyle]
+ * @property {boolean} [buttonRounded = false]
+ * @property {boolean} [fill = false]
+ * @property {function()} [click]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: Control.ts                                                           +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Основная единица графического элемента
+ * @class Control
+ * @augments View
+ */
+class Control extends View {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(options);
+        this.__subviews = [];
+        if (options.subviews)
+            this.addSubView(...options.subviews);
+    }
+    /**
+     * Создает Control или объект elyControlObjectProtocol
+     * @param obj
+     */
+    static fromObject(obj) {
+        if (obj.line)
+            return Control.line();
+        const item = obj.item;
+        if (item && window.elyflatobjects.hasOwnProperty(item)) {
+            const opts = bin_8.filter(obj, (k) => {
+                return ["item"].indexOf(k) === -1;
+            });
+            const inst = new window.elyflatobjects[item](opts);
+            if (inst instanceof View || typeof inst.getView === "function")
+                return inst;
+        }
+        return Control.empty();
+    }
+    /**
+     * Создает Control или объект elyControlObjectProtocol из JSON строки
+     * @param json
+     */
+    static fromJSON(json) {
+        return Control.fromObject(JSON.parse(json));
+    }
+    /**
+     * Выполняет попытку мутировать obj в объект View.
+     * Иначе возвращает пустой элемент.
+     *
+     *
+     *     let obj = "Тест";
+     *     let view = Control.tryMutateToView(obj);
+     *
+     *     typeOf view; // elyTextView
+     *     view.text(); // "Тест"
+     *
+     *
+     *
+     * @param obj
+     */
+    static tryMutateToView(obj) {
+        try {
+            if (obj instanceof View)
+                return obj;
+            return String(obj).textView();
+        }
+        catch (e) {
+            return Control.empty();
+        }
+    }
+    /**
+     * Возвращает дочерние элементы
+     */
+    getSubViews() {
+        return this.__subviews;
+    }
+    /**
+     * Добавляет элемент в элемент
+     * @param views
+     */
+    addSubView(...views) {
+        views.forEach((view) => {
+            if (view instanceof View) {
+                this.__subviews.push(view);
+                view.superview = this;
+                this.notificate("addview", [view]);
+                this.getDocument().appendChild(view.getDocument());
+            }
+            else {
+                bin_9.default.error("В объект Control может быть добавлен только элемент " +
+                    "реализующий протокол elyContentProtocol!");
+            }
+        });
+        return this;
+    }
+    /**
+     * Удаляет дочений элемент
+     * @param view
+     */
+    removeSubView(view) {
+        const index$$1 = this.__subviews.indexOf(view);
+        if (index$$1 > -1) {
+            const sub = this.__subviews[index$$1];
+            this.getDocument().removeChild(sub.getDocument());
+            this.__subviews.splice(this.__subviews.indexOf(view), 1);
+        }
+        return this;
+    }
+    /**
+     * Полностью очищает графический элемент
+     */
+    clearView() {
+        this.__subviews.splice(0, this.__subviews.length);
+        this.__view.innerHTML = "";
+        return this;
+    }
+    removeViewContent() {
+        this.__subviews.splice(0, this.__subviews.length);
+        return super.removeViewContent();
+    }
+}
+/**
+ * Горизонтальная линяя
+ */
+Control.line = () => new Control({ tag: "hr" });
+/**
+ * Пустой объект Control
+ */
+Control.empty = () => new Control();
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyRebuildableViewProtocol.ts                                        +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент, который может быть перестроен
+ * @class elyRebuildableViewProtocol
+ * @augments {View}
+ */
+class elyRebuildableViewProtocol extends View {
     /**
      * Конструктор
      * @param options
      */
     constructor(options) {
-        super();
-        /**
-         * Последний размер файла
-         */
-        this.lastFileSize = -1;
-        /**
-         * Стартовое значение на первой итерации
-         */
-        this.startValue = null;
-        /**
-         * Поток
-         */
-        this.thread = null;
-        this.filePath = options.filePath;
-        const view = new Control();
-        view.getStyle().backgroundColor = "rgb(110, 136, 73)";
-        view.getStyle().textAlign = "center";
-        view.getStyle().position = "fixed";
-        view.getStyle().bottom = "0";
-        view.getStyle().left = "0";
-        view.getStyle().right = "0";
-        view.getStyle().zIndex = "1000";
-        view.getStyle().padding = "15px";
-        const iconView = new IconView({ iconName: "refresh" });
-        iconView.spinning(true);
-        iconView.getStyle().marginLeft = "15px";
-        const textView = new TextView({ text: "Develop file watching" });
-        textView.getStyle().display = "inline-block";
-        view.addSubView(textView);
-        view.addSubView(iconView);
-        document.body.append(view.getDocument());
-        this.addListener((size) => {
-            textView.text(`Develop file watching. Size: *${size}* bytes`);
-        });
+        super(options);
+        this.__denyRebuild = false;
     }
     /**
-     * Добавляет слушатель изменения файла
-     * @param observer
+     * Запрещает или отменяет запрет перестроения
+     * @param deny
      */
-    addListener(observer) {
-        this.addObserver("changed", observer);
+    denyRebuild(deny) {
+        this.__denyRebuild = deny;
         return this;
     }
     /**
-     * Добавляет слушатель изменения файла по отношению к первоначальной стадии
-     * @param observer
+     * Выполняет перестроени элемента
      */
-    addUpdateListener(observer) {
-        this.addObserver("updated", observer);
+    rebuild() {
+        if (!this.__denyRebuild)
+            this.__rebuild();
+        this.notificate("rebuilt");
         return this;
     }
     /**
-     * Запускает систему прослушивания
+     * Добавляет наблюдатель: элемент был перестроен
+     *
+     * Имя обсервера: rebuilt
+     *
+     * @param o - наблюдатель
      */
-    start() {
-        this.thread = setInterval(() => {
-            const xhr = new XMLHttpRequest();
-            xhr.open("HEAD", this.filePath, true);
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === xhr.DONE) {
-                    const size = Math.round(parseInt(xhr.getResponseHeader("Content-Length") || "0", 10)
-                        / (1024) * 100) / 100;
-                    if (this.lastFileSize === -1)
-                        this.lastFileSize = size;
-                    if (size !== this.lastFileSize)
-                        this.notificate("changed", [size]);
-                    this.lastFileSize = size;
-                    if (this.startValue === null)
-                        this.startValue = size;
-                    if (this.startValue !== size)
-                        this.notificate("updated", [size]);
-                }
-            };
-            xhr.send();
-        }, 1000);
-        return this;
-    }
-    stop() {
-        if (this.thread)
-            clearInterval(this.thread);
+    addRebuiltObserver(o) {
+        this.addObserver("rebuilt", o);
         return this;
     }
 }
@@ -3658,40 +5685,79 @@ class AppFileWatcher extends Observable {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: elyEnum.ts                                                           +
- + Файл изменен: 06.01.2019 04:55:09                                          +
+ + Файл: ListView.ts                                                          +
+ + Файл изменен: 07.02.2019 23:53:41                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Перечисление
- * @class elyEnum
- * @template T
- * @abstract
+ * Списко элементов
+ * @class ListView
+ * @augments {elyRebuildableViewProtocol}
  */
-class elyEnum {
+class ListView extends elyRebuildableViewProtocol {
     /**
      * Конструктор
-     * @param {{value: T}} props
+     * @param {ListViewOptions} options
      */
-    constructor(props) {
-        this.value = props.value;
+    constructor(options = {}) {
+        super(Object.assign({ tag: "ul" }, options));
+        this.__items = new ObservableArray();
+        this.__items.change(() => this.__rebuild());
+        (options.items || []).forEach(value => this.addView(value));
     }
     /**
-     * Преобразование в строку
-     * @return {string}
+     * Возвращает элементы списка
      */
-    toString() {
-        return String(this.value);
+    getItems() {
+        return this.__items;
     }
     /**
-     * Возвращает true, если объекты одинаковые
-     * @param {elyEnum} obj
-     * @return {boolean}
+     * Добавляет элемент отображения
+     * @param view
      */
-    equals(obj) {
-        return this.value === obj.value;
+    addView(view) {
+        this.__items.push(view);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: элемент будет добавлен.
+     *
+     * Наблюдатель принимает два параметра: view и container.
+     *
+     * Элементы в ListView хранятся в контейнерах. Поэтому
+     * при добавлении слушатель получает два View элемента.
+     * Благодаря этому слушателю, Вы можете кастомизировать контейнер.
+     *
+     * Имя обсервера: itemWillAdd
+     *
+     * @param o - наблюдатель
+     */
+    addItemWillAddObserver(o) {
+        this.addObserver("itemWillAdd", o);
+        return this;
+    }
+    /**
+     * Выполняет перестроение элемента
+     *
+     * Метод для переопределения реализации престроения
+     * @private
+     * @ignore
+     */
+    __rebuild() {
+        this.removeViewContent();
+        this.getItems().forEach(item => {
+            const view = new Control({ tag: "li", class: "--item" });
+            view.addSubView(item);
+            this.notificate("itemWillAdd", [item, view]);
+            this.getDocument().append(view.getDocument());
+        });
+        return this;
     }
 }
+/**
+ * @typedef {Object} ListViewOptions
+ * @property {View[]} [items]
+ */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -3712,35 +5778,51 @@ class elyEnum {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: Style.ts                                                             +
- + Файл изменен: 08.02.2019 01:22:49                                          +
+ + Файл: Weight.ts                                                            +
+ + Файл изменен: 08.02.2019 02:06:22                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Стили ely.flat.application
- * @class Style
- * @augments {elyEnum}
+ * Толщина ely.flat.application
+ * @class Weight
+ * @augments {elyEnum<number>}
  */
-class Style extends elyEnum {
+class Weight extends elyEnum {
     /**
      * Конструктор
      * @ignore
-     * @param props
+     * @param {value: string | number, custom: boolean} props
      */
     constructor(props) {
-        super(props);
+        super({ value: String(props.value) });
+        this.custom = props.custom || false;
+    }
+    /**
+     * Свой размер
+     * @param value
+     * @return {Weight}
+     */
+    static custom(value) {
+        return new Weight({ value, custom: true });
+    }
+    /**
+     * Возвращает размер по названию
+     * @param {String} value
+     * @return {Weight}
+     */
+    static byName(value) {
+        return new Weight({ value });
     }
     /**
      * Список
      */
     static rawList() {
         return {
-            danger: Style.danger.value,
-            default: Style.default.value,
-            info: Style.info.value,
-            primary: Style.primary.value,
-            success: Style.success.value,
-            warning: Style.warning.value,
+            default: Weight.default.value,
+            fat: Weight.fat.value,
+            light: Weight.light.value,
+            normal: Weight.normal.value,
+            thin: Weight.thin.value,
         };
     }
     /**
@@ -3748,72 +5830,46 @@ class Style extends elyEnum {
      */
     static list() {
         return {
-            danger: Style.danger,
-            default: Style.default,
-            info: Style.info,
-            primary: Style.primary,
-            success: Style.success,
-            warning: Style.warning,
+            default: Weight.default,
+            fat: Weight.fat,
+            light: Weight.light,
+            normal: Weight.normal,
+            thin: Weight.thin,
         };
-    }
-    /**
-     * Свой стиль
-     * @param name
-     */
-    static custom(name) {
-        return new Style({ value: name });
-    }
-    /**
-     * Возвраща стиль по имени
-     * @param name
-     */
-    static byName(name) {
-        return new Style({ value: name });
     }
     /**
      * Сериализует объект
      * @return {*}
      */
     serialize() {
-        return { _item: "Style", value: this.value };
+        return { _item: "Weight", value: this.value, custom: this.custom };
     }
 }
 /**
- * Стандартный стиль
- *
- * Элементарный сброс стиля
+ * Стандартная толщина ely.flat.application
+ * @type {Weight}
  */
-Style.default = new Style({ value: "default" });
+Weight.default = new Weight({ value: "regular" });
 /**
- * Главный стиль
- *
- * Основной стиль подходит для важных элементов.
+ * Толщина, используемая общими стандартами
+ * @type {Weight}
  */
-Style.primary = new Style({ value: "primary" });
+Weight.normal = new Weight({ value: "standard" });
 /**
- * Информативный стиль
- *
- * Основной стиль подходит для отображения информации, которая должна выделяться.
+ * Высокая толщина
+ * @type {Weight}
  */
-Style.info = new Style({ value: "info" });
+Weight.fat = new Weight({ value: "fat" });
 /**
- * Стиль предупреждения
- *
- * Стиль, особо концентрирующий внимание пользователя.
+ * Толщина меньше стандартной
+ * @type {Weight}
  */
-Style.warning = new Style({ value: "warning" });
+Weight.light = new Weight({ value: "light" });
 /**
- * Успешный стиль
- *
- * Стиль, говорящий об успешном завершении действия.
+ * Предельно низкая толщина
+ * @type {Weight}
  */
-Style.success = new Style({ value: "success" });
-/**
- * Опасный стиль
- *
- * Стиль, ярко бросающийся в глаза. Подойдет для отметки ошибок.
- */
-Style.danger = new Style({ value: "danger" });
+Weight.thin = new Weight({ value: "thin" });
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -3834,107 +5890,1505 @@ Style.danger = new Style({ value: "danger" });
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: PreloaderViews                                                   +
- + Файл изменен: 15.02.2019 01:13:20                                          +
+ + Файл: ViewLayout.ts                                                        +
+ + Файл изменен: 08.03.2019 21:20:52                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Элемент отображения
- * @class PreloaderView
+ * @class ViewLayout
  * @augments {View}
  */
-class PreloaderView extends View {
+class ViewLayout extends elyRebuildableViewProtocol {
     /**
      * Конструктор
-     * @param {PreloaderViewOptions} options - опции
+     * @param {ViewLayoutOptions} [options] - опции
      */
     constructor(options = {}) {
         super(options);
         /**
-         * Панель объединения
-         * @protected
+         * Свойство: элементы отображения
          * @ignore
+         * @protected
          */
-        this.__wrapperView = new Control({ class: "--wrapper" });
+        this.__itemsProperty = new ObservableArray().change(() => this.rebuild());
+        this.denyRebuild(true);
+        this.add(...(options.items || []));
+        this.denyRebuild(false);
+        if (!(options.nobuild))
+            this.rebuild();
+    }
+    /**
+     * Возвращает свойство: элементы отображения
+     * @return {ObservableProperty<View[]>}
+     */
+    getItemsProperty() {
+        return this.__itemsProperty;
+    }
+    /**
+     * Возвращает и устанавливает элементы отображения
+     * @param {View[]} [value] - значение
+     * @returns {View[]|this|null}
+     */
+    items(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__itemsProperty);
+    }
+    /**
+     * Добавляет элементы
+     * @param items
+     */
+    add(...items) {
+        items.forEach(value => this.getItemsProperty().push(value));
+        return this;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        return Object.assign({}, super.serialize(), { items: this.items().map(value => value.serialize()) });
+    }
+    /**
+     * Выполняет перестроение
+     * @private
+     */
+    __rebuild() {
+        this.removeViewContent();
+        this.getItemsProperty().forEach(item => {
+            this.getDocument().append(item.getDocument());
+        });
+        return this;
+    }
+}
+/**
+ * @typedef {Object} ViewLayoutOptions
+ * @property {View[]} [items]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: RowLayoutViews                                                   +
+ + Файл изменен: 09.02.2019 16:35:37                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображение строка {@link GridLayoutView}
+ * @class efGridLayoutRowView
+ * @augments {View}
+ */
+class RowLayoutView extends ViewLayout {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(Object.assign({}, options, { nobuild: true }));
         /**
-         * Иконка
-         * @protected
+         * Свойство: количество элементов в динамической строке
          * @ignore
+         * @protected
          */
-        this.__iconView = new IconView({ iconName: "refresh", spinning: true });
+        this.__rowLengthProperty = new ObservableProperty(24);
         /**
-         * Элемент отображения текста
-         * @protected
+         * Свойство: использование статичного размера элементов в строке
          * @ignore
+         * @protected
          */
-        this.__titleTextView = new TextView({ class: "--title" });
+        this.__rowItemsStaticSizeProperty = new ObservableProperty(false);
         /**
-         * Свойство: стиль загрузчика
+         * Контейнеры
+         * @protected
+         * @ignore
+         */
+        this.__containers = [];
+        this.addClass("ef-row");
+        this.__rowLengthProperty.change(() => this.rebuild());
+        this.__rowItemsStaticSizeProperty.change(() => this.rebuild());
+        this.denyRebuild(true);
+        this.rowLength(24);
+        this.rowItemsStaticSize(false);
+        bin_1.variable(options.rowLength, () => this.rowLength(options.rowLength));
+        bin_1.variable(options.rowItemsStaticSize, () => this.rowItemsStaticSize(options.rowItemsStaticSize));
+        this.denyRebuild(false);
+        this.rebuild();
+    }
+    /**
+     * Возвращает и устанавливает количество элементов в динамической строке
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    rowLength(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__rowLengthProperty);
+    }
+    /**
+     * Возвращает и устанавливает использование статичного размера элементов в строке
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    rowItemsStaticSize(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__rowItemsStaticSizeProperty);
+    }
+    /**
+     * Вставляет элементы в нужную позицию
+     * @param index
+     * @param view
+     */
+    insert(index$$1, ...view) {
+        this.getItemsProperty().insert(index$$1, ...view);
+        return this;
+    }
+    /**
+     * Возвращает индекс элемента в строке
+     * @param {View} view
+     * @return {number}
+     */
+    indexOf(view) {
+        return this.getItemsProperty().indexOf(view);
+    }
+    /**
+     * Возвращает true, если в строке существует элемент
+     * @param {View} view
+     * @return {boolean}
+     */
+    contains(view) {
+        return this.indexOf(view) > -1;
+    }
+    /**
+     * Удаляет элемент
+     * @param {View} view
+     * @return {this}
+     */
+    remove(view) {
+        return this.removeIndex(this.indexOf(view));
+    }
+    /**
+     * Удаляет элемент по индексу
+     * @param {number} index - индекс элемента в строке
+     * @return {this}
+     */
+    removeIndex(index$$1) {
+        this.getItemsProperty().remove(index$$1);
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель: элемент будет добавлен, помещенный в контейнер.
+     *
+     * Аргументы:
+     * - Первый аргумент - элемент;
+     * - Второй аргумент - контейнер в который уже добавлен элемент.
+     *
+     * Имя обсервера: itemWillAdd
+     *
+     * @param o - наблюдатель
+     */
+    addItemWillAddObserver(o) {
+        this.addObserver("itemWillAdd", o);
+        return this;
+    }
+    /**
+     * Возвращает элемент на сетке
+     *
+     * @param {number} index
+     * @return {View}
+     */
+    viewAt(index$$1) {
+        if (this.getItemsProperty().hasIndex(index$$1))
+            return this.getItemsProperty().item(index$$1);
+        return null;
+    }
+    /**
+     * Возвращает колонку по индексу. Колонка - контейнер содержит элемент. Элемент
+     * можно получить испльзуя метод `{@link RowLayoutView.viewAt}`
+     *
+     * @param {number} index
+     * @return {View}
+     */
+    columnAt(index$$1) {
+        if (this.getItemsProperty().hasIndex(index$$1))
+            return this.__containers[index$$1];
+        return null;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        const _items = [];
+        this.getItemsProperty().forEach(view => _items.push(view.serialize()));
+        return Object.assign({}, super.serialize(), { items: _items });
+    }
+    /**
+     * Выполняет перестроение
+     * @ignore
+     * @private
+     */
+    __rebuild() {
+        this.removeViewContent();
+        this.__containers = [];
+        this.getItemsProperty().forEach((item) => {
+            const container = new Control({ class: "ef-col" });
+            let containerSize = (1 / this.rowLength()) * 100;
+            if (!this.rowItemsStaticSize())
+                containerSize = 100 / (this.rowLength() / (this.rowLength() / this.getItemsProperty().length()));
+            container.getStyle().width = containerSize + "%";
+            container.addSubView(item);
+            this.__containers.push(container);
+            this.notify("itemWillAdd", item, container);
+            this.getDocument().append(container.getDocument());
+        });
+        return this;
+    }
+}
+/**
+ * @typedef {ViewLayoutOptions} RowLayoutViewOptions
+ * @property {number} [rowLength = 24]
+ * @property {boolean} [rowItemsStaticSize = false]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: gridLayoutViews                                                  +
+ + Файл изменен: 09.02.2019 16:34:32                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения динамической сетки
+ * @class GridLayoutView
+ * @augments {View}
+ */
+class GridLayoutView extends elyRebuildableViewProtocol {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Свойство: количество элементов в строках
          * @ignore
          * @protected
          */
-        this.__preloaderStyleProperty = new ObservableProperty(Style.primary).change((value, oldVal) => {
+        this.__rowsLengthProperty = new ObservableProperty(24);
+        /**
+         * Строки
+         * @ignore
+         * @protected
+         */
+        this.__rows = new ObservableArray();
+        this.__rowsLengthProperty.change((val) => this.getRows().forEach(item => item.rowLength(val)));
+        this.__rows.change(() => this.rebuild());
+        this.denyRebuild(true);
+        bin_1.variable(options.items, (value) => {
+            if (value[0] && value[0] instanceof RowLayoutView)
+                for (const row of value)
+                    this.getRows().push(row);
+            else
+                for (const items of value)
+                    this.add(...items);
+        });
+        this.rowsLength(24);
+        bin_1.variableAndSet(options.rowsLength, this.rowsLength, this);
+        this.denyRebuild(false);
+        this.rebuild();
+    }
+    /**
+     * Возвращает и устанавливает количество элементов в строках
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     *
+     * Внимание! После установки данного значения, значения во всех строках будут изменены!
+     */
+    rowsLength(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__rowsLengthProperty);
+    }
+    /**
+     * Возвращает строки сетки
+     * @return {ObservableArray<RowLayoutView>}
+     */
+    getRows() {
+        return this.__rows;
+    }
+    /**
+     * Возвращает строку по индексу
+     * @param {number} index
+     * @return {RowLayoutView}
+     */
+    rowAt(index$$1) {
+        if (this.getRows().hasIndex(index$$1))
+            return this.getRows().item(index$$1);
+        return null;
+    }
+    /**
+     * Добавляет элемент[ы] на сетку
+     * @param view
+     */
+    add(...view) {
+        const row = new RowLayoutView({ rowLength: this.rowsLength() });
+        this.getRows().push(row);
+        row.add(...view);
+        this.rebuild();
+        return this;
+    }
+    /**
+     * Возвращает индекс строки элемента
+     * @param {View} view
+     */
+    rowIndex(view) {
+        let i = 0;
+        for (const row of this.getRows().get()) {
+            if (row.contains(view))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+    /**
+     * Воззвращает координаты элемента на сетке
+     * @param {View} view
+     * @return {{ rowIndex: number, colIndex: number }}
+     */
+    colRowIndex(view) {
+        const rowIndex = this.rowIndex(view);
+        if (rowIndex === -1)
+            return { rowIndex: -1, colIndex: -1 };
+        const row = this.rowAt(rowIndex);
+        const colIndex = row ? row.indexOf(view) : -1;
+        if (colIndex > -1)
+            return { rowIndex, colIndex };
+        return { rowIndex: -1, colIndex: -1 };
+    }
+    /**
+     * Серализует объект
+     */
+    serialize() {
+        const _items = [];
+        this.getRows().forEach(row => {
+            _items.push(row.serialize());
+        });
+        return Object.assign({}, super.serialize(), { items: _items });
+    }
+    /**
+     * Перестроение
+     * @ignore
+     * @private
+     */
+    __rebuild() {
+        this.removeViewContent();
+        this.getRows().forEach(item => {
+            this.getDocument().append(item.getDocument());
+        });
+        return this;
+    }
+}
+/**
+ * @typedef {Object} GridLayoutViewOptions
+ * @property {number} [rowsLength = 24]
+ * @property {boolean} [staticGrid = false]
+ * @property {View[][] | RowLayoutView[]} [items]
+ */
+/**
+ * @typedef {Object} TGridSize
+ * @property {number} columns
+ * @property {number} rows
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: ViewController                                                 +
+ + Файл изменен: 30.11.2018 00:25:05                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер элемента отображения
+ * @class ViewController
+ * @augments Observable
+ */
+class ViewController extends Observable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Элемент отображения
+         * @type {Control}
+         */
+        this.view = Control.empty();
+    }
+    /**
+     * Делегат окончания инициилизации объекта
+     * @param screen - экран
+     */
+    viewWillAppear(screen) {
+        // Nothing is done
+    }
+    /**
+     * Делегат окончания загрузки элемента
+     */
+    viewDidLoad() {
+        // Nothing is done
+    }
+    /**
+     * Делегат окончания отображения элемента
+     */
+    viewDidAppear() {
+        // Nothing is done
+    }
+}
+/**
+ * Текущий контроллер
+ * @ignore
+ */
+ViewController.__thisControllers = [];
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: GridViewController.ts                                                +
+ + Файл изменен: 09.02.2019 18:42:19                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер с сеткой в основании
+ * @class GridViewController
+ * @augments {ViewController}
+ */
+class GridViewController extends ViewController {
+    /**
+     * Конструктор
+     */
+    constructor(props) {
+        super();
+        this.view = props.controllerMainView || new GridLayoutView();
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        return { _item: "GridViewController", controllerMainView: this.view.serialize() };
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: SimplePageViewController                                       +
+ + Файл изменен: 30.11.2018 01:52:55                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Контроллер с шаблоном макета приложения
+ * @class SimplePageViewController
+ * @augments {GridViewController}
+ */
+class SimplePageViewController extends GridViewController {
+    /**
+     * Конструктор
+     * @param {} [props]
+     */
+    constructor(props = {}) {
+        super(props);
+        /**
+         * Основной заголовок
+         * @type {TextView}
+         */
+        this.titleView = new TextView({ class: "--title" });
+        /**
+         * Описание страницы
+         * @type {TextView}
+         */
+        this.descriptionView = new TextView({ class: "--description" });
+        const rows = this.view.getRows().get();
+        this.view.getRows().clear();
+        this.view.addClass("ef-simple-content");
+        const headerView = new Control({ class: "--content-header" });
+        this.titleView.textSize(Size.xlarge).textCenter(true);
+        this.descriptionView.textCenter(true).textWeight(Weight.thin);
+        headerView.addSubView(this.titleView);
+        headerView.addSubView(this.descriptionView);
+        this.view.add(headerView);
+        bin_1.variableAndSet(props.title, this.title, this);
+        bin_1.variableAndSet(props.description, this.description, this);
+        rows.forEach((row) => this.view.getRows().push(row));
+    }
+    /**
+     * Устанавливает или возвращает заголовок
+     * @param {string} [value]
+     * @return {this|string}
+     */
+    title(value) {
+        if (value === undefined)
+            return this.titleView.text();
+        this.titleView.text(value);
+        return this;
+    }
+    /**
+     * Устанавливает или возвращает описание контента
+     * @param {string} [value]
+     * @return {this|string}
+     */
+    description(value) {
+        if (value === undefined)
+            return this.descriptionView.text();
+        this.descriptionView.text(value);
+        return this;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        const obj = super.serialize();
+        obj._item = "SimplePageViewController";
+        obj.title = this.title();
+        obj.description = this.description();
+        return obj;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: ScreenController                                               +
+ + Файл изменен: 30.11.2018 00:19:28                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+class __elyScreenIndexViewController extends SimplePageViewController {
+    /**
+     * После загрущки
+     *
+     * + В данном методе рекомендуется выполнять отрисовку, а также программную логику
+     *   контроллера элемента отображения.
+     */
+    viewDidLoad() {
+        super.viewDidLoad();
+        this.title("ely.Flat *{* Application *}*");
+        this.description("Приложение разработано на основе ely.flat framework");
+    }
+}
+/**
+ * Контроллер экрана
+ * @class ScreenController
+ * @augments Observable
+ */
+class ScreenController extends Observable {
+    /**
+     * Конструктор
+     */
+    constructor() {
+        super();
+        /**
+         * Контроллер
+         */
+        this.controller = new ObservableProperty();
+        /**
+         * Элемент отображения
+         */
+        this.view = new Control({ class: "ef-screen" });
+        /**
+         * Элементы контента
+         */
+        this.items = {};
+        this.present(new __elyScreenIndexViewController());
+        this.elyScreenControllerDidInit();
+    }
+    /**
+     * Делегат завершения инициилизации контроллера
+     */
+    elyScreenControllerDidInit() {
+        this.notificate("didInit");
+    }
+    /**
+     * Отображает элемент
+     * @param controller
+     * @param completion
+     */
+    present(controller, completion) {
+        if (typeof controller === "string") {
+            bin_9.default.log(`[ScreenController]: Отображение контроллера id:${controller}`);
+            if (this.items.hasOwnProperty(controller))
+                this.present(this.items[controller].controller, completion);
+        }
+        else {
+            this.view.fadeOut(() => {
+                this.controller.set(controller);
+                if (ViewController.__thisControllers.indexOf(controller.constructor.name) === -1) {
+                    ViewController.__thisControllers.push(controller.constructor.name);
+                    controller.viewDidLoad();
+                }
+                controller.viewWillAppear(this);
+                this.view.removeViewContent();
+                this.view.addSubView(controller.view);
+                this.view.fadeIn(() => {
+                    controller.viewDidAppear();
+                    if (completion)
+                        completion();
+                });
+            });
+        }
+    }
+    /**
+     * Добавляет контроллер в навигацию
+     * @param name
+     * @param controller
+     * @param canOverwrite
+     */
+    addControllerName(name, controller, canOverwrite = false) {
+        bin_9.default.log(`[ScreenController]: Добавлен контроллер: ${name} (${controller.constructor.name})`);
+        if (this.items.hasOwnProperty(name)) {
+            if (!this.items[name].canOverwrite)
+                return;
+            this.items[name].controller = controller;
+            this.items[name].canOverwrite = canOverwrite;
+        }
+        this.items[name] = { controller, canOverwrite };
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: IconView.ts                                                      +
+ + Файл изменен: 08.02.2019 00:19:40                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения иконки
+ * @class IconView
+ * @augments {View}
+ */
+class IconView extends View {
+    /**
+     * Конструткор
+     * @param {IconViewOptions} options
+     */
+    constructor(options) {
+        super(Object.assign({ tag: "span" }, options));
+        /**
+         * Свойство: размер иконки
+         * @ignore
+         * @protected
+         */
+        this.__iconSizeProperty = new ObservableProperty().change((value, oldVal) => {
+            this.getStyle().fontSize = null;
+            if (oldVal && !oldVal.custom)
+                this.removeClass(`--${oldVal.value}`);
+            if (value.custom) {
+                this.getStyle().fontSize = value.value;
+            }
+            else {
+                this.addClass(`--${value.value}`);
+            }
+        });
+        /**
+         * Свойство: толщина иконки
+         * @ignore
+         * @protected
+         */
+        this.__iconWeightProperty = new ObservableProperty().change((value, oldVal) => {
+            this.getStyle().fontWeight = null;
+            if (oldVal && !oldVal.custom)
+                this.removeClass(`--${oldVal.value}`);
+            if (value.custom) {
+                this.getStyle().fontSize = value.value;
+            }
+            else {
+                this.addClass(`--${value.value}`);
+            }
+        });
+        /**
+         * Свойство: стиль иконки
+         * @ignore
+         * @protected
+         */
+        this.__iconStyleProperty = new ObservableProperty().change((value, oldVal) => {
             if (oldVal)
                 this.removeClass(`--${oldVal.value}`);
             this.addClass(`--${value.value}`);
         });
-        if (!options.selector) {
-            this.addClass("ef-loading");
-            this.getDocument().append(this.getWrapperView().getDocument());
-            this.getWrapperView()
-                .addSubView(this.getIconView())
-                .addSubView(this.getTitleTextView());
-            this.title(options.title || "Пожалуйста, подождите...");
-            variable(options.fixedPosition, value => this.fixedPosition(value));
-            variable(options.preloaderStyle, value => this.preloaderStyle(value));
-        }
+        /**
+         * Свойство: имя иконки
+         * @ignore
+         * @protected
+         */
+        this.__iconNameProperty = new ObservableProperty().change((value, oldVal) => {
+            if (oldVal)
+                this.removeClass(`fa-${oldVal}`);
+            this.addClass(`fa-${value}`);
+        });
+        this.addClass("ef-icon");
+        this.addClass("fa");
+        Guard_2(options.iconName, this.iconName, this, "refresh");
+        Guard_2(options.iconSize, this.iconSize, this);
+        Guard_2(options.iconStyle, this.iconStyle, this);
+        Guard_2(options.iconWeight, this.iconWeight, this);
+        Guard_2(options.spinning, this.spinning, this);
     }
     /**
-     * Возвращает элемент объекдинения
-     * @return {Control}
-     */
-    getWrapperView() {
-        return this.__wrapperView;
-    }
-    /**
-     * Возвращает элемент отображения иконки
+     * Десериализует объект
+     * @param {string} raw - сериализованный объект
      * @return {IconView}
      */
-    getIconView() {
-        return this.__iconView;
+    static deserialize(raw) {
+        return new IconView(JSON.parse(raw));
+    }
+    /**
+     * Возвращает свойство: имя иконки
+     * @return {ObservableProperty<string>}
+     */
+    getIconNameProperty() {
+        return this.__iconNameProperty;
+    }
+    /**
+     * Возвращает и устанавливает имя иконки
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    iconName(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__iconNameProperty);
+    }
+    /**
+     * Возвращает свойство: размер иконки
+     * @return {ObservableProperty<Size>}
+     */
+    getIconSizeProperty() {
+        return this.__iconSizeProperty;
+    }
+    /**
+     * Возвращает и устанавливает размер иконки
+     * @param {Size} [value] - значение
+     * @returns {Size|this|null}
+     */
+    iconSize(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__iconSizeProperty);
+    }
+    /**
+     * Возвращает свойство: толщина иконки
+     * @return {ObservableProperty<Weight>}
+     */
+    getIconWeightProperty() {
+        return this.__iconWeightProperty;
+    }
+    /**
+     * Возвращает и устанавливает толщина иконки
+     * @param {Weight} [value] - значение
+     * @returns {Weight|this|null}
+     */
+    iconWeight(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__iconWeightProperty);
+    }
+    /**
+     * Возвращает свойство: стиль иконки
+     * @return {ObservableProperty<Style>}
+     */
+    getIconStyleProperty() {
+        return this.__iconStyleProperty;
+    }
+    /**
+     * Возвращает и устанавливает стиль иконки
+     * @param {Style} [value] - значение
+     * @returns {Style|this|null}
+     */
+    iconStyle(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__iconStyleProperty);
+    }
+    /**
+     * Возвращает и устанавливает флаг анимации вращения элемента
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    spinning(value) {
+        if (value === undefined)
+            return this.hasClass("fa-spin");
+        if (value)
+            this.addClass("fa-spin");
+        else
+            this.removeClass("fa-spin");
+        return this;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        const obj = {};
+        if (this.iconSize())
+            obj.iconSize = this.iconSize().serialize();
+        if (this.iconWeight())
+            obj.iconWeight = this.iconWeight().serialize();
+        if (this.iconSize())
+            obj.iconStyle = this.iconStyle().serialize();
+        if (this.spinning())
+            obj.spinning = this.spinning();
+        return Object.assign({}, super.serialize(), obj, { iconName: this.iconName() });
+    }
+}
+/**
+ * @typedef {Object} IconViewOptions
+ * @property {string} [iconName]
+ * @property {Size|string|number} [iconSize]
+ * @property {Weight|string|number} [iconWeight]
+ * @property {Style|string|number} [iconStyle]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: ImageViews                                                       +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения: Изображение
+ * @version 1.0
+ *
+ * Events:
+ * - loaded: Изображение загружено
+ */
+class ImageView extends View {
+    /**
+     * Конструтор
+     * @param {ImageViewOptions} options - опции
+     */
+    constructor(options = {}) {
+        super(Object.assign({ tag: "img" }, options));
+        /**
+         * Свойство: ссылка на изображение
+         * @ignore
+         * @protected
+         */
+        this.__urlProperty = new ObservableProperty("").change((newValue) => this.getDocument().src = newValue);
+        this.addClass("ef-image");
+        this.getDocument().onload = (e) => this.notificate("loaded", [e]);
+        if (options.url)
+            this.url(options.url);
+    }
+    /**
+     * Возвращает свойство: ссылка на изображение
+     * @return {ObservableProperty<string>}
+     */
+    getUrlProperty() {
+        return this.__urlProperty;
+    }
+    /**
+     * Возвращает и устанавливает ссылка на изображение
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    url(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__urlProperty);
+    }
+    /**
+     * Добавляет наблюдатель: изображение загружено
+     *
+     * Имя обсервера: loaded
+     *
+     * @param o - наблюдатель
+     */
+    addLoadedObserver(o) {
+        this.addObserver("loaded", o);
+        return this;
+    }
+    /**
+     * Возвращает корневой элемент
+     */
+    getDocument() {
+        return this.__view;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        const obj = {};
+        if (this.url())
+            obj.url = this.url();
+        return Object.assign({}, super.serialize(), obj);
+    }
+}
+/**
+ * @typedef {Object} ImageViewOptions
+ * @property {string} [url]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ContainerViews.ts                                                    +
+ + Файл изменен: 09.02.2019 19:10:18                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения контейнер с элементом
+ * @class ContainerView
+ * @template T
+ * @augments View
+ */
+class ContainerView extends View {
+    /**
+     * Конструктор
+     * @param {T} view
+     * @param options
+     */
+    constructor(view, options = {}) {
+        super(options);
+        /**
+         * Элемент отображения
+         * @protected
+         * @ignore
+         */
+        this.__theView = view;
+        this.getDocument().append(view.getDocument());
+    }
+    /**
+     * Возвращает содержимое контейнера
+     * @return {T}
+     */
+    getView() {
+        return this.__theView;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: ProgressBarView.ts                                                   +
+ + Файл изменен: 02.03.2019 02:19:54                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения
+ * @class ProgressBarView
+ * @augments {View}
+ */
+class ProgressBarView extends View {
+    /**
+     * Конструктор
+     * @param {IProgressBarViewOptions} options - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Основной элемент
+         * @ignore
+         * @protected
+         */
+        this.__bodyView = new Control({ class: "ef-progress-bar" });
+        /**
+         * Контейнер
+         * @ignore
+         * @protected
+         */
+        this.__progressLineContainer = new ContainerView(new Control({ class: "ef-progress-line" }), { class: "ef-progress-container" });
+        /**
+         * Свойство: стиль полосы бара
+         * @ignore
+         * @protected
+         */
+        this.__progressBarStyleProperty = new ObservableProperty()
+            .change((value, oldVal) => {
+            if (this.getLineViewContainer() instanceof ContainerView) {
+                if (oldVal)
+                    this.getLineViewContainer()
+                        .getView().removeClass(`bg-${oldVal.value}`);
+                this.getLineViewContainer()
+                    .getView().addClass(`bg-${value.value}`);
+            }
+        });
+        /**
+         * Свойство: максимальное значение
+         * @ignore
+         * @protected
+         */
+        this.__maxValueProperty = new ObservableProperty(100).change(value => {
+            if (value < this.minValue())
+                this.maxValue(this.minValue());
+            this.__update();
+        });
+        /**
+         * Свойство: минимальное значение
+         * @ignore
+         * @protected
+         */
+        this.__minValueProperty = new ObservableProperty(0).change(value => {
+            if (value > this.minValue())
+                this.minValue(this.maxValue());
+            if (this.value() < value)
+                this.value(this.minValue());
+            this.__update();
+        });
+        /**
+         * Свойство: значение шкалы прогресса
+         * @ignore
+         * @protected
+         */
+        this.__valueProperty = new ObservableProperty(0).change(value => {
+            if (value > this.maxValue())
+                this.value(this.maxValue());
+            if (value < this.minValue())
+                this.value(this.minValue());
+            this.__update();
+        });
+        this.addClass("ef-progress");
+        this.getDocument().append(this.getBodyView().getDocument());
+        this.getBodyView().getDocument().append(this.getLineViewContainer().getDocument());
+        bin_1.variableAndSet(options.minValue, this.minValue, this, 0);
+        bin_1.variableAndSet(options.maxValue, this.maxValue, this, 100);
+        bin_1.variableAndSet(options.value, this.value, this, 0);
+    }
+    /**
+     * Возвращает основной элемент, содержащий прогресс баг
+     * @return {View}
+     */
+    getBodyView() {
+        return this.__bodyView;
+    }
+    /**
+     * Возвращает контейнер с элементом отображения
+     * @return {ContainerView<View>}
+     */
+    getLineViewContainer() {
+        return this.__progressLineContainer;
+    }
+    /**
+     * Возвращает свойство: стиль полосы бара
+     * @return {ObservableProperty<Style>}
+     */
+    getProgressBarStyleProperty() {
+        return this.__progressBarStyleProperty;
+    }
+    /**
+     * Возвращает и устанавливает стиль полосы бара
+     * @param {Style} [value] - значение
+     * @returns {Style|this|null}
+     */
+    progressBarStyle(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__progressBarStyleProperty);
+    }
+    /**
+     * Возвращает свойство: максимальное значение
+     * @return {ObservableProperty<number>}
+     */
+    getMaxValueProperty() {
+        return this.__maxValueProperty;
+    }
+    /**
+     * Возвращает и устанавливает максимальное значение
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    maxValue(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__maxValueProperty);
+    }
+    /**
+     * Возвращает свойство: минимальное значение
+     * @return {ObservableProperty<number>}
+     */
+    getMinValueProperty() {
+        return this.__minValueProperty;
+    }
+    /**
+     * Возвращает и устанавливает минимальное значение
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    minValue(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__minValueProperty);
+    }
+    /**
+     * Возвращает свойство: значение шкалы прогресса
+     * @return {ObservableProperty<number>}
+     */
+    getValueProperty() {
+        return this.__valueProperty;
+    }
+    /**
+     * Возвращает и устанавливает значение шкалы прогресса
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    value(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__valueProperty);
+    }
+    /**
+     * Возвращает процентное соотношение значений
+     * @return {number}
+     */
+    getPercentage() {
+        return bin_6.map(this.value(), this.minValue(), this.maxValue(), 0, 100);
+    }
+    /**
+     * Добавляет наблюдатель: при изменении значений прогресс бара
+     *
+     * Имя обсервера: changed
+     *
+     * @param {function(value: number, maxValue: number, minValue: number)} o - наблюдатель
+     */
+    addChangedObserver(o) {
+        this.addObserver("changed", o);
+        return this;
+    }
+    serialize() {
+        return Object.assign({}, super.serialize(), { maxValue: this.maxValue(), minValue: this.minValue(), value: this.value() });
+    }
+    /**
+     * Обновляет бар
+     * @ignore
+     * @private
+     */
+    __update() {
+        this.notificate("changed", [this.value(), this.maxValue(), this.minValue()]);
+        if (this.getLineViewContainer() instanceof ContainerView) {
+            this.getLineViewContainer().getView().getStyle().width =
+                this.getPercentage() + "%";
+        }
+    }
+}
+/**
+ * @typedef {Object} IProgressBarViewOptions
+ * @property {Style} [progressBarStyle]
+ * @property {number} [maxValue]
+ * @property {number} [minValue]
+ * @property {number} [value]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: NavigationViewProgressBar.ts                                         +
+ + Файл изменен: 02.03.2019 02:43:04                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Панель загрузки навигации
+ * @class NavigationViewProgressBar
+ * @augments {ProgressBarView}
+ */
+class NavigationViewProgressBar extends ProgressBarView {
+    /**
+     * Конструктор
+     * @param {IProgressBarViewOptions} [options = {}] - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Свойство: стиль полосы бара
+         * @ignore
+         * @protected
+         */
+        this.__progressBarStyleProperty = new ObservableProperty()
+            .change((value, oldVal) => {
+            if (oldVal)
+                this.removeClass(`bg-${oldVal.value}`);
+            this.addClass(`bg-${value.value}`);
+        });
+        this.removeViewContent();
+        this.addClass("--progress-line");
+    }
+    /**
+     * Обновляет бар
+     * @ignore
+     * @private
+     */
+    __update() {
+        this.notificate("changed", [this.value(), this.maxValue(), this.minValue()]);
+        this.getStyle().width = this.getPercentage() + "%";
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: NavigationView.ts                                                    +
+ + Файл изменен: 07.02.2019 23:43:35                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения - панель навигации
+ * @class NavigationView
+ * @augments {elyRebuildableViewProtocol}
+ */
+class NavigationView extends ListView {
+    /**
+     * Конструктор
+     * @param {NavigationViewOptions} options
+     */
+    constructor(options = { horizontal: true, fixed: false }) {
+        super(options);
+        /**
+         * Изображение
+         * @protected
+         * @ignore
+         */
+        this.__imageView = null;
+        /**
+         * Элемент отображения заголовка
+         * @protected
+         * @ignore
+         */
+        this.__titleTextView = new TextView({ tag: "li" });
+        /**
+         * Элемент отображения иконки-переключателя
+         * @protected
+         * @ignore
+         */
+        this.__toggleIconView = new IconView({ tag: "li", iconName: "navicon" });
+        /**
+         * Элемент загрузки
+         * @protected
+         * @ignore
+         */
+        this.__progressView = new NavigationViewProgressBar();
+        this.__denyRebuild = false;
+        this.addClass("ef-navigation");
+        this.fixed(options.fixed || false);
+        this.horizontal(options.horizontal);
+        this.getTitleView().addClass("--item", "logo");
+        this.getToggleIconView().addClass("--toggle");
+        this.getToggleIconView().addObserver("click", () => {
+            if (this.hasClass("--open"))
+                this.removeClass("--open");
+            else
+                this.addClass("--open");
+        });
+        this.rebuild();
+    }
+    /**
+     * Изображение
+     * @return {ImageView}
+     */
+    getImageView() {
+        return this.__imageView;
+    }
+    /**
+     * Возвращает и устанавливает путь до изображения в навигации
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    imageUrl(value) {
+        if (value === undefined) {
+            return this.getImageView() ? this.getImageView().url() : null;
+        }
+        if (value) {
+            this.__imageView = new ImageView({ url: value });
+        }
+        else {
+            this.__imageView = null;
+        }
+        return this.rebuild();
+    }
+    /**
+     * Возвращает панель прогресса в панели навигации
+     * @return {NavigationViewProgressBar|ProgressBarView}
+     */
+    getProgressView() {
+        return this.__progressView;
     }
     /**
      * Возвращает элемент отображения заголовка
      * @return {TextView}
      */
-    getTitleTextView() {
+    getTitleView() {
         return this.__titleTextView;
     }
     /**
-     * Возвращает и устанавливает текст загрузки
-     * @param {string} [value] - значение
-     * @returns {string|this}
+     * Возвращает иконку-переключатель
      */
-    title(value) {
-        if (value === undefined)
-            return this.getTitleTextView().text();
-        this.getTitleTextView().text(value);
-        return this;
+    getToggleIconView() {
+        return this.__toggleIconView;
     }
     /**
-     * Возвращает и устанавливает стиль загрузчика
-     * @param {Style} [value] - значение
-     * @returns {Style|this|null}
-     */
-    preloaderStyle(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__preloaderStyleProperty);
-    }
-    /**
-     * Возвращает и устанавливает флаг фиксированной позиции
+     * Возвращает и устанавливает
      * @param {boolean} [value] - значение
      * @returns {boolean|this|null}
      */
-    fixedPosition(value) {
+    fixed(value) {
         if (value === undefined)
             return this.hasClass("--fixed");
         if (value)
@@ -3943,12 +7397,51 @@ class PreloaderView extends View {
             this.removeClass("--fixed");
         return this;
     }
+    /**
+     * Возвращает и устанавливает горизонтальное расположение
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    horizontal(value) {
+        if (value === undefined)
+            return this.hasClass("--horizontal");
+        if (value)
+            this.addClass("--horizontal");
+        else
+            this.removeClass("--horizontal");
+        return this;
+    }
+    /**
+     * Выполняет перестроение элемента
+     *
+     * Метод для переопределения реализации престроения
+     * @private
+     * @ignore
+     */
+    __rebuild() {
+        this.removeViewContent();
+        this.getDocument().append(this.getToggleIconView().getDocument());
+        if (this.getImageView()) {
+            const view = new Control({ tag: "li", class: "--item" });
+            view.addClass("--image");
+            view.getDocument().append(this.getImageView().getDocument());
+            this.getDocument().append(view.getDocument());
+        }
+        this.getDocument().append(this.getTitleView().getDocument());
+        this.getItems().forEach(item => {
+            const view = new Control({ tag: "li", class: "--item" });
+            view.addSubView(item);
+            this.notificate("itemWillAdd", [item, view]);
+            this.getDocument().append(view.getDocument());
+        });
+        this.getDocument().append(this.getProgressView().getDocument());
+        return this;
+    }
 }
 /**
- * @typedef {Object} PreloaderViewOptions
- * @property {boolean} [fixedPosition = false]
- * @property {string} [title = false]
- * @property {Style} [preloaderStyle]
+ * @typedef {Object} NavigationViewOptions
+ * @property {boolean} [horizontal = true]
+ * @property {boolean} [fixed = false]
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -3970,91 +7463,101 @@ class PreloaderView extends View {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: AppPreloaderViews                                                +
- + Файл изменен: 15.02.2019 01:31:19                                          +
+ + Файл: AppStylesheet.ts                                                     +
+ + Файл изменен: 27.02.2019 01:47:53                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+var StylesheetItemType;
+(function (StylesheetItemType) {
+    StylesheetItemType[StylesheetItemType["class"] = 0] = "class";
+    StylesheetItemType[StylesheetItemType["tag"] = 1] = "tag";
+    StylesheetItemType[StylesheetItemType["id"] = 2] = "id";
+})(StylesheetItemType || (StylesheetItemType = {}));
 /**
- * Элемент отображения - экран загрузки приложения
- * @class AppPreloaderView
- * @augments {PreloaderView}
+ * Таблица стилей
+ *
  */
-class AppPreloaderView extends PreloaderView {
+class AppStylesheet {
     /**
      * Конструктор
+     * @param sheet
+     *
      */
-    constructor() {
-        super({ selector: "#preloader" });
-        /**
-         * Панель объединения
-         * @protected
-         * @ignore
-         */
-        this.__wrapperView = new Control({
-            element: document.getElementById("preloader")
-                .getElementsByClassName("--wrapper")[0],
+    constructor(sheet) {
+        this.__view = document.createElement("style");
+        this.stylesheet = sheet || (this.__view.sheet || {});
+        this.classes = new ObservableDictionary();
+    }
+    /**
+     * Возвращает документ
+     */
+    getDocument() {
+        return this.__view;
+    }
+    addItem(name, type, style) {
+        if (this.classes.contains(name) && this.classes.item(name).type === type) {
+            this.classes.item(name).style = Object.assign({}, (this.classes.item(name).style || {}), style);
+        }
+        else {
+            this.classes.add(name, { name, type, style });
+        }
+        return this.rebuild();
+    }
+    /**
+     * Добавляет класс стилей
+     * @param className
+     * @param style
+     */
+    addClass(className, style) {
+        return this.addItem(className, StylesheetItemType.class, style);
+    }
+    /**
+     * Добавляет ID стилей
+     * @param id
+     * @param style
+     */
+    addID(id, style) {
+        return this.addItem(id, StylesheetItemType.id, style);
+    }
+    /**
+     * Добавляет стили
+     * @param name
+     * @param style
+     */
+    add(name, style) {
+        return this.addItem(name, StylesheetItemType.tag, style);
+    }
+    /**
+     * Перестроение таблицы стилей
+     */
+    rebuild() {
+        this.getDocument().innerHTML = "";
+        this.classes.forEach((key, value) => {
+            const tempNode = document.createElement("div");
+            for (const name in value.style)
+                if (value.style.hasOwnProperty(name))
+                    tempNode.style[name] = value.style[name];
+            let name = value.name;
+            switch (value.type) {
+                case StylesheetItemType.class:
+                    name = `.${name}`;
+                    break;
+                case StylesheetItemType.tag:
+                    name = `${name}`;
+                    break;
+                case StylesheetItemType.id:
+                    name = `#${name}`;
+                    break;
+            }
+            this.getDocument().appendChild(document.createTextNode(`${name}{${tempNode.getAttribute("style").replace(/;/g, " !important;")}}`));
         });
-        /**
-         * Иконка
-         * @protected
-         * @ignore
-         */
-        this.__iconView = new IconView({
-            element: document.getElementById("preloader")
-                .getElementsByClassName("--wrapper")[0]
-                .getElementsByClassName("ef-icon")[0],
-        });
-        /**
-         * Элемент отображения текста
-         * @protected
-         * @ignore
-         */
-        this.__titleTextView = new TextView({
-            element: document.getElementById("preloader")
-                .getElementsByClassName("--wrapper")[0]
-                .getElementsByClassName("--title")[0],
-        });
-        this.title("Пожалуйста, подождите...");
-        this.fixedPosition(true);
-        this.getIconView().iconName("refresh");
+        return this;
     }
 }
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyFooterView.ts                                                     +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Подвал приложения
- * @deprecated
+ * Глобавльные стили
  */
-class elyFooterView extends Control {
-    /**s
-     * Констуктор
-     */
-    constructor() {
-        super({ class: "ef-footer" });
-        this.titleView = new TextView({ class: "--title" });
-        this.subtitleView = new TextView({ class: "--sub-title" });
-        this.addSubView(this.titleView);
-        this.addSubView(this.subtitleView);
-    }
-}
+AppStylesheet.global = new AppStylesheet();
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -4182,20 +7685,20 @@ class AppConfig extends Observable {
      * @param {{file?: string, data?: *}} props
      */
     load(props) {
-        if (isSet(props.file)) {
-            XLogger.default.log("[AppConfig]: Загрузка конфигурации через URL...");
-            URLRequest.sendGET(props.file, {}, (response, status) => {
+        if (bin_1.isSet(props.file)) {
+            bin_9.default.log("[AppConfig]: Загрузка конфигурации через URL...");
+            bin_14.Requests.URLRequest.sendGET(props.file, {}, (response, status) => {
                 if (status) {
-                    Utils.mergeDeep(this, safeJsonParse(response));
+                    bin_8.mergeDeep(this, bin_1.safeJsonParse(response));
                 }
-                this.notificate("loaded", [status, this]);
+                this.notify("loaded", status, this);
             });
         }
         else {
             if (props.data) {
-                XLogger.default.log("[AppConfig]: Загрузка конфигурации из данных...");
-                Utils.mergeDeep(this, props.data);
-                this.notificate("loaded", [true, this]);
+                bin_9.default.log("[AppConfig]: Загрузка конфигурации из данных...");
+                bin_8.mergeDeep(this, props.data);
+                this.notify("loaded", true, this);
             }
         }
     }
@@ -4235,14 +7738,14 @@ class AppConfig extends Observable {
      * Возвращает цвет панели навигации
      */
     getNavigationBarColor() {
-        return new Color({ hex: this.getNavigationBarColorString() });
+        return new bin_4({ hex: this.getNavigationBarColorString() });
     }
     /**
      * Возвращает основной цвет приложения
      * @return {Color}
      */
     getAppColor() {
-        return new Color({ hex: this.getAppColorString() });
+        return new bin_4({ hex: this.getAppColorString() });
     }
     /**
      * Возвращает true, если используется панель навигации
@@ -4337,8 +7840,8 @@ class Field extends View {
             }
             this.getAccessory().disabled = !value;
         });
-        variableAndSet(options.editable, this.editable, this);
-        variableAndSet(options.placeholder, this.placeholder, this);
+        bin_1.variableAndSet(options.editable, this.editable, this);
+        bin_1.variableAndSet(options.placeholder, this.placeholder, this);
     }
     /**
      * Возвращает элемент доступа
@@ -4496,9 +7999,9 @@ class TextAreaField extends Field {
         this.getAccessory().oninput = (e) => this.notificate("input", [this.getAccessory().value, e]);
         this.valueProperty.change((value) => this.getAccessory().value = value);
         this.rowsCount(5);
-        variable(options.value, (v) => this.value(v));
-        variable(options.rowsCount, (v) => this.rowsCount(v));
-        variable(options.readonly, (v) => this.readonly(v));
+        bin_1.variable(options.value, (v) => this.value(v));
+        bin_1.variable(options.rowsCount, (v) => this.rowsCount(v));
+        bin_1.variable(options.readonly, (v) => this.readonly(v));
     }
     /**
      * Возвращает элемент доступа
@@ -4753,16 +8256,16 @@ class AppDocumentBody extends Control {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: AppDocumentHead.ts                                               +
+ + Файл: AppDocumentHead.ts                                                   +
  + Файл изменен: 30.01.2019 01:54:59                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Документ: Заголовок
- * @class appDocumentHead
+ * @class AppDocumentHead
  * @augments {View}
  */
-class appDocumentHead extends View {
+class AppDocumentHead extends View {
     /**
      * Конструктор
      */
@@ -4800,7 +8303,7 @@ class appDocumentHead extends View {
     /**
      * Добавляет мета значение
      * @param {{ name: string, content: string }} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     addMetaValue(props) {
         const metaElement = document.createElement("meta");
@@ -4813,7 +8316,7 @@ class appDocumentHead extends View {
      * Добавляет viewport
      * @param {{fit?: string, initialScale?: number, maximumScale?: number,
      * userScalable?: string, width?: string}} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     addViewPort(props) {
         const a = [];
@@ -4832,7 +8335,7 @@ class appDocumentHead extends View {
     /**
      * Устанавливает кодировку
      * @param {string} charset
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     setCharset(charset) {
         const metaElement = document.createElement("meta");
@@ -4843,7 +8346,7 @@ class appDocumentHead extends View {
     /**
      * Добавляет ссылку
      * @param {{ rel: string, href: string}|*} props
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     addLink(props) {
         const lnk = document.createElement("link");
@@ -4887,7 +8390,7 @@ class AppDocument {
         /**
          * Заголовок
          */
-        this.__head = new appDocumentHead();
+        this.__head = new AppDocumentHead();
         /**
          * Тело документа
          */
@@ -4902,1183 +8405,10 @@ class AppDocument {
     }
     /**
      * Возвращает заголовок документа
-     * @return {appDocumentHead}
+     * @return {AppDocumentHead}
      */
     getHead() {
         return this.__head;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: ViewController                                                 +
- + Файл изменен: 30.11.2018 00:25:05                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер элемента отображения
- * @class ViewController
- * @augments Observable
- */
-class ViewController extends Observable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Элемент отображения
-         * @type {Control}
-         */
-        this.view = Control.empty();
-    }
-    /**
-     * Делегат окончания инициилизации объекта
-     * @param screen - экран
-     */
-    viewWillAppear(screen) {
-        // Nothing is done
-    }
-    /**
-     * Делегат окончания загрузки элемента
-     */
-    viewDidLoad() {
-        // Nothing is done
-    }
-    /**
-     * Делегат окончания отображения элемента
-     */
-    viewDidAppear() {
-        // Nothing is done
-    }
-}
-/**
- * Текущий контроллер
- * @ignore
- */
-ViewController.__thisControllers = [];
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyRebuildableViewProtocol.ts                                        +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент, который может быть перестроен
- * @class elyRebuildableViewProtocol
- * @augments {View}
- */
-class elyRebuildableViewProtocol extends View {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options) {
-        super(options);
-        this.__denyRebuild = false;
-    }
-    /**
-     * Запрещает или отменяет запрет перестроения
-     * @param deny
-     */
-    denyRebuild(deny) {
-        this.__denyRebuild = deny;
-        return this;
-    }
-    /**
-     * Выполняет перестроени элемента
-     */
-    rebuild() {
-        if (!this.__denyRebuild)
-            this.__rebuild();
-        this.notificate("rebuilt");
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: элемент был перестроен
-     *
-     * Имя обсервера: rebuilt
-     *
-     * @param o - наблюдатель
-     */
-    addRebuiltObserver(o) {
-        this.addObserver("rebuilt", o);
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: ObservableArray.ts                                             +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Массив
- * @template T
- * @class ObservableArray
- * @augments ObservableProperty.<T[]>
- */
-class ObservableArray extends ObservableProperty {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super([]);
-    }
-    /**
-     * Возвращает массив
-     * @return {T[]}
-     */
-    get() {
-        return this.value || [];
-    }
-    /**
-     * Регистрирует слушатель добавления нового элемента в массив
-     * @param {function(newItem: {T}, index: number)} observer - слушатель
-     */
-    addNewItemObserver(observer) {
-        return this.addObserver("add", observer);
-    }
-    /**
-     * Регистрирует слушатель изменения элементов массива
-     * @param observer - слушатель
-     */
-    addChangeItemsObserver(observer) {
-        return this.addObserver("change", observer);
-    }
-    /**
-     * Регистрирует слушатель очищения массива
-     * @param observer - слушатель
-     */
-    addClearObserver(observer) {
-        return this.addObserver("clear", observer);
-    }
-    /**
-     * Регистрирует слушатель удаления элемента массива
-     * @param observer - слушатель
-     */
-    addRemoveObserver(observer) {
-        return this.addObserver("remove", observer);
-    }
-    /**
-     * Добавляет элемент в массив
-     * @param item
-     */
-    push(item) {
-        this.value.push(item);
-        this.notificate("change", [this.get()]);
-        this.notificate("add", [item, this.value.length - 1]);
-        return this;
-    }
-    /**
-     * Добавляет элемент в массив по индексу
-     * @param {number} index
-     * @param {...T} items
-     */
-    insert(index, ...items) {
-        this.value.splice(index, 0, ...items);
-        this.notificate("change", [this.get()]);
-        this.notificate("add", [index, ...items]);
-        return this;
-    }
-    /**
-     * Добавляет элемент в массив
-     * @param {number} index
-     * @return {this}
-     */
-    remove(index) {
-        const item = this.item(index);
-        this.value = this.value.splice(index, 1);
-        this.notificate("change", [this.get()]);
-        this.notificate("remove", [item]);
-        return this;
-    }
-    /**
-     * Удаляет элемент из массива
-     * @param {T} item - элемент массива
-     * @return {this}
-     */
-    removeItem(item) {
-        const index = this.indexOf(item);
-        this.remove(index);
-        return this;
-    }
-    /**
-     * Возвращает элемент массива
-     * @param {number} index
-     */
-    item(index) {
-        return this.value[index];
-    }
-    /**
-     * Возвращает последний элемент
-     * @return {T}
-     */
-    last() {
-        return this.value[this.value.length - 1];
-    }
-    /**
-     * Возвращает последний элемент и удаляет его из массива
-     * @return {T}
-     */
-    pop() {
-        const val = this.items().pop();
-        return val === undefined ? null : val;
-    }
-    /**
-     * Возвращает длину массива
-     * @return {number}
-     */
-    length() {
-        return this.value.length;
-    }
-    /**
-     * Возвращает true, если существует индекс
-     * @param {number} index
-     */
-    hasIndex(index) {
-        return !!this.value[index];
-    }
-    /**
-     * Возвращает индекс элемента в массиве или -1, если
-     * элемент не найден
-     * @param {T} item
-     */
-    indexOf(item) {
-        return this.value.indexOf(item);
-    }
-    /**
-     * Возвращает true, если массив содержит item
-     * @param {T} item
-     */
-    hasItem(item) {
-        return this.indexOf(item) > -1;
-    }
-    /**
-     * Очищает массив
-     * @return {this}
-     */
-    clear() {
-        this.value = [];
-        this.notificate("change", [this.get()]);
-        this.notificate("clear", []);
-        return this;
-    }
-    /**
-     * Возвращает true, если массив пустой
-     * @return {boolean}
-     */
-    isEmpty() {
-        return this.length() === 0;
-    }
-    /**
-     * Элементы
-     * @return {T[]}
-     */
-    items() {
-        return this.value;
-    }
-    /**
-     * Устанавливает элемент в индексе массива
-     * @param {T} item - элемент
-     * @param {number} index - индекс
-     * @deprecated Данный метод не рекомендуется к спользованию!
-     */
-    setItemAtIndex(item, index) {
-        this.value[index] = item;
-        this.notificate("change", [this.get()]);
-        return this;
-    }
-    /**
-     * Цикл по элементам массива
-     * @param {function(item: T, index: number, items: T[])} callbackfn - обработчик
-     */
-    forEach(callbackfn) {
-        this.items().forEach((value, index, array) => callbackfn(value, index, array));
-        return this;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: ViewLayout.ts                                                        +
- + Файл изменен: 08.03.2019 21:20:52                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения
- * @class ViewLayout
- * @augments {View}
- */
-class ViewLayout extends elyRebuildableViewProtocol {
-    /**
-     * Конструктор
-     * @param {ViewLayoutOptions} [options] - опции
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: элементы отображения
-         * @ignore
-         * @protected
-         */
-        this.__itemsProperty = new ObservableArray().change(() => this.rebuild());
-        this.denyRebuild(true);
-        this.add(...(options.items || []));
-        this.denyRebuild(false);
-        if (!(options.nobuild))
-            this.rebuild();
-    }
-    /**
-     * Возвращает свойство: элементы отображения
-     * @return {ObservableProperty<View[]>}
-     */
-    getItemsProperty() {
-        return this.__itemsProperty;
-    }
-    /**
-     * Возвращает и устанавливает элементы отображения
-     * @param {View[]} [value] - значение
-     * @returns {View[]|this|null}
-     */
-    items(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__itemsProperty);
-    }
-    /**
-     * Добавляет элементы
-     * @param items
-     */
-    add(...items) {
-        items.forEach(value => this.getItemsProperty().push(value));
-        return this;
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        return Object.assign({}, super.serialize(), { items: this.items().map(value => value.serialize()) });
-    }
-    /**
-     * Выполняет перестроение
-     * @private
-     */
-    __rebuild() {
-        this.removeViewContent();
-        this.getItemsProperty().forEach(item => {
-            this.getDocument().append(item.getDocument());
-        });
-        return this;
-    }
-}
-/**
- * @typedef {Object} ViewLayoutOptions
- * @property {View[]} [items]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: RowLayoutViews                                                   +
- + Файл изменен: 09.02.2019 16:35:37                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображение строка {@link GridLayoutView}
- * @class efGridLayoutRowView
- * @augments {View}
- */
-class RowLayoutView extends ViewLayout {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(Object.assign({}, options, { nobuild: true }));
-        /**
-         * Свойство: количество элементов в динамической строке
-         * @ignore
-         * @protected
-         */
-        this.__rowLengthProperty = new ObservableProperty(24);
-        /**
-         * Свойство: использование статичного размера элементов в строке
-         * @ignore
-         * @protected
-         */
-        this.__rowItemsStaticSizeProperty = new ObservableProperty(false);
-        /**
-         * Контейнеры
-         * @protected
-         * @ignore
-         */
-        this.__containers = [];
-        this.addClass("ef-row");
-        this.__rowLengthProperty.change(() => this.rebuild());
-        this.__rowItemsStaticSizeProperty.change(() => this.rebuild());
-        this.denyRebuild(true);
-        this.rowLength(24);
-        this.rowItemsStaticSize(false);
-        variable(options.rowLength, () => this.rowLength(options.rowLength));
-        variable(options.rowItemsStaticSize, () => this.rowItemsStaticSize(options.rowItemsStaticSize));
-        this.denyRebuild(false);
-        this.rebuild();
-    }
-    /**
-     * Возвращает и устанавливает количество элементов в динамической строке
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    rowLength(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__rowLengthProperty);
-    }
-    /**
-     * Возвращает и устанавливает использование статичного размера элементов в строке
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    rowItemsStaticSize(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__rowItemsStaticSizeProperty);
-    }
-    /**
-     * Вставляет элементы в нужную позицию
-     * @param index
-     * @param view
-     */
-    insert(index, ...view) {
-        this.getItemsProperty().insert(index, ...view);
-        return this;
-    }
-    /**
-     * Возвращает индекс элемента в строке
-     * @param {View} view
-     * @return {number}
-     */
-    indexOf(view) {
-        return this.getItemsProperty().indexOf(view);
-    }
-    /**
-     * Возвращает true, если в строке существует элемент
-     * @param {View} view
-     * @return {boolean}
-     */
-    contains(view) {
-        return this.indexOf(view) > -1;
-    }
-    /**
-     * Удаляет элемент
-     * @param {View} view
-     * @return {this}
-     */
-    remove(view) {
-        return this.removeIndex(this.indexOf(view));
-    }
-    /**
-     * Удаляет элемент по индексу
-     * @param {number} index - индекс элемента в строке
-     * @return {this}
-     */
-    removeIndex(index) {
-        this.getItemsProperty().remove(index);
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: элемент будет добавлен, помещенный в контейнер.
-     *
-     * Аргументы:
-     * - Первый аргумент - элемент;
-     * - Второй аргумент - контейнер в который уже добавлен элемент.
-     *
-     * Имя обсервера: itemWillAdd
-     *
-     * @param o - наблюдатель
-     */
-    addItemWillAddObserver(o) {
-        this.addObserver("itemWillAdd", o);
-        return this;
-    }
-    /**
-     * Возвращает элемент на сетке
-     *
-     * @param {number} index
-     * @return {View}
-     */
-    viewAt(index) {
-        if (this.getItemsProperty().hasIndex(index))
-            return this.getItemsProperty().item(index);
-        return null;
-    }
-    /**
-     * Возвращает колонку по индексу. Колонка - контейнер содержит элемент. Элемент
-     * можно получить испльзуя метод `{@link RowLayoutView.viewAt}`
-     *
-     * @param {number} index
-     * @return {View}
-     */
-    columnAt(index) {
-        if (this.getItemsProperty().hasIndex(index))
-            return this.__containers[index];
-        return null;
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        const _items = [];
-        this.getItemsProperty().forEach(view => _items.push(view.serialize()));
-        return Object.assign({}, super.serialize(), { items: _items });
-    }
-    /**
-     * Выполняет перестроение
-     * @ignore
-     * @private
-     */
-    __rebuild() {
-        this.removeViewContent();
-        this.__containers = [];
-        this.getItemsProperty().forEach(item => {
-            const container = new Control({ class: "ef-col" });
-            let containerSize = (1 / this.rowLength()) * 100;
-            if (!this.rowItemsStaticSize())
-                containerSize = 100 / (this.rowLength() / (this.rowLength() / this.getItemsProperty().length()));
-            container.getStyle().width = containerSize + "%";
-            container.addSubView(item);
-            this.__containers.push(container);
-            this.notificate("itemWillAdd", [item, container]);
-            this.getDocument().append(container.getDocument());
-        });
-        return this;
-    }
-}
-/**
- * @typedef {ViewLayoutOptions} RowLayoutViewOptions
- * @property {number} [rowLength = 24]
- * @property {boolean} [rowItemsStaticSize = false]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: gridLayoutViews                                                  +
- + Файл изменен: 09.02.2019 16:34:32                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения динамической сетки
- * @class GridLayoutView
- * @augments {View}
- */
-class GridLayoutView extends elyRebuildableViewProtocol {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: количество элементов в строках
-         * @ignore
-         * @protected
-         */
-        this.__rowsLengthProperty = new ObservableProperty(24);
-        /**
-         * Строки
-         * @ignore
-         * @protected
-         */
-        this.__rows = new ObservableArray();
-        this.__rowsLengthProperty.change((val) => this.getRows().forEach(item => item.rowLength(val)));
-        this.__rows.change(() => this.rebuild());
-        this.denyRebuild(true);
-        variable(options.items, (value) => {
-            if (value[0] && value[0] instanceof RowLayoutView)
-                for (const row of value)
-                    this.getRows().push(row);
-            else
-                for (const items of value)
-                    this.add(...items);
-        });
-        this.rowsLength(24);
-        variableAndSet(options.rowsLength, this.rowsLength, this);
-        this.denyRebuild(false);
-        this.rebuild();
-    }
-    /**
-     * Возвращает и устанавливает количество элементов в строках
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     *
-     * Внимание! После установки данного значения, значения во всех строках будут изменены!
-     */
-    rowsLength(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__rowsLengthProperty);
-    }
-    /**
-     * Возвращает строки сетки
-     * @return {ObservableArray<RowLayoutView>}
-     */
-    getRows() {
-        return this.__rows;
-    }
-    /**
-     * Возвращает строку по индексу
-     * @param {number} index
-     * @return {RowLayoutView}
-     */
-    rowAt(index) {
-        if (this.getRows().hasIndex(index))
-            return this.getRows().item(index);
-        return null;
-    }
-    /**
-     * Добавляет элемент[ы] на сетку
-     * @param view
-     */
-    add(...view) {
-        const row = new RowLayoutView({ rowLength: this.rowsLength() });
-        this.getRows().push(row);
-        row.add(...view);
-        this.rebuild();
-        return this;
-    }
-    /**
-     * Возвращает индекс строки элемента
-     * @param {View} view
-     */
-    rowIndex(view) {
-        let i = 0;
-        for (const row of this.getRows().get()) {
-            if (row.contains(view))
-                return i;
-            i++;
-        }
-        return -1;
-    }
-    /**
-     * Воззвращает координаты элемента на сетке
-     * @param {View} view
-     * @return {{ rowIndex: number, colIndex: number }}
-     */
-    colRowIndex(view) {
-        const rowIndex = this.rowIndex(view);
-        if (rowIndex === -1)
-            return { rowIndex: -1, colIndex: -1 };
-        const row = this.rowAt(rowIndex);
-        const colIndex = row ? row.indexOf(view) : -1;
-        if (colIndex > -1)
-            return { rowIndex, colIndex };
-        return { rowIndex: -1, colIndex: -1 };
-    }
-    /**
-     * Серализует объект
-     */
-    serialize() {
-        const _items = [];
-        this.getRows().forEach(row => {
-            _items.push(row.serialize());
-        });
-        return Object.assign({}, super.serialize(), { items: _items });
-    }
-    /**
-     * Перестроение
-     * @ignore
-     * @private
-     */
-    __rebuild() {
-        this.removeViewContent();
-        this.getRows().forEach(item => {
-            this.getDocument().append(item.getDocument());
-        });
-        return this;
-    }
-}
-/**
- * @typedef {Object} GridLayoutViewOptions
- * @property {number} [rowsLength = 24]
- * @property {boolean} [staticGrid = false]
- * @property {View[][] | RowLayoutView[]} [items]
- */
-/**
- * @typedef {Object} TGridSize
- * @property {number} columns
- * @property {number} rows
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: GridViewController.ts                                                +
- + Файл изменен: 09.02.2019 18:42:19                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер с сеткой в основании
- * @class GridViewController
- * @augments {ViewController}
- */
-class GridViewController extends ViewController {
-    /**
-     * Конструктор
-     */
-    constructor(props) {
-        super();
-        this.view = props.controllerMainView || new GridLayoutView();
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        return { _item: "GridViewController", controllerMainView: this.view.serialize() };
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: Size.ts                                                              +
- + Файл изменен: 08.02.2019 01:19:15                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Размеры ely.flat.application
- * @class Size
- * @augments {elyEnum<string>}
- */
-class Size extends elyEnum {
-    /**
-     * Конструктор
-     * @ignore
-     * @param {{value: string, custom?: boolean}} props
-     */
-    constructor(props) {
-        super(props);
-        this.custom = props.custom || false;
-    }
-    /**
-     * Свой размер
-     * @param {string|number} value
-     * @type {Size}
-     */
-    static custom(value) {
-        if (typeof value === "number")
-            value = value.toString() + "px";
-        return new Size({ value, custom: true });
-    }
-    /**
-     * Возвращает размер по его названию
-     * @param {string} name
-     * @return {Size}
-     */
-    static byName(name) {
-        return new Size({ value: name });
-    }
-    /**
-     * Список
-     * @return {*}
-     */
-    static rawList() {
-        return {
-            default: Size.default.value,
-            fill: Size.fill.value,
-            large: Size.large.value,
-            normal: Size.normal.value,
-            small: Size.small.value,
-            xlarge: Size.xlarge.value,
-            xsmall: Size.xsmall.value,
-            xxlarge: Size.xxlarge.value,
-        };
-    }
-    /**
-     * Список
-     * @return {*}
-     */
-    static list() {
-        return {
-            default: Size.default,
-            fill: Size.fill,
-            large: Size.large,
-            normal: Size.normal,
-            small: Size.small,
-            xlarge: Size.xlarge,
-            xsmall: Size.xsmall,
-            xxlarge: Size.xxlarge,
-        };
-    }
-    /**
-     * Сериализует объект
-     * @return {string}
-     */
-    serialize() {
-        return { _item: "Size", custom: this.custom, value: this.value };
-    }
-}
-/**
- * Стандартный размер
- * @type {Size}
- */
-Size.default = new Size({ value: "normal" });
-/**
- * Основной размер, используемый в ely.flat
- * @type {Size}
- */
-Size.normal = new Size({ value: "regular" });
-/**
- * Размер во весь блок
- * @type {Size}
- */
-Size.fill = new Size({ value: "fill" });
-/**
- * Маленький размер
- * @type {Size}
- */
-Size.small = new Size({ value: "small" });
-/**
- * Очень маленький размер
- * @type {Size}
- */
-Size.xsmall = new Size({ value: "xsmall" });
-/**
- * Большой размер
- * @type {Size}
- */
-Size.large = new Size({ value: "large" });
-/**
- * Очень большой размер
- * @type {Size}
- */
-Size.xlarge = new Size({ value: "xlarge" });
-/**
- * Огромный размер
- * @type {Size}
- */
-Size.xxlarge = new Size({ value: "xxlarge" });
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: Weight.ts                                                            +
- + Файл изменен: 08.02.2019 02:06:22                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Толщина ely.flat.application
- * @class Weight
- * @augments {elyEnum<number>}
- */
-class Weight extends elyEnum {
-    /**
-     * Конструктор
-     * @ignore
-     * @param {value: string | number, custom: boolean} props
-     */
-    constructor(props) {
-        super({ value: String(props.value) });
-        this.custom = props.custom || false;
-    }
-    /**
-     * Свой размер
-     * @param value
-     * @return {Weight}
-     */
-    static custom(value) {
-        return new Weight({ value, custom: true });
-    }
-    /**
-     * Возвращает размер по названию
-     * @param {String} value
-     * @return {Weight}
-     */
-    static byName(value) {
-        return new Weight({ value });
-    }
-    /**
-     * Список
-     */
-    static rawList() {
-        return {
-            default: Weight.default.value,
-            fat: Weight.fat.value,
-            light: Weight.light.value,
-            normal: Weight.normal.value,
-            thin: Weight.thin.value,
-        };
-    }
-    /**
-     * Список
-     */
-    static list() {
-        return {
-            default: Weight.default,
-            fat: Weight.fat,
-            light: Weight.light,
-            normal: Weight.normal,
-            thin: Weight.thin,
-        };
-    }
-    /**
-     * Сериализует объект
-     * @return {*}
-     */
-    serialize() {
-        return { _item: "Weight", value: this.value, custom: this.custom };
-    }
-}
-/**
- * Стандартная толщина ely.flat.application
- * @type {Weight}
- */
-Weight.default = new Weight({ value: "regular" });
-/**
- * Толщина, используемая общими стандартами
- * @type {Weight}
- */
-Weight.normal = new Weight({ value: "standard" });
-/**
- * Высокая толщина
- * @type {Weight}
- */
-Weight.fat = new Weight({ value: "fat" });
-/**
- * Толщина меньше стандартной
- * @type {Weight}
- */
-Weight.light = new Weight({ value: "light" });
-/**
- * Предельно низкая толщина
- * @type {Weight}
- */
-Weight.thin = new Weight({ value: "thin" });
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: SimplePageViewController                                       +
- + Файл изменен: 30.11.2018 01:52:55                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Контроллер с шаблоном макета приложения
- * @class SimplePageViewController
- * @augments {GridViewController}
- */
-class SimplePageViewController extends GridViewController {
-    /**
-     * Конструктор
-     * @param {} [props]
-     */
-    constructor(props = {}) {
-        super(props);
-        /**
-         * Основной заголовок
-         * @type {TextView}
-         */
-        this.titleView = new TextView({ class: "--title" });
-        /**
-         * Описание страницы
-         * @type {TextView}
-         */
-        this.descriptionView = new TextView({ class: "--description" });
-        const rows = this.view.getRows().get();
-        this.view.getRows().clear();
-        this.view.addClass("ef-simple-content");
-        const headerView = new Control({ class: "--content-header" });
-        this.titleView.textSize(Size.xlarge).textCenter(true);
-        this.descriptionView.textCenter(true).textWeight(Weight.thin);
-        headerView.addSubView(this.titleView);
-        headerView.addSubView(this.descriptionView);
-        this.view.add(headerView);
-        variableAndSet(props.title, this.title, this);
-        variableAndSet(props.description, this.description, this);
-        rows.forEach(row => this.view.getRows().push(row));
-    }
-    /**
-     * Устанавливает или возвращает заголовок
-     * @param {string} [value]
-     * @return {this|string}
-     */
-    title(value) {
-        if (value === undefined)
-            return this.titleView.text();
-        this.titleView.text(value);
-        return this;
-    }
-    /**
-     * Устанавливает или возвращает описание контента
-     * @param {string} [value]
-     * @return {this|string}
-     */
-    description(value) {
-        if (value === undefined)
-            return this.descriptionView.text();
-        this.descriptionView.text(value);
-        return this;
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        const obj = super.serialize();
-        obj._item = "SimplePageViewController";
-        obj.title = this.title();
-        obj.description = this.description();
-        return obj;
     }
 }
 
@@ -6117,7 +8447,7 @@ class SingleApp extends Observable {
         return window.hasOwnProperty("efSingleInit") && window.efSingleInit;
     }
     static initApplication(callback) {
-        XLogger.default.log("[SingleApp] Инициилизация single app контроллера");
+        bin_9.default.log("[SingleApp] Инициилизация single app контроллера");
         const vc = new SimplePageViewController();
         vc.title("efSingle App");
         vc.description("Простейшее приложение ely.flat");
@@ -6142,248 +8472,226 @@ class SingleApp extends Observable {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat.application                                               +
- +                                                                            +
- + Файл: ScreenController                                               +
- + Файл изменен: 30.11.2018 00:19:28                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-class __elyScreenIndexViewController extends SimplePageViewController {
-    /**
-     * После загрущки
-     *
-     * + В данном методе рекомендуется выполнять отрисовку, а также программную логику
-     *   контроллера элемента отображения.
-     */
-    viewDidLoad() {
-        super.viewDidLoad();
-        this.title("ely.Flat *{* Application *}*");
-        this.description("Приложение разработано на основе ely.flat framework");
-    }
-}
-/**
- * Контроллер экрана
- * @class ScreenController
- * @augments Observable
- */
-class ScreenController extends Observable {
-    /**
-     * Конструктор
-     */
-    constructor() {
-        super();
-        /**
-         * Контроллер
-         */
-        this.controller = new ObservableProperty();
-        /**
-         * Элемент отображения
-         */
-        this.view = new Control({ class: "ef-screen" });
-        /**
-         * Элементы контента
-         */
-        this.items = {};
-        this.present(new __elyScreenIndexViewController());
-        this.elyScreenControllerDidInit();
-    }
-    /**
-     * Делегат завершения инициилизации контроллера
-     */
-    elyScreenControllerDidInit() {
-        this.notificate("didInit");
-    }
-    /**
-     * Отображает элемент
-     * @param controller
-     * @param completion
-     */
-    present(controller, completion) {
-        if (typeof controller === "string") {
-            XLogger.default.log(`[ScreenController]: Отображение контроллера id:${controller}`);
-            if (this.items.hasOwnProperty(controller))
-                this.present(this.items[controller].controller, completion);
-        }
-        else {
-            this.view.fadeOut(() => {
-                this.controller.set(controller);
-                if (ViewController.__thisControllers.indexOf(controller.constructor.name) === -1) {
-                    ViewController.__thisControllers.push(controller.constructor.name);
-                    controller.viewDidLoad();
-                }
-                controller.viewWillAppear(this);
-                this.view.removeViewContent();
-                this.view.addSubView(controller.view);
-                this.view.fadeIn(() => {
-                    controller.viewDidAppear();
-                    if (completion)
-                        completion();
-                });
-            });
-        }
-    }
-    /**
-     * Добавляет контроллер в навигацию
-     * @param name
-     * @param controller
-     * @param canOverwrite
-     */
-    addControllerName(name, controller, canOverwrite = false) {
-        XLogger.default.log(`[ScreenController]: Добавлен контроллер: ${name} (${controller.constructor.name})`);
-        if (this.items.hasOwnProperty(name)) {
-            if (!this.items[name].canOverwrite)
-                return;
-            this.items[name].controller = controller;
-            this.items[name].canOverwrite = canOverwrite;
-        }
-        this.items[name] = { controller, canOverwrite };
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: ListView.ts                                                          +
- + Файл изменен: 07.02.2019 23:53:41                                          +
+ + Файл: AppColorManagers                                                 +
+ + Файл изменен: 30.01.2019 01:44:27                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Списко элементов
- * @class ListView
- * @augments {elyRebuildableViewProtocol}
+ * Менеджер цветов приложения
+ * @class AppColorManager
  */
-class ListView extends elyRebuildableViewProtocol {
+class AppColorManager {
     /**
      * Конструктор
-     * @param {ListViewOptions} options
+     * @param props
      */
-    constructor(options = {}) {
-        super(Object.assign({ tag: "ul" }, options));
-        this.__items = new ObservableArray();
-        this.__items.change(() => this.__rebuild());
-        (options.items || []).forEach(value => this.addView(value));
-    }
-    /**
-     * Возвращает элементы списка
-     */
-    getItems() {
-        return this.__items;
-    }
-    /**
-     * Добавляет элемент отображения
-     * @param view
-     */
-    addView(view) {
-        this.__items.push(view);
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: элемент будет добавлен.
-     *
-     * Наблюдатель принимает два параметра: view и container.
-     *
-     * Элементы в ListView хранятся в контейнерах. Поэтому
-     * при добавлении слушатель получает два View элемента.
-     * Благодаря этому слушателю, Вы можете кастомизировать контейнер.
-     *
-     * Имя обсервера: itemWillAdd
-     *
-     * @param o - наблюдатель
-     */
-    addItemWillAddObserver(o) {
-        this.addObserver("itemWillAdd", o);
-        return this;
-    }
-    /**
-     * Выполняет перестроение элемента
-     *
-     * Метод для переопределения реализации престроения
-     * @private
-     * @ignore
-     */
-    __rebuild() {
-        this.removeViewContent();
-        this.getItems().forEach(item => {
-            const view = new Control({ tag: "li", class: "--item" });
-            view.addSubView(item);
-            this.notificate("itemWillAdd", [item, view]);
-            this.getDocument().append(view.getDocument());
-        });
-        return this;
-    }
-}
-/**
- * @typedef {Object} ListViewOptions
- * @property {View[]} [items]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: ContainerViews.ts                                                    +
- + Файл изменен: 09.02.2019 19:10:18                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения контейнер с элементом
- * @class ContainerView
- * @template T
- * @augments View
- */
-class ContainerView extends View {
-    /**
-     * Конструктор
-     * @param {T} view
-     * @param options
-     */
-    constructor(view, options = {}) {
-        super(options);
+    constructor(props) {
         /**
-         * Элемент отображения
+         * Цвет приложения
          * @protected
          * @ignore
          */
-        this.__theView = view;
-        this.getDocument().append(view.getDocument());
+        this.__appColor = bin_4.black();
+        /**
+         * Цвет навигации
+         * @protected
+         * @ignore
+         */
+        this.__navigationBarColor = bin_4.black();
+        this.__app = props.app;
     }
     /**
-     * Возвращает содержимое контейнера
-     * @return {T}
+     * Изменяет цветовую гамму приложения
+     * @param color
      */
-    getView() {
-        return this.__theView;
+    applyApplicationColor(color) {
+        const darker = color.getDarkerColor(0.1);
+        const lighter = color.getLighterColor(0.18);
+        // AppStylesheet.global.addClass("bg-primary", {
+        //     backgroundColor: color.toString(),
+        //     color: color.isDarker() ? "white" : "black",
+        // });
+        // AppStylesheet.global.addClass("brd-primary", {
+        //     borderColor: color.toString(),
+        // });
+        //
+        // AppStylesheet.global.addClass("text-primary", {
+        //     color: color.toString(),
+        // });
+        //
+        // AppStylesheet.global.addClass("bg-info", {
+        //     backgroundColor: lighter.toString(),
+        //     color: lighter.isDarker() ? "white" : "black",
+        // });
+        // AppStylesheet.global.addClass("brd-info", {
+        //     borderColor: lighter.toString(),
+        // });
+        //
+        // AppStylesheet.global.addClass("text-info", {
+        //     color: lighter.toString(),
+        // });
+        AppStylesheet.global.add("::-webkit-scrollbar-track", {
+            borderColor: "#c2c2c2",
+        });
+        AppStylesheet.global.add("::-webkit-scrollbar", {
+            borderColor: "#c2c2c2",
+            width: "5px",
+        });
+        AppStylesheet.global.add("::-webkit-scrollbar-thumb", {
+            backgroundColor: darker.toString(),
+        });
+        this.__appColor = color;
+    }
+    /**
+     * Изменяет цвет панели нацигации
+     * @param color
+     */
+    applyNavigationBarColor(color) {
+        bin_9.default.log(`[AppColorManager]: Смена цвета навигации: ${color.toString()}. ` +
+            `Темынй: ${color.isDarker() ? "YES" : "NO"}`);
+        const isDarkerColor = color.isDarker();
+        const borderColor = isDarkerColor ? color.getLighterColor(0.3) : color.getDarkerColor(0.05);
+        const textColor = isDarkerColor ? bin_4.white() : new bin_4({ hex: "#555555" });
+        AppStylesheet.global.addClass("ef-navigation", {
+            backgroundColor: color.toString(),
+            borderBottomColor: borderColor.toString(),
+        });
+        AppStylesheet.global.addClass("ef-navigation li", {
+            color: textColor.toString(),
+        });
+        this.__navigationBarColor = color;
+    }
+    /**
+     * Возвращает текущий цвет приложения
+     * @return {Color}
+     */
+    getApplicationColor() {
+        return this.__appColor;
+    }
+    /**
+     * Возвращает текущий цвет панели навигации
+     * @return {Color}
+     */
+    getNavigatonBarColor() {
+        return this.__navigationBarColor;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat.application                                               +
+ +                                                                            +
+ + Файл: AppFileWatcher.ts                                                    +
+ + Файл изменен: 23.11.2018 23:19:03                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Отслеживание изменения файла
+ */
+class AppFileWatcher extends bin_11.Observable {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options) {
+        super();
+        /**
+         * Последний размер файла
+         */
+        this.lastFileSize = -1;
+        /**
+         * Стартовое значение на первой итерации
+         */
+        this.startValue = null;
+        /**
+         * Поток
+         */
+        this.thread = null;
+        this.filePath = options.filePath;
+        const view = new Control();
+        view.getStyle().backgroundColor = "rgb(110, 136, 73)";
+        view.getStyle().textAlign = "center";
+        view.getStyle().position = "fixed";
+        view.getStyle().bottom = "0";
+        view.getStyle().left = "0";
+        view.getStyle().right = "0";
+        view.getStyle().zIndex = "1000";
+        view.getStyle().padding = "15px";
+        const iconView = new IconView({ iconName: "refresh" });
+        iconView.spinning(true);
+        iconView.getStyle().marginLeft = "15px";
+        const textView = new TextView({ text: "Develop file watching" });
+        textView.getStyle().display = "inline-block";
+        view.addSubView(textView);
+        view.addSubView(iconView);
+        document.body.append(view.getDocument());
+        this.addListener((size) => {
+            textView.text(`Develop file watching. Size: *${size}* bytes`);
+        });
+    }
+    /**
+     * Добавляет слушатель изменения файла
+     * @param observer
+     */
+    addListener(observer) {
+        this.addObserver("changed", observer);
+        return this;
+    }
+    /**
+     * Добавляет слушатель изменения файла по отношению к первоначальной стадии
+     * @param observer
+     */
+    addUpdateListener(observer) {
+        this.addObserver("updated", observer);
+        return this;
+    }
+    /**
+     * Запускает систему прослушивания
+     */
+    start() {
+        this.thread = setInterval(() => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("HEAD", this.filePath, true);
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === xhr.DONE) {
+                    const size = Math.round(parseInt(xhr.getResponseHeader("Content-Length") || "0", 10)
+                        / (1024) * 100) / 100;
+                    if (this.lastFileSize === -1)
+                        this.lastFileSize = size;
+                    if (size !== this.lastFileSize)
+                        this.notificate("changed", [size]);
+                    this.lastFileSize = size;
+                    if (this.startValue === null)
+                        this.startValue = size;
+                    if (this.startValue !== size)
+                        this.notificate("updated", [size]);
+                }
+            };
+            xhr.send();
+        }, 1000);
+        return this;
+    }
+    stop() {
+        if (this.thread)
+            clearInterval(this.thread);
+        return this;
     }
 }
 
@@ -6406,477 +8714,107 @@ class ContainerView extends View {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: ProgressBarView.ts                                                   +
- + Файл изменен: 02.03.2019 02:19:54                                          +
+ + Файл: PreloaderViews                                                   +
+ + Файл изменен: 15.02.2019 01:13:20                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
  * Элемент отображения
- * @class ProgressBarView
+ * @class PreloaderView
  * @augments {View}
  */
-class ProgressBarView extends View {
+class PreloaderView extends View {
     /**
      * Конструктор
-     * @param {ProgressBarViewOptions} options - опции
+     * @param {PreloaderViewOptions} options - опции
      */
     constructor(options = {}) {
         super(options);
         /**
-         * Основной элемент
-         * @ignore
+         * Панель объединения
          * @protected
+         * @ignore
          */
-        this.__bodyView = new Control({ class: "ef-progress-bar" });
+        this.__wrapperView = new Control({ class: "--wrapper" });
         /**
-         * Контейнер
-         * @ignore
+         * Иконка
          * @protected
+         * @ignore
          */
-        this.__progressLineContainer = new ContainerView(new Control({ class: "ef-progress-line" }), { class: "ef-progress-container" });
+        this.__iconView = new IconView({ iconName: "refresh", spinning: true });
         /**
-         * Свойство: стиль полосы бара
-         * @ignore
+         * Элемент отображения текста
          * @protected
+         * @ignore
          */
-        this.__progressBarStyleProperty = new ObservableProperty()
-            .change((value, oldVal) => {
-            if (this.getLineViewContainer() instanceof ContainerView) {
-                if (oldVal)
-                    this.getLineViewContainer()
-                        .getView().removeClass(`bg-${oldVal.value}`);
-                this.getLineViewContainer()
-                    .getView().addClass(`bg-${value.value}`);
-            }
-        });
+        this.__titleTextView = new TextView({ class: "--title" });
         /**
-         * Свойство: максимальное значение
+         * Свойство: стиль загрузчика
          * @ignore
          * @protected
          */
-        this.__maxValueProperty = new ObservableProperty(100).change(value => {
-            if (value < this.minValue())
-                this.maxValue(this.minValue());
-            this.__update();
-        });
-        /**
-         * Свойство: минимальное значение
-         * @ignore
-         * @protected
-         */
-        this.__minValueProperty = new ObservableProperty(0).change(value => {
-            if (value > this.minValue())
-                this.minValue(this.maxValue());
-            if (this.value() < value)
-                this.value(this.minValue());
-            this.__update();
-        });
-        /**
-         * Свойство: значение шкалы прогресса
-         * @ignore
-         * @protected
-         */
-        this.__valueProperty = new ObservableProperty(0).change(value => {
-            if (value > this.maxValue())
-                this.value(this.maxValue());
-            if (value < this.minValue())
-                this.value(this.minValue());
-            this.__update();
-        });
-        this.addClass("ef-progress");
-        this.getDocument().append(this.getBodyView().getDocument());
-        this.getBodyView().getDocument().append(this.getLineViewContainer().getDocument());
-        variableAndSet(options.minValue, this.minValue, this, 0);
-        variableAndSet(options.maxValue, this.maxValue, this, 100);
-        variableAndSet(options.value, this.value, this, 0);
-    }
-    /**
-     * Возвращает основной элемент, содержащий прогресс баг
-     * @return {View}
-     */
-    getBodyView() {
-        return this.__bodyView;
-    }
-    /**
-     * Возвращает контейнер с элементом отображения
-     * @return {ContainerView<View>}
-     */
-    getLineViewContainer() {
-        return this.__progressLineContainer;
-    }
-    /**
-     * Возвращает свойство: стиль полосы бара
-     * @return {ObservableProperty<Style>}
-     */
-    getProgressBarStyleProperty() {
-        return this.__progressBarStyleProperty;
-    }
-    /**
-     * Возвращает и устанавливает стиль полосы бара
-     * @param {Style} [value] - значение
-     * @returns {Style|this|null}
-     */
-    progressBarStyle(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__progressBarStyleProperty);
-    }
-    /**
-     * Возвращает свойство: максимальное значение
-     * @return {ObservableProperty<number>}
-     */
-    getMaxValueProperty() {
-        return this.__maxValueProperty;
-    }
-    /**
-     * Возвращает и устанавливает максимальное значение
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    maxValue(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__maxValueProperty);
-    }
-    /**
-     * Возвращает свойство: минимальное значение
-     * @return {ObservableProperty<number>}
-     */
-    getMinValueProperty() {
-        return this.__minValueProperty;
-    }
-    /**
-     * Возвращает и устанавливает минимальное значение
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    minValue(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__minValueProperty);
-    }
-    /**
-     * Возвращает свойство: значение шкалы прогресса
-     * @return {ObservableProperty<number>}
-     */
-    getValueProperty() {
-        return this.__valueProperty;
-    }
-    /**
-     * Возвращает и устанавливает значение шкалы прогресса
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    value(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__valueProperty);
-    }
-    /**
-     * Возвращает процентное соотношение значений
-     * @return {number}
-     */
-    getPercentage() {
-        return elyMath.map(this.value(), this.minValue(), this.maxValue(), 0, 100);
-    }
-    /**
-     * Добавляет наблюдатель: при изменении значений прогресс бара
-     *
-     * Имя обсервера: changed
-     *
-     * @param {function(value: number, maxValue: number, minValue: number)} o - наблюдатель
-     */
-    addChangedObserver(o) {
-        this.addObserver("changed", o);
-        return this;
-    }
-    serialize() {
-        return Object.assign({}, super.serialize(), { maxValue: this.maxValue(), minValue: this.minValue(), value: this.value() });
-    }
-    /**
-     * Обновляет бар
-     * @ignore
-     * @private
-     */
-    __update() {
-        this.notificate("changed", [this.value(), this.maxValue(), this.minValue()]);
-        if (this.getLineViewContainer() instanceof ContainerView) {
-            this.getLineViewContainer().getView().getStyle().width =
-                this.getPercentage() + "%";
-        }
-    }
-}
-/**
- * @typedef {Object} ProgressBarViewOptions
- * @property {Style} [progressBarStyle]
- * @property {number} [maxValue]
- * @property {number} [minValue]
- * @property {number} [value]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: NavigationViewProgressBar.ts                                         +
- + Файл изменен: 02.03.2019 02:43:04                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Панель загрузки навигации
- * @class NavigationViewProgressBar
- * @augments {ProgressBarView}
- */
-class NavigationViewProgressBar extends ProgressBarView {
-    /**
-     * Конструктор
-     * @param {ProgressBarViewOptions} [options = {}] - опции
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: стиль полосы бара
-         * @ignore
-         * @protected
-         */
-        this.__progressBarStyleProperty = new ObservableProperty()
-            .change((value, oldVal) => {
+        this.__preloaderStyleProperty = new ObservableProperty(Style.primary).change((value, oldVal) => {
             if (oldVal)
-                this.removeClass(`bg-${oldVal.value}`);
-            this.addClass(`bg-${value.value}`);
+                this.removeClass(`--${oldVal.value}`);
+            this.addClass(`--${value.value}`);
         });
-        this.removeViewContent();
-        this.addClass("--progress-line");
-    }
-    /**
-     * Обновляет бар
-     * @ignore
-     * @private
-     */
-    __update() {
-        this.notificate("changed", [this.value(), this.maxValue(), this.minValue()]);
-        this.getStyle().width = this.getPercentage() + "%";
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: ImageViews                                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения: Изображение
- * @version 1.0
- *
- * Events:
- * - loaded: Изображение загружено
- */
-class ImageView extends View {
-    /**
-     * Конструтор
-     * @param {ImageViewOptions} options - опции
-     */
-    constructor(options = {}) {
-        super(Object.assign({ tag: "img" }, options));
-        /**
-         * Свойство: ссылка на изображение
-         * @ignore
-         * @protected
-         */
-        this.__urlProperty = new ObservableProperty("").change((newValue) => this.getDocument().src = newValue);
-        this.addClass("ef-image");
-        this.getDocument().onload = (e) => this.notificate("loaded", [e]);
-        if (options.url)
-            this.url(options.url);
-    }
-    /**
-     * Возвращает свойство: ссылка на изображение
-     * @return {ObservableProperty<string>}
-     */
-    getUrlProperty() {
-        return this.__urlProperty;
-    }
-    /**
-     * Возвращает и устанавливает ссылка на изображение
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    url(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__urlProperty);
-    }
-    /**
-     * Добавляет наблюдатель: изображение загружено
-     *
-     * Имя обсервера: loaded
-     *
-     * @param o - наблюдатель
-     */
-    addLoadedObserver(o) {
-        this.addObserver("loaded", o);
-        return this;
-    }
-    /**
-     * Возвращает корневой элемент
-     */
-    getDocument() {
-        return this.__view;
-    }
-    serialize() {
-        const obj = {};
-        if (this.url())
-            obj.url = this.url();
-        return Object.assign({}, super.serialize(), obj);
-    }
-}
-/**
- * @typedef {Object} ImageViewOptions
- * @property {string} [url]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: NavigationView.ts                                                    +
- + Файл изменен: 07.02.2019 23:43:35                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения - панель навигации
- * @class NavigationView
- * @augments {elyRebuildableViewProtocol}
- */
-class NavigationView extends ListView {
-    /**
-     * Конструктор
-     * @param {NavigationViewOptions} options
-     */
-    constructor(options = { horizontal: true, fixed: false }) {
-        super(options);
-        /**
-         * Изображение
-         * @protected
-         * @ignore
-         */
-        this.__imageView = null;
-        /**
-         * Элемент отображения заголовка
-         * @protected
-         * @ignore
-         */
-        this.__titleTextView = new TextView({ tag: "li" });
-        /**
-         * Элемент отображения иконки-переключателя
-         * @protected
-         * @ignore
-         */
-        this.__toggleIconView = new IconView({ tag: "li", iconName: "navicon" });
-        /**
-         * Элемент загрузки
-         * @protected
-         * @ignore
-         */
-        this.__progressView = new NavigationViewProgressBar();
-        this.__denyRebuild = false;
-        this.addClass("ef-navigation");
-        this.fixed(options.fixed || false);
-        this.horizontal(options.horizontal);
-        this.getTitleView().addClass("--item", "logo");
-        this.getToggleIconView().addClass("--toggle");
-        this.getToggleIconView().addObserver("click", () => {
-            if (this.hasClass("--open"))
-                this.removeClass("--open");
-            else
-                this.addClass("--open");
-        });
-        this.rebuild();
-    }
-    /**
-     * Изображение
-     * @return {ImageView}
-     */
-    getImageView() {
-        return this.__imageView;
-    }
-    /**
-     * Возвращает и устанавливает путь до изображения в навигации
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    imageUrl(value) {
-        if (value === undefined) {
-            return this.getImageView() ? this.getImageView().url() : null;
+        if (!options.selector) {
+            this.addClass("ef-loading");
+            this.getDocument().append(this.getWrapperView().getDocument());
+            this.getWrapperView()
+                .addSubView(this.getIconView())
+                .addSubView(this.getTitleTextView());
+            this.title(options.title || "Пожалуйста, подождите...");
+            bin_1.variable(options.fixedPosition, value => this.fixedPosition(value));
+            bin_1.variable(options.preloaderStyle, value => this.preloaderStyle(value));
         }
-        if (value) {
-            this.__imageView = new ImageView({ url: value });
-        }
-        else {
-            this.__imageView = null;
-        }
-        return this.rebuild();
     }
     /**
-     * Возвращает панель прогресса в панели навигации
-     * @return {NavigationViewProgressBar|ProgressBarView}
+     * Возвращает элемент объекдинения
+     * @return {Control}
      */
-    getProgressView() {
-        return this.__progressView;
+    getWrapperView() {
+        return this.__wrapperView;
+    }
+    /**
+     * Возвращает элемент отображения иконки
+     * @return {IconView}
+     */
+    getIconView() {
+        return this.__iconView;
     }
     /**
      * Возвращает элемент отображения заголовка
      * @return {TextView}
      */
-    getTitleView() {
+    getTitleTextView() {
         return this.__titleTextView;
     }
     /**
-     * Возвращает иконку-переключатель
+     * Возвращает и устанавливает текст загрузки
+     * @param {string} [value] - значение
+     * @returns {string|this}
      */
-    getToggleIconView() {
-        return this.__toggleIconView;
+    title(value) {
+        if (value === undefined)
+            return this.getTitleTextView().text();
+        this.getTitleTextView().text(value);
+        return this;
     }
     /**
-     * Возвращает и устанавливает
+     * Возвращает и устанавливает стиль загрузчика
+     * @param {Style} [value] - значение
+     * @returns {Style|this|null}
+     */
+    preloaderStyle(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__preloaderStyleProperty);
+    }
+    /**
+     * Возвращает и устанавливает флаг фиксированной позиции
      * @param {boolean} [value] - значение
      * @returns {boolean|this|null}
      */
-    fixed(value) {
+    fixedPosition(value) {
         if (value === undefined)
             return this.hasClass("--fixed");
         if (value)
@@ -6885,51 +8823,12 @@ class NavigationView extends ListView {
             this.removeClass("--fixed");
         return this;
     }
-    /**
-     * Возвращает и устанавливает горизонтальное расположение
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    horizontal(value) {
-        if (value === undefined)
-            return this.hasClass("--horizontal");
-        if (value)
-            this.addClass("--horizontal");
-        else
-            this.removeClass("--horizontal");
-        return this;
-    }
-    /**
-     * Выполняет перестроение элемента
-     *
-     * Метод для переопределения реализации престроения
-     * @private
-     * @ignore
-     */
-    __rebuild() {
-        this.removeViewContent();
-        this.getDocument().append(this.getToggleIconView().getDocument());
-        if (this.getImageView()) {
-            const view = new Control({ tag: "li", class: "--item" });
-            view.addClass("--image");
-            view.getDocument().append(this.getImageView().getDocument());
-            this.getDocument().append(view.getDocument());
-        }
-        this.getDocument().append(this.getTitleView().getDocument());
-        this.getItems().forEach(item => {
-            const view = new Control({ tag: "li", class: "--item" });
-            view.addSubView(item);
-            this.notificate("itemWillAdd", [item, view]);
-            this.getDocument().append(view.getDocument());
-        });
-        this.getDocument().append(this.getProgressView().getDocument());
-        return this;
-    }
 }
 /**
- * @typedef {Object} NavigationViewOptions
- * @property {boolean} [horizontal = true]
- * @property {boolean} [fixed = false]
+ * @typedef {Object} PreloaderViewOptions
+ * @property {boolean} [fixedPosition = false]
+ * @property {string} [title = false]
+ * @property {Style} [preloaderStyle]
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -6951,272 +8850,91 @@ class NavigationView extends ListView {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: efSize.ts                                                            +
- + Файл изменен: 28.12.2018 01:18:31                                          +
+ + Файл: AppPreloaderViews                                                +
+ + Файл изменен: 15.02.2019 01:31:19                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Прослушиываемый размер
+ * Элемент отображения - экран загрузки приложения
+ * @class AppPreloaderView
+ * @augments {PreloaderView}
  */
-class efSize extends Observable {
-    /**
-     * Конструктор
-     * @param {{width: number, height: number}} props
-     */
-    constructor(props = { width: 0, height: 0 }) {
-        super();
-        /**
-         * Свойство: ширина
-         */
-        this.widthProperty = new ObservableProperty(0);
-        /**
-         * Свойство: высота
-         */
-        this.heightProperty = new ObservableProperty(0);
-        if (props.d !== undefined) {
-            this.width(props.d || 0);
-            this.height(props.d || 0);
-        }
-        else {
-            this.width(props.width || 0);
-            this.height(props.height || 0);
-        }
-        this.widthProperty.change(value => this.notificate("changed", ["width", value, this.height()]));
-        this.heightProperty.change(value => this.notificate("changed", ["height", this.width(), value]));
-    }
-    /**
-     * Возвращает нулевой размер
-     * @return {efSize}
-     */
-    static zero() {
-        return new efSize({ width: 0, height: 0 });
-    }
-    /**
-     * Возвращает и устанавливает ширина
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    width(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.widthProperty);
-    }
-    /**
-     * Возвращает и устанавливает высота
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    height(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.heightProperty);
-    }
-    /**
-     * Изменяет размер
-     *
-     * @param {number} sW   - ширина или общее значение
-     * @param {number} [sH] - высота
-     * @return {this}
-     */
-    scale(sW, sH) {
-        if (sH === undefined) {
-            this.width(this.width() * sW);
-            this.height(this.height() * sW);
-        }
-        else {
-            this.width(this.width() * sW);
-            this.height(this.height() * (sH || 0));
-        }
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: изменение размера
-     *
-     * Имя обсервера: changed
-     *
-     * @param o - наблюдатель
-     */
-    addChangeObserver(o) {
-        this.addObserver("changed", o);
-        return this;
-    }
-    /**
-     * Преобразует объект в строку
-     * @return {string}
-     */
-    toString() {
-        return `efSize{w: ${this.width()}, h: ${this.height()}}`;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: DeviceDetector.ts                                              +
- + Файл изменен: 31.01.2019 00:49:47                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Детектор устройств и системы
- */
-class DeviceDetector extends Observable {
+class AppPreloaderView extends PreloaderView {
     /**
      * Конструктор
      */
     constructor() {
-        super();
+        super({ selector: "#preloader" });
         /**
-         * Данные
-         * @ignore
+         * Панель объединения
          * @protected
+         * @ignore
          */
-        this.__data = {
-            browser: null,
-            os: null,
-        };
-    }
-    /**
-     * Добавляет наблюдатель: распознавание закончено
-     *
-     * Имя обсервера: detected
-     *
-     * @param o - наблюдатель
-     */
-    addDetectedObserver(o) {
-        this.addObserver("detected", o);
-        return this;
-    }
-    /**
-     * Выполняет детектинг
-     */
-    detect() {
-        for (const os of DeviceDetector.__osNames)
-            if (navigator.userAgent.indexOf(os.value) > -1) {
-                this.__data.os = os.name;
-                break;
-            }
-        for (const browser of DeviceDetector.__browsers)
-            if (navigator.userAgent.indexOf(browser.value) > -1) {
-                this.__data.browser = browser.name;
-                break;
-            }
-        this.notificate("detected");
-    }
-    /**
-     * Возвращает имя системы
-     * @return {string}
-     */
-    getOSName() {
-        return this.__data.os || "Undetected";
-    }
-    /**
-     * Возвращает имя браузера
-     * @return {string}
-     */
-    getBrowserName() {
-        return this.__data.browser || "Undefined";
-    }
-    /**
-     * Возвращает true, если приложение запущено отдельным приложением**
-     * @return {boolean}
-     */
-    isStandalone() {
-        // @ts-ignore
-        return window.navigator.standalone || false;
-    }
-    /**
-     * Возвращает true, если система iOS
-     * @return {boolean}
-     */
-    isIOS() {
-        return /iPad|iPhone|iPod/.test(this.__data.os);
-    }
-    /**
-     * Возвращает соотнощение сторон
-     * @return {number}
-     */
-    getRatio() {
-        return window.devicePixelRatio || 1;
-    }
-    /**
-     * Возвращает реальный размер жкрана
-     * @return {efSize}
-     */
-    getScreenSize() {
-        return new efSize({
-            height: window.screen.height * this.getRatio(),
-            width: window.screen.width * this.getRatio(),
+        this.__wrapperView = new Control({
+            element: document.getElementById("preloader")
+                .getElementsByClassName("--wrapper")[0],
         });
-    }
-    /**
-     * Возвращает true, если устройство - iPhone X
-     * @return {boolean}
-     */
-    isIPhoneX() {
-        const size = this.getScreenSize();
-        return this.isIOS() && size.width() === 1125 && size.height() === 2436;
+        /**
+         * Иконка
+         * @protected
+         * @ignore
+         */
+        this.__iconView = new IconView({
+            element: document.getElementById("preloader")
+                .getElementsByClassName("--wrapper")[0]
+                .getElementsByClassName("ef-icon")[0],
+        });
+        /**
+         * Элемент отображения текста
+         * @protected
+         * @ignore
+         */
+        this.__titleTextView = new TextView({
+            element: document.getElementById("preloader")
+                .getElementsByClassName("--wrapper")[0]
+                .getElementsByClassName("--title")[0],
+        });
+        this.title("Пожалуйста, подождите...");
+        this.fixedPosition(true);
+        this.getIconView().iconName("refresh");
     }
 }
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyFooterView.ts                                                     +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Стандартный детектор
+ * Подвал приложения
+ * @deprecated
  */
-DeviceDetector.default = new DeviceDetector();
-/**
- * Имена операционных систем
- * @protected
- * @ignore
- */
-DeviceDetector.__osNames = [
-    { name: "Windows Phone", value: "Windows Phone", version: "OS" },
-    { name: "Windows", value: "Win", version: "NT" },
-    { name: "iPhone", value: "iPhone", version: "OS" },
-    { name: "iPad", value: "iPad", version: "OS" },
-    { name: "iPod", value: "iPod", version: "OS" },
-    { name: "Kindle", value: "Silk", version: "Silk" },
-    { name: "Android", value: "Android", version: "Android" },
-    { name: "PlayBook", value: "PlayBook", version: "OS" },
-    { name: "BlackBerry", value: "BlackBerry", version: "/" },
-    { name: "MacOS", value: "Mac", version: "OS X" },
-    { name: "Linux", value: "Linux", version: "rv" },
-    { name: "Palm", value: "Palm", version: "PalmOS" },
-];
-/**
- * Браузеры
- * @protected
- * @ignore
- */
-DeviceDetector.__browsers = [
-    { name: "Chrome", value: "Chrome", version: "Chrome" },
-    { name: "Firefox", value: "Firefox", version: "Firefox" },
-    { name: "Safari", value: "Safari", version: "Version" },
-    { name: "Internet Explorer", value: "MSIE", version: "MSIE" },
-    { name: "Opera", value: "Opera", version: "Opera" },
-    { name: "BlackBerry", value: "CLDC", version: "CLDC" },
-    { name: "Mozilla", value: "Mozilla", version: "Mozilla" },
-];
-/**
- * Заголовки
- * @protected
- * @ignore
- */
-DeviceDetector.__headers = [
-    navigator.platform,
-    navigator.userAgent,
-    navigator.appVersion,
-    navigator.vendor,
-];
+class elyFooterView extends Control {
+    /**s
+     * Констуктор
+     */
+    constructor() {
+        super({ class: "ef-footer" });
+        this.titleView = new TextView({ class: "--title" });
+        this.subtitleView = new TextView({ class: "--sub-title" });
+        this.addSubView(this.titleView);
+        this.addSubView(this.subtitleView);
+    }
+}
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -7282,22 +9000,22 @@ class Application extends Observable {
      * @param closure
      */
     static loadApplication(closure) {
-        XLogger.default.log("Загрузка приложения...");
+        bin_9.default.log("Загрузка приложения...");
         AppConfig.default.addLoadedObserver((result, cfg) => {
             console.log(cfg);
             if (!result)
-                XLogger.default.error("Файл конфигурации не найден. " +
+                bin_9.default.error("Файл конфигурации не найден. " +
                     "Будет использована стандратная конфигурация.");
             else
-                XLogger.default.log("Файл конфигурации успешно загружен.");
+                bin_9.default.log("Файл конфигурации успешно загружен.");
             // Распознание текущего устройства
             DeviceDetector.default.addDetectedObserver(() => Application.default.init(cfg));
             DeviceDetector.default.detect();
         });
         if (SingleApp.isUsesSingle()) {
-            XLogger.default.log("Загрузка single версии приложения...");
-            SingleApp.initApplication(vc => {
-                SingleApp.applicationInitFunction(cfg => {
+            bin_9.default.log("Загрузка single версии приложения...");
+            SingleApp.initApplication((vc) => {
+                SingleApp.applicationInitFunction((cfg) => {
                     Application.default.addReadyObserver(next => {
                         Application.default.getApplicationScreenController().addControllerName("index", vc);
                         next(true);
@@ -7307,7 +9025,7 @@ class Application extends Observable {
             });
         }
         else {
-            XLogger.default.log("Загрузка конфигурации: " + AppConfig.appConfigPath);
+            bin_9.default.log("Загрузка конфигурации: " + AppConfig.appConfigPath);
             AppConfig.default.load({ file: AppConfig.appConfigPath });
         }
     }
@@ -7362,8 +9080,8 @@ class Application extends Observable {
         this.__applicationConfig = config;
         this.applyConfiguration(config);
         this.notificate("ready", [(flag, message) => {
-                XLogger.default.log(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
-                XLogger.default.log(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
+                bin_9.default.log(`---> Запуск загрузчика ${this.readySignalsShouldBeReceived}`);
+                bin_9.default.log(`[~~] Загрузчик передал флаг ${flag ? "true" : "false"} (${message})`);
                 if (!flag) {
                     this.getApplicationLoaderView().getIconView()
                         .iconName("times")
@@ -7373,7 +9091,7 @@ class Application extends Observable {
                     return;
                 }
                 this.readySignalsShouldBeReceived--;
-                XLogger.default.log("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
+                bin_9.default.log("[OK] Загрузчик обработан. Осталось: " + this.readySignalsShouldBeReceived);
                 if (this.readySignalsShouldBeReceived === 0) {
                     if (this.getApplicationConfig().manifest.useContentController) {
                         __applyElyOneActions(this);
@@ -7388,7 +9106,7 @@ class Application extends Observable {
      * @param config
      */
     applyConfiguration(config) {
-        XLogger.default.log("~~~> Применение конфигурации");
+        bin_9.default.log("~~~> Применение конфигурации");
         //
         // App
         //
@@ -7415,7 +9133,7 @@ class Application extends Observable {
                 this.getApplicationNavigationView().getTitleView().addObserver("click", () => {
                     this.getApplicationScreenController().present(config.contentController.defaultContentId);
                 });
-            config.navigationBar.items.forEach(value => {
+            config.navigationBar.items.forEach((value) => {
                 value.item = value.item || "LinkTextView";
                 this.getApplicationNavigationView().addView(Control.fromObject(value));
             });
@@ -7521,378 +9239,6 @@ function __applyElyOneActions(app) {
         }
     };
 }
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: Button.ts                                                        +
- + Файл изменен: 08.02.2019 02:22:02                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения кнопка
- * @class Button
- * @augments {Button}
- */
-class Button extends View {
-    /**
-     * Конструктор
-     * @param {ButtonOptions} options
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: текст на кнопке
-         * @ignore
-         */
-        this.textProperty = new ObservableProperty("");
-        /**
-         * Свойство: стиль кнопки
-         * @ignore
-         */
-        this.buttonStyleProperty = new ObservableProperty(Style.primary);
-        /**
-         * Свойство: размер кнопки
-         * @ignore
-         */
-        this.buttonSizeProperty = new ObservableProperty(Size.default);
-        this.addClass("button");
-        this.textProperty.change(value => {
-            this.getDocument().innerHTML = TextView.filterString(value);
-        });
-        this.text(options.text || "");
-        this.buttonSizeProperty.change((value, oldVal) => {
-            this.getStyle().fontSize = null;
-            if (oldVal && !oldVal.custom)
-                this.removeClass(`--${oldVal.value}`);
-            this.addClass(`--${value.value}`);
-        });
-        this.buttonStyleProperty.change((value, oldVal) => {
-            if (oldVal)
-                this.removeClass(`--${oldVal.value}`);
-            this.addClass(`--${value.value}`);
-        });
-        variableAndSet(options.buttonSize, this.buttonSize, this);
-        variableAndSet(options.buttonStyle, this.buttonStyle, this, Style.primary);
-        variableAndSet(options.buttonRounded, this.buttonRounded, this);
-        if (isSet(options.click))
-            this.click(() => {
-                options.click();
-            });
-        if (options.fill)
-            this.fill();
-    }
-    static willBeDeserialized(obj) {
-        if (typeof obj.buttonSize === "string")
-            obj.buttonSize = Size.byName(obj.buttonSize);
-        if (typeof obj.buttonStyle === "string")
-            obj.buttonStyle = Style.byName(obj.buttonStyle);
-    }
-    /**
-     * Возвращает и устанавливает размер кнопки
-     * @param {Size} [value] - значение
-     * @returns {Size|this|null}
-     */
-    buttonSize(value) {
-        if (value !== undefined && typeof value === "string")
-            value = Size.byName(value);
-        return ObservableProperty.simplePropertyAccess(this, value, this.buttonSizeProperty);
-    }
-    /**
-     * Устанавливает размер кнопки во весь блок.
-     * Алиас выражения `Button.buttonSize(Size.fill)`.
-     * @return {this}
-     */
-    fill() {
-        return this.buttonSize(Size.fill);
-    }
-    /**
-     * Возвращает и устанавливает стиль кнопки
-     * @param {Style|string} [value] - значение
-     * @returns {Style|this|null}
-     */
-    buttonStyle(value) {
-        if (value !== undefined && typeof value === "string")
-            value = Style.byName(value);
-        return ObservableProperty.simplePropertyAccess(this, value, this.buttonStyleProperty);
-    }
-    /**
-     * Возвращает и устанавливает текст на кнопке
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    text(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.textProperty);
-    }
-    /**
-     * Устанавливает слушатель нажатия или нажимает на кнопку
-     *
-     * @param {Function} [callback = null]
-     * @returns {Button}
-     */
-    click(callback) {
-        if (callback === undefined) {
-            this.getDocument().click();
-        }
-        else {
-            this.addObserver("click", callback);
-        }
-        return this;
-    }
-    /**
-     * Возвращает и устанавливает флаг закругления углов кнопки
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    buttonRounded(value) {
-        if (value === undefined)
-            return this.hasClass("--rounded");
-        if (value)
-            this.addClass("--rounded");
-        else
-            this.removeClass("--rounded");
-        return this;
-    }
-    /**
-     * Сериализует объект
-     * @return {string}
-     */
-    serialize() {
-        return Object.assign({}, super.serialize(), { buttonRounded: this.buttonRounded(), buttonSize: this.buttonSize().serialize(), buttonStyle: this.buttonStyle().serialize(), text: this.text() });
-    }
-}
-/**
- * @typedef {Object} ButtonOptions
- * @property {String} [text = ""]
- * @property {Size} [buttonSize]
- * @property {Style} [buttonStyle]
- * @property {boolean} [buttonRounded = false]
- * @property {boolean} [fill = false]
- * @property {function()} [click]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: TextViewContainer.ts                                             +
- + Файл изменен: 09.02.2019 16:15:14                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * элемент отображения контейнера с текстом
- * @class TextViewContainer
- * @augments View
- */
-class TextViewContainer extends View {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Элемент отображения текста
-         * @protected
-         * @ignore
-         */
-        this.__textView = new TextView();
-        this.getDocument().append(this.getTextView().getDocument());
-    }
-    /**
-     * Возвращает элемент отображения текста
-     * @return {TextView}
-     */
-    getTextView() {
-        return this.__textView;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: PanelView.ts                                                         +
- + Файл изменен: 09.02.2019 16:11:48                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения панель
- */
-class PanelView extends View {
-    /**
-     * Конструктор
-     * @param {PanelViewOptions} options
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Элемен отображения заголовка
-         * @protected
-         * @ignore
-         */
-        this.__headerView = new TextViewContainer({ class: "--header" });
-        /**
-         * Элемен отображения контента
-         * @protected
-         * @ignore
-         */
-        this.__contentView = new GridLayoutView({ class: "--content" });
-        /**
-         * Элемен отображения подвала
-         * @protected
-         * @ignore
-         */
-        this.__footerView = new TextViewContainer({ class: "--footer" });
-        this.addClass("ef-panel");
-        if (options.panelContainer)
-            this.__contentView = options.panelContainer.addClass("--content");
-        this.panelHover(true);
-        variable(options.panelTitle, (v) => this.panelTitle(v));
-        variable(options.panelHover, (v) => this.panelHover(v));
-        variable(options.panelActionText, (v) => this.panelActionText(v));
-        variable(options.panelActionClick, (v) => this.panelActionClick(v));
-        this.rebuild();
-    }
-    /**
-     * Возвращает элемент отображения заголовка
-     * @return {TextViewContainer}
-     */
-    getHeaderView() {
-        return this.__headerView;
-    }
-    /**
-     * Возвращает элемент отображения подвала
-     * @return {TextViewContainer}
-     */
-    getFooterView() {
-        return this.__footerView;
-    }
-    /**
-     * Возвращает элемент отображения контента
-     * @return {GridLayoutView}
-     */
-    getContentView() {
-        return this.__contentView;
-    }
-    /**
-     * Возвращает и устанавливает флаг изменения палени при наведении на неё
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    panelHover(value) {
-        if (value === undefined)
-            return this.hasClass("--hover");
-        if (value)
-            this.addClass("--hover");
-        else
-            this.removeClass("--hover");
-        return this;
-    }
-    /**
-     * Возвращает и устанавливает текст активации
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    panelActionText(value) {
-        if (value === undefined)
-            return this.getFooterView().getTextView().text();
-        this.getFooterView().getTextView().text(value);
-        this.rebuild();
-        return this;
-    }
-    /**
-     * Возвращает и устанавливает текст заголовка панели
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    panelTitle(value) {
-        if (value === undefined)
-            return this.getHeaderView().getTextView().text();
-        this.getHeaderView().getTextView().text(value);
-        this.rebuild();
-        return this;
-    }
-    /**
-     * Выполняет перестроение панели
-     */
-    rebuild() {
-        this.removeViewContent();
-        if (this.panelTitle() !== "")
-            this.getDocument().append(this.getHeaderView().getDocument());
-        this.getDocument().append(this.getContentView().getDocument());
-        if (this.panelActionText() !== "")
-            this.getDocument().append(this.getFooterView().getDocument());
-        return this;
-    }
-    /**
-     * Добавляет слушатель нажатия на функциональную клавишу
-     * @param {function()} callbackfn
-     */
-    panelActionClick(callbackfn) {
-        this.getFooterView().addObserver("click", callbackfn);
-        return this;
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        return Object.assign({}, super.serialize(), { panelActionText: this.panelActionText(), panelContainer: this.getContentView().serialize(), panelHover: this.panelHover(), panelTitle: this.panelTitle() });
-    }
-}
-/**
- * @typedef {Object} PanelViewOptions - Опции панели
- * @property {string} [panelTitle]
- * @property {string} [panelActionText]
- * @property {boolean} [panelHover = true]
- * @property {function()} [panelActionClick]
- */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  + ,--. o                   |    o                                            +
@@ -8159,179 +9505,6 @@ NotificationView.defaults = {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: SendFileRequest.ts                                             +
- + Файл изменен: 27.02.2019 00:18:04                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Запрос отправки файла
- * @class SendFileRequest
- * @augments {URLRequest}
- */
-class SendFileRequest extends URLRequest {
-    /**
-     * Выполняет отправку файлов
-     *
-     * @param {string} url - адрес
-     * @param {*} files - объект для передачи
-     * @param {TURLCallback} callback - обработчик результата
-     * @return SendFileRequest
-     */
-    static send(url, files, callback) {
-        new SendFileRequest({ url, files }).send(callback);
-    }
-    /**
-     * Конструктор
-     * @param {SendFileRequestOptions} options
-     */
-    constructor(options) {
-        super(options);
-        this.__files = options.files || [];
-    }
-    /**
-     * Выполняет запрос
-     *
-     * @param {TURLCallback} callback
-     */
-    send(callback) {
-        this.__method = URLRequestMethod.POST;
-        this.__prepareXMLHttpRequestCore(callback);
-        const theFormData = new FormData();
-        this.getFiles().forEach(file => {
-            theFormData.append("file", file);
-        });
-        this.getXMLHttpRequest().send(theFormData);
-    }
-    /**
-     * Добавляет файлы
-     * @param {...File} files - файлы
-     * @return SendFileRequest
-     */
-    addFiles(...files) {
-        this.__files.push(...files);
-        return this;
-    }
-    /**
-     * Возвращает файлы
-     */
-    getFiles() {
-        return this.__files;
-    }
-}
-/**
- * @typedef {Object} SendFileRequest
- * @property {string} url
- * @property {boolean} [async]
- * @property {*} [data]
- * @property {File[]} [files]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: SendJsonRequest.ts                                             +
- + Файл изменен: 26.02.2019 23:45:06                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * SendJsonRequest позволяет передавать JSON данные через POST запрос.
- *
- * JSON данные передаются в теле запроса. Отправка данных производится методом POST.
- *
- * Заголовки:
- * - Content-type: application/json; charset=utf-8
- *
- * @class SendJsonRequest
- * @augments {URLRequest}
- */
-class SendJsonRequest extends URLRequest {
-    /**
-     * Выполняет отправку JSON данных
-     *
-     * @param {string} url - адрес
-     * @param {*} object - объект для передачи
-     * @param {TURLCallback} callback - обработчик результата
-     */
-    static send(url, object, callback) {
-        new SendJsonRequest({ url, object }).send(callback);
-    }
-    /**
-     * Конструктор
-     * @param {SendJsonRequestOptions} options
-     */
-    constructor(options) {
-        super(options);
-        this.__object = options.object;
-    }
-    /**
-     * Выполняет запрос
-     * @param {TURLCallback} callback
-     */
-    send(callback) {
-        this.__method = URLRequestMethod.POST;
-        this.__prepareXMLHttpRequestCore(callback);
-        this.getXMLHttpRequest().send(JSON.stringify(this.getObject()));
-    }
-    /**
-     * Устаналивает объект для передачи
-     * @param {*} obj
-     * @return {this}
-     */
-    setObject(obj) {
-        this.__object = obj;
-        return this;
-    }
-    /**
-     * Возвращает объект для передачи
-     * @return {*}
-     */
-    getObject() {
-        return this.__object;
-    }
-}
-/**
- * @typedef {Object} SendJsonRequestOptions
- * @property {string} url
- * @property {boolean} [async]
- * @property {*} [data]
- * @property {*} [object]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
  + Файл: elyUIExt.ts                                                          +
  + Файл изменен: 08.02.2019 02:41:23                                          +
  +                                                                            +
@@ -8467,203 +9640,108 @@ Window.prototype.notifi = (text, title, content) => {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: SwitchFields                                                     +
- + Файл изменен: 09.02.2019 15:38:01                                          +
+ + Файл: efxApp.ts                                                            +
+ + Файл изменен: 22.02.2019 23:04:56                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Поле ввода переключатель
- * @class SwitchField
- * @augments {Field<boolean>}
+ * Приложение efX-app
+ * @class {efxApp}
+ * @augments {Observable}
  */
-class SwitchField extends Field {
+class efxApp extends Observable {
     /**
      * Конструктор
-     * @param {SwitchFieldOptions} options
+     * @param props
      */
-    constructor(options = {}) {
-        super(Object.assign({ tag: "label" }, options));
+    constructor(props = {}) {
+        super();
         /**
-         * Левый лейбл
-         * @type {ObservableProperty<View>}
          * @protected
          * @ignore
          */
-        this.__leftLabel = new ObservableProperty();
+        this.__isConnected = false;
         /**
-         * Правый лейбл
-         * @type {ObservableProperty<View>}
          * @protected
          * @ignore
          */
-        this.__rightLabel = new ObservableProperty();
+        this.__host = "http://localhost";
         /**
-         * Элемент переключателя
          * @protected
          * @ignore
          */
-        this.__core = new Control({ class: "--core", tag: "span" });
-        /**
-         * Свойство: стиль переключателя
-         * @ignore
-         */
-        this.switchStyleProperty = new ObservableProperty(null);
-        this.addClass("ef-switch");
-        this.getDocument().append(this.getToggleView().getDocument());
-        this.getAccessory().type = "checkbox";
-        this.getAccessory().onchange = () => this.value(this.getAccessory().checked);
-        this.__leftLabel.change(() => this.rebuild());
-        this.__rightLabel.change(() => this.rebuild());
-        this.switchStyleProperty.change((value, oldVal) => {
-            if (oldVal)
-                this.removeClass(`--${oldVal}`);
-            this.addClass(`--${value}`);
-        });
-        this.valueProperty.change(value => this.getAccessory().checked = value);
-        variable(options.leftLabel, () => this.setLeftLabel(options.leftLabel));
-        variable(options.rightLabel, () => this.setRightLabel(options.rightLabel));
-        variable(options.title, () => this.setLeftLabel(options.title));
-        variable(options.value, () => this.value(options.value));
-        variable(options.switchStyle, () => this.switchStyle(options.switchStyle));
+        this.__port = 1583;
     }
     /**
-     * Очищает значение
-     * @return {this}
+     * Возвращает состояние подключения
+     * @return {boolean}
      */
-    clearValue() {
-        this.value(false);
-        return this;
+    isConnected() {
+        return this.__isConnected;
     }
     /**
-     * Устанавливает лейбл слева
-     * @param {string|View} view
-     * @return {this}
+     * Возвращает хост соединения
+     * @return {string}
      */
-    setLeftLabel(view) {
-        return this.__setLabel(this.__leftLabel, view);
+    getHost() {
+        return this.__host;
     }
     /**
-     * Устанавливает лейбл справа
-     * @param {string|View} view
-     * @return {this}
+     * Возвращает порт соединения
+     * @return {number}
      */
-    setRightLabel(view) {
-        return this.__setLabel(this.__rightLabel, view);
+    getPort() {
+        return this.__port;
     }
     /**
-     * Возвращает левый лейбл
-     * @return {View|null}
+     * Соединяется с сервером efX-app
+     * @param callback
      */
-    getLeftLabel() {
-        return this.__leftLabel.get();
-    }
-    /**
-     * Возвращает правый лейбл
-     * @return {View|null}
-     */
-    getRightLabel() {
-        return this.__rightLabel.get();
-    }
-    /**
-     * Возвращает элемент переключателя
-     * @return {View}
-     */
-    getToggleView() {
-        return this.__core;
-    }
-    /**
-     * Возвращает и устанавливает левый заголовок
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    leftLabel(value) {
-        if (value === undefined) {
-            if (this.getLeftLabel())
-                return this.getLeftLabel().getDocument().innerText;
-            return null;
-        }
-        this.setLeftLabel(value);
-        return this;
-    }
-    /**
-     * Возвращает и устанавливает правый заголовок
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    rightLabel(value) {
-        if (value === undefined) {
-            if (this.getRightLabel())
-                return this.getRightLabel().getDocument().innerText;
-            return null;
-        }
-        this.setRightLabel(value);
-        return this;
-    }
-    /**
-     * Выполняет перестроение элемента
-     * @return {this}
-     */
-    rebuild() {
-        this.removeViewContent();
-        this.getDocument().append(this.getAccessory());
-        if (!this.__leftLabel.isNull())
-            this.getDocument().append(this.__leftLabel.get().getDocument());
-        this.getDocument().append(this.getToggleView().getDocument());
-        if (!this.__rightLabel.isNull())
-            this.getDocument().append(this.__rightLabel.get().getDocument());
-        return this;
-    }
-    /**
-     * Возвращает и устанавливает стиль переключателя
-     * @param {Style|string} [value] - значение
-     * @returns {Style|this|null}
-     */
-    switchStyle(value) {
-        if (typeof value === "string")
-            value = Style.byName(value);
-        return ObservableProperty.simplePropertyAccess(this, value, this.switchStyleProperty);
-    }
-    serialize() {
-        const obj = {};
-        if (this.leftLabel())
-            obj.leftLabel = this.leftLabel();
-        if (this.rightLabel())
-            obj.rightLabel = this.rightLabel();
-        if (this.switchStyle())
-            obj.switchStyle = this.switchStyle();
-        return Object.assign({}, super.serialize(), obj);
-    }
-    /**
-     * Устанавливает заголовок переключателья
-     * @param label
-     * @param value
-     * @private
-     */
-    __setLabel(label, value) {
-        if (typeof value === "string") {
-            if (value === "")
-                label.set(null);
-            else {
-                value = new TextView({ text: value });
-                label.set(value);
+    connect(callback) {
+        this.sendRaw("list", {}, (res) => {
+            const self = this;
+            this.__isConnected = res.status;
+            if (res.status) {
+                const obj = {};
+                res.response.forEach(value => {
+                    Object.defineProperty(obj, value, {
+                        get: () => {
+                            return {
+                                rows(data, callback) {
+                                    self.sendRaw("select", Object.assign({ table: value }, data), response => {
+                                        callback(response.response);
+                                    });
+                                },
+                            };
+                        },
+                    });
+                });
+                callback(obj);
             }
-        }
-        else {
-            label.set(value);
-        }
-        return this;
+        });
+    }
+    global(callback) {
+        this.sendRaw("select", { table: "global" }, response => {
+            const obj = {};
+            response.response.forEach((o) => {
+                obj[o.name] = {
+                    value: o.value,
+                    set(value, callback) {
+                        this.sendRaw("set", { table: "global", id: o.id }, (a) => {
+                            callback();
+                        });
+                    },
+                };
+            });
+            callback(obj);
+        });
+    }
+    sendRaw(method, data, callback) {
+        bin_14.Requests.URLRequest.sendGET(this.getHost() + ":" + this.getPort() + "/db/" + method, data, response => {
+            callback(response);
+        });
     }
 }
-/**
- * @typedef {Object} SwitchFieldOptions
- * @property {string|View} [title]
- * @property {string|View} [leftLabel]
- * @property {string|View} [rightLabel]
- * @property {string|Style} [switchStyle]
- * @property {boolean} [value]
- * @property {boolean} [editable = true]
- * @property {string} [placeholder = ""]
- */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -8777,6 +9855,86 @@ TextFieldType.mail = new TextFieldType({ value: "mail" });
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
+ + Файл: LinkTextViews                                                    +
+ + Файл изменен: 08.02.2019 00:48:47                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Текст с ссылкой
+ * @class LinkTextView
+ * @augments {TextView}
+ */
+class LinkTextView extends TextView {
+    /**
+     * Конструктор
+     * @param {LinkTextViewOptions} options
+     */
+    constructor(options = { url: "#" }) {
+        super(options);
+        /**
+         * Свойство: адрес ссылки
+         * @type {ObservableProperty<string>}
+         */
+        this.urlProperty = new ObservableProperty("#").change(value => {
+            this.attribute("href", value);
+        });
+        this.url(options.url);
+    }
+    /**
+     * Десериализует объект
+     * @param {string} raw - сериализованный объект
+     * @return {LinkTextView}
+     */
+    static deserialize(raw) {
+        return new LinkTextView(JSON.parse(raw));
+    }
+    /**
+     * Возвращает и устанавливает адрес ссылки
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    url(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.urlProperty);
+    }
+    /**
+     * Сериализует объект
+     * @return {string}
+     */
+    serialize() {
+        return JSON.stringify({
+            text: this.text(),
+            textCenter: this.textCenter(),
+            textSize: this.textSize().value,
+            textStyle: this.textStyle().value,
+            textWeight: this.textWeight().value,
+            url: this.url(),
+        });
+    }
+}
+/**
+ * @typedef {TextViewOptions} LinkTextViewOptions
+ * @property {string} [url = "#"]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
  + Файл: TextField.ts                                                     +
  + Файл изменен: 09.02.2019 19:08:52                                          +
  +                                                                            +
@@ -8815,10 +9973,10 @@ class TextField extends Field {
         this.valueProperty.change((value, oldVal) => {
             this.getAccessory().value = value;
         });
-        variable(options.value, () => this.value(options.value));
-        variable(options.fieldType, () => this.fieldType(options.fieldType));
-        variable(options.rightIconName, (v) => this.setRightIcon(v));
-        variable(options.leftIconName, (v) => this.setLeftIcon(v));
+        bin_1.variable(options.value, () => this.value(options.value));
+        bin_1.variable(options.fieldType, () => this.fieldType(options.fieldType));
+        bin_1.variable(options.rightIconName, (v) => this.setRightIcon(v));
+        bin_1.variable(options.leftIconName, (v) => this.setLeftIcon(v));
     }
     static willBeDeserialized(obj) {
         if (typeof obj.fieldType === "string")
@@ -9007,68 +10165,206 @@ class TextField extends Field {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: LinkTextViews                                                    +
- + Файл изменен: 08.02.2019 00:48:47                                          +
+ + Файл: SwitchFields                                                     +
+ + Файл изменен: 09.02.2019 15:38:01                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Текст с ссылкой
- * @class LinkTextView
- * @augments {TextView}
+ * Поле ввода переключатель
+ * @class SwitchField
+ * @augments {Field<boolean>}
  */
-class LinkTextView extends TextView {
+class SwitchField extends Field {
     /**
      * Конструктор
-     * @param {LinkTextViewOptions} options
+     * @param {SwitchFieldOptions} options
      */
-    constructor(options = { url: "#" }) {
-        super(options);
+    constructor(options = {}) {
+        super(Object.assign({ tag: "label" }, options));
         /**
-         * Свойство: адрес ссылки
-         * @type {ObservableProperty<string>}
+         * Левый лейбл
+         * @type {ObservableProperty<View>}
+         * @protected
+         * @ignore
          */
-        this.urlProperty = new ObservableProperty("#").change(value => {
-            this.attribute("href", value);
+        this.__leftLabel = new ObservableProperty();
+        /**
+         * Правый лейбл
+         * @type {ObservableProperty<View>}
+         * @protected
+         * @ignore
+         */
+        this.__rightLabel = new ObservableProperty();
+        /**
+         * Элемент переключателя
+         * @protected
+         * @ignore
+         */
+        this.__core = new Control({ class: "--core", tag: "span" });
+        /**
+         * Свойство: стиль переключателя
+         * @ignore
+         */
+        this.switchStyleProperty = new ObservableProperty(null);
+        this.addClass("ef-switch");
+        this.getDocument().append(this.getToggleView().getDocument());
+        this.getAccessory().type = "checkbox";
+        this.getAccessory().onchange = () => this.value(this.getAccessory().checked);
+        this.__leftLabel.change(() => this.rebuild());
+        this.__rightLabel.change(() => this.rebuild());
+        this.switchStyleProperty.change((value, oldVal) => {
+            if (oldVal)
+                this.removeClass(`--${oldVal}`);
+            this.addClass(`--${value}`);
         });
-        this.url(options.url);
+        this.valueProperty.change(value => this.getAccessory().checked = value);
+        bin_1.variable(options.leftLabel, () => this.setLeftLabel(options.leftLabel));
+        bin_1.variable(options.rightLabel, () => this.setRightLabel(options.rightLabel));
+        bin_1.variable(options.title, () => this.setLeftLabel(options.title));
+        bin_1.variable(options.value, () => this.value(options.value));
+        bin_1.variable(options.switchStyle, () => this.switchStyle(options.switchStyle));
     }
     /**
-     * Десериализует объект
-     * @param {string} raw - сериализованный объект
-     * @return {LinkTextView}
+     * Очищает значение
+     * @return {this}
      */
-    static deserialize(raw) {
-        return new LinkTextView(JSON.parse(raw));
+    clearValue() {
+        this.value(false);
+        return this;
     }
     /**
-     * Возвращает и устанавливает адрес ссылки
+     * Устанавливает лейбл слева
+     * @param {string|View} view
+     * @return {this}
+     */
+    setLeftLabel(view) {
+        return this.__setLabel(this.__leftLabel, view);
+    }
+    /**
+     * Устанавливает лейбл справа
+     * @param {string|View} view
+     * @return {this}
+     */
+    setRightLabel(view) {
+        return this.__setLabel(this.__rightLabel, view);
+    }
+    /**
+     * Возвращает левый лейбл
+     * @return {View|null}
+     */
+    getLeftLabel() {
+        return this.__leftLabel.get();
+    }
+    /**
+     * Возвращает правый лейбл
+     * @return {View|null}
+     */
+    getRightLabel() {
+        return this.__rightLabel.get();
+    }
+    /**
+     * Возвращает элемент переключателя
+     * @return {View}
+     */
+    getToggleView() {
+        return this.__core;
+    }
+    /**
+     * Возвращает и устанавливает левый заголовок
      * @param {string} [value] - значение
      * @returns {string|this|null}
      */
-    url(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.urlProperty);
+    leftLabel(value) {
+        if (value === undefined) {
+            if (this.getLeftLabel())
+                return this.getLeftLabel().getDocument().innerText;
+            return null;
+        }
+        this.setLeftLabel(value);
+        return this;
     }
     /**
-     * Сериализует объект
-     * @return {string}
+     * Возвращает и устанавливает правый заголовок
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
      */
+    rightLabel(value) {
+        if (value === undefined) {
+            if (this.getRightLabel())
+                return this.getRightLabel().getDocument().innerText;
+            return null;
+        }
+        this.setRightLabel(value);
+        return this;
+    }
+    /**
+     * Выполняет перестроение элемента
+     * @return {this}
+     */
+    rebuild() {
+        this.removeViewContent();
+        this.getDocument().append(this.getAccessory());
+        if (!this.__leftLabel.isNull())
+            this.getDocument().append(this.__leftLabel.get().getDocument());
+        this.getDocument().append(this.getToggleView().getDocument());
+        if (!this.__rightLabel.isNull())
+            this.getDocument().append(this.__rightLabel.get().getDocument());
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает стиль переключателя
+     * @param {Style|string} [value] - значение
+     * @returns {Style|this|null}
+     */
+    switchStyle(value) {
+        if (typeof value === "string")
+            value = Style.byName(value);
+        return ObservableProperty.simplePropertyAccess(this, value, this.switchStyleProperty);
+    }
     serialize() {
-        return JSON.stringify({
-            text: this.text(),
-            textCenter: this.textCenter(),
-            textSize: this.textSize().value,
-            textStyle: this.textStyle().value,
-            textWeight: this.textWeight().value,
-            url: this.url(),
-        });
+        const obj = {};
+        if (this.leftLabel())
+            obj.leftLabel = this.leftLabel();
+        if (this.rightLabel())
+            obj.rightLabel = this.rightLabel();
+        if (this.switchStyle())
+            obj.switchStyle = this.switchStyle();
+        return Object.assign({}, super.serialize(), obj);
+    }
+    /**
+     * Устанавливает заголовок переключателья
+     * @param label
+     * @param value
+     * @private
+     */
+    __setLabel(label, value) {
+        if (typeof value === "string") {
+            if (value === "")
+                label.set(null);
+            else {
+                value = new TextView({ text: value });
+                label.set(value);
+            }
+        }
+        else {
+            label.set(value);
+        }
+        return this;
     }
 }
 /**
- * @typedef {TextViewOptions} LinkTextViewOptions
- * @property {string} [url = "#"]
+ * @typedef {Object} SwitchFieldOptions
+ * @property {string|View} [title]
+ * @property {string|View} [leftLabel]
+ * @property {string|View} [rightLabel]
+ * @property {string|Style} [switchStyle]
+ * @property {boolean} [value]
+ * @property {boolean} [editable = true]
+ * @property {string} [placeholder = ""]
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -9084,734 +10380,236 @@ class LinkTextView extends TextView {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Файл: ModalViews                                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: GroupedDataField.ts                                                  +
+ + Файл изменен: 15.03.2019 20:07:19                                          +
+ +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**w
- * Элемент отображения: Модальное окно
- * @version 1.0
- * @class ModalView
+/**
+ * Элемент отображения: сгрупированное поле.
+ *
+ * Временно поддерживается только тип string.
+ *
+ * @class GroupedDataField
  * @augments {View}
  */
-class ModalView extends View {
+class GroupedDataField extends Field {
     /**
      * Конструктор
-     * @param {ModalViewOptions} options - опции
+     * @param {GroupedDataFieldOptions} [options] - опции
      */
     constructor(options = {}) {
         super(options);
         /**
-         * Элемент модального окна
-         * @readonly
-         * @type {Control}
+         * Поля
          */
-        this.__containerView = new Control({ class: "ef-modal-container" });
-        /**
-         * Кнопка закрытия
-         * @type {IconView}
-         * @readonly
-         */
-        this.__closeButtonView = new IconView({ iconName: "close", class: "close" });
-        /**
-         * Элемент заголовка
-         * @readonly
-         * @type {TextViewContainer}
-         */
-        this.__titleTextContainerView = new TextViewContainer({ class: "title" });
-        /**
-         * Элемент контента
-         * @type {View}
-         * @readonly
-         * @protected
-         */
-        this.__modalContentView = new Control({ class: "content" });
-        /**
-         * Свойство: стиль модального окна
-         * @ignore
-         * @protected
-         */
-        this.__modalStyleProperty = new ObservableProperty(Style.primary).change((value, oldVal) => {
-            if (oldVal)
-                this.getTitleTextContainerView().removeClass(`bg-${oldVal.value}`);
-            this.getTitleTextContainerView().addClass(`bg-${value.value}`);
+        this.__fields = [];
+        this.addClass("ef-input", "ef-input-group");
+        this.removeViewContent();
+        // this.valueProperty.removeAllObservers("change");
+        // this.valueProperty.change(a => {
+        //     a.forEach((value, index) => this.getFieldsOnly()[index].field!.value(value));
+        // });
+        this.editableProperty.removeAllObservers("change");
+        this.editableProperty.change(value => {
+            this.getFieldsOnly().forEach(field => field.field.editable(value));
         });
-        /**
-         * Свойство: флаг возможности закрытия окна
-         * @ignore
-         * @protected
-         */
-        this.__modalClosableProperty = new ObservableProperty(true).change(value => {
-            this.getCloseButtonView().hidden(!value);
-        });
-        /**
-         * Свойство: элемент - содержимое модального окна
-         * @ignore
-         * @protected
-         */
-        this.__modalContentProperty = new ObservableProperty(Control.empty()).change((newValue) => {
-            this.getContentView().removeViewContent();
-            this.getContentView().getDocument().append(newValue.getDocument());
-        });
-        this.addClass("ef-modal");
-        this.getCloseButtonView().addObserver("click", () => this.dismiss());
-        this.getTitleTextContainerView().getDocument().append(this.getCloseButtonView().getDocument());
-        this.getContainerView().addSubView(this.getTitleTextContainerView());
-        this.getContainerView().addSubView(this.getContentView());
-        this.getDocument().append(this.getContainerView().getDocument());
-        // Set
-        variable(options.content, value => this.content(value), Control.empty());
-        variable(options.title, value => this.title(value), "Modal");
-        variable(options.closable, value => this.closable(value), true);
-        variable(options.modalStyle, value => this.modalStyle(value), Style.byName("default"));
-    }
-    /**
-     * Открывает следующее модальное окно из стэка
-     * @protected
-     * @static
-     */
-    static next() {
-        if (ModalView.queue.length > 0 && ModalView.currentModal === null) {
-            ModalView.currentModal = ModalView.queue.pop();
-            Application.default.getApplicationDocument().getBody().addSubView(ModalView.currentModal);
-            ModalView.currentModal.fadeIn();
-        }
-    }
-    /**
-     * Отображает модальное окно
-     * @return
-     */
-    present() {
-        this.notificate("present", [this]);
-        ModalView.queue.push(this);
-        ModalView.next();
-    }
-    /**
-     * Скрывает модальное окно
-     * @param {boolean} [force = false]
-     * @return
-     *
-     * Модальное окно может быть "незакрываемым", тогда
-     * удалить его можно только используя параметр `force`.
-     *
-     *
-     *     myModal.dismiss(true); // Force dismiss modal
-     *
-     *
-     */
-    dismiss(force = false) {
-        if (this.closable() || force) {
-            this.notificate("dismiss", [this]);
-            this.fadeOut(() => {
-                Application.default.getApplicationDocument().getBody().removeSubView(this);
-                ModalView.currentModal = null;
-                ModalView.next();
+        if (options.items) {
+            options.items.forEach(item => {
+                if (item instanceof Field)
+                    this.addField(item);
+                else
+                    this.addBlock(item);
             });
+            this.rebuild();
         }
+        bin_1.variableAndSet(options.value, this.value, this);
     }
     /**
-     * Возвращает элемент отображения заголовка
-     * @return {TextView}
+     * Возвращает элемент управления
+     * @deprecated Объект GroupedDataField не имеет элемента управления
      */
-    getTitleTextContainerView() {
-        return this.__titleTextContainerView;
+    getAccessory() {
+        return this.__accessoryView;
     }
     /**
-     * Возвращает элемент отображения содержимого модального окна
-     * @return {View}
+     * Добавляет поле
+     * @param {Field<*>} field - поле
+     * @param {number} percentage - дробное значение - процент места в строке
+     *
+     * @return {GroupedDataField}
      */
-    getContentView() {
-        return this.__modalContentView;
+    addField(field, percentage) {
+        field.change(() => this.value(this.getValuesArray()));
+        field.addInputObserver(value => {
+            this.notificate("input", [this.getFieldsOnly().map(f => {
+                    if (f.field === field)
+                        return value;
+                    else
+                        return f.field.value();
+                })]);
+        });
+        this.__fields.push({ field, percentage });
+        return this.rebuild();
     }
     /**
-     * Возвращает элемент отображения - контейнер модального окна
-     * @return {Control}
+     * Возвращает массив значений
+     */
+    getValuesArray() {
+        return this.getFieldsOnly().map(item => {
+            if (bin_1.isSet(item.field.value()))
+                return item.field.value();
+            else
+                return null;
+        });
+    }
+    /**
+     * Добавляет блок отображения
+     * @param {View} content
+     * @return {GroupedDataField}
+     */
+    addBlock(content) {
+        this.__fields.push({ block: content });
+        return this.rebuild();
+    }
+    /**
+     * Возаращает массив всех полей и элементов в группе
+     * @return {GroupedDataFieldItem[]}
+     */
+    getFieldsAndBlocks() {
+        return this.__fields;
+    }
+    /**
+     * Возвращает только поля в группе
+     * @return {GroupedDataFieldItem[]}
+     */
+    getFieldsOnly() {
+        return this.__fields.filter(a => bin_1.isSet(a.field));
+    }
+    /**
+     * Выполняет перестроение элемента
+     * @return {GroupedDataField}
+     */
+    rebuild() {
+        this.removeViewContent();
+        const percentageMode = this.__fields.every(value => bin_1.isSet(value.percentage) || bin_1.isSet(value.block));
+        this.__fields.forEach(field => {
+            if (field.field) {
+                this.getDocument().append(field.field.getAccessory());
+                if (percentageMode) {
+                    field.field.getAccessory().style.width = (field.percentage * 100) + "%";
+                }
+                else {
+                    field.field.getAccessory().style.width = (100 / this.getFieldsOnly().length) + "%";
+                }
+            }
+            if (field.block) {
+                const view = new Control({ class: "ef-input-block" });
+                view.addSubView(field.block);
+                this.getDocument().append(view.getDocument());
+            }
+        });
+        return this;
+    }
+    /**
+     * Добавляет наблюдатель ввода
+     *
+     * Имя наблюдатель: input
+     *
+     * @param {function(values: *[])} o
+     * @return {GroupedDataField}
+     */
+    addInputObserver(o) {
+        return this.addObserver("input", o);
+    }
+    /**
+     * Возвращает true, если все элементы прошли валидацию
+     * @return {boolean}
+     */
+    isValid() {
+        return this.getFieldsOnly().every(f => f.field.isValid());
+    }
+}
+/**
+ * @typedef {Object} GroupedDataFieldOptions
+ * @property {boolean} [first]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: BoxView.ts                                                           +
+ + Файл изменен: 08.03.2019 20:11:59                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения
+ * @class BoxView
+ * @augments {View}
+ */
+class BoxView extends View {
+    /**
+     * Конструктор
+     * @param {BoxViewOptions} options - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        this.addClass("box");
+        this.__containerView = options.containerView ?
+            options.containerView : new GridLayoutView();
+        this.getContainerView().addClass("--container");
+        this.getDocument().append(this.getContainerView().getDocument());
+        bin_1.variableAndSet(options.boxHover, this.boxHover, this, true);
+    }
+    /**
+     * Возвращает и устанавливает флаг анимации при наведении
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    boxHover(value) {
+        if (value === undefined)
+            return this.hasClass("--hover");
+        if (value)
+            this.addClass("--hover");
+        else
+            this.removeClass("--hover");
+        return this;
+    }
+    /**
+     * Возвращает контейнер элемента
+     * @return {GridLayoutView}
      */
     getContainerView() {
         return this.__containerView;
     }
     /**
-     * Возвращает элемент отображения иконки закрытия модального окна
-     * @return {IconView}
+     * Сериализует элемент
      */
-    getCloseButtonView() {
-        return this.__closeButtonView;
-    }
-    /**
-     * Возвращает и устанавливает заголовок модального окна
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
-     */
-    title(value) {
-        if (value === undefined)
-            return this.getTitleTextContainerView().getTextView().text();
-        this.getTitleTextContainerView().getTextView().text(value);
-        return this;
-    }
-    /**
-     * Возвращает свойство: элемент - содержимое модального окна
-     * @return {ObservableProperty<View>}
-     */
-    getModalContentProperty() {
-        return this.__modalContentProperty;
-    }
-    /**
-     * Возвращает и устанавливает элемент - содержимое модального окна
-     * @param {View} [value] - значение
-     * @returns {View|this|null}
-     */
-    content(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__modalContentProperty);
-    }
-    /**
-     * Возвращает свойство: флаг возможности закрытия окна
-     * @return {ObservableProperty<boolean>}
-     */
-    getModalClosableProperty() {
-        return this.__modalClosableProperty;
-    }
-    /**
-     * Возвращает и устанавливает флаг возможности закрытия окна
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
-     */
-    closable(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__modalClosableProperty);
-    }
-    /**
-     * Возвращает свойство: стиль модального окна
-     * @return {ObservableProperty<Style>}
-     */
-    getModalStyleProperty() {
-        return this.__modalStyleProperty;
-    }
-    /**
-     * Возвращает и устанавливает стиль модального окна
-     * @param {Style} [value] - значение
-     * @returns {Style|this|null}
-     */
-    modalStyle(value) {
-        return ObservableProperty.simplePropertyAccess(this, value, this.__modalStyleProperty);
+    serialize() {
+        return Object.assign({}, super.serialize(), { containerView: this.getContainerView().serialize() });
     }
 }
 /**
- * Текущее окно
- * @type {ModalView|null}
- */
-ModalView.currentModal = null;
-/**
- * Очередь из объектов
- * @protected
- * @type {ModalView[]}
- */
-ModalView.queue = [];
-/**
- * @typedef {Object} ModalViewOptions
- * @property {string} [title]
- * @property {View} [content]
- * @property {boolean} [closable = true]
- * @property {Style} [modalStyle]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: Cookies.ts                                                           +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Печеньки
- */
-class Cookies {
-    /**
-     * Возвращает данные cookie
-     * @param name
-     */
-    static get(name) {
-        const matches = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)"));
-        const val = matches ? decodeURIComponent(matches[1]) : null;
-        if (val && (val === "undefined" || val === "null"))
-            return null;
-        return val;
-    }
-    /**
-     * Устанавливает cookie
-     * @param name
-     * @param value
-     * @param options
-     */
-    static set(name, value, options) {
-        options = options || {};
-        let expires = options.expires;
-        if (typeof expires === "number" && expires) {
-            const d = new Date();
-            d.setTime(d.getTime() + expires * 1000);
-            expires = options.expires = d;
-        }
-        if (expires && expires.toUTCString) {
-            options.expires = expires.toUTCString();
-        }
-        value = encodeURIComponent(value);
-        let updatedCookie = name + "=" + value;
-        for (const propName in options) {
-            if (!options.hasOwnProperty(propName))
-                continue;
-            updatedCookie += "; " + propName;
-            const propValue = options[propName];
-            if (propValue !== true) {
-                updatedCookie += "=" + propValue;
-            }
-        }
-        document.cookie = updatedCookie;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: Time.ts                                                              +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Модуль elyFlat для работы со временем
- * @class Time
- */
-class Time {
-    /**
-     * Конструткор
-     * @param {{date?: Date}} options - опции
-     */
-    constructor(options = { date: new Date() }) {
-        this.date = options.date;
-    }
-    /**
-     * Создает объект времени по дате
-     * @param {number} [day] - день
-     * @param {number} [month] - месяц
-     * @param {number} [year] - год
-     * @param {number} [hour] - час
-     * @param {number} [minute] - минута
-     * @param {number} [second] - секунда
-     *
-     * @return {Time}
-     */
-    static byDate(day = 0, month = 0, year = 0, hour = 0, minute = 0, second = 0) {
-        return new Time({ date: new Date(year, month - 1, day, hour, minute, second) });
-    }
-    /**
-     * Возвращает объект текущего времени
-     * @return {Time}
-     */
-    static now() {
-        return new Time({ date: new Date() });
-    }
-    /**
-     * Возвращает количество часов со склонением
-     *
-     * ```typescript
-     *
-     * Time.hoursString(5); // 5 часов
-     * Time.hoursString(2); // 2 часа
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     * @return {string}
-     *
-     */
-    static hoursString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "часов",
-            "час",
-            "часа",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Возвращает количество минут со склонением
-     *
-     * ```typescript
-     *
-     * Time.minutesString(5); // 5 минут
-     * Time.minutesString(2); // 2 минуты
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     * @return {string}
-     *
-     */
-    static minutesString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "минут",
-            "минута",
-            "минуты",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Возвращает количество секунд со склонением
-     *
-     * ```typescript
-     *
-     * Time.secondsString(5); // 5 секунд
-     * Time.secondsString(2); // 2 секунды
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     *
-     * @return {string}
-     *
-     */
-    static secondsString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "секунд",
-            "секунда",
-            "секунды",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Возвращает количество дней со склонением
-     *
-     * ```typescript
-     *
-     * Time.daysString(5); // 5 дней
-     * Time.daysString(2); // 2 дня
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     * @return {string}
-     *
-     */
-    static daysString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "дней",
-            "день",
-            "дня",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Возвращает количество месяцев со склонением
-     *
-     * ```typescript
-     *
-     * Time.monthsString(5); // 5 месяцев
-     * Time.monthsString(2); // 2 месяца
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     *
-     * @return {string}
-     */
-    static monthsString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "месяцев",
-            "месяц",
-            "месяца",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Возвращает количество лет со склонением
-     *
-     * ```typescript
-     *
-     * Time.yearsString(5); // 5 лет
-     * Time.yearsString(2); // 2 года
-     * ```
-     *
-     * @param {number} value - значение
-     * @param {boolean} [isUpperFirstChar = false] - делает первую букву
-     * величины закловной
-     *
-     * @return {string}
-     */
-    static yearsString(value, isUpperFirstChar = false) {
-        return Time.__stringByLastNumber(value, [
-            "лет",
-            "год",
-            "года",
-        ], isUpperFirstChar);
-    }
-    /**
-     * Преобразует временной код в части: дни, часы, минуты, секунды.
-     * Такая технология может быть полезна для создания таймеров.
-     *
-     * Использование:
-     * - Сначала необходимо получить разницу веремни, например, используя вычитание;
-     * - Полученное значение может быть трансформировано через этот метод.
-     *
-     * @param {number }timeCode - врменной код
-     * @return {TimeDifferences}
-     */
-    static timeCodeToVars(timeCode) {
-        const source = timeCode;
-        timeCode /= 1000;
-        const _days = Math.floor(timeCode / 86400);
-        timeCode -= _days * 86400;
-        const _hours = Math.floor(timeCode / 3600) % 24;
-        timeCode -= _hours * 3600;
-        const _minutes = Math.floor(timeCode / 60) % 60;
-        timeCode -= _minutes * 60;
-        const _seconds = Math.floor(timeCode % 60);
-        return { days: _days, hours: _hours, minutes: _minutes, seconds: _seconds, source };
-    }
-    static __stringByLastNumber(num, list, isUpperFirstChar) {
-        const str = list[Time.__lastNumberChar(num)];
-        return num + " " + (isUpperFirstChar ? (str[0].toUpperCase() + str.substr(1)) : str);
-    }
-    static __lastNumberChar(num) {
-        const d100 = num % 100;
-        if (d100 > 10 && d100 < 15)
-            return 0;
-        const d10 = num % 10;
-        if (d10 === 0 || d10 > 4)
-            return 0;
-        if (d10 === 1)
-            return 1;
-        if (d10 > 1 && d10 < 5)
-            return 2;
-        return 0;
-    }
-    /**
-     * Возвращает timestamp
-     * @return {number}
-     */
-    getTime() {
-        return this.date.getTime();
-    }
-    /**
-     * Возвращает количество дней в месяце для
-     * даты, указанной в Time.
-     *
-     * @return {number}
-     */
-    getDaysInMonth() {
-        return 32 - new Date(this.date.getFullYear(), this.date.getMonth(), 32).getDate();
-    }
-    /**
-     * Возвращает разницу времени
-     * @param {Time} time - время сравнения
-     *
-     * @return {TimeDifferences}
-     *
-     *
-     * ```ts
-     *
-     * const d1 = Time.byDate(10, 1, 2019);
-     * const d2 = Time.byDate(15, 1, 2019);
-     *
-     * const diff = d1.getDifference(d2);
-     * const daysString = Time.daysString(diff.days); // 5 дней
-     * ```
-     */
-    getDifference(time) {
-        return Time.timeCodeToVars(Math.abs(this.getTime() - time.getTime()));
-    }
-    /**
-     * Возвращает разницу времени
-     *
-     * @return {TimeDifferences}
-     */
-    getDifferenceNow() {
-        return this.getDifference(Time.now());
-    }
-    /**
-     * Возвращает true, елси текущее время позже, чем время,
-     * указанное в аршументе.
-     * @param {Time} time - время сравнения
-     *
-     * @return {boolean}
-     */
-    isLaterThen(time) {
-        return this.getDifference(time).source > 0;
-    }
-    /**
-     * Возвращает строку времени
-     * @param {boolean} withTime - если установлено true, в строке будет отображено
-     * время в формате HH:MM:SS
-     *
-     * @return {string}
-     */
-    getString(withTime = false) {
-        const dateString = this.formatZero(this.date.getDate()) + "." +
-            this.formatZero(this.date.getMonth() + 1) + "." + this.date.getFullYear();
-        if (!withTime)
-            return dateString;
-        const timeString = this.formatZero(this.date.getHours()) + ":" +
-            this.formatZero(this.date.getMinutes()) + ":" + this.formatZero(this.date.getSeconds());
-        return `${dateString} ${timeString}`;
-    }
-    /**
-     * Возвращает строку времени
-     * @param withSeconds - флаг секунд. Добавляет или убирает SS из формата.
-     *
-     * @return {string}
-     */
-    getTimeString(withSeconds = true) {
-        let ts = this.formatZero(this.date.getHours()) + ":" +
-            this.formatZero(this.date.getMinutes());
-        if (withSeconds)
-            ts += ":" + this.formatZero(this.date.getSeconds());
-        return ts;
-    }
-    /**
-     * Возвращает дату
-     * @return {{date: number, month: number, year: number}}
-     */
-    getDate() {
-        return { date: this.date.getDate(), month: this.date.getMonth() + 1, year: this.date.getFullYear() };
-    }
-    /**
-     * Возвращает время
-     * @return {{hours: number, milliseconds: number, minutes: number, seconds: number}}
-     */
-    getDateTime() {
-        return {
-            hours: this.date.getHours(),
-            milliseconds: this.date.getMilliseconds(),
-            minutes: this.date.getMinutes(),
-            seconds: this.date.getSeconds(),
-        };
-    }
-    /**
-     * Возвращает индекс дня недели
-     * @return {number}
-     */
-    getWeekDayIndex() {
-        switch (this.date.getDay()) {
-            case 0:
-                return 6;
-            case 1:
-                return 0;
-            case 2:
-                return 1;
-            case 3:
-                return 2;
-            case 4:
-                return 3;
-            case 5:
-                return 4;
-            case 6:
-                return 5;
-            default:
-                return 0;
-        }
-    }
-    /**
-     * Возвращает название дня недели
-     * @param {boolean} isShort
-     * @return {string}
-     */
-    getWeekDayName(isShort = false) {
-        return isShort ? Time.weekDaysShortList[this.getWeekDayIndex()] :
-            Time.weekDaysList[this.getWeekDayIndex()];
-    }
-    /**
-     * Возвращает строку времени
-     * @return {string}
-     */
-    toString() {
-        return this.getString(true);
-    }
-    formatZero(str) {
-        if (str % 10 === str) {
-            return "0" + str;
-        }
-        return String(str);
-    }
-}
-/**
- * Список дней ндели
- *
- * - "Понедельник"
- * - "Вторник"
- * - "Среда"
- * - "Четверг"
- * - "Пятница"
- * - "Суббота"
- * - "Воскресение"
- *
- * @type {string[]}
- */
-Time.weekDaysList = [
-    "Понедельник", "Вторник", "Среда",
-    "Четверг", "Пятница", "Суббота", "Воскресение",
-];
-/**
- * Список коротких названий дней недели
- *
- * - "Пн"
- * - "Вт"
- * - "Ср"
- * - "Чт"
- * - "Пт"
- * - "Сб"
- * - "Вс"
- *
- * @type {string[]}
- */
-Time.weekDaysShortList = [
-    "Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс",
-];
-/**
- * Список названий мясяцев
- * @type {string[]}
- */
-Time.monthsList = [
-    "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-    "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
-];
-/**
- * Список названий коротких названий мясяцев
- * @type {string[]}
- */
-Time.monthsShortList = [
-    "Янв", "Фев", "Мрт", "Апр", "Май", "Июн",
-    "Июл", "Авг", "Сен", "Окт", "Ноб", "Дек",
-];
-/**
- * @typedef {Object} TimeDifferences
- * @property {number} days
- * @property {number} hours
- * @property {number} minutes
- * @property {number} seconds
- * @property {number} source
+ * @typedef {Object} BoxViewOptions
+ * @property {GridLayoutView} [container] - контейнер
+ * @property {boolean} [boxHover] - анимация тени при наведении
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -9833,396 +10631,436 @@ Time.monthsShortList = [
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: Timer.ts                                                       +
- + Файл изменен: 08.01.2019 01:11:46                                          +
+ + Файл: SelectField.ts                                                       +
+ + Файл изменен: 14.03.2019 01:36:41                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Таймер
- *
- * ```ts
- *
- * const timer = new Timer({duration: 10 * 1000}); // Таймер на 10 сек
- *
- * // Добавляем наблюдатель начала работы таймера
- * timer.addStartObserver( () => {
- *    console.log( "Go!" );
- * });
- *
- * // Добавляем наблюдатель окончания работы таймера
- * timer.addEndObserver( () => {
- *    console.log( "Time is up!" );
- * });
- *
- * // Запускаем таймер
- * timer.start();
- * ```
- *
- * @class {Timer}
- * @augments {Observable}
+ * Элемент подсказок
  */
-class Timer extends Observable {
+class SelectFieldHintView extends BoxView {
     /**
      * Конструктор
-     * @param {{ duration: number, loop: boolean | undefined }} props - свойства
+     * @param field
      */
-    constructor(props) {
-        super();
-        /**
-         * Циклический таймер
-         * @type {boolean}
-         * @ignore
-         * @protected
-         */
-        this.__loop = false;
-        /**
-         * @protected
-         */
-        this.__duration = props.duration;
-        /**
-         * @protected
-         */
-        this.__loop = props.loop || false;
+    constructor(field) {
+        super({ boxHover: false, styleNoSelect: true });
+        this.__field = field;
+        this.addClass("--hint");
+        this.hidden(true);
+        this.getField().getAccessory().onfocus = () => this.addClass("--focus");
+        this.getField().getAccessory().onblur = () => this.removeClass("--focus");
     }
     /**
-     * Добавляет наблюдатель: окончание таймера
-     *
-     * Если таймер циклический, данный метод будет вызван каждый цикл
-     *
-     * Имя обсервера: addEndObserver
-     *
-     * @param {function} o - наблюдатель
+     * Обновляет элемент
+     * @param {string} q - введенное значение для фильтра подсказок
+     * @return {string[]} - результаты поиска
      */
-    addEndObserver(o) {
-        this.addObserver("endTimer", o);
-        return this;
-    }
-    /**
-     * Добавляет наблюдатель: запускт таймера
-     *
-     * Имя обсервера: startTimer
-     *
-     * @param {function} o - наблюдатель
-     */
-    addStartObserver(o) {
-        this.addObserver("startTimer", o);
-        return this;
-    }
-    /**
-     * Запускает таймер
-     */
-    start() {
-        if (this.__thread !== null)
-            return;
-        this.notificate("startTimer");
-        if (this.__loop)
-            this.__thread = setInterval(() => {
-                this.stop(true);
-            }, this.__duration);
-        else {
-            this.__thread = setTimeout(() => {
-                this.stop(true);
-            }, this.__duration);
-        }
-    }
-    /**
-     * Перезапускает таймер
-     */
-    restart() {
-        this.stop(false);
-        this.start();
-    }
-    /**
-     * Останавливает таймер
-     * @param {boolean} [notificate = true] - если установлено значение true,
-     * после выполнения метода, будет вызвано событие `endTimer`.
-     * {@link Timer.addEndObserver}
-     */
-    stop(notificate = true) {
-        if (this.__loop)
-            clearInterval(this.__thread);
-        else
-            clearTimeout(this.__thread);
-        if (notificate)
-            this.notificate("endTimer");
-        this.__thread = null;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: efxApp.ts                                                            +
- + Файл изменен: 22.02.2019 23:04:56                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Приложение efX-app
- * @class {efxApp}
- * @augments {Observable}
- */
-class efxApp extends Observable {
-    /**
-     * Конструктор
-     * @param props
-     */
-    constructor(props = {}) {
-        super();
-        /**
-         * @protected
-         * @ignore
-         */
-        this.__isConnected = false;
-        /**
-         * @protected
-         * @ignore
-         */
-        this.__host = "http://localhost";
-        /**
-         * @protected
-         * @ignore
-         */
-        this.__port = 1583;
-    }
-    /**
-     * Возвращает состояние подключения
-     * @return {boolean}
-     */
-    isConnected() {
-        return this.__isConnected;
-    }
-    /**
-     * Возвращает хост соединения
-     * @return {string}
-     */
-    getHost() {
-        return this.__host;
-    }
-    /**
-     * Возвращает порт соединения
-     * @return {number}
-     */
-    getPort() {
-        return this.__port;
-    }
-    /**
-     * Соединяется с сервером efX-app
-     * @param callback
-     */
-    connect(callback) {
-        this.sendRaw("list", {}, (res) => {
-            const self = this;
-            this.__isConnected = res.status;
-            if (res.status) {
-                const obj = {};
-                res.response.forEach(value => {
-                    Object.defineProperty(obj, value, {
-                        get: () => {
-                            return {
-                                rows(data, callback) {
-                                    self.sendRaw("select", Object.assign({ table: value }, data), response => {
-                                        callback(response.response);
-                                    });
-                                },
-                            };
-                        },
-                    });
-                });
-                callback(obj);
-            }
-        });
-    }
-    global(callback) {
-        this.sendRaw("select", { table: "global" }, response => {
-            const obj = {};
-            response.response.forEach((o) => {
-                obj[o.name] = {
-                    value: o.value,
-                    set(value, callback) {
-                        this.sendRaw("set", { table: "global", id: o.id }, (a) => {
-                            callback();
-                        });
-                    },
-                };
-            });
-            callback(obj);
-        });
-    }
-    sendRaw(method, data, callback) {
-        URLRequest.sendGET(this.getHost() + ":" + this.getPort() + "/db/" + method, data, response => {
-            callback(response);
-        });
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: CircularProgressBarView.ts                                           +
- + Файл изменен: 02.03.2019 02:55:37                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Круговой бар загрузки
- * @class CircularProgressBarView
- * @augments {ProgressBarView}
- */
-class CircularProgressBarView extends ProgressBarView {
-    /**
-     * Конструктор
-     * @param {ProgressBarViewOptions} [options = {}] - опции
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: стиль полосы бара
-         * @ignore
-         * @protected
-         */
-        this.__progressBarStyleProperty = new ObservableProperty();
-        this.addClass("--circular");
-        this.getBodyView().removeClass("ef-progress-bar")
-            .addClass("ef-progress-circle");
-    }
-    /**
-     * Возвращает элемент полосы бара
-     */
-    getLineViewContainer() {
-        return this.__createSVG();
-    }
-    __createSVG() {
-        const svg = new Control({ tag: "svg" });
-        const circle0 = new Control({ tag: "circle" });
-        const circle1 = new Control({ tag: "circle" });
-        svg.attribute("viewBox", "0 0 120 120");
-        svg.getDocument().append(circle0.getDocument());
-        svg.getDocument().append(circle1.getDocument());
-        circle0.attribute("cx", "60")
-            .attribute("cy", "60")
-            .attribute("r", "54")
-            .attribute("fill", "none")
-            .attribute("class", "--track");
-        circle1.attribute("cx", "60")
-            .attribute("cy", "60")
-            .attribute("r", "54")
-            .attribute("fill", "none")
-            .attribute("class", "--path");
-        this.addChangedObserver((value, maxValue, minValue) => {
-            circle1.attribute("stroke-dashoffset", (339.292 * (1 - (this.getPercentage() / 100))).toString());
-        });
-        this.getProgressBarStyleProperty()
-            .change((value, oldVal) => {
-            if (oldVal)
-                circle1.removeClass(`stroke-${oldVal.value}`);
-            circle1.addClass(`stroke-${value.value}`);
-        });
-        return svg;
-    }
-}
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Файл: elyProgressNotificationView.ts                                       +
- + Файл создан: 23.11.2018 23:03:37                                           +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Шаблон прогресса
- */
-class elyProgressNotificationView extends NotificationView {
-    /**
-     * Конструктор
-     * @param options
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Индексация строки
-         * @ignore
-         */
-        this.__currentStringIndex = 1;
-        if (!options.strings || options.strings.length === 0)
-            options.strings = ["Пожалуйста, полождите..."];
-        this.iconView = new IconView({ iconName: "refresh", iconSize: Size.xlarge, spinning: true });
-        this.progressTitleView = new TextView({
-            text: options.progressTitle || "Загрузка...", textSize: Size.custom(20),
-        });
-        this.textView = new TextView({ text: options.strings[0] });
-        const timer = setInterval(() => {
-            if (this.__currentStringIndex === options.strings.length) {
-                clearInterval(timer);
+    update(q) {
+        q = q || "";
+        const results = [];
+        this.width(this.getField().getRect().width - 2);
+        this.getContainerView().getRows().clear();
+        this.getField().forEachItem((key, value, index$$1) => {
+            if (index$$1 > this.getField().maxHintsCount())
                 return;
-            }
-            this.textView.fadeOut(() => {
-                this.textView.text(options.strings[this.__currentStringIndex]);
-                this.textView.fadeIn();
-                this.__currentStringIndex++;
+            if (key.toLowerCase().indexOf(q.toLowerCase()) === -1)
+                return;
+            const textView = key.textView();
+            this.getContainerView().add(textView);
+            this.getContainerView().getRows().last().addClickObserver(() => {
+                this.getField().value(value);
             });
-        }, elyProgressNotificationView.STRINGS_TIME * this.__currentStringIndex);
-        this.closable(false);
-        this.contentView.getStyle().textAlign = "center";
-        this.contentView.addSubView(this.iconView);
-        this.contentView.addSubView(this.progressTitleView);
-        this.contentView.addSubView(this.textView);
+            results.push(key);
+        });
+        return results;
     }
     /**
-     * Устанавливает заголовок загрузки
-     * @param text
+     * Возвращает поле подсказки
+     * @return {SelectField<*>}
      */
-    progressTitle(text) {
-        this.progressTitleView.text(text);
-        return this;
+    getField() {
+        return this.__field;
     }
 }
 /**
- * Коэффициент времени, необходимы для переключения строки
+ * Элемент отображения
+ * @class SelectField
+ * @template {T}
+ * @augments {Field<T>}
  */
-elyProgressNotificationView.STRINGS_TIME = 3000;
+class SelectField extends Field {
+    /**
+     * Конструктор
+     * @param {SelectFieldOptions} [options] - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Свойство: элементы выбора
+         * @ignore
+         * @protected
+         */
+        this.__itemsProperty = new ObservableDictionary();
+        /**
+         * Элемент иконки
+         * @ignore
+         */
+        this.__iconContainer = new ContainerView(new IconView({ iconName: "search" }));
+        /**
+         * Свойство: максимальное количество подсказок
+         * @ignore
+         * @protected
+         */
+        this.__maxHintsCount = 7;
+        this.addClass("ef-input", "ef-selection", "with-suffix");
+        this.__hintView = new SelectFieldHintView(this);
+        this.getIconViewContainer().addClass("ef-input-suffix");
+        this.getIconViewContainer().styleClickable(true);
+        this.getIconViewContainer().addClickObserver(() => {
+            this.__editableLogic();
+        });
+        this.getHintView().addHiddenChangeObserver(hidden => {
+            if (!hidden)
+                this.addClass("--with-hint");
+            else
+                this.removeClass("--with-hint");
+        });
+        this.editable(false);
+        this.getAccessory().ondblclick = () => {
+            this.__editableLogic();
+        };
+        this.getAccessory().oninput = (e) => {
+            this.search(this.getAccessory().value, true);
+        };
+        this.valueProperty.change((value, oldVal) => {
+            const key = this.getKeyForValue(value);
+            if (bin_1.isSet(key)) {
+                this.getAccessory().value = key;
+                this.__disableLogic();
+            }
+        });
+        this.getDocument().append(this.getIconViewContainer().getDocument());
+        this.getDocument().append(this.getHintView().getDocument());
+        bin_1.variable(options.value, () => this.value(options.value));
+        bin_1.variableAndSet(options.items, this.items, this);
+        bin_1.variableAndSet(options.maxHintsCount, this.maxHintsCount, this, 7);
+    }
+    /**
+     * Устанавливает элементы из массива
+     * @param {T[]} arr
+     */
+    setItemsByArray(arr) {
+        const obj = {};
+        arr.forEach((value, index$$1) => obj[value] = index$$1);
+        return this.items(obj);
+    }
+    /**
+     * Возвращает и устанавливает максимальное количество подсказок
+     * @param {number} [value] - значение
+     * @returns {number|this|null}
+     */
+    maxHintsCount(value) {
+        if (value === undefined)
+            return this.__maxHintsCount;
+        this.__maxHintsCount = value;
+        return this;
+    }
+    /**
+     * Выполняет поиск
+     *
+     * @param {string} str
+     * @param {boolean} [complete = true]
+     * @return {SelectField<T>>}
+     */
+    search(str, complete = true) {
+        this.getHintView().hidden(false);
+        const results = this.getHintView().update(str);
+        if (complete && results.length === 1) {
+            this.trySelectByKey(results[0]);
+        }
+        else if (complete) {
+            for (const resKey of results)
+                if (str.toLowerCase() === resKey.toLowerCase())
+                    this.trySelectByKey(resKey);
+        }
+        return this;
+    }
+    /**
+     * Устанавливает элемент по его ключу и возвращает результат
+     * @param {string} key
+     * @return {boolean}
+     */
+    trySelectByKey(key) {
+        const val = this.getValueForKey(key);
+        if (bin_1.isSet(val)) {
+            this.value(val);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Возвращает элемент отображения подсказок
+     * @return {SelectFieldHintView}
+     */
+    getHintView() {
+        return this.__hintView;
+    }
+    /**
+     * Возвращает контейнер с иконки
+     * @return {ContainerView<IconView>}
+     */
+    getIconViewContainer() {
+        return this.__iconContainer;
+    }
+    /**
+     * Возвращает свойство: элементы выбора
+     * @return {ObservableDictionary<T>}
+     */
+    getItemsProperty() {
+        return this.__itemsProperty;
+    }
+    /**
+     * Возвращает и устанавливает элементы выбора
+     * @param {T} [value] - значение
+     * @returns {{T}}|this|null}
+     */
+    items(value) {
+        if (value && value instanceof Array)
+            return this.setItemsByArray(value);
+        return ObservableProperty.simplePropertyAccess(this, value, this.__itemsProperty);
+    }
+    /**
+     * Добавляет элемент
+     * @param {string} key
+     * @param {T} value
+     * @return {SelectField<T>}
+     */
+    addItem(key, value) {
+        this.getItemsProperty().add(key, value);
+        return this;
+    }
+    /**
+     * Цикл по элемента
+     * @param {function(key: string, value: T, index: number)} closure
+     * @return {SelectField<T>}
+     */
+    forEachItem(closure) {
+        this.getItemsProperty().getSorted((a, b) => a[0] > b[0] ? 1 : -1).forEach(closure);
+        return this;
+    }
+    /**
+     * Возвращает ключ для значения
+     * @param {T} value
+     * @return {string|null}
+     */
+    getKeyForValue(value) {
+        const key = this.getItemsProperty().keyOf(value);
+        return bin_1.isSet(key) ? key : null;
+    }
+    /**
+     * Возвращает значение для ключа
+     * @param {string} key
+     * @return {T|null}
+     */
+    getValueForKey(key) {
+        const val = this.getItemsProperty().item(key);
+        return bin_1.isSet(val) ? val : null;
+    }
+    /**
+     * Логика отключения поля
+     * @ignore
+     * @private
+     */
+    __disableLogic() {
+        this.editable(false);
+        this.getHintView().hidden(true);
+        this.getIconViewContainer().getView().iconName("search");
+        if (bin_1.isSet(this.value()))
+            this.getAccessory().value = this.getKeyForValue(this.value());
+        else
+            this.getAccessory().value = "";
+    }
+    /**
+     * Логика редактирования
+     * @ignore
+     * @private
+     */
+    __editableLogic() {
+        if (this.getHintView().hidden()) {
+            this.getAccessory().value = "";
+            this.editable(true);
+            this.getAccessory().focus();
+            this.search(this.getAccessory().value);
+            this.getIconViewContainer().getView().iconName("times");
+        }
+        else {
+            this.__disableLogic();
+        }
+    }
+}
+/**
+ * @typedef {FieldOptions} SelectFieldOptions
+ * @template {T}
+ * @property {T} [value]
+ * @property {string} [placeholder]
+ * @property {string} [selectedKey]
+ * @property {number} [maxHintsCount]
+ * @property {T[]|{{}}} [items]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: DictionaryDataField.ts                                               +
+ + Файл изменен: 15.03.2019 20:01:40                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения
+ * @class DictionaryDataField
+ * @augments {View}
+ * @template {T} - тип данных значения
+ */
+class DictionaryDataField extends Field {
+    /**
+     * Конструктор
+     * @param {DictionaryDataFieldOptions} [options] - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Строки
+         */
+        this.__rows = new ObservableArray().change(() => {
+            const rows = this.getGroupDataFieldsProperty().get();
+            this.removeViewContent();
+            rows.forEach((row) => this.getDocument().append(row.getDocument()));
+            this.getDocument().append(this.getAddButton().getDocument());
+        });
+        /**
+         * Кнопка
+         */
+        this.__addRowButton = new Button({ text: "Добавить", buttonSize: Size.fill, buttonStyle: Style.default });
+        this.addClass("ef-dictionary-input");
+        this.getAddButton().click(() => {
+            this.addNewRows(1);
+        });
+        this.addNewRows(1);
+        this.getGroupDataFieldsProperty().addRemoveObserver(() => this.value(this.getValuesObject()));
+        this.getGroupDataFieldsProperty().addClearObserver(() => this.value(this.getValuesObject()));
+    }
+    /**
+     * Создаёт строку словаря
+     * @param {DictionaryDataField} field
+     * @param {*} options
+     * @return {GroupedDataField}
+     */
+    static createDictionaryGroupDataField(field, options = {}) {
+        const gdf = new GroupedDataField();
+        const gdfRemoveButton = new IconView({ styleNoSelect: true, styleClickable: true, iconName: "times" });
+        gdfRemoveButton.addClickObserver(() => field.getGroupDataFieldsProperty().removeItem(gdf));
+        gdf.addField(new TextField({ placeholder: "Key" }));
+        gdf.addField(new TextField({ placeholder: "Value" }));
+        gdf.addBlock(gdfRemoveButton);
+        return gdf;
+    }
+    /**
+     * Добавляет новые строки
+     * @param {number} [count = 1] - количество строк будет добавлено
+     * @return {DictionaryDataField<T>}
+     */
+    addNewRows(count = 1) {
+        const field = DictionaryDataField.createDictionaryGroupDataField(this);
+        field.change(() => this.value(this.getValuesObject()));
+        field.addInputObserver(value => {
+            const obj = {};
+            this.getGroupDataFieldsProperty().forEach(item => {
+                if (item === field) {
+                    if (bin_1.isSet(value[0]))
+                        obj[value[0]] = value[1];
+                }
+                else {
+                    const values = item.getValuesArray();
+                    if (bin_1.isSet(values[0]))
+                        obj[values[0]] = values[1];
+                }
+            });
+            this.notificate("input", [obj]);
+        });
+        this.getGroupDataFieldsProperty().push(field);
+        return this;
+    }
+    /**
+     * Возвращает словарь значений
+     * @return {DictionaryDataFieldValue}
+     */
+    getValuesObject() {
+        const obj = {};
+        this.getGroupDataFieldsProperty().forEach(f => {
+            if (f.isValid()) {
+                const pair = f.value();
+                if (pair)
+                    obj[pair[0]] = pair[1];
+            }
+        });
+        return obj;
+    }
+    /**
+     * Добавляет наблюдатель ввода
+     *
+     * Имя наблюдатель: input
+     *
+     * @param {function(values: *[])} o
+     * @return {GroupedDataField}
+     */
+    addInputObserver(o) {
+        return this.addObserver("input", o);
+    }
+    /**
+     * Удаляет строку по индексу
+     * @param {number} index
+     * @return {DictionaryDataField}
+     */
+    removeRow(index$$1) {
+        this.getGroupDataFieldsProperty().remove(index$$1);
+        return this;
+    }
+    /**
+     * Возвращает кнопку добавления строки
+     * @return {Button}
+     */
+    getAddButton() {
+        return this.__addRowButton;
+    }
+    /**
+     * Возвращает свойство строк
+     * @return {ObservableArray<GroupedDataField>}
+     */
+    getGroupDataFieldsProperty() {
+        return this.__rows;
+    }
+}
+/**
+ * @typedef {Object} DictionaryDataFieldOptions
+ * @property {boolean} [first]
+ */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -10274,7 +11112,7 @@ class StaticGridLayoutView extends ViewLayout {
         this.denyRebuild(true);
         this.rows(options.rows);
         this.columns(options.columns);
-        variableAndSet(options.items, this.items, this, []);
+        bin_1.variableAndSet(options.items, this.items, this, []);
         this.denyRebuild(false);
         this.rebuild();
     }
@@ -10343,6 +11181,288 @@ class StaticGridLayoutView extends ViewLayout {
  * @typedef {ViewLayoutOptions} StaticGridLayoutViewOptions
  * @property {number} rows
  * @property {number} columns
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: TextViewContainer.ts                                             +
+ + Файл изменен: 09.02.2019 16:15:14                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * элемент отображения контейнера с текстом
+ * @class TextViewContainer
+ * @augments View
+ */
+class TextViewContainer extends View {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Элемент отображения текста
+         * @protected
+         * @ignore
+         */
+        this.__textView = new TextView();
+        this.getDocument().append(this.getTextView().getDocument());
+    }
+    /**
+     * Возвращает элемент отображения текста
+     * @return {TextView}
+     */
+    getTextView() {
+        return this.__textView;
+    }
+}
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: BoxHeaderView.ts                                                     +
+ + Файл изменен: 08.03.2019 20:24:00                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения
+ * @class BoxHeaderView
+ * @augments {BoxView}
+ */
+class BoxHeaderView extends BoxView {
+    /**
+     * Конструктор
+     * @param {BoxHeaderViewOptions} [options] - опции
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Контейнер с текстом
+         * @ignore
+         */
+        this.__headerView = new TextViewContainer({ class: "box-header" });
+        this.removeViewContent();
+        this.getDocument().append(this.getHeaderView().getDocument());
+        this.getDocument().append(this.getContainerView().getDocument());
+        bin_1.variableAndSet(options.boxTitle, this.boxTitle, this);
+    }
+    /**
+     * Возвращает и устанавливает заголовок
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    boxTitle(value) {
+        if (value === undefined)
+            return this.getHeaderView().getTextView().text();
+        this.getHeaderView().getTextView().text(value);
+        return this;
+    }
+    /**
+     * Возвращает элемент заголовка
+     * @return {TextViewContainer}
+     */
+    getHeaderView() {
+        return this.__headerView;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        return Object.assign({}, super.serialize(), { boxTitle: this.boxTitle() });
+    }
+}
+/**
+ * @typedef {BoxViewOptions} BoxHeaderViewOptions
+ * @property {string} [boxTitle] - заголовок
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ +                                                                            +
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Проект: ely.flat                                                           +
+ +                                                                            +
+ + Файл: PanelView.ts                                                         +
+ + Файл изменен: 09.02.2019 16:11:48                                          +
+ +                                                                            +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Элемент отображения панель
+ */
+class PanelView extends View {
+    /**
+     * Конструктор
+     * @param {PanelViewOptions} options
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Элемен отображения заголовка
+         * @protected
+         * @ignore
+         */
+        this.__headerView = new TextViewContainer({ class: "--header" });
+        /**
+         * Элемен отображения контента
+         * @protected
+         * @ignore
+         */
+        this.__contentView = new GridLayoutView({ class: "--content" });
+        /**
+         * Элемен отображения подвала
+         * @protected
+         * @ignore
+         */
+        this.__footerView = new TextViewContainer({ class: "--footer" });
+        this.addClass("ef-panel");
+        if (options.panelContainer)
+            this.__contentView = options.panelContainer.addClass("--content");
+        this.panelHover(true);
+        bin_1.variable(options.panelTitle, (v) => this.panelTitle(v));
+        bin_1.variable(options.panelHover, (v) => this.panelHover(v));
+        bin_1.variable(options.panelActionText, (v) => this.panelActionText(v));
+        bin_1.variable(options.panelActionClick, (v) => this.panelActionClick(v));
+        this.rebuild();
+    }
+    /**
+     * Возвращает элемент отображения заголовка
+     * @return {TextViewContainer}
+     */
+    getHeaderView() {
+        return this.__headerView;
+    }
+    /**
+     * Возвращает элемент отображения подвала
+     * @return {TextViewContainer}
+     */
+    getFooterView() {
+        return this.__footerView;
+    }
+    /**
+     * Возвращает элемент отображения контента
+     * @return {GridLayoutView}
+     */
+    getContentView() {
+        return this.__contentView;
+    }
+    /**
+     * Возвращает и устанавливает флаг изменения палени при наведении на неё
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    panelHover(value) {
+        if (value === undefined)
+            return this.hasClass("--hover");
+        if (value)
+            this.addClass("--hover");
+        else
+            this.removeClass("--hover");
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает текст активации
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    panelActionText(value) {
+        if (value === undefined)
+            return this.getFooterView().getTextView().text();
+        this.getFooterView().getTextView().text(value);
+        this.rebuild();
+        return this;
+    }
+    /**
+     * Возвращает и устанавливает текст заголовка панели
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    panelTitle(value) {
+        if (value === undefined)
+            return this.getHeaderView().getTextView().text();
+        this.getHeaderView().getTextView().text(value);
+        this.rebuild();
+        return this;
+    }
+    /**
+     * Выполняет перестроение панели
+     */
+    rebuild() {
+        this.removeViewContent();
+        if (this.panelTitle() !== "")
+            this.getDocument().append(this.getHeaderView().getDocument());
+        this.getDocument().append(this.getContentView().getDocument());
+        if (this.panelActionText() !== "")
+            this.getDocument().append(this.getFooterView().getDocument());
+        return this;
+    }
+    /**
+     * Добавляет слушатель нажатия на функциональную клавишу
+     * @param {function()} callbackfn
+     */
+    panelActionClick(callbackfn) {
+        this.getFooterView().addObserver("click", callbackfn);
+        return this;
+    }
+    /**
+     * Сериализует объект
+     */
+    serialize() {
+        return Object.assign({}, super.serialize(), { panelActionText: this.panelActionText(), panelContainer: this.getContentView().serialize(), panelHover: this.panelHover(), panelTitle: this.panelTitle() });
+    }
+}
+/**
+ * @typedef {Object} PanelViewOptions - Опции панели
+ * @property {string} [panelTitle]
+ * @property {string} [panelActionText]
+ * @property {boolean} [panelHover = true]
+ * @property {function()} [panelActionClick]
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -10515,9 +11635,9 @@ class TabsPanelView extends elyRebuildableViewProtocol {
         this.__containerView = new Control({ class: "--container" });
         this.addClass("box");
         this.denyRebuild(true);
-        variableAndSet(options.tabs, this.tabs, this);
-        variableAndSet(options.selectedTabIndex, this.selectedTabIndex, this);
-        variableAndSet(options.panelHover, this.panelHover, this, true);
+        bin_1.variableAndSet(options.tabs, this.tabs, this);
+        bin_1.variableAndSet(options.selectedTabIndex, this.selectedTabIndex, this);
+        bin_1.variableAndSet(options.panelHover, this.panelHover, this, true);
         this.getDocument().append(this.getHeaderView().getDocument());
         this.getDocument().append(this.getContainerView().getDocument());
         this.denyRebuild(false);
@@ -10549,8 +11669,8 @@ class TabsPanelView extends elyRebuildableViewProtocol {
      * @param {number} index
      * @param {View} body
      */
-    setTabIndexBody(index, body) {
-        this.getTabsBodyViewsProperty().setItemAtIndex(body, index);
+    setTabIndexBody(index$$1, body) {
+        this.getTabsBodyViewsProperty().setItemAtIndex(body, index$$1);
         return this;
     }
     /**
@@ -10623,20 +11743,20 @@ class TabsPanelView extends elyRebuildableViewProtocol {
         this.getContainerView().removeViewContent();
         const wrapper = this.getHeaderView().getScrollView().getWrapperView();
         wrapper.removeViewContent();
-        this.tabs().forEach((tabName, index) => {
+        this.tabs().forEach((tabName, index$$1) => {
             const view = tabName.textView().addClass("--item");
-            if (this.selectedTabIndex() === index) {
+            if (this.selectedTabIndex() === index$$1) {
                 view.addClass("--active");
-                this.notificate("selected", [index, tabName]);
+                this.notificate("selected", [index$$1, tabName]);
             }
             else {
                 view.addClickObserver(() => {
-                    this.selectedTabIndex(index);
+                    this.selectedTabIndex(index$$1);
                 });
             }
             wrapper.getDocument().append(view.getDocument());
         });
-        if (isSet(this.selectedTabIndex())) {
+        if (bin_1.isSet(this.selectedTabIndex())) {
             if (this.getTabsBodyViewsProperty().hasIndex(this.selectedTabIndex())) {
                 this.getContainerView().getDocument()
                     .append(this.getTabsBodyViewsProperty().item(this.selectedTabIndex()).getDocument());
@@ -10653,7 +11773,6 @@ class TabsPanelView extends elyRebuildableViewProtocol {
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
  + ,--. o                   |    o                                            +
  + |   |.,---.,---.,---.    |    .,---.,---.                                  +
  + |   |||---'|   ||   |    |    ||   ||   |                                  +
@@ -10669,64 +11788,305 @@ class TabsPanelView extends elyRebuildableViewProtocol {
  + Использование, изменение, копирование, распространение, обмен/продажа      +
  + могут выполняться исключительно в согласии с условиями файла COPYING.      +
  +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: BoxView.ts                                                           +
- + Файл изменен: 08.03.2019 20:11:59                                          +
- +                                                                            +
+ + Файл: ModalViews                                                       +
+ + Файл создан: 23.11.2018 23:03:37                                           +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент отображения
- * @class BoxView
+/**w
+ * Элемент отображения: Модальное окно
+ * @version 1.0
+ * @class ModalView
  * @augments {View}
  */
-class BoxView extends View {
+class ModalView extends View {
     /**
      * Конструктор
-     * @param {BoxViewOptions} options - опции
+     * @param {ModalViewOptions} options - опции
      */
     constructor(options = {}) {
         super(options);
-        this.addClass("box");
-        this.__containerView = options.containerView ?
-            options.containerView : new GridLayoutView();
-        this.getContainerView().addClass("--container");
+        /**
+         * Элемент модального окна
+         * @readonly
+         * @type {Control}
+         */
+        this.__containerView = new Control({ class: "ef-modal-container" });
+        /**
+         * Кнопка закрытия
+         * @type {IconView}
+         * @readonly
+         */
+        this.__closeButtonView = new IconView({ iconName: "close", class: "close" });
+        /**
+         * Элемент заголовка
+         * @readonly
+         * @type {TextViewContainer}
+         */
+        this.__titleTextContainerView = new TextViewContainer({ class: "title" });
+        /**
+         * Элемент контента
+         * @type {View}
+         * @readonly
+         * @protected
+         */
+        this.__modalContentView = new Control({ class: "content" });
+        /**
+         * Свойство: стиль модального окна
+         * @ignore
+         * @protected
+         */
+        this.__modalStyleProperty = new ObservableProperty(Style.primary).change((value, oldVal) => {
+            if (oldVal)
+                this.getTitleTextContainerView().removeClass(`bg-${oldVal.value}`);
+            this.getTitleTextContainerView().addClass(`bg-${value.value}`);
+        });
+        /**
+         * Свойство: флаг возможности закрытия окна
+         * @ignore
+         * @protected
+         */
+        this.__modalClosableProperty = new ObservableProperty(true).change(value => {
+            this.getCloseButtonView().hidden(!value);
+        });
+        /**
+         * Свойство: элемент - содержимое модального окна
+         * @ignore
+         * @protected
+         */
+        this.__modalContentProperty = new ObservableProperty(Control.empty()).change((newValue) => {
+            this.getContentView().removeViewContent();
+            this.getContentView().getDocument().append(newValue.getDocument());
+        });
+        this.addClass("ef-modal");
+        this.getCloseButtonView().addObserver("click", () => this.dismiss());
+        this.getTitleTextContainerView().getDocument().append(this.getCloseButtonView().getDocument());
+        this.getContainerView().addSubView(this.getTitleTextContainerView());
+        this.getContainerView().addSubView(this.getContentView());
         this.getDocument().append(this.getContainerView().getDocument());
-        variableAndSet(options.boxHover, this.boxHover, this, true);
+        // Set
+        bin_1.variable(options.content, value => this.content(value), Control.empty());
+        bin_1.variable(options.title, value => this.title(value), "Modal");
+        bin_1.variable(options.closable, value => this.closable(value), true);
+        bin_1.variable(options.modalStyle, value => this.modalStyle(value), Style.byName("default"));
     }
     /**
-     * Возвращает и устанавливает флаг анимации при наведении
-     * @param {boolean} [value] - значение
-     * @returns {boolean|this|null}
+     * Открывает следующее модальное окно из стэка
+     * @protected
+     * @static
      */
-    boxHover(value) {
-        if (value === undefined)
-            return this.hasClass("--hover");
-        if (value)
-            this.addClass("--hover");
-        else
-            this.removeClass("--hover");
-        return this;
+    static next() {
+        if (ModalView.queue.length > 0 && ModalView.currentModal === null) {
+            ModalView.currentModal = ModalView.queue.pop();
+            Application.default.getApplicationDocument().getBody().addSubView(ModalView.currentModal);
+            ModalView.currentModal.fadeIn();
+        }
     }
     /**
-     * Возвращает контейнер элемента
-     * @return {GridLayoutView}
+     * Отображает модальное окно
+     * @return
+     */
+    present() {
+        this.notificate("present", [this]);
+        ModalView.queue.push(this);
+        ModalView.next();
+    }
+    /**
+     * Скрывает модальное окно
+     * @param {boolean} [force = false]
+     * @return
+     *
+     * Модальное окно может быть "незакрываемым", тогда
+     * удалить его можно только используя параметр `force`.
+     *
+     *
+     *     myModal.dismiss(true); // Force dismiss modal
+     *
+     *
+     */
+    dismiss(force = false) {
+        if (this.closable() || force) {
+            this.notificate("dismiss", [this]);
+            this.fadeOut(() => {
+                Application.default.getApplicationDocument().getBody().removeSubView(this);
+                ModalView.currentModal = null;
+                ModalView.next();
+            });
+        }
+    }
+    /**
+     * Возвращает элемент отображения заголовка
+     * @return {TextView}
+     */
+    getTitleTextContainerView() {
+        return this.__titleTextContainerView;
+    }
+    /**
+     * Возвращает элемент отображения содержимого модального окна
+     * @return {View}
+     */
+    getContentView() {
+        return this.__modalContentView;
+    }
+    /**
+     * Возвращает элемент отображения - контейнер модального окна
+     * @return {Control}
      */
     getContainerView() {
         return this.__containerView;
     }
     /**
-     * Сериализует элемент
+     * Возвращает элемент отображения иконки закрытия модального окна
+     * @return {IconView}
      */
-    serialize() {
-        return Object.assign({}, super.serialize(), { containerView: this.getContainerView().serialize() });
+    getCloseButtonView() {
+        return this.__closeButtonView;
+    }
+    /**
+     * Возвращает и устанавливает заголовок модального окна
+     * @param {string} [value] - значение
+     * @returns {string|this|null}
+     */
+    title(value) {
+        if (value === undefined)
+            return this.getTitleTextContainerView().getTextView().text();
+        this.getTitleTextContainerView().getTextView().text(value);
+        return this;
+    }
+    /**
+     * Возвращает свойство: элемент - содержимое модального окна
+     * @return {ObservableProperty<View>}
+     */
+    getModalContentProperty() {
+        return this.__modalContentProperty;
+    }
+    /**
+     * Возвращает и устанавливает элемент - содержимое модального окна
+     * @param {View} [value] - значение
+     * @returns {View|this|null}
+     */
+    content(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__modalContentProperty);
+    }
+    /**
+     * Возвращает свойство: флаг возможности закрытия окна
+     * @return {ObservableProperty<boolean>}
+     */
+    getModalClosableProperty() {
+        return this.__modalClosableProperty;
+    }
+    /**
+     * Возвращает и устанавливает флаг возможности закрытия окна
+     * @param {boolean} [value] - значение
+     * @returns {boolean|this|null}
+     */
+    closable(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__modalClosableProperty);
+    }
+    /**
+     * Возвращает свойство: стиль модального окна
+     * @return {ObservableProperty<Style>}
+     */
+    getModalStyleProperty() {
+        return this.__modalStyleProperty;
+    }
+    /**
+     * Возвращает и устанавливает стиль модального окна
+     * @param {Style} [value] - значение
+     * @returns {Style|this|null}
+     */
+    modalStyle(value) {
+        return ObservableProperty.simplePropertyAccess(this, value, this.__modalStyleProperty);
     }
 }
 /**
- * @typedef {Object} BoxViewOptions
- * @property {GridLayoutView} [container] - контейнер
- * @property {boolean} [boxHover] - анимация тени при наведении
+ * Текущее окно
+ * @type {ModalView|null}
  */
+ModalView.currentModal = null;
+/**
+ * Очередь из объектов
+ * @protected
+ * @type {ModalView[]}
+ */
+ModalView.queue = [];
+/**
+ * @typedef {Object} ModalViewOptions
+ * @property {string} [title]
+ * @property {View} [content]
+ * @property {boolean} [closable = true]
+ * @property {Style} [modalStyle]
+ */
+
+/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ + ,--. o                   |    o                                            +
+ + |   |.,---.,---.,---.    |    .,---.,---.                                  +
+ + |   |||---'|   ||   |    |    ||   ||   |                                  +
+ + `--' ``---'`---|`---'    `---'``   '`---|                                  +
+ +            `---'                    `---'                                  +
+ +                                                                            +
+ + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
+ + Mail: <diegoling33@gmail.com>                                              +
+ +                                                                            +
+ + Это программное обеспечение имеет лицензию, как это сказано в файле        +
+ + COPYING, который Вы должны были получить в рамках распространения ПО.      +
+ +                                                                            +
+ + Использование, изменение, копирование, распространение, обмен/продажа      +
+ + могут выполняться исключительно в согласии с условиями файла COPYING.      +
+ +                                                                            +
+ + Файл: elyProgressNotificationView.ts                                       +
+ + Файл создан: 23.11.2018 23:03:37                                           +
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+/**
+ * Шаблон прогресса
+ */
+class elyProgressNotificationView extends NotificationView {
+    /**
+     * Конструктор
+     * @param options
+     */
+    constructor(options = {}) {
+        super(options);
+        /**
+         * Индексация строки
+         * @ignore
+         */
+        this.__currentStringIndex = 1;
+        if (!options.strings || options.strings.length === 0)
+            options.strings = ["Пожалуйста, полождите..."];
+        this.iconView = new IconView({ iconName: "refresh", iconSize: Size.xlarge, spinning: true });
+        this.progressTitleView = new TextView({
+            text: options.progressTitle || "Загрузка...", textSize: Size.custom(20),
+        });
+        this.textView = new TextView({ text: options.strings[0] });
+        const timer = setInterval(() => {
+            if (this.__currentStringIndex === options.strings.length) {
+                clearInterval(timer);
+                return;
+            }
+            this.textView.fadeOut(() => {
+                this.textView.text(options.strings[this.__currentStringIndex]);
+                this.textView.fadeIn();
+                this.__currentStringIndex++;
+            });
+        }, elyProgressNotificationView.STRINGS_TIME * this.__currentStringIndex);
+        this.closable(false);
+        this.contentView.getStyle().textAlign = "center";
+        this.contentView.addSubView(this.iconView);
+        this.contentView.addSubView(this.progressTitleView);
+        this.contentView.addSubView(this.textView);
+    }
+    /**
+     * Устанавливает заголовок загрузки
+     * @param text
+     */
+    progressTitle(text) {
+        this.progressTitleView.text(text);
+        return this;
+    }
+}
+/**
+ * Коэффициент времени, необходимы для переключения строки
+ */
+elyProgressNotificationView.STRINGS_TIME = 3000;
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -10747,61 +12107,67 @@ class BoxView extends View {
  +                                                                            +
  + Проект: ely.flat                                                           +
  +                                                                            +
- + Файл: BoxHeaderView.ts                                                     +
- + Файл изменен: 08.03.2019 20:24:00                                          +
+ + Файл: CircularProgressBarView.ts                                           +
+ + Файл изменен: 02.03.2019 02:55:37                                          +
  +                                                                            +
  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 /**
- * Элемент отображения
- * @class BoxHeaderView
- * @augments {BoxView}
+ * Круговой бар загрузки
+ * @class CircularProgressBarView
+ * @augments {ProgressBarView}
  */
-class BoxHeaderView extends BoxView {
+class CircularProgressBarView extends ProgressBarView {
     /**
      * Конструктор
-     * @param {BoxHeaderViewOptions} [options] - опции
+     * @param {IProgressBarViewOptions} [options = {}] - опции
      */
     constructor(options = {}) {
         super(options);
         /**
-         * Контейнер с текстом
+         * Свойство: стиль полосы бара
          * @ignore
+         * @protected
          */
-        this.__headerView = new TextViewContainer({ class: "box-header" });
-        this.removeViewContent();
-        this.getDocument().append(this.getHeaderView().getDocument());
-        this.getDocument().append(this.getContainerView().getDocument());
-        variableAndSet(options.boxTitle, this.boxTitle, this);
+        this.__progressBarStyleProperty = new ObservableProperty();
+        this.addClass("--circular");
+        this.getBodyView().removeClass("ef-progress-bar")
+            .addClass("ef-progress-circle");
     }
     /**
-     * Возвращает и устанавливает заголовок
-     * @param {string} [value] - значение
-     * @returns {string|this|null}
+     * Возвращает элемент полосы бара
      */
-    boxTitle(value) {
-        if (value === undefined)
-            return this.getHeaderView().getTextView().text();
-        this.getHeaderView().getTextView().text(value);
-        return this;
+    getLineViewContainer() {
+        return this.__createSVG();
     }
-    /**
-     * Возвращает элемент заголовка
-     * @return {TextViewContainer}
-     */
-    getHeaderView() {
-        return this.__headerView;
-    }
-    /**
-     * Сериализует объект
-     */
-    serialize() {
-        return Object.assign({}, super.serialize(), { boxTitle: this.boxTitle() });
+    __createSVG() {
+        const svg = new Control({ tag: "svg" });
+        const circle0 = new Control({ tag: "circle" });
+        const circle1 = new Control({ tag: "circle" });
+        svg.attribute("viewBox", "0 0 120 120");
+        svg.getDocument().append(circle0.getDocument());
+        svg.getDocument().append(circle1.getDocument());
+        circle0.attribute("cx", "60")
+            .attribute("cy", "60")
+            .attribute("r", "54")
+            .attribute("fill", "none")
+            .attribute("class", "--track");
+        circle1.attribute("cx", "60")
+            .attribute("cy", "60")
+            .attribute("r", "54")
+            .attribute("fill", "none")
+            .attribute("class", "--path");
+        this.addChangedObserver((value, maxValue, minValue) => {
+            circle1.attribute("stroke-dashoffset", (339.292 * (1 - (this.getPercentage() / 100))).toString());
+        });
+        this.getProgressBarStyleProperty()
+            .change((value, oldVal) => {
+            if (oldVal)
+                circle1.removeClass(`stroke-${oldVal.value}`);
+            circle1.addClass(`stroke-${value.value}`);
+        });
+        return svg;
     }
 }
-/**
- * @typedef {BoxViewOptions} BoxHeaderViewOptions
- * @property {string} [boxTitle] - заголовок
- */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  +                                                                            +
@@ -10846,7 +12212,7 @@ class YouTubePlayer extends View {
         this.__videoIdProperty = new ObservableProperty().change(value => {
             this.attribute("src", `https://www.youtube.com/embed/${value}`);
         });
-        variableAndSet(options.videoId, this.videoId, this);
+        bin_1.variableAndSet(options.videoId, this.videoId, this);
         this.attribute("frameborder", "0");
         this.attribute("allow", "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture");
         this.attribute("allowfullscreen", "allowfullscreen");
@@ -10915,7 +12281,7 @@ class VideoPlayer extends View {
         this.__urlProperty = new ObservableProperty().change(value => {
             this.attribute("src", value);
         });
-        variableAndSet(options.url, this.url, this);
+        bin_1.variableAndSet(options.url, this.url, this);
         this.attribute("controls", "true");
         this.attribute("type", "video/mp4");
         this.attribute("controlsList", "nodownload");
@@ -10942,303 +12308,6 @@ class VideoPlayer extends View {
 /**
  * @typedef {Object} VideoPlayerOptions
  * @property {string} [url]
- */
-
-/*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- +                                                                            +
- + ,--. o                   |    o                                            +
- + |   |.,---.,---.,---.    |    .,---.,---.                                  +
- + |   |||---'|   ||   |    |    ||   ||   |                                  +
- + `--' ``---'`---|`---'    `---'``   '`---|                                  +
- +            `---'                    `---'                                  +
- +                                                                            +
- + Copyright (C) 2016-2019, Yakov Panov (Yakov Ling)                          +
- + Mail: <diegoling33@gmail.com>                                              +
- +                                                                            +
- + Это программное обеспечение имеет лицензию, как это сказано в файле        +
- + COPYING, который Вы должны были получить в рамках распространения ПО.      +
- +                                                                            +
- + Использование, изменение, копирование, распространение, обмен/продажа      +
- + могут выполняться исключительно в согласии с условиями файла COPYING.      +
- +                                                                            +
- + Проект: ely.flat                                                           +
- +                                                                            +
- + Файл: SelectField.ts                                                       +
- + Файл изменен: 14.03.2019 01:36:41                                          +
- +                                                                            +
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-/**
- * Элемент подсказок
- */
-class SelectFieldHintView extends BoxView {
-    /**
-     * Конструктор
-     * @param field
-     */
-    constructor(field) {
-        super({ boxHover: false, styleNoSelect: true });
-        this.__field = field;
-        this.addClass("--hint");
-        this.hidden(true);
-        this.getField().getAccessory().onfocus = () => this.addClass("--focus");
-        this.getField().getAccessory().onblur = () => this.removeClass("--focus");
-    }
-    /**
-     * Обновляет элемент
-     * @param {string} q - введенное значение для фильтра подсказок
-     * @return {string[]} - результаты поиска
-     */
-    update(q) {
-        q = q || "";
-        const results = [];
-        this.width(this.getField().getRect().width - 2);
-        this.getContainerView().getRows().clear();
-        this.getField().forEachItem((key, value, index) => {
-            if (index > this.getField().maxHintsCount())
-                return;
-            if (key.toLowerCase().indexOf(q.toLowerCase()) === -1)
-                return;
-            const textView = key.textView();
-            this.getContainerView().add(textView);
-            this.getContainerView().getRows().last().addClickObserver(() => {
-                this.getField().value(value);
-            });
-            results.push(key);
-        });
-        return results;
-    }
-    /**
-     * Возвращает поле подсказки
-     * @return {SelectField<*>}
-     */
-    getField() {
-        return this.__field;
-    }
-}
-/**
- * Элемент отображения
- * @class SelectField
- * @template {T}
- * @augments {Field<T>}
- */
-class SelectField extends Field {
-    /**
-     * Конструктор
-     * @param {SelectFieldOptions} [options] - опции
-     */
-    constructor(options = {}) {
-        super(options);
-        /**
-         * Свойство: элементы выбора
-         * @ignore
-         * @protected
-         */
-        this.__itemsProperty = new ObservableDictionary();
-        /**
-         * Элемент иконки
-         * @ignore
-         */
-        this.__iconContainer = new ContainerView(new IconView({ iconName: "search" }));
-        /**
-         * Свойство: максимальное количество подсказок
-         * @ignore
-         * @protected
-         */
-        this.__maxHintsCount = 7;
-        this.addClass("ef-input", "ef-selection", "with-suffix");
-        this.__hintView = new SelectFieldHintView(this);
-        this.getIconViewContainer().addClass("ef-input-suffix");
-        this.getIconViewContainer().styleClickable(true);
-        this.getIconViewContainer().addClickObserver(() => {
-            this.__editableLogic();
-        });
-        this.getHintView().addHiddenChangeObserver(hidden => {
-            if (!hidden)
-                this.addClass("--with-hint");
-            else
-                this.removeClass("--with-hint");
-        });
-        this.editable(false);
-        this.getAccessory().ondblclick = () => {
-            this.__editableLogic();
-        };
-        this.getAccessory().oninput = (e) => {
-            this.search(this.getAccessory().value, true);
-        };
-        this.valueProperty.change((value, oldVal) => {
-            const key = this.getKeyForValue(value);
-            if (isSet(key)) {
-                this.getAccessory().value = key;
-                this.__disableLogic();
-            }
-        });
-        this.getDocument().append(this.getIconViewContainer().getDocument());
-        this.getDocument().append(this.getHintView().getDocument());
-        variable(options.value, () => this.value(options.value));
-        variableAndSet(options.items, this.items, this);
-        variableAndSet(options.maxHintsCount, this.maxHintsCount, this, 7);
-    }
-    /**
-     * Устанавливает элементы из массива
-     * @param {T[]} arr
-     */
-    setItemsByArray(arr) {
-        const obj = {};
-        arr.forEach((value, index) => obj[value] = index);
-        return this.items(obj);
-    }
-    /**
-     * Возвращает и устанавливает максимальное количество подсказок
-     * @param {number} [value] - значение
-     * @returns {number|this|null}
-     */
-    maxHintsCount(value) {
-        if (value === undefined)
-            return this.__maxHintsCount;
-        this.__maxHintsCount = value;
-        return this;
-    }
-    /**
-     * Выполняет поиск
-     *
-     * @param {string} str
-     * @param {boolean} [complete = true]
-     * @return {SelectField<T>>}
-     */
-    search(str, complete = true) {
-        this.getHintView().hidden(false);
-        const results = this.getHintView().update(str);
-        if (complete && results.length === 1) {
-            this.trySelectByKey(results[0]);
-        }
-        else if (complete) {
-            for (const resKey of results)
-                if (str.toLowerCase() === resKey.toLowerCase())
-                    this.trySelectByKey(resKey);
-        }
-        return this;
-    }
-    /**
-     * Устанавливает элемент по его ключу и возвращает результат
-     * @param {string} key
-     * @return {boolean}
-     */
-    trySelectByKey(key) {
-        const val = this.getValueForKey(key);
-        if (isSet(val)) {
-            this.value(val);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * Возвращает элемент отображения подсказок
-     * @return {SelectFieldHintView}
-     */
-    getHintView() {
-        return this.__hintView;
-    }
-    /**
-     * Возвращает контейнер с иконки
-     * @return {ContainerView<IconView>}
-     */
-    getIconViewContainer() {
-        return this.__iconContainer;
-    }
-    /**
-     * Возвращает свойство: элементы выбора
-     * @return {ObservableDictionary<T>}
-     */
-    getItemsProperty() {
-        return this.__itemsProperty;
-    }
-    /**
-     * Возвращает и устанавливает элементы выбора
-     * @param {T} [value] - значение
-     * @returns {{T}}|this|null}
-     */
-    items(value) {
-        if (value && value instanceof Array)
-            return this.setItemsByArray(value);
-        return ObservableProperty.simplePropertyAccess(this, value, this.__itemsProperty);
-    }
-    /**
-     * Добавляет элемент
-     * @param {string} key
-     * @param {T} value
-     * @return {SelectField<T>}
-     */
-    addItem(key, value) {
-        this.getItemsProperty().add(key, value);
-        return this;
-    }
-    /**
-     * Цикл по элемента
-     * @param {function(key: string, value: T, index: number)} closure
-     * @return {SelectField<T>}
-     */
-    forEachItem(closure) {
-        this.getItemsProperty().getSorted((a, b) => a[0] > b[0] ? 1 : -1).forEach(closure);
-        return this;
-    }
-    /**
-     * Возвращает ключ для значения
-     * @param {T} value
-     * @return {string|null}
-     */
-    getKeyForValue(value) {
-        const key = this.getItemsProperty().keyOf(value);
-        return isSet(key) ? key : null;
-    }
-    /**
-     * Возвращает значение для ключа
-     * @param {string} key
-     * @return {T|null}
-     */
-    getValueForKey(key) {
-        const val = this.getItemsProperty().item(key);
-        return isSet(val) ? val : null;
-    }
-    /**
-     * Логика отключения поля
-     * @ignore
-     * @private
-     */
-    __disableLogic() {
-        this.editable(false);
-        this.getHintView().hidden(true);
-        this.getIconViewContainer().getView().iconName("search");
-        if (isSet(this.value()))
-            this.getAccessory().value = this.getKeyForValue(this.value());
-        else
-            this.getAccessory().value = "";
-    }
-    /**
-     * Логика редактирования
-     * @ignore
-     * @private
-     */
-    __editableLogic() {
-        if (this.getHintView().hidden()) {
-            this.getAccessory().value = "";
-            this.editable(true);
-            this.getAccessory().focus();
-            this.search(this.getAccessory().value);
-            this.getIconViewContainer().getView().iconName("times");
-        }
-        else {
-            this.__disableLogic();
-        }
-    }
-}
-/**
- * @typedef {FieldOptions} SelectFieldOptions
- * @template {T}
- * @property {T} [value]
- * @property {string} [placeholder]
- * @property {string} [selectedKey]
- * @property {number} [maxHintsCount]
- * @property {T[]|{{}}} [items]
  */
 
 /*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -11302,7 +12371,7 @@ const navigationBar = () => {
     return app().getApplicationNavigationView();
 };
 window.onload = () => {
-    XLogger.default.clear = true;
+    bin_9.default.clear = true;
     if (SingleApp.isUsesSingle()) {
         SingleApp.applicationInitFunction = window.efSingleInit;
         Object.keys(window.elyflatobjects).forEach(value => {
@@ -11328,11 +12397,12 @@ window.elyflatobjects = {
     AppDevelopConsole,
     efxApp,
     // elyGuard
-    isNone,
-    isSet,
-    safeJsonParse,
-    variable,
-    variableAndSet,
+    Guard: bin_1,
+    isNone: Guard_4,
+    isSet: Guard_3,
+    safeJsonParse: Guard_5,
+    variable: Guard_1,
+    variableAndSet: Guard_2,
     // elyObservable
     Observable,
     ObservableArray,
@@ -11341,23 +12411,23 @@ window.elyflatobjects = {
     ObservableProperty,
     // elyRequest
     URLRequest,
-    URLRequestHeaderName,
-    URLRequestMethod,
+    URLRequestHeaderName: URLRequest_3,
+    URLRequestMethod: URLRequest_2,
     SendFileRequest,
     SendJsonRequest,
     AppStylesheet,
     Application,
-    DeviceDetector,
-    Color,
-    Time,
-    Timer,
-    Cookies,
-    XLogger,
-    Utils,
-    ColorUtils,
+    DeviceDetector: bin_7,
+    Color: bin_4,
+    Time: bin_2,
+    Timer: bin_3,
+    LocalStorage,
+    XLogger: bin_9,
+    Utils: bin_8,
+    ColorUtils: bin_5,
     AppFileWatcher,
-    View,
     Control,
+    View,
     ScreenController,
     ViewController,
     SimplePageViewController,
@@ -11377,6 +12447,8 @@ window.elyflatobjects = {
     TextAreaField,
     SwitchField,
     SelectField,
+    GroupedDataField,
+    DictionaryDataField,
     RowLayoutView,
     GridLayoutView,
     StaticGridLayoutView,

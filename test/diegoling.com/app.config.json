@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "Diego Ling",
+    "author": null
+  },
+  "manifest": {
+    "allowStandaloneMode": true,
+    "useMeta": true,
+    "useApplicationIcon": true,
+    "useViewPort": true,
+    "useNavigationBar": true,
+    "useSideNavigationBar": false,
+    "useContentController": true,
+    "useContentRouter": true,
+    "useIPhoneXStandaloneFix": true,
+    "useDevelopMode": false
+  },
+  "contentController": {
+    "defaultContentId": "index",
+    "errorContentId": "error"
+  },
+  "template": {
+    "maxContainerWidth": 800,
+    "color": "#409EFF",
+    "footer": {
+      "title": "Diego Ling &COPY; 2015-2019 All Rights Reserved",
+      "subtitle": "Mail: diegoling33@gmail.com"
+    }
+  },
+  "navigationBar": {
+    "title": "Diego Ling",
+    "color": "#2b2b2b",
+    "subtitle": null,
+    "extendedStyle": false,
+    "imageUrl": "./resources/img/ling-logo-white.png",
+    "items": [
+      {
+        "text": "Home",
+        "icon": "home",
+        "action": "#content(index)"
+      },
+      {
+        "text": "Music",
+        "icon": "music",
+        "action": "#content(music)"
+      },
+      {
+        "text": "Videos",
+        "icon": "video",
+        "action": "#content(videos)"
+      },
+      {
+        "text": "Artist",
+        "icon": "artist",
+        "action": "#content(artist)"
+      },
+      {
+        "text": "Band",
+        "icon": "band",
+        "action": "#content(band)"
+      }
+    ]
+  },
+  "meta": {
+    "charset": "UTF-8",
+    "iconPath": "resources/icon",
+    "appleMobile": {
+      "statusBarStyle": "black-translucent"
+    },
+    "viewport": {
+      "fit": "cover",
+      "userScale": "no",
+      "initialScale": 1,
+      "maximumScale": 1,
+      "width": "device-width"
+    }
+  }
+}

@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/documentation" />
       <excludeFolder url="file://$MODULE_DIR$/ely.build.js" />
+      <excludeFolder url="file://$MODULE_DIR$/ely.core" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/bin" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/dist" />
       <excludeFolder url="file://$MODULE_DIR$/ely.flat.application/modules/elyUIWorkshop.elymod" />
