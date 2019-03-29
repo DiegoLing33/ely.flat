@@ -1,4 +1,4 @@
-import {SelectField, SwitchField, TextField} from "../../../build/ely.flat";
+import {DictionaryDataField, SelectField, SwitchField, TextField} from "../../../build/ely.flat";
 
 /**
  * Фабрика полей ввода данных
@@ -37,6 +37,17 @@ export default class WSFieldsFactory {
      */
     static createDictionaryField(placeholder, value, items) {
         return new SelectField({placeholder, value, items});
+    }
+
+    /**
+     * Создаёт поле ручного ввода
+     *
+     * @param placeholder
+     * @param value
+     * @return {DictionaryDataField}
+     */
+    static createDictionaryInputField(placeholder, value) {
+        return new DictionaryDataField();
     }
 
 }

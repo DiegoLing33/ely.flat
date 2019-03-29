@@ -16,7 +16,6 @@ import {ServerViewController} from "./controllers/ServerViewController";
 import {DatabaseViewController} from "./controllers/efxapp/DatabaseViewController";
 import BuilderViewController from "./ViewBuilder/BuilderViewController";
 
-
 //
 //  Обработка завершения запуска приложения
 //

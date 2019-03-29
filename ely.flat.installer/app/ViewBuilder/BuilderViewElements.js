@@ -12,6 +12,7 @@ export const BuilderViewElements = {
                 Style: {
                     styleClickable: "boolean",
                     styleNoSelect: "boolean",
+                    css: "dictionary"
                 }
             }
         }
@@ -23,6 +24,9 @@ export const BuilderViewElements = {
         extends: ["View"],
         fields: {
             boxHover: "boolean",
+        },
+        subviews: {
+            container: "__containerView"
         },
         grid: ["__containerView"],
         defaults: {
@@ -40,6 +44,10 @@ export const BuilderViewElements = {
         description: "Элемент отображения: контейнер с заголовком. " +
             "Контейнер с эффектом наведения, рамкой и заголовком",
         extends: ["BoxView"],
+        subviews: {
+            header: "__headerView",
+            container: "__containerView",
+        },
         fields: {
             boxTitle: "string"
         },
@@ -136,6 +144,11 @@ export const BuilderViewElements = {
             panelTitle: "string",
             panelActionText: "string",
             panelHover: "boolean"
+        },
+        subviews: {
+            header: "__headerView",
+            footer: "__footerView",
+            container: "__contentView",
         },
         grid: ["__contentView"],
         defaults: {
@@ -277,7 +290,8 @@ export function getGroupLang(group) {
 }
 
 export function getFieldsMap(name) {
-    const val = BuilderViewElements[name];
+    name = name || "View";
+    const val = BuilderViewElements[name] || BuilderViewElements.View;
     let opts = {};
     if (val.extends) {
         val.extends.forEach(ext => {
@@ -286,3 +300,4 @@ export function getFieldsMap(name) {
     }
     return Utils.mergeDeep(opts, val.fields);
 }
+

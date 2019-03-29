@@ -3,6 +3,7 @@ import BuilderViewCreateItemModal from "../BuilderViewCreateItemModal";
 import BuilderViewsFactory from "./BuilderViewsFactory";
 import WSViewsRegex from "../ws/WSViewsRegex";
 import WSManager from "../ws/WSManager";
+import WSUtils from "../ws/WSUtils";
 
 /**
  * Фабрика холдеров
@@ -86,11 +87,14 @@ export default class BuilderPlaceholdersFactory {
     static testViewForPlaceholders(view, opt) {
         if (view instanceof StaticGridLayoutView) {
             BuilderPlaceholdersFactory.createPlaceholdingSystemForStaticGrid(view);
-        }else {
-            if(opt.grid) {
+        } else {
+            if (opt.subviews) {
+                Object.keys(opt.subviews).forEach(k =>
+                    WSViewsRegex.default.registerView(view[opt.subviews[k]], k, WSUtils.getViewSignatureClassName(view)));
+            }
+            if (opt.grid) {
                 opt.grid.forEach(value => {
                     BuilderPlaceholdersFactory.createPlaceholdingSystemForStaticGrid(view[value]);
-                    WSViewsRegex.default.registerView(view[value]);
                 });
             }
         }

@@ -35,9 +35,14 @@ export default class WSViewsRegex extends Observable {
     /**
      * Регистрирует View
      * @param {View} view
+     * @param {string?} prename
+     * @param {string?} postname
      */
-    registerView(view) {
-        let id = `${WSUtils.getViewSignatureClassName(view)}-${++this.__idsCounter}`;
+    registerView(view, prename, postname) {
+        let id = `${WSUtils.getViewSignatureClassName(view)}`;
+        if (prename) id = prename + id.substr(0, 1).toUpperCase() + id.substr(1);
+        if (postname) id = postname + id.substr(0, 1).toUpperCase() + id.substr(1);
+        id += `-${++this.__idsCounter}`;
         view.attribute(WSViewsRegex.consts.BUILDER_ID_ATTR_NAME, id);
         this.__registeredViews[id] = view;
         this.notificate("registered", [view, id])

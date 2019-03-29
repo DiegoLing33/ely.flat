@@ -104,6 +104,10 @@ export default class BuilderViewEditorPanel extends GridLayoutView {
      */
     createEditableField(item, type, value, name) {
         switch (type) {
+            case "dictionary":
+                const df = WSFieldsFactory.createDictionaryInputField(name, value);
+                df.addInputObserver(v => item[name](v));
+                return df;
             case "boolean":
                 return WSFieldsFactory.createBooleanField(name, value);
             case "string":
